@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Ultima;
@@ -584,21 +585,30 @@ namespace UoFiddler.Controls.UserControls
             return ((int[])x.Tag)[0].CompareTo(((int[])y.Tag)[0]);
         }
 
-        private void AddUopActionNodes(TreeNode parent, int body, int actionType)
+        /// <summary>
+        /// Lists the actions defined for <paramref name="body"/>: every defined UOP action for UOP bodies,
+        /// the named-action table for MUL bodies.
+        /// </summary>
+        private List<int> GetDefinedActions(int body, int actionType)
         {
             // UOP animations are not bounded by the legacy per-type group counts (Low=13, High=22,
             // People=34): a UOP body can define action bins well past them (the client scans up to
-            // MaxAnimActions - "gargoyle is like 78"). List every defined UOP action, naming those within
-            // the type's table and falling back to a generic "ActionN" for the higher UOP-specific bins.
-            var definedActions = Animations.GetUopDefinedActions(body);
-            foreach (int i in definedActions)
+            // MaxAnimActions - "gargoyle is like 78").
+            if (Animations.IsUopBody(body))
             {
-                string actionName = i < GetActionNames[actionType].Length
-                    ? GetActionNames[actionType][i]
-                    : $"Action{i}";
-
-                parent.Nodes.Add(new TreeNode($"{i} {actionName}") { Tag = i });
+                return Animations.GetUopDefinedActions(body);
             }
+
+            var actions = new List<int>();
+            for (int i = 0; i < GetActionNames[actionType].GetLength(0); ++i)
+            {
+                if (Animations.IsActionDefined(body, i, 0))
+                {
+                    actions.Add(i);
+                }
+            }
+
+            return actions;
         }
 
         /// <summary>
@@ -668,21 +678,14 @@ namespace UoFiddler.Controls.UserControls
             TreeViewMobs.BeginUpdate();
             try
             {
-                if (Animations.IsUopBody(graphic))
+                // Actions past the type's name table (UOP-specific bins) get a generic "ActionN"
+                foreach (int i in GetDefinedActions(graphic, actionType))
                 {
-                    AddUopActionNodes(bodyNode, graphic, actionType);
-                }
-                else
-                {
-                    for (int i = 0; i < GetActionNames[actionType].GetLength(0); ++i)
-                    {
-                        if (!Animations.IsActionDefined(graphic, i, 0))
-                        {
-                            continue;
-                        }
+                    string actionName = i < GetActionNames[actionType].Length
+                        ? GetActionNames[actionType][i]
+                        : $"Action{i}";
 
-                        bodyNode.Nodes.Add(new TreeNode($"{i} {GetActionNames[actionType][i]}") { Tag = i });
-                    }
+                    bodyNode.Nodes.Add(new TreeNode($"{i} {actionName}") { Tag = i });
                 }
             }
             finally
@@ -1395,6 +1398,204 @@ namespace UoFiddler.Controls.UserControls
         {
             MainPictureBox.ShowFrameBounds = !MainPictureBox.ShowFrameBounds;
             ShowFrameBoundsCheckBox.Checked = MainPictureBox.ShowFrameBounds;
+        }
+
+        /// <summary>
+        /// The action-name table of the body node for <see cref="_currentSelect"/>, found from the tree
+        /// selection or, when the body was picked from the thumbnail list, by searching the tree.
+        /// </summary>
+        private int GetSelectedBodyActionType()
+        {
+            TreeNode node = TreeViewMobs.SelectedNode;
+            if (node?.Tag is int && node.Parent?.Tag is int[])
+            {
+                node = node.Parent;
+            }
+
+            if (node?.Tag is int[] selectedTag && selectedTag[0] == _currentSelect)
+            {
+                return GetActionNameType(selectedTag[1]);
+            }
+
+            string rootName = _displayType == 1 ? "Equipment" : "Mobs";
+            foreach (TreeNode root in TreeViewMobs.Nodes)
+            {
+                if (root.Name != rootName)
+                {
+                    continue;
+                }
+
+                foreach (TreeNode bodyNode in root.Nodes)
+                {
+                    if (bodyNode.Tag is int[] tag && tag[0] == _currentSelect)
+                    {
+                        return GetActionNameType(tag[1]);
+                    }
+                }
+            }
+
+            // Largest name table, so no defined MUL action is missed
+            return (int)MobType.Human;
+        }
+
+        private void OnClickPackFrames(object sender, EventArgs e)
+        {
+            if (_currentSelect == 0)
+            {
+                MessageBox.Show("No animation selected.", "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using var optionsForm = new PackOptionsForm();
+            if (optionsForm.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            using var folderDialog = new FolderBrowserDialog
+            {
+                Description = "Select the folder to save the packed sheets in",
+                ShowNewFolderButton = true,
+                SelectedPath = Options.OutputPath
+            };
+            if (folderDialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            string outDir = folderDialog.SelectedPath;
+            int body = _currentSelect;
+
+            var saved = new List<string>();
+            try
+            {
+                using (new WaitCursorScope(this))
+                {
+                    List<int> actions = optionsForm.ExportAllActions
+                        ? GetDefinedActions(body, GetSelectedBodyActionType())
+                        : new List<int> { _currentSelectAction };
+
+                    foreach (int action in actions)
+                    {
+                        string baseName = PackAnimation(outDir, body, action, optionsForm);
+                        if (baseName != null)
+                        {
+                            saved.Add(baseName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.ExternalException)
+            {
+                MessageBox.Show($"Failed to pack frames: {ex.Message}", "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (saved.Count == 0)
+            {
+                MessageBox.Show("No frames found to pack.", "Pack Frames", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string message = saved.Count == 1
+                ? $"Packed sheet {Path.GetFileName(saved[0])} (.png, .json and _guide.png) saved successfully."
+                : $"{saved.Count} packed sheets anim_{body}_<action> (.png, .json and _guide.png) saved successfully.";
+            FileSavedDialog.Show(FindForm(), outDir, message);
+        }
+
+        /// <summary>
+        /// Packs the frames of the chosen directions of one action into <c>anim_{body}_{action}.png</c>
+        /// with a <c>.json</c> descriptor, a <c>_guide.png</c> showing frame bounds and anchors and, with one
+        /// row per direction, a <c>_rows.txt</c> naming the rows.
+        /// </summary>
+        /// <returns>The output path without extension, or null if the action has no frames.</returns>
+        private static string PackAnimation(string outDir, int body, int action, PackOptionsForm options)
+        {
+            var layout = new SpriteSheetLayout(options.MaxWidth, options.Spacing);
+            var entries = new List<PackedFrameEntry>();
+            var images = new List<Bitmap>();
+            var rows = new StringBuilder();
+            int rowCount = 0;
+
+            try
+            {
+                foreach (int direction in options.SelectedDirections)
+                {
+                    // No hue: pack the stored colours, not a body.def hue, so the sheet imports back unchanged
+                    int hue = 0;
+                    AnimationFrame[] frames = Animations.GetAnimation(body, action, direction, ref hue, true, false);
+                    if (frames == null || !frames.Any(frame => frame?.Bitmap != null))
+                    {
+                        continue;
+                    }
+
+                    if (options.OneRowPerDirection)
+                    {
+                        layout.NewRow();
+                        rows.AppendLine($"Row {rowCount++}: {direction} {PackOptionsForm.DirectionNames[direction]}");
+                    }
+
+                    for (int i = 0; i < frames.Length; ++i)
+                    {
+                        AnimationFrame frame = frames[i];
+                        if (frame?.Bitmap == null)
+                        {
+                            continue;
+                        }
+
+                        PackedRect rect = layout.Place(frame.Bitmap.Width, frame.Bitmap.Height, wrap: !options.OneRowPerDirection);
+                        entries.Add(new PackedFrameEntry
+                        {
+                            Direction = direction,
+                            Index = i,
+                            Frame = rect,
+                            Center = new PackedPoint { X = frame.Center.X, Y = frame.Center.Y }
+                        });
+
+                        // The frames are cache-owned
+                        images.Add(new Bitmap(frame.Bitmap));
+                    }
+                }
+
+                if (entries.Count == 0)
+                {
+                    return null;
+                }
+
+                string baseName = Path.Combine(outDir, $"anim_{body}_{action}");
+                string imageFile = baseName + ".png";
+                List<PackedRect> rects = entries.Select(entry => entry.Frame).ToList();
+
+                using (Bitmap sheet = SpriteSheetPacker.Compose(layout.Width, layout.Height, images, rects))
+                {
+                    sheet.Save(imageFile, ImageFormat.Png);
+                    SpriteSheetPacker.WriteJson(baseName + ".json", new PackedAnimation
+                    {
+                        Meta = SpriteSheetPacker.CreateMeta(imageFile, sheet),
+                        Frames = entries
+                    });
+
+                    // The anchor is where the frame's center is drawn, as in GetAlignedLocation
+                    List<Point?> anchors = entries
+                        .Select(entry => (Point?)new Point(entry.Frame.X + entry.Center.X, entry.Frame.Y + entry.Frame.H + entry.Center.Y))
+                        .ToList();
+                    SpriteSheetPacker.SaveGuide(baseName + "_guide.png", sheet, rects, anchors);
+                }
+
+                if (options.OneRowPerDirection)
+                {
+                    File.WriteAllText(baseName + "_rows.txt", rows.ToString());
+                }
+
+                return baseName;
+            }
+            finally
+            {
+                foreach (Bitmap image in images)
+                {
+                    image.Dispose();
+                }
+            }
         }
     }
 
