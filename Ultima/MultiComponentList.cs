@@ -810,7 +810,7 @@ namespace Ultima
                         SortedTiles[counter].OffsetY = (short)(y - _center.Y);
                         SortedTiles[counter].OffsetZ = mTile.Z;
                         SortedTiles[counter].Flags = mTile.Flag;
-                        SortedTiles[counter].Unk1 = 0;
+                        SortedTiles[counter].Unk1 = mTile.Unk1;
 
                         if (SortedTiles[counter].OffsetX < _min.X)
                         {

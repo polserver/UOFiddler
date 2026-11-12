@@ -76,7 +76,10 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                             x,
                             y,
                             list.Tiles[x][y][i].Z,
-                            list.Tiles[x][y][i].Flag));
+                            list.Tiles[x][y][i].Flag)
+                        {
+                            Extra = list.Tiles[x][y][i].Unk1
+                        });
                     }
 
                     Tiles.Add(new FloorTile(x, y, _parent.DrawFloorZ));
@@ -150,7 +153,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     continue;
                 }
 
-                tiles[tile.X][tile.Y].Add(tile.Id, (sbyte)tile.Z, tile.Invisible ? (sbyte)0 : (sbyte)1, 0);
+                tiles[tile.X][tile.Y].Add(tile.Id, (sbyte)tile.Z, tile.Invisible ? (sbyte)0 : (sbyte)1, tile.Extra);
                 ++count;
             }
 
@@ -713,7 +716,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             {
                 Tiles.Add(tile.IsVirtualFloor
                     ? new FloorTile(tile.X, tile.Y, tile.Z)
-                    : new MultiTile(tile.Id, tile.X, tile.Y, tile.Z, tile.Invisible));
+                    : new MultiTile(tile.Id, tile.X, tile.Y, tile.Z, tile.Invisible) { Extra = tile.Extra });
             }
 
             _modified = true;
@@ -941,7 +944,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             {
                 entry.Tiles.Add(tile.IsVirtualFloor
                     ? new FloorTile(tile.X, tile.Y, tile.Z)
-                    : new MultiTile(tile.Id, tile.X, tile.Y, tile.Z, tile.Invisible));
+                    : new MultiTile(tile.Id, tile.X, tile.Y, tile.Z, tile.Invisible) { Extra = tile.Extra });
             }
 
             return entry;
@@ -1340,6 +1343,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         }
 
         public bool Invisible { get; set; }
+
+        /// <summary>
+        /// The multi.mul extra field (MultiTileEntry.Unk1), kept so a save writes it back.
+        /// </summary>
+        public int Extra { get; set; }
 
         public bool Walkable { get; private set; }
 
