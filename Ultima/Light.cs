@@ -16,6 +16,7 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
+            _fileIndex?.Dispose();
             _fileIndex = new FileIndex("lightidx.mul", "light.mul", 100, -1);
             _cache = new Bitmap[100];
             _removed = new bool[100];

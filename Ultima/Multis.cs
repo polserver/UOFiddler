@@ -66,6 +66,7 @@ namespace Ultima
         /// </summary>
         public static void Reload()
         {
+            _fileIndex?.Dispose();
             _fileIndex = new FileIndex("Multi.idx", "Multi.mul", MaximumMultiIndex, 14);
             _components = new MultiComponentList[MaximumMultiIndex];
             ReloadUop();

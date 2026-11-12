@@ -47,6 +47,7 @@ namespace Ultima
         {
             _cache = new UoSound[0xFFF];
             _removed = new bool[0xFFF];
+            _fileIndex?.Dispose();
             _fileIndex = new FileIndex("soundidx.mul", "sound.mul", "soundLegacyMUL.uop", 0xFFF, 8, ".dat", -1, false);
             var reg = new Regex(@"(\d{1,4}) \x7B(\d{1,4})\x7D (\d{1,3})", RegexOptions.Compiled);
 
