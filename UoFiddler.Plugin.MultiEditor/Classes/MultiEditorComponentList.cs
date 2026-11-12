@@ -736,8 +736,27 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 return;
             }
 
-            RestoreSnapshot(UndoList[index]);
-            RedoList.Clear();
+            // Step back one entry at a time, so every state passed over, the current one included,
+            // ends up on the redo stack and can be redone.
+            for (int i = 0; i <= index; ++i)
+            {
+                UndoStep();
+            }
+        }
+
+        /// <summary>
+        /// Sets a tile's Dynamic (invisible) flag as an undoable change.
+        /// </summary>
+        public void TileSetInvisible(MultiTile tile, bool invisible)
+        {
+            if (tile == null || tile.Invisible == invisible || !Tiles.Contains(tile))
+            {
+                return;
+            }
+
+            AddToUndoList("Dynamic");
+            tile.Invisible = invisible;
+            _modified = true;
         }
 
         /// <summary>Single-step undo (Ctrl+Z). Pushes current state to redo stack.</summary>

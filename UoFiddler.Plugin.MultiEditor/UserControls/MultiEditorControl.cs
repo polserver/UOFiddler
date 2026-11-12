@@ -2441,10 +2441,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 return;
             }
 
-            if (SelectedTile.Invisible != DynamiccheckBox.Checked)
-            {
-                SelectedTile.Invisible = DynamiccheckBox.Checked;
-            }
+            _compList.TileSetInvisible(SelectedTile, DynamiccheckBox.Checked);
         }
 
         private void BTN_ShowWalkables_Click(object sender, EventArgs e)
