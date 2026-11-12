@@ -175,9 +175,9 @@ namespace Ultima
                     bmp.UnlockBits(bd);
                 }
 
-                if (!Files.CacheData)
+                if (Files.CacheData)
                 {
-                    return _cache[index] = bmp;
+                    _cache[index] = bmp;
                 }
 
                 return bmp;
