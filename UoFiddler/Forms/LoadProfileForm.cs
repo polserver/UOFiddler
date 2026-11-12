@@ -76,6 +76,8 @@ namespace UoFiddler.Forms
             _log.LogInformation("Loading profile: {ProfileName}", Options.ProfileName);
             FiddlerOptions.LoadProfile($"{_profiles[comboBoxLoad.SelectedIndex]}.xml");
 
+            // The Enter key path closes the form without a button, so set the result here.
+            DialogResult = DialogResult.OK;
             Close();
         }
 
