@@ -69,6 +69,9 @@ namespace UoFiddler.Controls.UserControls
             alignFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             packFramesSeparator = new System.Windows.Forms.ToolStripSeparator();
             packFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            importAnimationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            unpackFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            bulkUnpackFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             listView1 = new ListViewWithScrollbar();
             contextMenuStrip3 = new System.Windows.Forms.ContextMenuStrip(components);
             exportFrameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -275,9 +278,9 @@ namespace UoFiddler.Controls.UserControls
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { extractImageToolStripMenuItem, extractAnimationToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { extractImageToolStripMenuItem, extractAnimationToolStripMenuItem, importAnimationToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new System.Drawing.Size(174, 48);
+            contextMenuStrip1.Size = new System.Drawing.Size(174, 70);
             // 
             // extractImageToolStripMenuItem
             // 
@@ -388,6 +391,29 @@ namespace UoFiddler.Controls.UserControls
             packFramesToolStripMenuItem.Text = "Pack Frames to Sheet (Png + Json)..";
             packFramesToolStripMenuItem.ToolTipText = "Pack the frames of the chosen directions into one sprite sheet with a Json file holding each frame's position and center.";
             packFramesToolStripMenuItem.Click += OnClickPackFrames;
+            //
+            // importAnimationToolStripMenuItem
+            //
+            importAnimationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { unpackFramesToolStripMenuItem, bulkUnpackFramesToolStripMenuItem });
+            importAnimationToolStripMenuItem.Name = "importAnimationToolStripMenuItem";
+            importAnimationToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            importAnimationToolStripMenuItem.Text = "Import Animation..";
+            //
+            // unpackFramesToolStripMenuItem
+            //
+            unpackFramesToolStripMenuItem.Name = "unpackFramesToolStripMenuItem";
+            unpackFramesToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            unpackFramesToolStripMenuItem.Text = "Unpack Frames from Sheet..";
+            unpackFramesToolStripMenuItem.ToolTipText = "Import a packed sheet (Json + Png) into the selected action.";
+            unpackFramesToolStripMenuItem.Click += OnClickUnpackFrames;
+            //
+            // bulkUnpackFramesToolStripMenuItem
+            //
+            bulkUnpackFramesToolStripMenuItem.Name = "bulkUnpackFramesToolStripMenuItem";
+            bulkUnpackFramesToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            bulkUnpackFramesToolStripMenuItem.Text = "Bulk Unpack Frames from Folder..";
+            bulkUnpackFramesToolStripMenuItem.ToolTipText = "Import every packed sheet anim_<body>_<action>.json of the selected body from a folder.";
+            bulkUnpackFramesToolStripMenuItem.Click += OnClickBulkUnpackFrames;
             // 
             // listView1
             // 
@@ -762,6 +788,9 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator alignFramesSeparator;
         private System.Windows.Forms.ToolStripSeparator packFramesSeparator;
         private System.Windows.Forms.ToolStripMenuItem packFramesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importAnimationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem unpackFramesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bulkUnpackFramesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem alignFramesToolStripMenuItem;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
