@@ -231,10 +231,10 @@ namespace Ultima
 
                 translated = true;
 
-                stream = _fileIndex.Seek(soundId, out _, out _, out _);
+                stream = _fileIndex.Seek(soundId, out length, out _, out _);
             }
 
-            if (stream == null)
+            if (stream == null || length < _mulNameLength)
             {
                 return false;
             }
