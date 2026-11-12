@@ -401,7 +401,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
 
             AddToUndoList("Add Tile");
-            MultiTile tile = new MultiTile(id, x, y, z, 1);
+            MultiTile tile = new MultiTile(id, x, y, ClampZ(z), 1);
             Tiles.Add(tile);
             CalcSolver(x, y);
             _modified = true;
@@ -412,6 +412,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>
         /// Moves given <see cref="MultiTile"/>
         /// </summary>
+        /// <summary>
+        /// Z is saved as a signed byte; larger values would wrap around.
+        /// </summary>
+        private static int ClampZ(int z) => Math.Clamp(z, sbyte.MinValue, sbyte.MaxValue);
+
         public void TileMove(MultiTile tile, int newX, int newY)
         {
             if (Width == 0 || Height == 0)
@@ -419,12 +424,13 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 return;
             }
 
-            AddToUndoList("Move Tile");
-
-            if (tile == null)
+            // A tile from before an undo or another multi is no longer in the list.
+            if (tile == null || newX < 0 || newX >= Width || newY < 0 || newY >= Height || !Tiles.Contains(tile))
             {
                 return;
             }
+
+            AddToUndoList("Move Tile");
 
             tile.X = newX;
             tile.Y = newY;
@@ -483,12 +489,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 return;
             }
 
-            AddToUndoList("Remove Tile");
-
-            if (tile == null)
+            if (tile == null || !Tiles.Contains(tile))
             {
                 return;
             }
+
+            AddToUndoList("Remove Tile");
 
             Tiles.Remove(tile);
             _modified = true;
@@ -591,7 +597,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                         continue;
                     }
 
-                    Tiles.Add(new MultiTile(id, x, y, z, 1));
+                    Tiles.Add(new MultiTile(id, x, y, ClampZ(z), 1));
                     CalcSolver(x, y);
                 }
             }
@@ -614,7 +620,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     continue;
                 }
 
-                Tiles.Add(new MultiTile(id, x, y, z, 1));
+                Tiles.Add(new MultiTile(id, x, y, ClampZ(z), 1));
                 CalcSolver(x, y);
             }
 
@@ -675,7 +681,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                         continue;
                     }
 
-                    Tiles.Add(new MultiTile(id, x, y, z, 1));
+                    Tiles.Add(new MultiTile(id, x, y, ClampZ(z), 1));
                     CalcSolver(x, y);
                 }
             }
@@ -698,7 +704,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     continue;
                 }
 
-                Tiles.Add(new MultiTile(id, x, y, z, 1));
+                Tiles.Add(new MultiTile(id, x, y, ClampZ(z), 1));
                 CalcSolver(x, y);
             }
 

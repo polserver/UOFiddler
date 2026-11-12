@@ -181,6 +181,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             int height = (int)numericUpDown_Size_Height.Value;
 
             _compList = new MultiEditorComponentList(width, height, this);
+            ClearTileReferences();
 
             UndoList_Clear();
 
@@ -1679,6 +1680,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                             MultiComponentList multi = Multis.LoadFromFile(dialog.FileName, importType);
 
                             _compList = new MultiEditorComponentList(multi, this);
+                            ClearTileReferences();
 
                             UndoList_Clear();
 
@@ -1771,6 +1773,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 textBox_SaveToID.Text = e.Node.Tag.ToString();
             }
 
+            ClearTileReferences();
             UndoList_Clear();
 
             MaxHeightTrackBar.Minimum = _compList.ZMin;
@@ -1895,17 +1898,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             int undo = (int)item.Tag;
             _compList.Undo(undo);
 
-            MaxHeightTrackBar.Minimum = _compList.ZMin;
-            MaxHeightTrackBar.Maximum = _compList.ZMax;
-            MaxHeightTrackBar.Value = _compList.ZMax;
-
-            numericUpDown_Size_Width.Value = _compList.Width;
-            numericUpDown_Size_Height.Value = _compList.Height;
-
-            numericUpDown_Selected_X.Maximum = _compList.Width - 1;
-            numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
-
-            ScrollbarsSetValue();
+            ClearTileReferences();
+            SyncControlsToList();
 
             pictureBoxMulti.Invalidate();
         }
@@ -2223,6 +2217,35 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         }
 
         /// <summary>
+        /// Drops every reference to tiles of the previous list. Undo, redo and opening a multi
+        /// rebuild the tiles as new objects, so old references would edit tiles no longer shown.
+        /// </summary>
+        private void ClearTileReferences()
+        {
+            _selectedTiles.Clear();
+            _overlayList.Clear();
+            HoverTile = null;
+            SelectedTile = null;
+            _isPasteMode = false;
+        }
+
+        /// <summary>
+        /// Brings the size, height and selection limits in line with the current list.
+        /// </summary>
+        private void SyncControlsToList()
+        {
+            UpdateTrackBarAfterZChange();
+
+            numericUpDown_Size_Width.Value = _compList.Width;
+            numericUpDown_Size_Height.Value = _compList.Height;
+
+            numericUpDown_Selected_X.Maximum = _compList.Width - 1;
+            numericUpDown_Selected_Y.Maximum = _compList.Height - 1;
+
+            ScrollbarsSetValue();
+        }
+
+        /// <summary>
         /// True when keyboard focus is in a text or number box, which needs its own keys
         /// (minus, brackets, arrows, Ctrl+C/V/Z).
         /// </summary>
@@ -2246,8 +2269,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 {
                     if (_compList.UndoStep())
                     {
-                        UpdateTrackBarAfterZChange();
-                        _selectedTiles.Clear();
+                        ClearTileReferences();
+                        SyncControlsToList();
                         pictureBoxMulti.Invalidate();
                     }
 
@@ -2258,8 +2281,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 {
                     if (_compList.RedoStep())
                     {
-                        UpdateTrackBarAfterZChange();
-                        _selectedTiles.Clear();
+                        ClearTileReferences();
+                        SyncControlsToList();
                         pictureBoxMulti.Invalidate();
                     }
 
