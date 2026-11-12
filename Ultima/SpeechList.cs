@@ -11,8 +11,6 @@ namespace Ultima
     {
         public static List<SpeechEntry> Entries { get; private set; }
 
-        private static readonly byte[] _buffer = new byte[128];
-
         static SpeechList()
         {
             Initialize();
@@ -42,16 +40,11 @@ namespace Ultima
                 while (bin.BaseStream.Length != bin.BaseStream.Position)
                 {
                     var id = BinaryPrimitives.ReverseEndianness(bin.ReadInt16());
-                    var length = BinaryPrimitives.ReverseEndianness(bin.ReadInt16());
+                    int length = BinaryPrimitives.ReverseEndianness(bin.ReadUInt16());
 
-                    if (length > 128)
-                    {
-                        length = 128;
-                    }
+                    byte[] text = bin.ReadBytes(length);
 
-                    _ = bin.Read(_buffer, 0, length);
-
-                    string keyword = Encoding.UTF8.GetString(_buffer, 0, length);
+                    string keyword = Encoding.UTF8.GetString(text);
 
                     Entries.Add(new SpeechEntry(id, keyword, order));
 
@@ -75,7 +68,7 @@ namespace Ultima
                 {
                     bin.Write(BinaryPrimitives.ReverseEndianness(entry.Id));
                     byte[] utf8String = Encoding.UTF8.GetBytes(entry.KeyWord);
-                    var length = (short)utf8String.Length;
+                    var length = (ushort)utf8String.Length;
                     bin.Write(BinaryPrimitives.ReverseEndianness(length));
                     bin.Write(utf8String);
                 }
