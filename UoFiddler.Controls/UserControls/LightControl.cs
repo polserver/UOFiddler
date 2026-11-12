@@ -251,7 +251,7 @@ namespace UoFiddler.Controls.UserControls
                 {
                     var bitmap = new Bitmap(bmpTemp);
 
-                    if (dialog.FileName.Contains(".bmp"))
+                    if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
                         bitmap = Utils.ConvertBmp(bitmap);
                     }

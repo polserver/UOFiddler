@@ -1434,11 +1434,11 @@ namespace UoFiddler.Controls.Forms
                                 using (var bmpTemp = new Bitmap(fileName))
                                 {
                                     // Copying a GIF keeps only its first frame
-                                    Bitmap bitmap = fileName.Contains(".gif") ? bmpTemp : new Bitmap(bmpTemp);
+                                    Bitmap bitmap = fileName.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) ? bmpTemp : new Bitmap(bmpTemp);
 
-                                    if (fileName.Contains(".bmp") || fileName.Contains(".tiff") ||
-                                        fileName.Contains(".png") || fileName.Contains(".jpeg") ||
-                                        fileName.Contains(".jpg"))
+                                    if (fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase) || fileName.EndsWith(".tiff", StringComparison.OrdinalIgnoreCase) ||
+                                        fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || fileName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                                        fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
                                     {
                                         bitmap = ConvertBmpAnim(bitmap, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value);
 
@@ -1452,7 +1452,7 @@ namespace UoFiddler.Controls.Forms
                                     }
 
                                     //Gif Especial Properties
-                                    if (fileName.Contains(".gif"))
+                                    if (fileName.EndsWith(".gif", StringComparison.OrdinalIgnoreCase))
                                     {
                                         FrameDimension dimension = new FrameDimension(bitmap.FrameDimensionsList[0]);
 
@@ -2313,7 +2313,7 @@ namespace UoFiddler.Controls.Forms
                 if (edit != null)
                 {
                     // Gif Especial Properties
-                    if (dialog.FileNames[w].Contains(".gif"))
+                    if (dialog.FileNames[w].EndsWith(".gif", StringComparison.OrdinalIgnoreCase))
                     {
                         // dialog.Filename replaced by dialog.FileNames[w]
                         using (Bitmap bitmap = new Bitmap(dialog.FileNames[w]))
@@ -2547,7 +2547,7 @@ namespace UoFiddler.Controls.Forms
 
                 // TODO: fix checking file extension
                 // Gif Especial Properties
-                if (!dialog.FileNames[w].Contains(".gif"))
+                if (!dialog.FileNames[w].EndsWith(".gif", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
@@ -2958,7 +2958,7 @@ namespace UoFiddler.Controls.Forms
 
                                 // TODO: fix checking file extension
                                 // Gif Especial Properties
-                                if (!dialog.FileNames[w].Contains(".gif"))
+                                if (!dialog.FileNames[w].EndsWith(".gif", StringComparison.OrdinalIgnoreCase))
                                 {
                                     continue;
                                 }
@@ -3243,7 +3243,7 @@ namespace UoFiddler.Controls.Forms
                             if (edit != null)
                             {
                                 // Gif Especial Properties
-                                if (dialog.FileName.Contains(".gif"))
+                                if (dialog.FileName.EndsWith(".gif", StringComparison.OrdinalIgnoreCase))
                                 {
                                     using (Bitmap bmpTemp = new Bitmap(dialog.FileName))
                                     using (MemoryStream ms = new MemoryStream())
@@ -3929,7 +3929,7 @@ namespace UoFiddler.Controls.Forms
                             if (edit != null)
                             {
                                 //Gif Especial Properties
-                                if (dialog.FileName.Contains(".gif"))
+                                if (dialog.FileName.EndsWith(".gif", StringComparison.OrdinalIgnoreCase))
                                 {
                                     using (Bitmap bmpTemp = new Bitmap(dialog.FileName))
                                     using (MemoryStream ms = new MemoryStream())
