@@ -15,10 +15,25 @@ namespace Ultima
         public long IdxLength { get => FileAccessor?.IdxLength ?? 0; }
         public IEntry this[int index]
         {
-            get => FileAccessor[index];
+            get => FileAccessor?[index];
             // Let the accessor cast: it knows whether it stores Entry3D or Entry6D.
-            set => FileAccessor[index] = value;
+            set
+            {
+                if (FileAccessor != null)
+                {
+                    FileAccessor[index] = value;
+                }
+            }
         }
+
+        private FileIndex()
+        {
+        }
+
+        /// <summary>
+        /// An index with no backing file: every entry reads as missing.
+        /// </summary>
+        public static FileIndex CreateEmpty() => new FileIndex();
 
         private readonly Lock _entryWriteLock = new();
 

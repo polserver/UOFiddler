@@ -101,7 +101,8 @@ namespace Ultima
             }
             catch
             {
-                _fileIndex = null;
+                // An unreadable file loads as no gumps, so reads return nothing instead of throwing.
+                _fileIndex = FileIndex.CreateEmpty();
                 _indexLength = _maxGumpIndex;
                 _cache?.Clear();
                 _cache ??= new LruBitmapCache(Files.CacheCapacityGumps);
