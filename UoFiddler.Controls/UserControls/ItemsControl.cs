@@ -1735,7 +1735,11 @@ namespace UoFiddler.Controls.UserControls
                             continue;
                         }
 
-                        _itemList[i] = index;
+                        // Insert before the first larger id; the id may already be listed
+                        if (_itemList[i] != index)
+                        {
+                            _itemList.Insert(i, index);
+                        }
 
                         done = true;
 
