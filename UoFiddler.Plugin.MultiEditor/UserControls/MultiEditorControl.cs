@@ -1819,13 +1819,68 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                 return;
             }
 
-            _drawTilesList = (List<int>)e.Node.Tag;
-            vScrollBarDrawTiles.Maximum = (_drawTilesList.Count / _pictureBoxDrawTilesCol) + 1;
+            _drawTilesCategory = e.Node.Tag as List<int> ?? GetAllValidStatics();
+            ApplyDrawTilesFilter();
+        }
+
+        /// <summary>
+        /// Tiles of the selected tree node, before the filter textbox is applied.
+        /// </summary>
+        private List<int> _drawTilesCategory = new List<int>();
+
+        private const string _allTilesTag = "AllTiles";
+
+        private static List<int> GetAllValidStatics()
+        {
+            int maxItemId = Art.GetMaxItemId();
+            var list = new List<int>(maxItemId + 1);
+            for (int i = 0; i <= maxItemId; ++i)
+            {
+                if (Art.IsValidStatic(i))
+                {
+                    list.Add(i);
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Shows the tiles of the selected node whose name contains the filter text (case insensitive),
+        /// or whose id matches when the text is a 0x prefixed hex number.
+        /// </summary>
+        private void ApplyDrawTilesFilter()
+        {
+            string filter = textBoxDrawTilesFilter.Text.Trim();
+
+            if (filter.Length == 0)
+            {
+                _drawTilesList = _drawTilesCategory;
+            }
+            else if (filter.StartsWith("0x", StringComparison.OrdinalIgnoreCase) && Utils.ConvertStringToInt(filter, out int id))
+            {
+                _drawTilesList = _drawTilesCategory.Where(tile => tile == id).ToList();
+            }
+            else
+            {
+                _drawTilesList = _drawTilesCategory
+                    // Art can hold more ids than tiledata
+                    .Where(tile => tile < TileData.ItemTable.Length &&
+                                   TileData.ItemTable[tile].Name?.Contains(filter, StringComparison.OrdinalIgnoreCase) == true)
+                    .ToList();
+            }
+
+            vScrollBarDrawTiles.Maximum = (_drawTilesList.Count / Math.Max(1, _pictureBoxDrawTilesCol)) + 1;
             vScrollBarDrawTiles.Minimum = 1;
             vScrollBarDrawTiles.SmallChange = 1;
             vScrollBarDrawTiles.LargeChange = 1;
             vScrollBarDrawTiles.Value = 1;
             pictureBoxDrawTiles.Invalidate();
+        }
+
+        private void TextBoxDrawTilesFilter_TextChanged(object sender, EventArgs e)
+        {
+            ApplyDrawTilesFilter();
         }
 
         private void Undo_onClick(object sender, EventArgs e)
@@ -1920,6 +1975,14 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
 
         private void XML_InitializeToolBox()
         {
+            // Rebuilt on every file path change, so start over instead of appending duplicates
+            treeViewTilesXML.Nodes.Clear();
+            _drawTilesCategory = new List<int>();
+            _drawTilesList = _drawTilesCategory;
+
+            // Every valid static, built when selected so it reflects the art loaded at that time
+            treeViewTilesXML.Nodes.Add(new TreeNode("All Tiles") { Tag = _allTilesTag, ImageIndex = 0 });
+
             string path = Options.AppDataPath;
             string fileName = Path.Combine(path, "plugins/multieditor.xml");
             if (!File.Exists(fileName))
