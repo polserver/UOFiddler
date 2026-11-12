@@ -738,7 +738,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            SelectedTextureId = e.ItemIndex < 0 || e.ItemIndex > _textureList.Count
+            SelectedTextureId = e.ItemIndex < 0 || e.ItemIndex >= _textureList.Count
                 ? _textureList[0]
                 : _textureList[e.ItemIndex];
         }
