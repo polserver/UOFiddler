@@ -259,13 +259,23 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Utils.ConvertStringToInt(ReplaceText.Text, out int index, 0, Hues.List.Length))
+            if (!Utils.ConvertStringToInt(ReplaceText.Text, out int index, 0, Hues.List.Length - 1))
             {
                 return;
             }
 
             contextMenuStrip1.Close();
-            Hues.List[_selected] = Hues.List[index];
+
+            // Copy the values: sharing the source Hue object would tie both slots together.
+            Hue source = Hues.List[index];
+            Hue target = Hues.List[_selected];
+            source.Colors.CopyTo(target.Colors, 0);
+            target.Name = source.Name;
+            target.TableStart = source.TableStart;
+            target.TableEnd = source.TableEnd;
+
+            ControlEvents.FireHueChangeEvent();
+            Options.ChangedUltimaClass["Hues"] = true;
             pictureBox.Invalidate();
         }
 
