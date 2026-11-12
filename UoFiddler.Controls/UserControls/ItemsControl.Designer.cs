@@ -98,6 +98,9 @@ namespace UoFiddler.Controls.UserControls
             toolStripSeparator4 = new ToolStripSeparator();
             MiscToolStripDropDownButton = new ToolStripDropDownButton();
             ExportAllToolStripMenuItem = new ToolStripMenuItem();
+            packedSheetSeparator = new ToolStripSeparator();
+            exportItemsToSheetToolStripMenuItem = new ToolStripMenuItem();
+            importItemsFromSheetToolStripMenuItem = new ToolStripMenuItem();
             asBmpToolStripMenuItem = new ToolStripMenuItem();
             asTiffToolStripMenuItem = new ToolStripMenuItem();
             asJpgToolStripMenuItem = new ToolStripMenuItem();
@@ -555,7 +558,7 @@ namespace UoFiddler.Controls.UserControls
             // MiscToolStripDropDownButton
             // 
             MiscToolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            MiscToolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { ExportAllToolStripMenuItem });
+            MiscToolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { ExportAllToolStripMenuItem, packedSheetSeparator, exportItemsToSheetToolStripMenuItem, importItemsFromSheetToolStripMenuItem });
             MiscToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             MiscToolStripDropDownButton.Name = "MiscToolStripDropDownButton";
             MiscToolStripDropDownButton.Size = new System.Drawing.Size(45, 25);
@@ -567,6 +570,27 @@ namespace UoFiddler.Controls.UserControls
             ExportAllToolStripMenuItem.Name = "ExportAllToolStripMenuItem";
             ExportAllToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
             ExportAllToolStripMenuItem.Text = "Export all..";
+            //
+            // packedSheetSeparator
+            //
+            packedSheetSeparator.Name = "packedSheetSeparator";
+            packedSheetSeparator.Size = new System.Drawing.Size(206, 6);
+            //
+            // exportItemsToSheetToolStripMenuItem
+            //
+            exportItemsToSheetToolStripMenuItem.Name = "exportItemsToSheetToolStripMenuItem";
+            exportItemsToSheetToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            exportItemsToSheetToolStripMenuItem.Text = "Export Range to Sheet..";
+            exportItemsToSheetToolStripMenuItem.ToolTipText = "Pack a range of items into one sprite sheet (Png) with a Json file holding each item's position.";
+            exportItemsToSheetToolStripMenuItem.Click += OnClickExportItemsToSheet;
+            //
+            // importItemsFromSheetToolStripMenuItem
+            //
+            importItemsFromSheetToolStripMenuItem.Name = "importItemsFromSheetToolStripMenuItem";
+            importItemsFromSheetToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            importItemsFromSheetToolStripMenuItem.Text = "Import from Sheet..";
+            importItemsFromSheetToolStripMenuItem.ToolTipText = "Replace the items listed in a packed sheet's Json file with their images from the sheet.";
+            importItemsFromSheetToolStripMenuItem.Click += OnClickImportItemsFromSheet;
             // 
             // asBmpToolStripMenuItem
             // 
@@ -658,6 +682,9 @@ namespace UoFiddler.Controls.UserControls
         private ContextMenuStrip TileViewContextMenuStrip;
         private PictureBox DetailPictureBox;
         private ToolStripMenuItem ExportAllToolStripMenuItem;
+        private ToolStripSeparator packedSheetSeparator;
+        private ToolStripMenuItem exportItemsToSheetToolStripMenuItem;
+        private ToolStripMenuItem importItemsFromSheetToolStripMenuItem;
         private ToolStripMenuItem extractToolStripMenuItem;
         private ToolStripMenuItem findNextFreeSlotToolStripMenuItem;
         private ToolStripStatusLabel GraphicLabel;

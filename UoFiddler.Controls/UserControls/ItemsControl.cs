@@ -1078,6 +1078,293 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private void OnClickExportItemsToSheet(object sender, EventArgs e)
+        {
+            const string title = "Export Items to Sheet";
+
+            List<int> selected = GetSelectedGraphicIds();
+            int initialStart = selected.Count > 0 ? selected[0] : -1;
+            int initialEnd = selected.Count > 0 ? Math.Min(selected[^1], initialStart + ItemRangeInputForm.MaxRangeLength - 1) : -1;
+
+            using var rangeForm = new ItemRangeInputForm(Art.GetMaxItemId(), initialStart, initialEnd);
+            if (rangeForm.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            using var folderDialog = new FolderBrowserDialog
+            {
+                Description = "Select the folder to save the packed sheet in",
+                ShowNewFolderButton = true,
+                SelectedPath = Options.OutputPath
+            };
+            if (folderDialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            string baseName;
+            int count;
+            try
+            {
+                using (new WaitCursorScope(this))
+                {
+                    baseName = PackItems(rangeForm.StartId, rangeForm.EndId, folderDialog.SelectedPath, out count);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Runtime.InteropServices.ExternalException)
+            {
+                MessageBox.Show($"Failed to export items: {ex.Message}", title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (baseName == null)
+            {
+                MessageBox.Show("No valid items found in the range.", title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            FileSavedDialog.Show(FindForm(), folderDialog.SelectedPath,
+                $"Packed {count} items into {Path.GetFileName(baseName)} (.png, .json and _guide.png).");
+        }
+
+        /// <summary>
+        /// Packs the valid items of <paramref name="startId"/>-<paramref name="endId"/> into
+        /// <c>items_{start}-{end}.png</c> with a <c>.json</c> descriptor and a <c>_guide.png</c>.
+        /// </summary>
+        /// <returns>The output path without extension, or null if the range has no valid item.</returns>
+        private string PackItems(int startId, int endId, string outDir, out int count)
+        {
+            const int maxWidth = 1024;
+            const int spacing = 2;
+
+            var layout = new SpriteSheetLayout(maxWidth, spacing);
+            var entries = new List<PackedItemEntry>();
+            var images = new List<Bitmap>();
+            count = 0;
+
+            try
+            {
+                for (int id = startId; id <= endId; ++id)
+                {
+                    if (!Art.IsValidStatic(id))
+                    {
+                        continue;
+                    }
+
+                    Bitmap bitmap = Art.GetStatic(id);
+                    if (bitmap == null)
+                    {
+                        continue;
+                    }
+
+                    entries.Add(new PackedItemEntry { Index = id, Frame = layout.Place(bitmap.Width, bitmap.Height) });
+
+                    // Art bitmaps are cache-owned
+                    images.Add(new Bitmap(bitmap));
+                }
+
+                if (entries.Count == 0)
+                {
+                    return null;
+                }
+
+                string baseName = Path.Combine(outDir, $"items_{Utils.FormatExportId(startId)}-{Utils.FormatExportId(endId)}");
+                string imageFile = baseName + ".png";
+                List<PackedRect> rects = entries.Select(entry => entry.Frame).ToList();
+
+                using (Bitmap sheet = SpriteSheetPacker.Compose(layout.Width, layout.Height, images, rects))
+                {
+                    sheet.Save(imageFile, ImageFormat.Png);
+                    SpriteSheetPacker.WriteJson(baseName + ".json", new PackedItems
+                    {
+                        Meta = SpriteSheetPacker.CreateMeta(imageFile, sheet),
+                        Items = entries
+                    });
+
+                    List<string> labels = entries.Select(entry => $"0x{entry.Index:X4}").ToList();
+                    SpriteSheetPacker.SaveGuide(baseName + "_guide.png", sheet, rects, labels: labels, font: Font);
+                }
+
+                count = entries.Count;
+                return baseName;
+            }
+            finally
+            {
+                foreach (Bitmap image in images)
+                {
+                    image.Dispose();
+                }
+            }
+        }
+
+        private void OnClickImportItemsFromSheet(object sender, EventArgs e)
+        {
+            const string title = "Import Items from Sheet";
+
+            using var fileDialog = new OpenFileDialog
+            {
+                Filter = "Packed sheet (*.json)|*.json|All files (*.*)|*.*",
+                Title = "Select the Json file of a packed item sheet"
+            };
+            if (fileDialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            // Read and check the whole sheet before anything is replaced
+            var items = new List<(int Id, Bitmap Bitmap)>();
+            var skipped = new List<string>();
+            int handedOver = 0;
+            try
+            {
+                try
+                {
+                    using (new WaitCursorScope(this))
+                    {
+                        ReadPackedItems(fileDialog.FileName, items, skipped);
+                    }
+                }
+                catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException or
+                                           ArgumentException or OutOfMemoryException or System.Runtime.InteropServices.ExternalException)
+                {
+                    MessageBox.Show($"Failed to read the sheet: {ex.Message}", title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                string skippedText = FormatSkipped(skipped);
+                if (items.Count == 0)
+                {
+                    MessageBox.Show($"No item of {Path.GetFileName(fileDialog.FileName)} could be imported.{skippedText}",
+                        title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                int existing = items.Count(item => Art.IsValidStatic(item.Id));
+                if (MessageBox.Show(
+                        $"Import {items.Count} items (0x{items[0].Id:X4}-0x{items[^1].Id:X4}), replacing {existing} existing item(s)?{skippedText}",
+                        title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                foreach (var (id, bitmap) in items)
+                {
+                    Art.ReplaceStatic(id, bitmap);
+                    handedOver++;
+                    ControlEvents.FireItemChangeEvent(this, id);
+
+                    // Ids that were free slots join the list when only valid items are shown
+                    if (!_showFreeSlots)
+                    {
+                        int position = _itemList.BinarySearch(id);
+                        if (position < 0)
+                        {
+                            _itemList.Insert(~position, id);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                // Art owns the bitmaps it was given
+                foreach (var (_, bitmap) in items.Skip(handedOver))
+                {
+                    bitmap.Dispose();
+                }
+            }
+
+            Options.ChangedUltimaClass["Art"] = true;
+
+            ItemsTileView.VirtualListSize = _itemList.Count;
+            ItemsTileView.Invalidate();
+            if (_selectedGraphicId >= 0)
+            {
+                UpdateToolStripLabels(_selectedGraphicId);
+                UpdateDetail(_selectedGraphicId);
+            }
+        }
+
+        /// <summary>
+        /// Reads every importable item of a packed item sheet into <paramref name="items"/>, sorted by id,
+        /// and describes the ones it leaves out in <paramref name="skipped"/>.
+        /// </summary>
+        private static void ReadPackedItems(string jsonFile, List<(int Id, Bitmap Bitmap)> items, List<string> skipped)
+        {
+            PackedItems packed = SpriteSheetPacker.ReadJson<PackedItems>(jsonFile);
+            if (packed.Items == null || packed.Items.Count == 0)
+            {
+                throw new InvalidDataException($"{Path.GetFileName(jsonFile)} lists no items.");
+            }
+
+            int maxId = Art.GetMaxItemId();
+            var seen = new HashSet<int>();
+            try
+            {
+                using (Bitmap sheet = SpriteSheetPacker.LoadSheet(jsonFile, packed.Meta))
+                {
+                    foreach (PackedItemEntry entry in packed.Items.Where(entry => entry != null).OrderBy(entry => entry.Index))
+                    {
+                        string id = $"0x{entry.Index:X4}";
+                        if (entry.Index < 0 || entry.Index > maxId)
+                        {
+                            skipped.Add($"{id}: past the last item id 0x{maxId:X4}");
+                            continue;
+                        }
+
+                        if (!seen.Add(entry.Index))
+                        {
+                            skipped.Add($"{id}: listed more than once");
+                            continue;
+                        }
+
+                        if (!SpriteSheetPacker.IsInside(entry.Frame, sheet))
+                        {
+                            skipped.Add($"{id}: outside the sheet image");
+                            continue;
+                        }
+
+                        Bitmap bitmap = SpriteSheetPacker.Crop(sheet, entry.Frame);
+                        if (!Art.ValidateStaticSize(bitmap, out int estimatedSize))
+                        {
+                            bitmap.Dispose();
+                            skipped.Add($"{id}: too large for the MUL format ({estimatedSize:N0} of 65,535 ushorts)");
+                            continue;
+                        }
+
+                        items.Add((entry.Index, bitmap));
+                    }
+                }
+            }
+            catch
+            {
+                foreach (var (_, bitmap) in items)
+                {
+                    bitmap.Dispose();
+                }
+
+                items.Clear();
+                throw;
+            }
+        }
+
+        private static string FormatSkipped(List<string> skipped)
+        {
+            if (skipped.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            const int maxShown = 10;
+            string text = $"\n\nSkipped {skipped.Count}:\n" + string.Join("\n", skipped.Take(maxShown));
+            if (skipped.Count > maxShown)
+            {
+                text += $"\n... and {skipped.Count - maxShown} more.";
+            }
+
+            return text;
+        }
+
         private void OnClickPreLoad(object sender, EventArgs e)
         {
             if (PreLoader.IsBusy)
