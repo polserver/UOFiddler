@@ -349,7 +349,7 @@ namespace UoFiddler.Controls.UserControls
 
             _refMarker.SelectMulRow(pos);
             _refMarker.AfterSelect_Multi(this, EventArgs.Empty);
-            ControlEvents.FireMultiChangeEvent(this, pos);
+            ControlEvents.FireMultiChangeEvent(this, id);
         }
 
         private void AfterSelect_Multi(object sender, EventArgs e)
