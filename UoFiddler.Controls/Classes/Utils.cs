@@ -86,6 +86,17 @@ namespace UoFiddler.Controls.Classes
                 : id.ToString();
         }
 
+        /// <summary>
+        /// <see cref="ConvertBmp"/> for callers that replace their bitmap with the result: the input is
+        /// disposed, since ConvertBmp always returns a new bitmap.
+        /// </summary>
+        public static Bitmap ConvertBmpAndDispose(Bitmap bmp)
+        {
+            Bitmap converted = ConvertBmp(bmp);
+            bmp.Dispose();
+            return converted;
+        }
+
         public static unsafe Bitmap ConvertBmp(Bitmap bmp)
         {
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);

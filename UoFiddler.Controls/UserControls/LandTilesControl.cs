@@ -510,7 +510,7 @@ namespace UoFiddler.Controls.UserControls
 
                     if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
-                        bitmap = Utils.ConvertBmp(bitmap);
+                        bitmap = Utils.ConvertBmpAndDispose(bitmap);
                     }
 
                     if (!CheckLandTileSize(bitmap, Path.GetFileName(dialog.FileName)))
@@ -574,7 +574,7 @@ namespace UoFiddler.Controls.UserControls
 
                             if (files[i].EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                             {
-                                bitmap = Utils.ConvertBmp(bitmap);
+                                bitmap = Utils.ConvertBmpAndDispose(bitmap);
                             }
 
                             if (!CheckLandTileSize(bitmap, Path.GetFileName(files[i])))
@@ -667,7 +667,7 @@ namespace UoFiddler.Controls.UserControls
 
                     if (dialog.FileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                     {
-                        bitmap = Utils.ConvertBmp(bitmap);
+                        bitmap = Utils.ConvertBmpAndDispose(bitmap);
                     }
 
                     if (!CheckLandTileSize(bitmap, Path.GetFileName(dialog.FileName)))
@@ -1187,7 +1187,7 @@ namespace UoFiddler.Controls.UserControls
 
                 if (fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
                 {
-                    bitmap = Utils.ConvertBmp(bitmap);
+                    bitmap = Utils.ConvertBmpAndDispose(bitmap);
                 }
 
                 if (bitmap.Width != LandTileSize || bitmap.Height != LandTileSize)
