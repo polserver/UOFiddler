@@ -84,29 +84,8 @@ namespace Ultima
                 return;
             }
 
-            using (var sr = new StreamReader(fileName))
-            {
-                int count = 0;
-
-                while (sr.ReadLine() is { } line)
-                {
-                    line = line.Trim();
-
-                    if (line.Length == 0 || line.StartsWith("#"))
-                    {
-                        continue;
-                    }
-
-                    if (line.StartsWith("ID;"))
-                    {
-                        continue;
-                    }
-
-                    ++count;
-                }
-
-                Colors = new ushort[count];
-            }
+            // Rows update the loaded table; ids past its end grow it.
+            var colors = (ushort[])(Colors ?? []).Clone();
 
             using (var sr = new StreamReader(fileName))
             {
@@ -124,41 +103,38 @@ namespace Ultima
                         continue;
                     }
 
-                    try
+                    string[] split = line.Split(';');
+                    if (split.Length < 2 || !TryConvertStringToInt(split[0], out int id) || !TryConvertStringToInt(split[1], out int color))
                     {
-                        string[] split = line.Split(';');
-                        if (split.Length < 2)
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        int id = ConvertStringToInt(split[0]);
-                        int color = ConvertStringToInt(split[1]);
-                        Colors[id] = (ushort)color;
-                    }
-                    catch
+                    if (id < 0 || id > 0xFFFF)
                     {
-                        // TODO: ignored?
-                        // ignored
+                        continue;
                     }
+
+                    if (id >= colors.Length)
+                    {
+                        Array.Resize(ref colors, id + 1);
+                    }
+
+                    colors[id] = (ushort)color;
                 }
             }
+
+            Colors = colors;
         }
 
-        private static int ConvertStringToInt(string text)
+        private static bool TryConvertStringToInt(string text, out int result)
         {
-            int result;
-            if (text.Contains("0x"))
+            text = text.Trim();
+            if (text.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             {
-                string convert = text.Replace("0x", "");
-                int.TryParse(convert, NumberStyles.HexNumber, null, out result);
-            }
-            else
-            {
-                int.TryParse(text, NumberStyles.Integer, null, out result);
+                return int.TryParse(text.AsSpan(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out result);
             }
 
-            return result;
+            return int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out result);
         }
     }
 }
