@@ -506,18 +506,9 @@ namespace UoFiddler.Controls.UserControls
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
 
-                    // Validate image size (land tiles should be 44x44 but check anyway)
-                    if (!Art.ValidateStaticSize(bitmap, out int estimatedSize))
+                    if (!CheckLandTileSize(bitmap, Path.GetFileName(dialog.FileName)))
                     {
-                        MessageBox.Show(
-                            $"Image is too large for MUL format!\n\n" +
-                            $"Image dimensions: {bitmap.Width}x{bitmap.Height}\n" +
-                            $"Estimated encoded size: {estimatedSize:N0} ushorts\n" +
-                            $"Maximum allowed: 65,535 ushorts\n\n" +
-                            $"Note: Land tiles should typically be 44x44 pixels.",
-                            "Image Too Large",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
+                        bitmap.Dispose();
                         return;
                     }
 
@@ -579,19 +570,14 @@ namespace UoFiddler.Controls.UserControls
                                 bitmap = Utils.ConvertBmp(bitmap);
                             }
 
-                            if (!Art.ValidateStaticSize(bitmap, out int estimatedSize))
+                            if (!CheckLandTileSize(bitmap, Path.GetFileName(files[i])))
                             {
                                 bitmap.Dispose();
-                                MessageBox.Show(
-                                    $"Image is too large for MUL format!\n\n" +
-                                    $"File: {Path.GetFileName(files[i])}\n" +
-                                    $"Estimated encoded size: {estimatedSize:N0} ushorts\n" +
-                                    $"Maximum allowed: 65,535 ushorts\n\n" +
-                                    $"Note: Land tiles should typically be 44x44 pixels.\n" +
-                                    $"No changes made.",
-                                    "Image Too Large",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Warning);
+                                foreach (var loaded in bitmaps)
+                                {
+                                    loaded.Dispose();
+                                }
+
                                 return;
                             }
 
@@ -677,9 +663,17 @@ namespace UoFiddler.Controls.UserControls
                         bitmap = Utils.ConvertBmp(bitmap);
                     }
 
+                    if (!CheckLandTileSize(bitmap, Path.GetFileName(dialog.FileName)))
+                    {
+                        bitmap.Dispose();
+                        return;
+                    }
+
                     Art.ReplaceLand(index, bitmap);
 
                     ControlEvents.FireLandTileChangeEvent(this, index);
+
+                    Options.ChangedUltimaClass["Art"] = true;
 
                     if (_showFreeSlots)
                     {
@@ -709,8 +703,6 @@ namespace UoFiddler.Controls.UserControls
                         LandTilesTileView.VirtualListSize = _tileList.Count;
                         LandTilesTileView.Invalidate();
                         SelectedGraphicId = index;
-
-                        Options.ChangedUltimaClass["Art"] = true;
                     }
                 }
             }
@@ -1130,6 +1122,10 @@ namespace UoFiddler.Controls.UserControls
                     AddSingleLandTile(file, index);
                     replacedLines.Add($"  0x{index:X4}  {name}");
                 }
+                catch (ArgumentException ex)
+                {
+                    skippedLines.Add($"  {name}  ({ex.Message})");
+                }
                 catch
                 {
                     skippedLines.Add($"  {name}  (failed to load image)");
@@ -1187,6 +1183,13 @@ namespace UoFiddler.Controls.UserControls
                     bitmap = Utils.ConvertBmp(bitmap);
                 }
 
+                if (bitmap.Width != LandTileSize || bitmap.Height != LandTileSize)
+                {
+                    string size = $"{bitmap.Width}x{bitmap.Height}";
+                    bitmap.Dispose();
+                    throw new ArgumentException($"{size}, land tiles must be {LandTileSize}x{LandTileSize}");
+                }
+
                 Art.ReplaceLand(index, bitmap);
 
                 ControlEvents.FireLandTileChangeEvent(this, index);
@@ -1200,7 +1203,12 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    _tileList[i] = index;
+                    // Insert before the first larger id; the id may already be listed
+                    if (_tileList[i] != index)
+                    {
+                        _tileList.Insert(i, index);
+                    }
+
                     done = true;
                     break;
                 }
@@ -1210,6 +1218,25 @@ namespace UoFiddler.Controls.UserControls
                     _tileList.Add(index);
                 }
             }
+        }
+
+        /// <summary>
+        /// Land art is a fixed 44x44 block; anything else would be written out as garbage.
+        /// </summary>
+        private bool CheckLandTileSize(Bitmap bitmap, string source)
+        {
+            if (bitmap.Width == LandTileSize && bitmap.Height == LandTileSize)
+            {
+                return true;
+            }
+
+            MessageBox.Show(
+                $"Invalid land tile dimensions!\n\n" +
+                $"{source}: {bitmap.Width}x{bitmap.Height}\n" +
+                $"Land tiles must be {LandTileSize}x{LandTileSize} pixels.\n\n" +
+                "No changes made.",
+                "Invalid Size", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return false;
         }
 
         public void UpdateTileView()
