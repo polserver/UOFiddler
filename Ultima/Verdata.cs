@@ -68,6 +68,34 @@ namespace Ultima
             }
         }
 
+        private static readonly object _readLock = new object();
+
+        /// <summary>
+        /// Reads a patch into a stream of its own. Every client file shares the one verdata stream,
+        /// so seek and read are done under a lock and callers never touch the shared position.
+        /// </summary>
+        /// <remarks>
+        /// A short or missing verdata.mul gives a shorter stream; the caller's read then fails the
+        /// same way it did when reading the shared stream directly.
+        /// </remarks>
+        public static Stream ReadPatch(int lookup, int length)
+        {
+            if (length <= 0)
+            {
+                return new MemoryStream(Array.Empty<byte>(), false);
+            }
+
+            var buffer = new byte[length];
+            int read;
+            lock (_readLock)
+            {
+                Seek(lookup);
+                read = Stream.ReadAtLeast(buffer, length, throwOnEndOfStream: false);
+            }
+
+            return new MemoryStream(buffer, 0, read, false);
+        }
+
         public static void Seek(int lookup)
         {
             if ((Stream?.CanRead != true || !Stream.CanSeek) && _path != null)

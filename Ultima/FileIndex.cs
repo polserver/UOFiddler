@@ -311,8 +311,9 @@ namespace Ultima
             if (IsVerdataPatched(e))
             {
                 patched = true;
-                Verdata.Seek(e.Lookup);
-                return Verdata.Stream;
+
+                // A private copy: the verdata stream is shared by every client file and every thread.
+                return Verdata.ReadPatch(e.Lookup, length);
             }
 
             if (e.Length < 0)
@@ -377,8 +378,9 @@ namespace Ultima
             if (IsVerdataPatched(e))
             {
                 patched = true;
-                Verdata.Seek(e.Lookup);
-                return Verdata.Stream;
+
+                // A private copy: the verdata stream is shared by every client file and every thread.
+                return Verdata.ReadPatch(e.Lookup, length);
             }
 
             if (e.Length < 0)
