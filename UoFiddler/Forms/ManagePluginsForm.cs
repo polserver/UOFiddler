@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
@@ -23,6 +24,10 @@ namespace UoFiddler.Forms
     {
         private static readonly ILogger _log = AppLog.For(typeof(ManagePluginsForm));
 
+        // Instances made only to show a plugin's name and details. They are never initialized,
+        // so they are dropped again on close and never unloaded.
+        private readonly HashSet<AvailablePlugin> _temporaryInstances = new HashSet<AvailablePlugin>();
+
         public ManagePluginsForm()
         {
             InitializeComponent();
@@ -30,14 +35,16 @@ namespace UoFiddler.Forms
 
             foreach (AvailablePlugin plugin in GlobalPlugins.Plugins.AvailablePlugins)
             {
-                bool loaded = true;
                 if (plugin.Instance == null)
                 {
                     _log.LogInformation("ManagePlugins - creating plugin instance: {Plugin} path: {AssemblyPath}", plugin.Type, plugin.AssemblyPath);
                     plugin.CreateInstance();
-                    loaded = false;
+                    _temporaryInstances.Add(plugin);
                 }
-                checkedListBox1.Items.Add(plugin.Instance.Name, loaded);
+
+                // The profile decides what is enabled; a change here takes effect on the next start.
+                bool enabled = Options.PluginsToLoad?.Contains(plugin.Type.ToString()) == true;
+                checkedListBox1.Items.Add(plugin.Instance.Name, enabled);
             }
         }
 
@@ -74,23 +81,24 @@ namespace UoFiddler.Forms
         {
             foreach (AvailablePlugin plug in GlobalPlugins.Plugins.AvailablePlugins)
             {
-                if (Options.PluginsToLoad?.Contains(plug.Type.ToString()) == false)
-                {
-                    if (checkedListBox1.CheckedItems.Contains(plug.Instance.Name))
-                    {
-                        _log.LogInformation("ManagePlugins - adding plugin to profile: {Plugin}", plug.Type.ToString());
-                        Options.PluginsToLoad.Add(plug.Type.ToString());
-                    }
+                string type = plug.Type.ToString();
+                bool isChecked = checkedListBox1.CheckedItems.Contains(plug.Instance.Name);
+                bool enabled = Options.PluginsToLoad?.Contains(type) == true;
 
-                    plug.Instance = null;
-                }
-                else
+                if (Options.PluginsToLoad != null && isChecked && !enabled)
                 {
-                    if (!checkedListBox1.CheckedItems.Contains(plug.Instance.Name))
-                    {
-                        _log.LogInformation("ManagePlugins - removing plugin from profile: {Plugin}", plug.Type.ToString());
-                        Options.PluginsToLoad.Remove(plug.Type.ToString());
-                    }
+                    _log.LogInformation("ManagePlugins - adding plugin to profile: {Plugin}", type);
+                    Options.PluginsToLoad.Add(type);
+                }
+                else if (Options.PluginsToLoad != null && !isChecked && enabled)
+                {
+                    _log.LogInformation("ManagePlugins - removing plugin from profile: {Plugin}", type);
+                    Options.PluginsToLoad.Remove(type);
+                }
+
+                if (_temporaryInstances.Contains(plug))
+                {
+                    plug.Instance = null;
                 }
             }
         }
