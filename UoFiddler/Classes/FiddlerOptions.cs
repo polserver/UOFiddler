@@ -82,7 +82,10 @@ namespace UoFiddler.Classes
             MoveFiles(di.GetFiles("DynamicItems.xml", SearchOption.TopDirectoryOnly), Options.AppDataPath);
 
             di = new DirectoryInfo(Path.Combine(Application.StartupPath, "plugins"));
-            MoveFiles(di.GetFiles("*.xml", SearchOption.TopDirectoryOnly), plugInPath);
+            if (di.Exists)
+            {
+                MoveFiles(di.GetFiles("*.xml", SearchOption.TopDirectoryOnly), plugInPath);
+            }
 
             string fileName = Path.Combine(Options.AppDataPath, "Options_default.xml");
             if (!File.Exists(fileName))
@@ -299,6 +302,17 @@ namespace UoFiddler.Classes
             _log.LogInformation("SaveProfile - done {Filename}", fileName);
         }
 
+        // Profile attributes can be missing in older or hand edited profiles; keep the fallback then.
+        private static bool ReadBool(XmlElement elem, string attribute, bool fallback)
+        {
+            return bool.TryParse(elem.GetAttribute(attribute), out bool value) ? value : fallback;
+        }
+
+        private static int ReadInt(XmlElement elem, string attribute, int fallback)
+        {
+            return int.TryParse(elem.GetAttribute(attribute), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int value) ? value : fallback;
+        }
+
         public static void LoadProfile(string filename)
         {
             _log.LogInformation("LoadProfile - start: {Filename}", filename);
@@ -313,7 +327,13 @@ namespace UoFiddler.Classes
             XmlDocument dom = new XmlDocument();
             dom.Load(fileName);
             XmlElement xOptions = dom["Options"];
-            XmlElement elem = (XmlElement)xOptions?.SelectSingleNode("OutputPath");
+            if (xOptions == null)
+            {
+                _log.LogWarning("LoadProfile: no Options element in {Filename}", filename);
+                return;
+            }
+
+            XmlElement elem = (XmlElement)xOptions.SelectSingleNode("OutputPath");
             if (elem != null)
             {
                 Options.OutputPath = elem.GetAttribute("path");
@@ -330,14 +350,14 @@ namespace UoFiddler.Classes
             elem = (XmlElement)xOptions.SelectSingleNode("ItemSize");
             if (elem != null)
             {
-                Options.ArtItemSizeWidth = int.Parse(elem.GetAttribute("width"));
-                Options.ArtItemSizeHeight = int.Parse(elem.GetAttribute("height"));
+                Options.ArtItemSizeWidth = ReadInt(elem, "width", Options.ArtItemSizeWidth);
+                Options.ArtItemSizeHeight = ReadInt(elem, "height", Options.ArtItemSizeHeight);
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("ItemClip");
             if (elem != null)
             {
-                Options.ArtItemClip = bool.Parse(elem.GetAttribute("active"));
+                Options.ArtItemClip = ReadBool(elem, "active", Options.ArtItemClip);
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("SaveFormat");
@@ -349,7 +369,7 @@ namespace UoFiddler.Classes
             elem = (XmlElement)xOptions.SelectSingleNode("CacheData");
             if (elem != null)
             {
-                Files.CacheData = bool.Parse(elem.GetAttribute("active"));
+                Files.CacheData = ReadBool(elem, "active", Files.CacheData);
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("TileFocusColor");
@@ -367,7 +387,7 @@ namespace UoFiddler.Classes
             elem = (XmlElement)xOptions.SelectSingleNode("RemoveTileBorder");
             if (elem != null)
             {
-                Options.RemoveTileBorder = bool.Parse(elem.GetAttribute("active"));
+                Options.RemoveTileBorder = ReadBool(elem, "active", Options.RemoveTileBorder);
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("PreviewBackgroundColor");
@@ -402,7 +422,7 @@ namespace UoFiddler.Classes
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("NewMapSize");
-            if (elem != null && bool.Parse(elem.GetAttribute("active")))
+            if (elem != null && ReadBool(elem, "active", false))
             {
                 Map.Felucca.Width = 7168;
                 Map.Trammel.Width = 7168;
@@ -411,19 +431,19 @@ namespace UoFiddler.Classes
             elem = (XmlElement)xOptions.SelectSingleNode("UseMapDiff");
             if (elem != null)
             {
-                Map.StartUpSetDiff(bool.Parse(elem.GetAttribute("active")));
+                Map.StartUpSetDiff(ReadBool(elem, "active", false));
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("PolSoundIdOffset");
             if (elem != null)
             {
-                Options.PolSoundIdOffset = bool.Parse(elem.GetAttribute("active"));
+                Options.PolSoundIdOffset = ReadBool(elem, "active", Options.PolSoundIdOffset);
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("UpdateCheck");
             if (elem != null)
             {
-                UpdateCheckOnStart = bool.Parse(elem.GetAttribute("active"));
+                UpdateCheckOnStart = ReadBool(elem, "active", UpdateCheckOnStart);
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("SendCharToLoc");
@@ -481,17 +501,19 @@ namespace UoFiddler.Classes
 
             foreach (XmlElement xTab in xOptions.SelectNodes("TabView"))
             {
-                int viewTab = Convert.ToInt32(xTab.GetAttribute("tab"));
-                Options.ChangedViewState[viewTab] = false;
+                if (int.TryParse(xTab.GetAttribute("tab"), out int viewTab))
+                {
+                    Options.ChangedViewState[viewTab] = false;
+                }
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("ViewState");
             if (elem != null)
             {
-                StoreFormState = bool.Parse(elem.GetAttribute("Active"));
-                MaximisedForm = bool.Parse(elem.GetAttribute("Maximised"));
-                FormPosition = new Point(int.Parse(elem.GetAttribute("PositionX")), int.Parse(elem.GetAttribute("PositionY")));
-                FormSize = new Size(int.Parse(elem.GetAttribute("Width")), int.Parse(elem.GetAttribute("Height")));
+                StoreFormState = ReadBool(elem, "Active", StoreFormState);
+                MaximisedForm = ReadBool(elem, "Maximised", MaximisedForm);
+                FormPosition = new Point(ReadInt(elem, "PositionX", FormPosition.X), ReadInt(elem, "PositionY", FormPosition.Y));
+                FormSize = new Size(ReadInt(elem, "Width", FormSize.Width), ReadInt(elem, "Height", FormSize.Height));
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("TileDataDirectlySaveOnChange");
