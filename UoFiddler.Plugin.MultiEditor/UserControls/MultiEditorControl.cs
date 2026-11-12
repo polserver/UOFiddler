@@ -48,7 +48,8 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
         private Point _marqueeEnd;
 
         // Copy/Paste
-        private List<(ushort id, int dx, int dy, int dz)> _clipboard;
+        // Dynamic flag and extra field travel with the tile, so a paste matches what was copied.
+        private List<(ushort id, int dx, int dy, int dz, bool invisible, int extra)> _clipboard;
         private bool _isPasteMode;
 
         // Zoom
@@ -1036,7 +1037,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             if (_isPasteMode && e.Button == MouseButtons.Left && _clipboard != null)
             {
                 ConvertCoords(_mouseLoc, out int px, out int py, out int pz);
-                var batch = _clipboard.Select(c => (c.id, px + c.dx, py + c.dy, pz + c.dz)).ToList();
+                var batch = _clipboard.Select(c => (c.id, px + c.dx, py + c.dy, pz + c.dz, c.invisible, c.extra)).ToList();
                 _compList.TileAddBatch(batch);
                 _isPasteMode = false;
                 MaxHeightTrackBar.Minimum = _compList.ZMin;
@@ -1392,7 +1393,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             if (_isPasteMode && _clipboard != null)
             {
                 ConvertCoords(_mouseLoc, out int px, out int py, out int pz);
-                foreach (var (id, dx, dy, dz) in _clipboard)
+                foreach (var (id, dx, dy, dz, _, _) in _clipboard)
                 {
                     var ghost = new MultiTile(id, px + dx, py + dy, pz + dz, 1);
                     Bitmap ghostBmp = ghost.GetBitmap();
@@ -2317,7 +2318,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     int ox = _selectedTiles.Min(t => t.X);
                     int oy = _selectedTiles.Min(t => t.Y);
                     int oz = _selectedTiles.Min(t => t.Z);
-                    _clipboard = _selectedTiles.Select(t => (t.Id, t.X - ox, t.Y - oy, t.Z - oz)).ToList();
+                    _clipboard = _selectedTiles.Select(t => (t.Id, t.X - ox, t.Y - oy, t.Z - oz, t.Invisible, t.Extra)).ToList();
                     return true;
                 }
 

@@ -410,13 +410,13 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         }
 
         /// <summary>
-        /// Moves given <see cref="MultiTile"/>
-        /// </summary>
-        /// <summary>
         /// Z is saved as a signed byte; larger values would wrap around.
         /// </summary>
         private static int ClampZ(int z) => Math.Clamp(z, sbyte.MinValue, sbyte.MaxValue);
 
+        /// <summary>
+        /// Moves given <see cref="MultiTile"/>
+        /// </summary>
         public void TileMove(MultiTile tile, int newX, int newY)
         {
             if (Width == 0 || Height == 0)
@@ -694,17 +694,17 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>
         /// Adds a batch of tiles in a single undo step (used by copy/paste).
         /// </summary>
-        public void TileAddBatch(List<(ushort id, int x, int y, int z)> tiles)
+        public void TileAddBatch(List<(ushort id, int x, int y, int z, bool invisible, int extra)> tiles)
         {
             AddToUndoList("Paste");
-            foreach (var (id, x, y, z) in tiles)
+            foreach (var (id, x, y, z, invisible, extra) in tiles)
             {
                 if (x < 0 || x >= Width || y < 0 || y >= Height)
                 {
                     continue;
                 }
 
-                Tiles.Add(new MultiTile(id, x, y, ClampZ(z), 1));
+                Tiles.Add(new MultiTile(id, x, y, ClampZ(z), invisible) { Extra = extra });
                 CalcSolver(x, y);
             }
 
