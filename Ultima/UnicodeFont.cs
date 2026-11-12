@@ -187,6 +187,8 @@ namespace Ultima
                 string filePath = Files.GetFilePath(_files[i]);
                 if (filePath == null)
                 {
+                    // Not in this client: drop the previous client's font.
+                    Fonts[i] = null;
                     continue;
                 }
 

@@ -1322,6 +1322,7 @@ namespace Ultima
             string filePath = Files.GetFilePath("tiledata.mul");
             if (filePath == null)
             {
+                InitializeEmpty();
                 return;
             }
 
@@ -1390,6 +1391,29 @@ namespace Ultima
                         currentPos += structSize;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Blank tables for a client without tiledata.mul, so nothing of the previous client's is kept.
+        /// Items cover the art id range, rounded up to the sizes shipped files have (0x4000, 0x8000, 0x10000).
+        /// </summary>
+        private static void InitializeEmpty()
+        {
+            _landHeader = new int[0x4000 / 32];
+            LandTable = new LandData[0x4000];
+            for (int i = 0; i < LandTable.Length; ++i)
+            {
+                LandTable[i].Name = string.Empty;
+            }
+
+            int itemLength = Math.Max(0x4000, (Art.GetMaxItemId() + 1 + 0xFFF) & ~0xFFF);
+            _itemHeader = new int[itemLength / 32];
+            ItemTable = new ItemData[itemLength];
+            HeightTable = new int[itemLength];
+            for (int i = 0; i < ItemTable.Length; ++i)
+            {
+                ItemTable[i].Name = string.Empty;
             }
         }
 

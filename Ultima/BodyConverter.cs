@@ -37,6 +37,9 @@ namespace Ultima
             string path = Files.GetFilePath("bodyconv.def");
             if (path == null)
             {
+                // No conversions in this client: drop the previous client's tables.
+                Table1 = Table2 = Table3 = Table4 = Table5 = null;
+                _reverse1 = _reverse2 = _reverse3 = _reverse4 = _reverse5 = null;
                 return;
             }
 
