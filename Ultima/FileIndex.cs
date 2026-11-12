@@ -832,6 +832,10 @@ namespace Ultima
             Index[patch.Index].Lookup = patch.Lookup;
             Index[patch.Index].Length = patch.Length | (1 << 31);
             Index[patch.Index].Extra = patch.Extra;
+
+            // Verdata payloads are stored uncompressed, whatever the UOP entry they replace used.
+            Index[patch.Index].Flag = CompressionFlag.None;
+            Index[patch.Index].DecompressedLength = patch.Length;
         }
 
         public IEntry GetEntry(int index)
