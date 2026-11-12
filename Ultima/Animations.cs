@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -143,9 +144,15 @@ namespace Ultima
                 _streamBuffer = new byte[length];
             }
 
-            _ = stream.Read(_streamBuffer, 0, length);
+            int read = stream.ReadAtLeast(_streamBuffer.AsSpan(0, length), length, throwOnEndOfStream: false);
 
-            var memoryStream = new MemoryStream(_streamBuffer, false);
+            // Too short to hold a palette and a frame count: decoding it would read stale buffer bytes.
+            if (read < (PaletteCapacity * 2) + 4)
+            {
+                return null;
+            }
+
+            var memoryStream = new MemoryStream(_streamBuffer, 0, read, false);
 
             bool flip = direction > 4;
             AnimationFrame[] frames;
@@ -711,53 +718,45 @@ namespace Ultima
             var bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
             BitmapData bd = bmp.LockBits(
                 new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-            var line = (ushort*)bd.Scan0;
+            var pixels = (ushort*)bd.Scan0;
             int delta = bd.Stride >> 1;
-
-            int header;
 
             int xBase = xCenter - 0x200;
             int yBase = (yCenter + height) - 0x200;
 
-            if (!flip)
+            try
             {
-                line += xBase;
-                line += yBase * delta;
-
+                int header;
                 while ((header = bin.ReadInt32()) != 0x7FFF7FFF)
                 {
                     header ^= _doubleXor;
 
-                    ushort* cur = line + ((((header >> 12) & 0x3FF) * delta) + ((header >> 22) & 0x3FF));
-                    ushort* end = cur + (header & 0xFFF);
-                    while (cur < end)
+                    // Runs are clipped to the frame, so a bad header cannot write outside the bitmap.
+                    int y = yBase + ((header >> 12) & 0x3FF);
+                    int x = xBase + ((header >> 22) & 0x3FF);
+                    int run = header & 0xFFF;
+                    bool rowInside = y >= 0 && y < height;
+                    ushort* row = pixels + (y * delta);
+
+                    for (int k = 0; k < run; ++k, ++x)
                     {
-                        *cur++ = palette[bin.ReadByte()];
+                        ushort color = palette[bin.ReadByte()];
+                        if (rowInside && x >= 0 && x < width)
+                        {
+                            row[flip ? width - 1 - x : x] = color;
+                        }
                     }
                 }
             }
-            else
+            finally
             {
-                line -= xBase - width + 1;
-                line += yBase * delta;
+                bmp.UnlockBits(bd);
+            }
 
-                while ((header = bin.ReadInt32()) != 0x7FFF7FFF)
-                {
-                    header ^= _doubleXor;
-
-                    ushort* cur = line + ((((header >> 12) & 0x3FF) * delta) - ((header >> 22) & 0x3FF));
-                    ushort* end = cur - (header & 0xFFF);
-
-                    while (cur > end)
-                    {
-                        *cur-- = palette[bin.ReadByte()];
-                    }
-                }
-
+            if (flip)
+            {
                 xCenter = width - xCenter;
             }
-
-            bmp.UnlockBits(bd);
 
             Center = new Point(xCenter, yCenter);
             Bitmap = bmp;

@@ -597,26 +597,31 @@ namespace Ultima
 
                 var bmp = new Bitmap(width, height, PixelFormat.Format16bppArgb1555);
                 BitmapData bd = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
-                var line = (ushort*)bd.Scan0;
+                var pixels = (ushort*)bd.Scan0;
                 int delta = bd.Stride >> 1;
 
                 int xBase = frame.Center.X - 0x200;
                 int yBase = frame.Center.Y + height - 0x200;
 
-                line += xBase;
-                line += yBase * delta;
-
+                // Runs are clipped to the frame, so a bad header cannot write outside the bitmap.
                 for (int j = 0; j < frame.RawData.Length; ++j)
                 {
                     FrameEdit.Raw raw = frame.RawData[j];
 
-                    ushort* cur = line + (((raw.offsetY) * delta) + ((raw.offsetX) & 0x3FF));
-                    ushort* end = cur + (raw.run);
-
-                    int ii = 0;
-                    while (cur < end)
+                    int y = yBase + raw.offsetY;
+                    if (y < 0 || y >= height)
                     {
-                        *cur++ = Palette[raw.data[ii++]];
+                        continue;
+                    }
+
+                    ushort* row = pixels + (y * delta);
+                    int x = xBase + (raw.offsetX & 0x3FF);
+                    for (int k = 0; k < raw.run; ++k, ++x)
+                    {
+                        if (x >= 0 && x < width)
+                        {
+                            row[x] = Palette[raw.data[k]];
+                        }
                     }
                 }
 
