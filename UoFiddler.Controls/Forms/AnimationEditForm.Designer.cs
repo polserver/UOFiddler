@@ -531,7 +531,7 @@
             allDirectionsAddToolStripMenuItem.Name = "allDirectionsAddToolStripMenuItem";
             allDirectionsAddToolStripMenuItem.Size = new System.Drawing.Size(412, 22);
             allDirectionsAddToolStripMenuItem.Text = "All directions add";
-            allDirectionsAddToolStripMenuItem.ToolTipText = "Select 5 Gifs to add ,one by one, in a diferent direction ";
+            allDirectionsAddToolStripMenuItem.ToolTipText = "Select 5 GIFs to add, one per direction, or select an action's images named ..._{direction}_{frame} (as Extract Images writes them) to replace its frames";
             allDirectionsAddToolStripMenuItem.Click += AllDirectionsAddToolStripMenuItem_Click;
             // 
             // allDirectionsAddWithCanvasToolStripMenuItem

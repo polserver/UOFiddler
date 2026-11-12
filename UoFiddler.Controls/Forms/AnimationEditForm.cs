@@ -2147,54 +2147,151 @@ namespace UoFiddler.Controls.Forms
         // Add in all Directions
         private void AllDirectionsAddToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_fileType != 0)
+            if (_fileType == 0)
             {
-                using (OpenFileDialog dialog = new OpenFileDialog())
+                return;
+            }
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = true;
+                dialog.Title = "Choose 5 GIFs (one per direction), or the images of an action named ..._{direction}_{frame}";
+                dialog.CheckFileExists = true;
+                dialog.Filter = "Gif or image files|*.gif;*.bmp;*.png;*.tif;*.tiff;*.jpg;*.jpeg|Gif files (*.gif)|*.gif|Image files|*.bmp;*.png;*.tif;*.tiff;*.jpg;*.jpeg";
+                if (dialog.ShowDialog() != DialogResult.OK)
                 {
-                    dialog.Multiselect = true;
-                    dialog.Title = "Choose 5 GIFs to add";
-                    dialog.CheckFileExists = true;
-                    dialog.Filter = "Gif files (*.gif;)|*.gif;";
-                    if (dialog.ShowDialog() == DialogResult.OK)
+                    return;
+                }
+
+                string[] files = dialog.FileNames;
+                int gifs = files.Count(file => Path.GetExtension(file).Equals(".gif", StringComparison.OrdinalIgnoreCase));
+                if (gifs == files.Length)
+                {
+                    if (files.Length != 5)
                     {
-                        DirectionTrackBar.Enabled = false;
-                        if (dialog.FileNames.Length == 5)
-                        {
-                            DirectionTrackBar.Value = 0;
-
-                            AddFilesAllDirections(dialog);
-                        }
-
-                        // Looping if dialog.FileNames.Length != 5
-                        while (dialog.FileNames.Length != 5)
-                        {
-                            if (dialog.ShowDialog() == DialogResult.Cancel)
-                            {
-                                break;
-                            }
-
-                            if (dialog.FileNames.Length != 5)
-                            {
-                                dialog.ShowDialog();
-                            }
-
-                            if (dialog.FileNames.Length != 5)
-                            {
-                                continue;
-                            }
-
-                            DirectionTrackBar.Value = 0;
-
-                            AddFilesAllDirections(dialog);
-                        }
-                        DirectionTrackBar.Enabled = true;
+                        MessageBox.Show("Choose exactly 5 GIFs, one per direction.", "All Directions Add",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
                     }
+
+                    DirectionTrackBar.Enabled = false;
+                    DirectionTrackBar.Value = 0;
+                    AddFilesAllDirections(dialog);
+                    DirectionTrackBar.Enabled = true;
+                }
+                else if (gifs > 0)
+                {
+                    MessageBox.Show("Choose either 5 GIFs or single images, not both.", "All Directions Add",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (!ReplaceActionFromImages(files))
+                {
+                    return;
                 }
             }
 
             // Refresh List
             _currentDir = DirectionTrackBar.Value;
             AfterSelectTreeView(null, null);
+        }
+
+        // Matches the names Extract Images writes: anim{file}_{body}_{action}_{direction}_{frame}
+        private static readonly System.Text.RegularExpressions.Regex _directionFrameName =
+            new System.Text.RegularExpressions.Regex(@"_(\d+)_(\d+)$");
+
+        /// <summary>
+        /// Replaces the frames of the current action with single images, sorted into directions and frames
+        /// by their names (..._{direction}_{frame}). Frame N keeps the center frame N had; extra frames get
+        /// the bottom middle of the image. Returns false when nothing was changed.
+        /// </summary>
+        private bool ReplaceActionFromImages(string[] files)
+        {
+            var entries = new List<(int Direction, int Frame, string File)>();
+            var invalid = new List<string>();
+            foreach (string file in files)
+            {
+                var match = _directionFrameName.Match(Path.GetFileNameWithoutExtension(file));
+                if (!match.Success || !int.TryParse(match.Groups[1].Value, out int direction) || direction > 4 ||
+                    !int.TryParse(match.Groups[2].Value, out int frame))
+                {
+                    invalid.Add(Path.GetFileName(file));
+                    continue;
+                }
+
+                entries.Add((direction, frame, file));
+            }
+
+            invalid.AddRange(entries.GroupBy(entry => (entry.Direction, entry.Frame))
+                .Where(group => group.Count() > 1)
+                .SelectMany(group => group.Select(entry => Path.GetFileName(entry.File))));
+
+            if (invalid.Count > 0)
+            {
+                string list = string.Join(Environment.NewLine, invalid.Take(10)) + (invalid.Count > 10 ? $"{Environment.NewLine}..." : string.Empty);
+                MessageBox.Show($"Image names must end in _{{direction}}_{{frame}} (direction 0-4), once per direction and frame, " +
+                    $"as Extract Images writes them. Not usable:{Environment.NewLine}{list}", "All Directions Add",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return false;
+            }
+
+            var directions = entries.GroupBy(entry => entry.Direction).OrderBy(group => group.Key).ToList();
+            string directionList = string.Join(", ", directions.Select(group => group.Key));
+            if (MessageBox.Show($"Replace the frames of body {_currentBody}, action {_currentAction} in direction(s) {directionList} " +
+                    $"with {entries.Count} images?", "All Directions Add", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+            {
+                return false;
+            }
+
+            foreach (var direction in directions)
+            {
+                AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, direction.Key);
+                if (edit == null)
+                {
+                    continue;
+                }
+
+                List<Point> centers = edit.Frames?.Select(frame => frame.Center).ToList() ?? new List<Point>();
+
+                var bitmaps = new List<Bitmap>();
+                try
+                {
+                    foreach (var entry in direction.OrderBy(entry => entry.Frame))
+                    {
+                        using (var image = new Bitmap(entry.File))
+                        {
+                            bitmaps.Add(ConvertBmpAnim(image, (int)numericUpDownRed.Value, (int)numericUpDownGreen.Value, (int)numericUpDownBlue.Value));
+                        }
+                    }
+
+                    edit.ClearFrames();
+                    // One palette for the whole direction
+                    edit.FitPalette(bitmaps);
+                    for (int i = 0; i < bitmaps.Count; ++i)
+                    {
+                        Point center = i < centers.Count ? centers[i] : new Point(bitmaps[i].Width / 2, 0);
+                        edit.AddFrame(bitmaps[i], center.X, center.Y);
+                    }
+                }
+                finally
+                {
+                    foreach (Bitmap bitmap in bitmaps)
+                    {
+                        bitmap.Dispose();
+                    }
+                }
+            }
+
+            TreeNode node = GetNode(_currentBody);
+            if (node != null)
+            {
+                node.ForeColor = Color.Empty;
+                node.Nodes[_currentAction].ForeColor = Color.Empty;
+            }
+
+            Options.ChangedUltimaClass["Animations"] = true;
+            return true;
         }
 
         private void AddFilesAllDirections(OpenFileDialog dialog)
