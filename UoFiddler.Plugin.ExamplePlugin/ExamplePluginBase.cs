@@ -27,11 +27,6 @@ namespace UoFiddler.Plugin.ExamplePlugin
     {
         private const string _itemDescFileName = "itemdesc.cfg";
 
-        public ExamplePluginBase()
-        {
-            PluginEvents.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
-        }
-
         /// <summary>
         /// Name of the plugin
         /// </summary>
@@ -61,10 +56,14 @@ namespace UoFiddler.Plugin.ExamplePlugin
         {
             // make something useful
             _ = Files.RootDir;
+
+            // Subscribe here, not in the constructor: the Manage Plugins form constructs disabled plugins too.
+            PluginEvents.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
         }
 
         public override void Unload()
         {
+            PluginEvents.ModifyItemsControlContextMenuEvent -= EventsModifyItemsControlContextMenuEvent;
         }
 
         public override void ModifyTabPages(TabControl tabControl)

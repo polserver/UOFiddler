@@ -21,11 +21,6 @@ namespace UoFiddler.Plugin.MultiEditor
     {
         private UserControls.MultiEditorControl _multiEditorControl;
 
-        public MultiEditorPluginBase()
-        {
-            PluginEvents.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
-        }
-
         /// <summary>
         /// Author of the plugin
         /// </summary>
@@ -54,12 +49,15 @@ namespace UoFiddler.Plugin.MultiEditor
         public override void Unload()
         {
             // fired in Fiddler OnClosing
+            PluginEvents.ModifyItemsControlContextMenuEvent -= EventsModifyItemsControlContextMenuEvent;
         }
 
         public override void Initialize()
         {
-            // fired on fiddler startup
+            // fired on fiddler startup; the Manage Plugins form also constructs disabled plugins,
+            // so events are subscribed here and not in the constructor
             _ = Files.RootDir;
+            PluginEvents.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
         }
 
         public override void ModifyPluginToolStrip(ToolStripDropDownButton toolStrip)

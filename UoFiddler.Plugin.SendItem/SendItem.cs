@@ -26,12 +26,6 @@ namespace UoFiddler.Plugin.SendItem
 {
     public class SendItemPluginBase : PluginBase
     {
-        public SendItemPluginBase()
-        {
-            _refMarker = this;
-            Events.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
-        }
-
         private static SendItemPluginBase _refMarker;
         private static bool _overrideClick;
 
@@ -79,6 +73,10 @@ namespace UoFiddler.Plugin.SendItem
         {
             _ = Files.RootDir;
 
+            // Done here, not in the constructor: the Manage Plugins form constructs disabled plugins too.
+            _refMarker = this;
+            Events.ModifyItemsControlContextMenuEvent += EventsModifyItemsControlContextMenuEvent;
+
             LoadXml();
             ChangeOverrideClick(OverrideClick, true);
         }
@@ -90,6 +88,7 @@ namespace UoFiddler.Plugin.SendItem
 
         public override void Unload()
         {
+            Events.ModifyItemsControlContextMenuEvent -= EventsModifyItemsControlContextMenuEvent;
             SaveXml();
         }
 
