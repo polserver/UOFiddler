@@ -805,7 +805,7 @@ namespace UoFiddler.Controls.UserControls
         private void OnTextChanged_InsertAt(object sender, EventArgs e)
         {
             Color invalidColor = Options.DarkMode ? Color.OrangeRed : Color.Red;
-            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Gumps.GetCount()))
+            if (Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Gumps.GetCount() - 1))
             {
                 InsertText.ForeColor = Gumps.IsValidIndex(index) ? invalidColor : SystemColors.ControlText;
             }
@@ -822,7 +822,7 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Gumps.GetCount()))
+            if (!Utils.ConvertStringToInt(InsertText.Text, out int index, 0, Gumps.GetCount() - 1))
             {
                 return;
             }
