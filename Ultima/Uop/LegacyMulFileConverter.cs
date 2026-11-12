@@ -357,14 +357,10 @@ namespace Ultima.Uop
                             entryHeader = BuildEntryHeader(entryHeaderTimestamp);
                         }
 
-                        // hash 906142efe9fdb38a, which is file 0009834.tga (and no others, as 7.0.59.5) use a different name format (7 digits instead of 8);
-                        //  if in newer versions more of these files will have adopted that format, someone should update this list of exceptions
-                        //  (even if this seems so much like a typo from someone from the UO development team :P)
-                        if ((type == FileType.GumpartLegacyMul) && (idxEntries[j].Id == 9834))
-                        {
-                            identifier = HashLittle2(string.Format(hashFormat[1], idxEntries[j].Id));
-                        }
-                        else if (type == FileType.MultiCollection && idxEntries[j].Id == _housingBinSentinelId)
+                        // Some older clients stored gump 9834 as 0009834.tga (7 digits). Current clients use
+                        // 8 digits for every gumpart entry, and that is the only name the reader looks up
+                        // first, so always write 8 digits. FromUop and FileIndex still accept the old name.
+                        if (type == FileType.MultiCollection && idxEntries[j].Id == _housingBinSentinelId)
                         {
                             identifier = _housingBinIdentifier;
                         }

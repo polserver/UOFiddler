@@ -669,6 +669,8 @@ namespace Ultima
 
     public class UopFileAccessor : IFileAccessor
     {
+        private const int _legacyGumpId = 9834;
+
         public Entry6D[] Index { get; }
 
         public FileStream Stream { get; set; }
@@ -722,6 +724,12 @@ namespace Ultima
                     ulong hash = UopUtils.HashFileName(entryName);
 
                     hashes.TryAdd(hash, i);
+                }
+
+                // Older clients stored gump 9834 under a 7 digit name.
+                if (uopPattern == "gumpartlegacymul" && length > _legacyGumpId)
+                {
+                    hashes.TryAdd(UopUtils.HashFileName($"build/{uopPattern}/{_legacyGumpId:D7}{uopEntryExtension}"), _legacyGumpId);
                 }
 
                 br.BaseStream.Seek(nextBlock, SeekOrigin.Begin);
