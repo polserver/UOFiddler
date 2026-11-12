@@ -81,6 +81,8 @@ namespace Ultima
             string path = Files.GetFilePath("fonts.mul");
             if (path == null)
             {
+                // No fonts in this client: drop the previous client's fonts.
+                System.Array.Clear(Fonts);
                 return;
             }
 
