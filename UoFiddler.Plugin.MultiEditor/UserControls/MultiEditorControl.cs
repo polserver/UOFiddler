@@ -686,7 +686,6 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
 
             ApplyPreviewBackgroundColor();
-            ControlEvents.PreviewBackgroundColorChangeEvent += ApplyPreviewBackgroundColor;
         }
 
         private void ApplyPreviewBackgroundColor()
@@ -831,6 +830,7 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             {
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                 ControlEvents.MultiChangeEvent += OnMultiChangeEvent;
+                ControlEvents.PreviewBackgroundColorChangeEvent += ApplyPreviewBackgroundColor;
             }
 
             _loaded = true;
