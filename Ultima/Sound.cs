@@ -104,7 +104,7 @@ namespace Ultima
                 return null;
             }
 
-            if (_removed[soundId])
+            if (soundId >= _removed.Length || _removed[soundId])
             {
                 return null;
             }
@@ -116,7 +116,7 @@ namespace Ultima
 
             Stream stream = _fileIndex.Seek(soundId, out int length, out int _, out bool _);
 
-            if (_fileIndex[soundId].Lookup < 0 || length <= 0)
+            if ((_fileIndex[soundId]?.Lookup ?? -1) < 0 || length <= 0)
             {
                 if (!_translations.TryGetValue(soundId, out soundId))
                 {
@@ -127,7 +127,7 @@ namespace Ultima
                 stream = _fileIndex.Seek(soundId, out length, out int _, out bool _);
             }
 
-            if (stream == null)
+            if (stream == null || length < _mulNameLength)
             {
                 return null;
             }
@@ -209,7 +209,7 @@ namespace Ultima
                 return false;
             }
 
-            if (_removed[soundId])
+            if (soundId >= _removed.Length || _removed[soundId])
             {
                 return false;
             }
@@ -222,7 +222,7 @@ namespace Ultima
 
             Stream stream = _fileIndex.Seek(soundId, out int length, out _, out _);
 
-            if (_fileIndex[soundId].Lookup < 0 || length <= 0)
+            if ((_fileIndex[soundId]?.Lookup ?? -1) < 0 || length <= 0)
             {
                 if (!_translations.TryGetValue(soundId, out soundId))
                 {
@@ -262,7 +262,7 @@ namespace Ultima
                 return 0;
             }
 
-            if (_removed[soundId])
+            if (soundId >= _removed.Length || _removed[soundId])
             {
                 return 0;
             }
@@ -277,7 +277,7 @@ namespace Ultima
             else
             {
                 Stream stream = _fileIndex.Seek(soundId, out int length, out int _, out bool _);
-                if (_fileIndex[soundId].Lookup < 0 || length <= 0)
+                if ((_fileIndex[soundId]?.Lookup ?? -1) < 0 || length <= 0)
                 {
                     if (!_translations.TryGetValue(soundId, out soundId))
                     {
@@ -287,7 +287,7 @@ namespace Ultima
                     stream = _fileIndex.Seek(soundId, out length, out int _, out bool _);
                 }
 
-                if (stream == null)
+                if (stream == null || length < _mulNameLength)
                 {
                     return 0;
                 }
