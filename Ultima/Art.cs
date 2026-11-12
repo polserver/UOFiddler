@@ -39,6 +39,8 @@ namespace Ultima
         // M3.5: dedup index keyed by xxHash128 of the bitmap pixels. Replaces
         // the previous List<ImageData> + SHA256-bytes-in-each-entry layout,
         // which made CompareSaveImages an O(n²) linear scan.
+        private static readonly object _readLock = new object();
+
         private static Dictionary<UInt128, ImageData> _landImageData;
         // Keyed by size as well: the pixel hash alone matches images of different sizes with the same bytes.
         private static Dictionary<(UInt128 Hash, int Width, int Height), ImageData> _staticImageData;
@@ -319,20 +321,24 @@ namespace Ultima
                 return true;
             }
 
-            Stream stream = _fileIndex.Seek(index, out int _, out int _, out bool _);
-
-            if (stream == null)
+            // The file stream is shared; seek and read must not interleave with another thread.
+            lock (_readLock)
             {
-                return false;
+                Stream stream = _fileIndex.Seek(index, out int _, out int _, out bool _);
+
+                if (stream == null)
+                {
+                    return false;
+                }
+
+                stream.Seek(4, SeekOrigin.Current);
+                stream.ReadExactly(_validBuffer, 0, 4);
+
+                short width = (short)(_validBuffer[0] | (_validBuffer[1] << 8));
+                short height = (short)(_validBuffer[2] | (_validBuffer[3] << 8));
+
+                return width > 0 && height > 0;
             }
-
-            stream.Seek(4, SeekOrigin.Current);
-            stream.ReadExactly(_validBuffer, 0, 4);
-
-            short width = (short)(_validBuffer[0] | (_validBuffer[1] << 8));
-            short height = (short)(_validBuffer[2] | (_validBuffer[3] << 8));
-
-            return width > 0 && height > 0;
         }
 
         /// <summary>
@@ -392,23 +398,27 @@ namespace Ultima
                 return cached;
             }
 
-            Stream stream = _fileIndex.Seek(index, out int length, out int _, out patched);
-            if (stream == null)
+            // The file stream is shared; seek and read must not interleave with another thread.
+            lock (_readLock)
             {
-                return null;
-            }
+                Stream stream = _fileIndex.Seek(index, out int length, out int _, out patched);
+                if (stream == null)
+                {
+                    return null;
+                }
 
-            if (patched)
-            {
-                _patched[index] = true;
-            }
+                if (patched)
+                {
+                    _patched[index] = true;
+                }
 
-            Bitmap bmp = LoadLand(stream, length);
-            if (Files.CacheData && bmp != null)
-            {
-                _cache.Set(index, bmp);
+                Bitmap bmp = LoadLand(stream, length);
+                if (Files.CacheData && bmp != null)
+                {
+                    _cache.Set(index, bmp);
+                }
+                return bmp;
             }
-            return bmp;
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -416,15 +426,19 @@ namespace Ultima
         {
             index &= 0x3FFF;
 
-            Stream stream = _fileIndex.Seek(index, out int length, out int _, out bool _);
-            if (stream == null)
+            // The file stream is shared; seek and read must not interleave with another thread.
+            lock (_readLock)
             {
-                return null;
-            }
+                Stream stream = _fileIndex.Seek(index, out int length, out int _, out bool _);
+                if (stream == null)
+                {
+                    return null;
+                }
 
-            var buffer = new byte[length];
-            stream.ReadExactly(buffer, 0, length);
-            return buffer;
+                var buffer = new byte[length];
+                stream.ReadExactly(buffer, 0, length);
+                return buffer;
+            }
         }
 
         /// <summary>
@@ -467,23 +481,27 @@ namespace Ultima
                 return cached;
             }
 
-            Stream stream = _fileIndex.Seek(index, out int length, out int _, out patched);
-            if (stream == null)
+            // The file stream is shared; seek and read must not interleave with another thread.
+            lock (_readLock)
             {
-                return null;
-            }
+                Stream stream = _fileIndex.Seek(index, out int length, out int _, out patched);
+                if (stream == null)
+                {
+                    return null;
+                }
 
-            if (patched)
-            {
-                _patched[index] = true;
-            }
+                if (patched)
+                {
+                    _patched[index] = true;
+                }
 
-            Bitmap bmp = LoadStatic(stream, length);
-            if (Files.CacheData && bmp != null)
-            {
-                _cache.Set(index, bmp);
+                Bitmap bmp = LoadStatic(stream, length);
+                if (Files.CacheData && bmp != null)
+                {
+                    _cache.Set(index, bmp);
+                }
+                return bmp;
             }
-            return bmp;
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -492,15 +510,19 @@ namespace Ultima
             index = GetLegalItemId(index);
             index += 0x4000;
 
-            Stream stream = _fileIndex.Seek(index, out int length, out int _, out bool _);
-            if (stream == null)
+            // The file stream is shared; seek and read must not interleave with another thread.
+            lock (_readLock)
             {
-                return null;
-            }
+                Stream stream = _fileIndex.Seek(index, out int length, out int _, out bool _);
+                if (stream == null)
+                {
+                    return null;
+                }
 
-            var buffer = new byte[length];
-            stream.ReadExactly(buffer, 0, length);
-            return buffer;
+                var buffer = new byte[length];
+                stream.ReadExactly(buffer, 0, length);
+                return buffer;
+            }
         }
 
         /// <summary>
@@ -532,41 +554,45 @@ namespace Ultima
                 return false;
             }
 
-            Stream stream = _fileIndex.Seek(index, out int length, out _, out patched);
-            if (stream == null)
+            // The file stream is shared; seek and read must not interleave with another thread.
+            lock (_readLock)
             {
-                return false;
-            }
-
-            if (patched)
-            {
-                _patched[index] = true;
-            }
-
-            byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
-            try
-            {
-                stream.ReadExactly(buffer, 0, length);
-
-                ReadOnlySpan<byte> entry = buffer.AsSpan(0, length);
-                if (!TryReadStaticSize(entry, out width, out height))
+                Stream stream = _fileIndex.Seek(index, out int length, out _, out patched);
+                if (stream == null)
                 {
                     return false;
                 }
 
-                if (destination.Length < width * height)
+                if (patched)
                 {
-                    return false;
+                    _patched[index] = true;
                 }
 
-                fixed (ushort* destPtr = destination)
+                byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
+                try
                 {
-                    return DecodeStatic(entry, destPtr, width, height, width);
+                    stream.ReadExactly(buffer, 0, length);
+
+                    ReadOnlySpan<byte> entry = buffer.AsSpan(0, length);
+                    if (!TryReadStaticSize(entry, out width, out height))
+                    {
+                        return false;
+                    }
+
+                    if (destination.Length < width * height)
+                    {
+                        return false;
+                    }
+
+                    fixed (ushort* destPtr = destination)
+                    {
+                        return DecodeStatic(entry, destPtr, width, height, width);
+                    }
                 }
-            }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(buffer);
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
             }
         }
 
@@ -590,60 +616,64 @@ namespace Ultima
                 return false;
             }
 
-            Stream stream = _fileIndex.Seek(index, out int length, out _, out patched);
-            if (stream == null || length < LandTileBytes)
+            // The file stream is shared; seek and read must not interleave with another thread.
+            lock (_readLock)
             {
-                return false;
-            }
-
-            if (patched)
-            {
-                _patched[index] = true;
-            }
-
-            byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
-            try
-            {
-                stream.ReadExactly(buffer, 0, length);
-
-                destination.Slice(0, 44 * 44).Clear();
-
-                fixed (byte* binData = buffer)
-                fixed (ushort* destPtr = destination)
+                Stream stream = _fileIndex.Seek(index, out int length, out _, out patched);
+                if (stream == null || length < LandTileBytes)
                 {
-                    var bdata = (ushort*)binData;
-                    int xOffset = 21;
-                    int xRun = 2;
-                    ushort* line = destPtr;
-
-                    for (int y = 0; y < 22; ++y, --xOffset, xRun += 2, line += 44)
-                    {
-                        ushort* cur = line + xOffset;
-                        ushort* end = cur + xRun;
-                        while (cur < end)
-                        {
-                            *cur++ = (ushort)(*bdata++ | 0x8000);
-                        }
-                    }
-
-                    xOffset = 0;
-                    xRun = 44;
-                    for (int y = 0; y < 22; ++y, ++xOffset, xRun -= 2, line += 44)
-                    {
-                        ushort* cur = line + xOffset;
-                        ushort* end = cur + xRun;
-                        while (cur < end)
-                        {
-                            *cur++ = (ushort)(*bdata++ | 0x8000);
-                        }
-                    }
+                    return false;
                 }
 
-                return true;
-            }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(buffer);
+                if (patched)
+                {
+                    _patched[index] = true;
+                }
+
+                byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
+                try
+                {
+                    stream.ReadExactly(buffer, 0, length);
+
+                    destination.Slice(0, 44 * 44).Clear();
+
+                    fixed (byte* binData = buffer)
+                    fixed (ushort* destPtr = destination)
+                    {
+                        var bdata = (ushort*)binData;
+                        int xOffset = 21;
+                        int xRun = 2;
+                        ushort* line = destPtr;
+
+                        for (int y = 0; y < 22; ++y, --xOffset, xRun += 2, line += 44)
+                        {
+                            ushort* cur = line + xOffset;
+                            ushort* end = cur + xRun;
+                            while (cur < end)
+                            {
+                                *cur++ = (ushort)(*bdata++ | 0x8000);
+                            }
+                        }
+
+                        xOffset = 0;
+                        xRun = 44;
+                        for (int y = 0; y < 22; ++y, ++xOffset, xRun -= 2, line += 44)
+                        {
+                            ushort* cur = line + xOffset;
+                            ushort* end = cur + xRun;
+                            while (cur < end)
+                            {
+                                *cur++ = (ushort)(*bdata++ | 0x8000);
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
             }
         }
 
@@ -663,18 +693,22 @@ namespace Ultima
                 return false;
             }
 
-            Stream stream = _fileIndex.Seek(index, out int length, out _, out _);
-            if (stream == null || length < 8)
+            // The file stream is shared; seek and read must not interleave with another thread.
+            lock (_readLock)
             {
-                return false;
-            }
+                Stream stream = _fileIndex.Seek(index, out int length, out _, out _);
+                if (stream == null || length < 8)
+                {
+                    return false;
+                }
 
-            // Header layout: 4 unknown ushorts then width, height as ushorts at offset 4 and 6.
-            Span<byte> header = stackalloc byte[8];
-            stream.ReadExactly(header);
-            width = header[4] | (header[5] << 8);
-            height = header[6] | (header[7] << 8);
-            return width > 0 && height > 0;
+                // Header layout: 4 unknown ushorts then width, height as ushorts at offset 4 and 6.
+                Span<byte> header = stackalloc byte[8];
+                stream.ReadExactly(header);
+                width = header[4] | (header[5] << 8);
+                height = header[6] | (header[7] << 8);
+                return width > 0 && height > 0;
+            }
         }
 
         public static unsafe void Measure(Bitmap bmp, out int xMin, out int yMin, out int xMax, out int yMax)
