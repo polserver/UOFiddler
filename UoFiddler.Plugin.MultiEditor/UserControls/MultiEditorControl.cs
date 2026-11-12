@@ -2222,9 +2222,24 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
             }
         }
 
+        /// <summary>
+        /// True when keyboard focus is in a text or number box, which needs its own keys
+        /// (minus, brackets, arrows, Ctrl+C/V/Z).
+        /// </summary>
+        private bool IsTextInputFocused()
+        {
+            Control focused = ActiveControl;
+            while (focused is ContainerControl { ActiveControl: not null } container)
+            {
+                focused = container.ActiveControl;
+            }
+
+            return focused is TextBoxBase or UpDownBase or ComboBox;
+        }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (_compList != null)
+            if (_compList != null && (keyData == Keys.Escape || !IsTextInputFocused()))
             {
                 // Undo / Redo
                 if (keyData == (Keys.Control | Keys.Z))
@@ -2334,18 +2349,15 @@ namespace UoFiddler.Plugin.MultiEditor.UserControls
                     return true;
                 }
 
-                if (ActiveControl is not TextBox && ActiveControl is not NumericUpDown)
-                {
-                    if (keyData == Keys.S) { BTN_Select_Click(null, EventArgs.Empty); return true; }
-                    if (keyData == Keys.D) { BTN_Draw_Click(null, EventArgs.Empty); return true; }
-                    if (keyData == Keys.R) { BTN_Remove_Click(null, EventArgs.Empty); return true; }
-                    if (keyData == Keys.E) { BTN_Z_Click(null, EventArgs.Empty); return true; }
-                    if (keyData == Keys.F) { BTN_Floor.Checked = !BTN_Floor.Checked; return true; }
-                    if (keyData == Keys.P) { BTN_Pipette_Click(null, EventArgs.Empty); return true; }
-                    if (keyData == Keys.T) { BTN_Trans_Clicked(null, EventArgs.Empty); return true; }
-                    if (keyData == Keys.B) { BTN_RectFill_Click(null, EventArgs.Empty); return true; }
-                    if (keyData == Keys.L) { BTN_LineDraw_Click(null, EventArgs.Empty); return true; }
-                }
+                if (keyData == Keys.S) { BTN_Select_Click(null, EventArgs.Empty); return true; }
+                if (keyData == Keys.D) { BTN_Draw_Click(null, EventArgs.Empty); return true; }
+                if (keyData == Keys.R) { BTN_Remove_Click(null, EventArgs.Empty); return true; }
+                if (keyData == Keys.E) { BTN_Z_Click(null, EventArgs.Empty); return true; }
+                if (keyData == Keys.F) { BTN_Floor.Checked = !BTN_Floor.Checked; return true; }
+                if (keyData == Keys.P) { BTN_Pipette_Click(null, EventArgs.Empty); return true; }
+                if (keyData == Keys.T) { BTN_Trans_Clicked(null, EventArgs.Empty); return true; }
+                if (keyData == Keys.B) { BTN_RectFill_Click(null, EventArgs.Empty); return true; }
+                if (keyData == Keys.L) { BTN_LineDraw_Click(null, EventArgs.Empty); return true; }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
