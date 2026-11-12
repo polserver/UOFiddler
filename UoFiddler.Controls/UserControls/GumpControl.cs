@@ -50,6 +50,7 @@ namespace UoFiddler.Controls.UserControls
 
         private static GumpControl _refMarker;
         private bool _loaded;
+        private bool _eventsSubscribed;
         private bool _showFreeSlots;
         private Dictionary<int, GumpEntry> _gumpEntries = new();
         private string _activeNameFilter = string.Empty;
@@ -222,11 +223,13 @@ namespace UoFiddler.Controls.UserControls
                 PopulateListBox(true);
                 LoadGumpXml();
 
-                if (!_loaded)
+                // Reload clears _loaded, so a separate flag keeps the handlers from being added twice.
+                if (!_eventsSubscribed)
                 {
                     ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
                     ControlEvents.GumpChangeEvent += OnGumpChangeEvent;
                     ControlEvents.PreviewBackgroundColorChangeEvent += OnPreviewBackgroundColorChanged;
+                    _eventsSubscribed = true;
                 }
 
                 _loaded = true;
