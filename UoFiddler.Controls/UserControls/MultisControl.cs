@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml;
 using Ultima;
@@ -168,6 +169,9 @@ namespace UoFiddler.Controls.UserControls
         private bool _previewFitMode = true;
         private Bitmap _mulBitmap;
         private Bitmap _uopBitmap;
+        private bool _mulSelectPending;
+        private bool _uopSelectPending;
+        private Panel _redrawSuspendedPanel;
         private bool _isPanning;
         private Point _panStartScreen;
         private double _zoomLevel = 1.0;
@@ -352,8 +356,28 @@ namespace UoFiddler.Controls.UserControls
             ControlEvents.FireMultiChangeEvent(this, id);
         }
 
+        // A virtual ListView raises SelectedIndexChanged twice per click (deselect, then select).
+        // Defer to one update so the empty in-between state never reaches the preview.
+        private void OnMulSelectionChanged(object sender, EventArgs e)
+        {
+            if (_mulSelectPending)
+            {
+                return;
+            }
+
+            _mulSelectPending = true;
+            BeginInvoke(() =>
+            {
+                if (_mulSelectPending && !IsDisposed)
+                {
+                    AfterSelect_Multi(this, EventArgs.Empty);
+                }
+            });
+        }
+
         private void AfterSelect_Multi(object sender, EventArgs e)
         {
+            _mulSelectPending = false;
             int id = GetSelectedMulId();
             MultiComponentList multi = id >= 0 ? Multis.GetComponents(id) : MultiComponentList.Empty;
             if (multi == MultiComponentList.Empty)
@@ -407,18 +431,57 @@ namespace UoFiddler.Controls.UserControls
 
         private void UpdateMulPictureBox()
         {
-            if (_previewFitMode || _mulBitmap == null)
+            WithoutPanelRedraw(panelMultiScroll, () =>
             {
-                MultiPictureBox.Dock = DockStyle.Fill;
-                MultiPictureBox.Cursor = Cursors.Default;
-            }
-            else
-            {
-                MultiPictureBox.Dock = DockStyle.None;
-                CenterPictureBox(MultiPictureBox, panelMultiScroll, GetZoomedSize(_mulBitmap.Size));
-                MultiPictureBox.Cursor = Cursors.Hand;
-            }
+                if (_previewFitMode || _mulBitmap == null)
+                {
+                    MultiPictureBox.Dock = DockStyle.Fill;
+                    MultiPictureBox.Cursor = Cursors.Default;
+                }
+                else
+                {
+                    MultiPictureBox.Dock = DockStyle.None;
+                    CenterPictureBox(MultiPictureBox, panelMultiScroll, GetZoomedSize(_mulBitmap.Size));
+                    MultiPictureBox.Cursor = Cursors.Hand;
+                }
+            });
             MultiPictureBox.Invalidate();
+        }
+
+        private const int _wmSetRedraw = 0x000B;
+        private const uint _rdwInvalidate = 0x0001;
+        private const uint _rdwErase = 0x0004;
+        private const uint _rdwAllChildren = 0x0080;
+        private const uint _rdwFrame = 0x0400;
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, uint flags);
+
+        // Moving and resizing the preview takes several window moves (dock, size, location, panel
+        // auto-scroll), and each one shows on screen. Hold the panel's redraw until all are done.
+        private void WithoutPanelRedraw(Panel panel, Action change)
+        {
+            if (!panel.IsHandleCreated || _redrawSuspendedPanel == panel)
+            {
+                change();
+                return;
+            }
+
+            _redrawSuspendedPanel = panel;
+            SendMessage(panel.Handle, _wmSetRedraw, IntPtr.Zero, IntPtr.Zero);
+            try
+            {
+                change();
+            }
+            finally
+            {
+                SendMessage(panel.Handle, _wmSetRedraw, new IntPtr(1), IntPtr.Zero);
+                _redrawSuspendedPanel = null;
+                RedrawWindow(panel.Handle, IntPtr.Zero, IntPtr.Zero, _rdwInvalidate | _rdwErase | _rdwAllChildren | _rdwFrame);
+            }
         }
 
         private void OnPaint_MultiPic(object sender, PaintEventArgs e)
@@ -991,8 +1054,26 @@ namespace UoFiddler.Controls.UserControls
             }
         }
 
+        private void OnUopSelectionChanged(object sender, EventArgs e)
+        {
+            if (_uopSelectPending)
+            {
+                return;
+            }
+
+            _uopSelectPending = true;
+            BeginInvoke(() =>
+            {
+                if (_uopSelectPending && !IsDisposed)
+                {
+                    AfterSelect_UopMulti(this, EventArgs.Empty);
+                }
+            });
+        }
+
         private void AfterSelect_UopMulti(object sender, EventArgs e)
         {
+            _uopSelectPending = false;
             int id = GetSelectedUopId();
             MultiComponentList multi = id >= 0 ? Multis.GetUopComponents(id) : MultiComponentList.Empty;
             if (multi == MultiComponentList.Empty)
@@ -1031,17 +1112,20 @@ namespace UoFiddler.Controls.UserControls
 
         private void UpdateUopPictureBox()
         {
-            if (_previewFitMode || _uopBitmap == null)
+            WithoutPanelRedraw(panelUopScroll, () =>
             {
-                UopPictureBox.Dock = DockStyle.Fill;
-                UopPictureBox.Cursor = Cursors.Default;
-            }
-            else
-            {
-                UopPictureBox.Dock = DockStyle.None;
-                CenterPictureBox(UopPictureBox, panelUopScroll, GetZoomedSize(_uopBitmap.Size));
-                UopPictureBox.Cursor = Cursors.Hand;
-            }
+                if (_previewFitMode || _uopBitmap == null)
+                {
+                    UopPictureBox.Dock = DockStyle.Fill;
+                    UopPictureBox.Cursor = Cursors.Default;
+                }
+                else
+                {
+                    UopPictureBox.Dock = DockStyle.None;
+                    CenterPictureBox(UopPictureBox, panelUopScroll, GetZoomedSize(_uopBitmap.Size));
+                    UopPictureBox.Cursor = Cursors.Hand;
+                }
+            });
             UopPictureBox.Invalidate();
         }
 
@@ -1129,7 +1213,8 @@ namespace UoFiddler.Controls.UserControls
         {
             if (!_previewFitMode && _mulBitmap != null)
             {
-                CenterPictureBox(MultiPictureBox, panelMultiScroll, GetZoomedSize(_mulBitmap.Size));
+                WithoutPanelRedraw(panelMultiScroll,
+                    () => CenterPictureBox(MultiPictureBox, panelMultiScroll, GetZoomedSize(_mulBitmap.Size)));
             }
         }
 
@@ -1137,7 +1222,8 @@ namespace UoFiddler.Controls.UserControls
         {
             if (!_previewFitMode && _uopBitmap != null)
             {
-                CenterPictureBox(UopPictureBox, panelUopScroll, GetZoomedSize(_uopBitmap.Size));
+                WithoutPanelRedraw(panelUopScroll,
+                    () => CenterPictureBox(UopPictureBox, panelUopScroll, GetZoomedSize(_uopBitmap.Size)));
             }
         }
 

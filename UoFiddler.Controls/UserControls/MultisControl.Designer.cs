@@ -225,7 +225,7 @@ namespace UoFiddler.Controls.UserControls
             listViewMultiColumn.Width = 240;
             listViewMulti.Columns.Add(listViewMultiColumn);
             listViewMulti.RetrieveVirtualItem += OnRetrieveMultiVirtualItem;
-            listViewMulti.SelectedIndexChanged += AfterSelect_Multi;
+            listViewMulti.SelectedIndexChanged += OnMulSelectionChanged;
             // 
             // contextMenuStrip2
             // 
@@ -811,7 +811,7 @@ namespace UoFiddler.Controls.UserControls
             listViewUopColumn.Width = 240;
             listViewUop.Columns.Add(listViewUopColumn);
             listViewUop.RetrieveVirtualItem += OnRetrieveUopVirtualItem;
-            listViewUop.SelectedIndexChanged += AfterSelect_UopMulti;
+            listViewUop.SelectedIndexChanged += OnUopSelectionChanged;
             // 
             // contextMenuStripUop
             // 
