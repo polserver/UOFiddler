@@ -135,6 +135,9 @@
             SameCenterButton = new System.Windows.Forms.Button();
             CenterXNumericUpDown = new System.Windows.Forms.NumericUpDown();
             CenterYNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            RelativeCenterCheckBox = new System.Windows.Forms.CheckBox();
+            CenterAllDirectionsCheckBox = new System.Windows.Forms.CheckBox();
+            CenterAllActionsCheckBox = new System.Windows.Forms.CheckBox();
             ReferencialPointGroupBox = new System.Windows.Forms.GroupBox();
             ToolStripLockButton = new System.Windows.Forms.CheckBox();
             RefYLabel = new System.Windows.Forms.Label();
@@ -1247,12 +1250,15 @@
             LocationCenterGroupBox.Controls.Add(SameCenterButton);
             LocationCenterGroupBox.Controls.Add(CenterXNumericUpDown);
             LocationCenterGroupBox.Controls.Add(CenterYNumericUpDown);
+            LocationCenterGroupBox.Controls.Add(RelativeCenterCheckBox);
+            LocationCenterGroupBox.Controls.Add(CenterAllDirectionsCheckBox);
+            LocationCenterGroupBox.Controls.Add(CenterAllActionsCheckBox);
             LocationCenterGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
             LocationCenterGroupBox.Location = new System.Drawing.Point(0, 221);
             LocationCenterGroupBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             LocationCenterGroupBox.Name = "LocationCenterGroupBox";
             LocationCenterGroupBox.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            LocationCenterGroupBox.Size = new System.Drawing.Size(190, 89);
+            LocationCenterGroupBox.Size = new System.Drawing.Size(190, 158);
             LocationCenterGroupBox.TabIndex = 21;
             LocationCenterGroupBox.TabStop = false;
             LocationCenterGroupBox.Text = "Location Center";
@@ -1315,7 +1321,38 @@
             CenterYNumericUpDown.TabIndex = 4;
             CenterYNumericUpDown.ValueChanged += OnCenterYValueChanged;
             CenterYNumericUpDown.KeyDown += TxtSendData_KeyDown;
-            // 
+            //
+            // RelativeCenterCheckBox
+            //
+            RelativeCenterCheckBox.AutoSize = true;
+            RelativeCenterCheckBox.Location = new System.Drawing.Point(9, 84);
+            RelativeCenterCheckBox.Name = "RelativeCenterCheckBox";
+            RelativeCenterCheckBox.Size = new System.Drawing.Size(68, 19);
+            RelativeCenterCheckBox.TabIndex = 19;
+            RelativeCenterCheckBox.Text = "Relative";
+            RelativeCenterCheckBox.UseVisualStyleBackColor = true;
+            RelativeCenterCheckBox.CheckedChanged += RelativeCenterCheckBox_CheckedChanged;
+            //
+            // CenterAllDirectionsCheckBox
+            //
+            CenterAllDirectionsCheckBox.AutoSize = true;
+            CenterAllDirectionsCheckBox.Location = new System.Drawing.Point(9, 107);
+            CenterAllDirectionsCheckBox.Name = "CenterAllDirectionsCheckBox";
+            CenterAllDirectionsCheckBox.Size = new System.Drawing.Size(97, 19);
+            CenterAllDirectionsCheckBox.TabIndex = 20;
+            CenterAllDirectionsCheckBox.Text = "All directions";
+            CenterAllDirectionsCheckBox.UseVisualStyleBackColor = true;
+            //
+            // CenterAllActionsCheckBox
+            //
+            CenterAllActionsCheckBox.AutoSize = true;
+            CenterAllActionsCheckBox.Location = new System.Drawing.Point(9, 130);
+            CenterAllActionsCheckBox.Name = "CenterAllActionsCheckBox";
+            CenterAllActionsCheckBox.Size = new System.Drawing.Size(83, 19);
+            CenterAllActionsCheckBox.TabIndex = 21;
+            CenterAllActionsCheckBox.Text = "All actions";
+            CenterAllActionsCheckBox.UseVisualStyleBackColor = true;
+            //
             // ReferencialPointGroupBox
             // 
             ReferencialPointGroupBox.Controls.Add(ToolStripLockButton);
@@ -1773,6 +1810,9 @@
         private System.Windows.Forms.Button SameCenterButton;
         private System.Windows.Forms.NumericUpDown CenterXNumericUpDown;
         private System.Windows.Forms.NumericUpDown CenterYNumericUpDown;
+        private System.Windows.Forms.CheckBox RelativeCenterCheckBox;
+        private System.Windows.Forms.CheckBox CenterAllDirectionsCheckBox;
+        private System.Windows.Forms.CheckBox CenterAllActionsCheckBox;
         private System.Windows.Forms.ToolStrip AnimationEditToolStrip;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripButton DrawFullRectangleToolStripButton;

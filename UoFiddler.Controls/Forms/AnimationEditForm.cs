@@ -39,6 +39,12 @@ namespace UoFiddler.Controls.Forms
 
         private float _zoomFactor = 1.0f;
 
+        // Center editing: set while the center boxes are filled from code, and the
+        // box values last applied in relative mode.
+        private bool _updatingCenterUi;
+        private int _lastRelativeX;
+        private int _lastRelativeY;
+
         // Second-animation overlay state
         private bool _secondAnimActivated;
         private int _secondAnimId;
@@ -647,8 +653,7 @@ namespace UoFiddler.Controls.Forms
                         FramesTrackBar.Value = 0;
                         FramesTrackBar.Invalidate();
 
-                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+                        ShowFrameCenter(edit.Frames[FramesTrackBar.Value]);
                     }
                     //Soulblighter Modification
                     else
@@ -1043,92 +1048,206 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-            if (edit != null && edit.Frames.Count > FramesTrackBar.Value)
-            {
-                CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
-            }
+            ShowFrameCenter(GetCurrentFrame());
 
             AnimationPictureBox.Invalidate();
         }
         //End of Soulblighter Modification
 
-        private void OnCenterXValueChanged(object sender, EventArgs e)
+        private FrameEdit GetCurrentFrame()
         {
+            if (_fileType == 0)
+            {
+                return null;
+            }
+
+            AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
+            if (edit?.Frames == null || FramesTrackBar.Value >= edit.Frames.Count)
+            {
+                return null;
+            }
+
+            return edit.Frames[FramesTrackBar.Value];
+        }
+
+        /// <summary>
+        /// Shows the frame's center in the center boxes. In relative mode the boxes hold the
+        /// offset applied so far, so they are left alone.
+        /// </summary>
+        private void ShowFrameCenter(FrameEdit frame)
+        {
+            if (frame == null || RelativeCenterCheckBox.Checked)
+            {
+                return;
+            }
+
+            SetCenterBoxes(frame.Center.X, frame.Center.Y);
+        }
+
+        private void SetCenterBoxes(int x, int y)
+        {
+            _updatingCenterUi = true;
             try
             {
-                if (_fileType == 0)
-                {
-                    return;
-                }
-
-                AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                if (edit == null || edit.Frames.Count < FramesTrackBar.Value)
-                {
-                    return;
-                }
-
-                FrameEdit frame = edit.Frames[FramesTrackBar.Value];
-                if (CenterXNumericUpDown.Value == frame.Center.X)
-                {
-                    return;
-                }
-
-                if (!frame.CanCenterAt((int)CenterXNumericUpDown.Value, frame.Center.Y))
-                {
-                    ShowCenterOutOfRange((int)CenterXNumericUpDown.Value, frame.Center.Y);
-                    CenterXNumericUpDown.Value = frame.Center.X;
-                    return;
-                }
-
-                frame.ChangeCenter((int)CenterXNumericUpDown.Value, frame.Center.Y);
-                Options.ChangedUltimaClass["Animations"] = true;
-                AnimationPictureBox.Invalidate();
+                CenterXNumericUpDown.Value = x;
+                CenterYNumericUpDown.Value = y;
             }
-            catch (NullReferenceException)
+            finally
             {
-                // TODO: add logging or fix?
-                // ignored
+                _updatingCenterUi = false;
             }
+        }
+
+        private void OnCenterXValueChanged(object sender, EventArgs e)
+        {
+            OnCenterValueChanged(true);
         }
 
         private void OnCenterYValueChanged(object sender, EventArgs e)
         {
-            try
+            OnCenterValueChanged(false);
+        }
+
+        private void OnCenterValueChanged(bool xAxis)
+        {
+            if (_updatingCenterUi || _fileType == 0)
             {
-                if (_fileType == 0)
-                {
-                    return;
-                }
-
-                AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
-                if (edit == null || edit.Frames.Count < FramesTrackBar.Value)
-                {
-                    return;
-                }
-
-                FrameEdit frame = edit.Frames[FramesTrackBar.Value];
-                if (CenterYNumericUpDown.Value == frame.Center.Y)
-                {
-                    return;
-                }
-
-                if (!frame.CanCenterAt(frame.Center.X, (int)CenterYNumericUpDown.Value))
-                {
-                    ShowCenterOutOfRange(frame.Center.X, (int)CenterYNumericUpDown.Value);
-                    CenterYNumericUpDown.Value = frame.Center.Y;
-                    return;
-                }
-
-                frame.ChangeCenter(frame.Center.X, (int)CenterYNumericUpDown.Value);
-                Options.ChangedUltimaClass["Animations"] = true;
-                AnimationPictureBox.Invalidate();
+                return;
             }
-            catch (NullReferenceException)
+
+            int value = (int)(xAxis ? CenterXNumericUpDown.Value : CenterYNumericUpDown.Value);
+
+            if (RelativeCenterCheckBox.Checked)
             {
-                // TODO: add logging or fix?
-                // ignored
+                int delta = value - (xAxis ? _lastRelativeX : _lastRelativeY);
+                if (delta == 0)
+                {
+                    return;
+                }
+
+                bool moved = ApplyCenterChange(center => xAxis
+                    ? new Point(center.X + delta, center.Y)
+                    : new Point(center.X, center.Y + delta));
+
+                if (!moved)
+                {
+                    SetCenterBoxes(_lastRelativeX, _lastRelativeY);
+                }
+                else if (xAxis)
+                {
+                    _lastRelativeX = value;
+                }
+                else
+                {
+                    _lastRelativeY = value;
+                }
+
+                return;
+            }
+
+            bool changed = ApplyCenterChange(center => xAxis
+                ? new Point(value, center.Y)
+                : new Point(center.X, value));
+
+            if (!changed)
+            {
+                ShowFrameCenter(GetCurrentFrame());
+            }
+        }
+
+        /// <summary>
+        /// Moves the center of every frame in the chosen scope: the current frame, all frames of
+        /// the action in all directions, or all frames of every action. Nothing changes if any
+        /// frame can't take its new center.
+        /// </summary>
+        private bool ApplyCenterChange(Func<Point, Point> move)
+        {
+            var changes = new List<(FrameEdit Frame, Point Center)>();
+            foreach (FrameEdit frame in GetCenterTargets())
+            {
+                Point center = move(frame.Center);
+                if (center == frame.Center)
+                {
+                    continue;
+                }
+
+                if (!frame.CanCenterAt(center.X, center.Y))
+                {
+                    ShowCenterOutOfRange(center.X, center.Y);
+                    return false;
+                }
+
+                changes.Add((frame, center));
+            }
+
+            foreach ((FrameEdit frame, Point center) in changes)
+            {
+                frame.ChangeCenter(center.X, center.Y);
+            }
+
+            if (changes.Count > 0)
+            {
+                Options.ChangedUltimaClass["Animations"] = true;
+            }
+
+            AnimationPictureBox.Invalidate();
+            return true;
+        }
+
+        private IEnumerable<FrameEdit> GetCenterTargets()
+        {
+            bool allActions = CenterAllActionsCheckBox.Checked;
+            if (!allActions && !CenterAllDirectionsCheckBox.Checked)
+            {
+                FrameEdit current = GetCurrentFrame();
+                if (current != null)
+                {
+                    yield return current;
+                }
+
+                yield break;
+            }
+
+            int firstAction = allActions ? 0 : _currentAction;
+            int lastAction = allActions ? Animations.GetAnimLength(_currentBody, _fileType) - 1 : _currentAction;
+            for (int action = firstAction; action <= lastAction; ++action)
+            {
+                if (!AnimationEdit.IsActionInRange(_fileType, _currentBody, action))
+                {
+                    continue;
+                }
+
+                for (int dir = 0; dir < 5; ++dir)
+                {
+                    AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, action, dir);
+                    if (edit?.Frames == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (FrameEdit frame in edit.Frames)
+                    {
+                        yield return frame;
+                    }
+                }
+            }
+        }
+
+        private void RelativeCenterCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            _lastRelativeX = 0;
+            _lastRelativeY = 0;
+
+            // Same Center reads absolute values from the boxes, which hold an offset in relative mode.
+            SameCenterButton.Enabled = !RelativeCenterCheckBox.Checked && !AnimationTimer.Enabled;
+
+            if (RelativeCenterCheckBox.Checked)
+            {
+                SetCenterBoxes(0, 0);
+            }
+            else
+            {
+                ShowFrameCenter(GetCurrentFrame());
             }
         }
 
@@ -1490,8 +1609,7 @@ namespace UoFiddler.Controls.Forms
 
                                         SetPaletteBox();
 
-                                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+                                        ShowFrameCenter(edit.Frames[FramesTrackBar.Value]);
 
                                         Options.ChangedUltimaClass["Animations"] = true;
                                     }
@@ -1530,8 +1648,7 @@ namespace UoFiddler.Controls.Forms
                                         FramesListView.TileSize = new Size(width + 5, height + 5);
                                         FramesTrackBar.Maximum = i;
 
-                                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+                                        ShowFrameCenter(edit.Frames[FramesTrackBar.Value]);
 
                                         Options.ChangedUltimaClass["Animations"] = true;
                                     }
@@ -2370,8 +2487,7 @@ namespace UoFiddler.Controls.Forms
 
                             FramesListView.Invalidate();
 
-                            CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                            CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+                            ShowFrameCenter(edit.Frames[FramesTrackBar.Value]);
 
                             Options.ChangedUltimaClass["Animations"] = true;
                         }
@@ -2428,7 +2544,7 @@ namespace UoFiddler.Controls.Forms
             {
                 AnimationTimer.Enabled = false;
                 FramesTrackBar.Enabled = true;
-                SameCenterButton.Enabled = true;
+                SameCenterButton.Enabled = !RelativeCenterCheckBox.Checked;
                 CenterXNumericUpDown.Enabled = true;
                 CenterYNumericUpDown.Enabled = true;
 
@@ -2960,8 +3076,7 @@ namespace UoFiddler.Controls.Forms
             ProgressBar.Invalidate();
             SetPaletteBox();
             FramesListView.Invalidate();
-            CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-            CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+            ShowFrameCenter(edit.Frames[FramesTrackBar.Value]);
             Options.ChangedUltimaClass["Animations"] = true;
         }
 
@@ -3352,8 +3467,7 @@ namespace UoFiddler.Controls.Forms
                                         SetPaletteBox();
                                         FramesListView.Invalidate();
 
-                                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+                                        ShowFrameCenter(edit.Frames[FramesTrackBar.Value]);
 
                                         Options.ChangedUltimaClass["Animations"] = true;
                                     }
@@ -4038,8 +4152,7 @@ namespace UoFiddler.Controls.Forms
                                         SetPaletteBox();
                                         FramesListView.Invalidate();
 
-                                        CenterXNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.X;
-                                        CenterYNumericUpDown.Value = edit.Frames[FramesTrackBar.Value].Center.Y;
+                                        ShowFrameCenter(edit.Frames[FramesTrackBar.Value]);
 
                                         Options.ChangedUltimaClass["Animations"] = true;
                                     }
