@@ -125,15 +125,15 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             int startX, int startY, int endX, int endY, int z, bool final);
 
         /// <summary>
-        /// The cell under the mouse and the base Z: the virtual floor, the hovered tall tile's own Z
+        /// The cell under the mouse and the base Z: the work plane, the hovered tall tile's own Z
         /// (to stay on its level), or the top of the hovered flat tile.
         /// </summary>
         protected virtual void BaseCell(out int x, out int y, out int z)
         {
             Context.CellAt(Context.MouseLoc, out x, out y, out z);
-            if (Context.FloorVisible)
+            if (Context.WorkZ is { } baseZ)
             {
-                z = Context.FloorZ;
+                z = baseZ;
                 Context.PlaneCell(Context.MouseLoc, z, out x, out y);
             }
             else if (Context.HoverTile is { } hover && hover.Height >= 10)

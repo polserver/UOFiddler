@@ -38,8 +38,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _limitBar = new System.Windows.Forms.TrackBar();
             _limitLabel = new System.Windows.Forms.Label();
             _limit = new System.Windows.Forms.CheckBox();
-            _planeZ = new System.Windows.Forms.NumericUpDown();
-            _showPlane = new System.Windows.Forms.CheckBox();
             _hideWalls = new System.Windows.Forms.CheckBox();
             _hideAbove = new System.Windows.Forms.CheckBox();
             _floorList = new System.Windows.Forms.ListBox();
@@ -83,7 +81,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             floorsPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)_firstFloor).BeginInit();
             ((System.ComponentModel.ISupportInitialize)_limitBar).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)_planeZ).BeginInit();
             selectionBox.SuspendLayout();
             selectionPage.SuspendLayout();
             _single.SuspendLayout();
@@ -116,8 +113,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             floorsPage.Controls.Add(_limitBar);
             floorsPage.Controls.Add(_limitLabel);
             floorsPage.Controls.Add(_limit);
-            floorsPage.Controls.Add(_planeZ);
-            floorsPage.Controls.Add(_showPlane);
             floorsPage.Controls.Add(_hideWalls);
             floorsPage.Controls.Add(_hideAbove);
             floorsPage.Controls.Add(_floorList);
@@ -129,7 +124,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // 
             // _firstFloor
             // 
-            _firstFloor.Location = new System.Drawing.Point(224, 186);
+            _firstFloor.Location = new System.Drawing.Point(224, 162);
             _firstFloor.Name = "_firstFloor";
             _firstFloor.Size = new System.Drawing.Size(52, 23);
             _firstFloor.TabIndex = 0;
@@ -138,7 +133,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // firstFloorLabel
             // 
             firstFloorLabel.AutoSize = true;
-            firstFloorLabel.Location = new System.Drawing.Point(4, 189);
+            firstFloorLabel.Location = new System.Drawing.Point(4, 165);
             firstFloorLabel.Name = "firstFloorLabel";
             firstFloorLabel.Size = new System.Drawing.Size(172, 15);
             firstFloorLabel.TabIndex = 1;
@@ -146,7 +141,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // 
             // _showHidden
             // 
-            _showHidden.Location = new System.Drawing.Point(4, 264);
+            _showHidden.Location = new System.Drawing.Point(4, 240);
             _showHidden.Name = "_showHidden";
             _showHidden.Size = new System.Drawing.Size(160, 26);
             _showHidden.TabIndex = 2;
@@ -156,7 +151,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // 
             // _editFloors
             // 
-            _editFloors.Location = new System.Drawing.Point(170, 264);
+            _editFloors.Location = new System.Drawing.Point(170, 240);
             _editFloors.Name = "_editFloors";
             _editFloors.Size = new System.Drawing.Size(106, 26);
             _editFloors.TabIndex = 3;
@@ -167,7 +162,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _limitBar
             // 
             _limitBar.AutoSize = false;
-            _limitBar.Location = new System.Drawing.Point(4, 234);
+            _limitBar.Location = new System.Drawing.Point(4, 210);
             _limitBar.Name = "_limitBar";
             _limitBar.Size = new System.Drawing.Size(276, 26);
             _limitBar.TabIndex = 4;
@@ -176,7 +171,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // 
             // _limitLabel
             // 
-            _limitLabel.Location = new System.Drawing.Point(224, 214);
+            _limitLabel.Location = new System.Drawing.Point(224, 190);
             _limitLabel.Name = "_limitLabel";
             _limitLabel.Size = new System.Drawing.Size(52, 18);
             _limitLabel.TabIndex = 5;
@@ -185,34 +180,13 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _limit
             // 
             _limit.AutoSize = true;
-            _limit.Location = new System.Drawing.Point(4, 212);
+            _limit.Location = new System.Drawing.Point(4, 188);
             _limit.Name = "_limit";
             _limit.Size = new System.Drawing.Size(90, 19);
             _limit.TabIndex = 6;
             _limit.Text = "Limit height";
             _limit.UseVisualStyleBackColor = true;
             _limit.CheckedChanged += Limit_CheckedChanged;
-            // 
-            // _planeZ
-            // 
-            _planeZ.Location = new System.Drawing.Point(224, 162);
-            _planeZ.Maximum = new decimal(new int[] { 127, 0, 0, 0 });
-            _planeZ.Minimum = new decimal(new int[] { 128, 0, 0, int.MinValue });
-            _planeZ.Name = "_planeZ";
-            _planeZ.Size = new System.Drawing.Size(52, 23);
-            _planeZ.TabIndex = 7;
-            _planeZ.ValueChanged += PlaneZ_ValueChanged;
-            // 
-            // _showPlane
-            // 
-            _showPlane.AutoSize = true;
-            _showPlane.Location = new System.Drawing.Point(4, 164);
-            _showPlane.Name = "_showPlane";
-            _showPlane.Size = new System.Drawing.Size(116, 19);
-            _showPlane.TabIndex = 8;
-            _showPlane.Text = "Show work plane";
-            _showPlane.UseVisualStyleBackColor = true;
-            _showPlane.CheckedChanged += ShowPlane_CheckedChanged;
             // 
             // _hideWalls
             // 
@@ -628,7 +602,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             floorsPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)_firstFloor).EndInit();
             ((System.ComponentModel.ISupportInitialize)_limitBar).EndInit();
-            ((System.ComponentModel.ISupportInitialize)_planeZ).EndInit();
             selectionBox.ResumeLayout(false);
             selectionPage.ResumeLayout(false);
             _single.ResumeLayout(false);
@@ -655,8 +628,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.TrackBar _limitBar;
         private System.Windows.Forms.Label _limitLabel;
         private System.Windows.Forms.CheckBox _limit;
-        private System.Windows.Forms.NumericUpDown _planeZ;
-        private System.Windows.Forms.CheckBox _showPlane;
         private System.Windows.Forms.CheckBox _hideWalls;
         private System.Windows.Forms.CheckBox _hideAbove;
         private System.Windows.Forms.ListBox _floorList;

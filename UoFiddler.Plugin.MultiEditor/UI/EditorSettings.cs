@@ -50,8 +50,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         public Color WorkPlane { get; set; } = Color.FromArgb(150, 40, 200, 40);
 
-        public Color FloorPlane { get; set; } = Color.FromArgb(150, 40, 80, 220);
-
         public Color Grid { get; set; } = Color.FromArgb(150, 110, 110, 110);
 
         public Color Outline { get; set; } = Color.FromArgb(200, 150, 150, 150);
@@ -60,8 +58,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         // How a new document starts.
         public bool StartWithWorkPlane { get; set; } = true;
-
-        public bool StartWithFloorPlane { get; set; }
 
         public bool StartWithGrid { get; set; }
 

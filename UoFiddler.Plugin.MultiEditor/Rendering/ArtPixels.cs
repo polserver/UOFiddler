@@ -71,7 +71,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             return rgba;
         }
 
-        /// <summary>A plane cell (work plane, floor plane): a translucent diamond with a stronger edge, coloured by its tint.</summary>
+        /// <summary>A work plane cell: a translucent diamond with a stronger edge, coloured by its tint.</summary>
         public static byte[] FloorDiamond()
         {
             const int half = FloorSize / 2;

@@ -42,7 +42,6 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
         private Color _marqueeLine;
         private Color _marqueeFill;
         private SpriteTint _workPlane;
-        private SpriteTint _floorPlane;
 
         private readonly ArtAtlas _atlas;
         private readonly SpriteBatch _sprites;
@@ -82,7 +81,6 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             _marqueeLine = settings.SelectionBox;
             _marqueeFill = Color.FromArgb(40, settings.SelectionBox);
             _workPlane = SpriteTint.Solid(settings.WorkPlane);
-            _floorPlane = SpriteTint.Solid(settings.FloorPlane);
 
             if (!session.HasDocument)
             {
@@ -109,7 +107,6 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             }
             else
             {
-                AddFloorPlane(session);
                 AddTiles(session);
             }
 
@@ -148,92 +145,102 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             MultiTile hover = session.HoverTile;
             (int Floor, int Ceiling)? level = session.ActiveLevel;
 
-            foreach (MultiTile tile in list.Tiles)
-            {
-                if (tile.IsVirtualFloor)
-                {
-                    if (session.FloorVisible && _atlas.TryGet(ArtAtlas.FloorKey, out AtlasSprite floor) && IsVisible(tile, floor))
-                    {
-                        _sprites.Add(floor, tile.XMod, tile.YMod, _workPlane);
-                    }
+            // The work plane goes into each cell's stack where its tiles reach the plane's height,
+            // so what is below shows through it and what stands on it is drawn over it.
+            bool plane = session.ShowWorkPlane && _atlas.TryGet(ArtAtlas.FloorKey, out _planeSprite);
+            int planeZ = session.WorkPlaneZ;
 
-                    continue;
-                }
-
-                if (tile.Z > maxHeight || !list.IsShown(tile))
-                {
-                    continue;
-                }
-
-                if (!_atlas.TryGet(tile.Id, out AtlasSprite sprite) || !IsVisible(tile, sprite))
-                {
-                    continue;
-                }
-
-                SpriteTint tint;
-                if (tile == hover)
-                {
-                    tint = _hover;
-                }
-                else if (tile == selected)
-                {
-                    tint = _selected;
-                }
-                else if (manySelected && session.IsSelected(tile))
-                {
-                    tint = _multiSelected;
-                }
-                else if (level is { } above && tile.Z >= above.Ceiling)
-                {
-                    if (session.HideAboveLevel)
-                    {
-                        continue;
-                    }
-
-                    tint = _aboveLevel;
-                }
-                else if (level is { } below && tile.Z < below.Floor)
-                {
-                    tint = _belowLevel;
-                }
-                else if (tile.Transparent)
-                {
-                    tint = _transparent;
-                }
-                else if ((session.ShowWalkables && tile.Walkable) || (session.ShowDoubleSurface && tile.DoubleSurface))
-                {
-                    tint = _standable;
-                }
-                else
-                {
-                    tint = SpriteTint.None;
-                }
-
-                _sprites.Add(sprite, tile.XMod, tile.YMod, tint);
-            }
-        }
-
-        /// <summary>
-        /// The floor plane: every cell of the multi as a diamond at the base of the floor being
-        /// built, under the tiles, in its own colour. The work plane moves; this one stays put.
-        /// </summary>
-        private void AddFloorPlane(EditorSession session)
-        {
-            if (!session.ShowFloorPlane || !_atlas.TryGet(ArtAtlas.FloorKey, out AtlasSprite floor))
-            {
-                return;
-            }
-
-            int z = session.FloorPlaneZ;
-            MultiEditorComponentList list = session.CompList;
             for (int x = 0; x < list.Width; ++x)
             {
                 for (int y = 0; y < list.Height; ++y)
                 {
-                    PointF corner = EditorSession.CellCorner(x, y, z);
-                    _sprites.Add(floor, corner.X - 22, corner.Y, _floorPlane);
+                    bool planeDrawn = !plane;
+                    foreach (MultiTile tile in list.TilesIn(x, y))
+                    {
+                        if (!planeDrawn && tile.SortKey >= planeZ)
+                        {
+                            AddPlaneCell(x, y, planeZ);
+                            planeDrawn = true;
+                        }
+
+                        AddTile(session, list, tile, maxHeight, manySelected, selected, hover, level);
+                    }
+
+                    if (!planeDrawn)
+                    {
+                        AddPlaneCell(x, y, planeZ);
+                    }
                 }
             }
+        }
+
+        private AtlasSprite _planeSprite;
+
+        /// <summary>One cell of the work plane: a diamond at the plane's height, when on screen.</summary>
+        private void AddPlaneCell(int x, int y, int z)
+        {
+            PointF corner = EditorSession.CellCorner(x, y, z);
+            float left = corner.X - 22;
+            if (left < _visible.Right && left + _planeSprite.Width > _visible.Left &&
+                corner.Y < _visible.Bottom && corner.Y + _planeSprite.Height > _visible.Top)
+            {
+                _sprites.Add(_planeSprite, left, corner.Y, _workPlane);
+            }
+        }
+
+        private void AddTile(EditorSession session, MultiEditorComponentList list, MultiTile tile, int maxHeight,
+            bool manySelected, MultiTile selected, MultiTile hover, (int Floor, int Ceiling)? level)
+        {
+            if (tile.Z > maxHeight || !list.IsShown(tile))
+            {
+                return;
+            }
+
+            if (!_atlas.TryGet(tile.Id, out AtlasSprite sprite) || !IsVisible(tile, sprite))
+            {
+                return;
+            }
+
+            SpriteTint tint;
+            if (tile == hover)
+            {
+                tint = _hover;
+            }
+            else if (tile == selected)
+            {
+                tint = _selected;
+            }
+            else if (manySelected && session.IsSelected(tile))
+            {
+                tint = _multiSelected;
+            }
+            else if (level is { } above && tile.Z >= above.Ceiling)
+            {
+                if (session.HideAboveLevel)
+                {
+                    return;
+                }
+
+                tint = _aboveLevel;
+            }
+            else if (level is { } below && tile.Z < below.Floor)
+            {
+                tint = _belowLevel;
+            }
+            else if (tile.Transparent)
+            {
+                tint = _transparent;
+            }
+            else if ((session.ShowWalkables && tile.Walkable) || (session.ShowDoubleSurface && tile.DoubleSurface))
+            {
+                tint = _standable;
+            }
+            else
+            {
+                tint = SpriteTint.None;
+            }
+
+            _sprites.Add(sprite, tile.XMod, tile.YMod, tint);
         }
 
         /// <summary>The reference multi, faint and blue, under everything else.</summary>
@@ -347,11 +354,13 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
                    tile.YMod < _visible.Bottom && tile.YMod + sprite.Height > _visible.Top;
         }
 
-        /// <summary>The outline of the multi on the working plane, and the cell grid when it is on.</summary>
+        /// <summary>The outline of the multi at Z 0, and the cell grid when it is on.</summary>
         private void AddGrid(EditorSession session)
         {
             MultiEditorComponentList list = session.CompList;
-            int z = session.FloorVisible ? session.FloorZ : 0;
+
+            // On the ground, whatever floor is chosen: the work plane is what moves with the floors.
+            const int z = 0;
             int width = list.Width;
             int height = list.Height;
 
@@ -453,7 +462,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
                         Fill(o.X, o.Y, cell, cell, color);
                     }
 
-                    if (session.FloorVisible)
+                    if (session.ShowWorkPlane)
                     {
                         Fill(o.X, o.Y, cell, cell, _planPlane);
                     }

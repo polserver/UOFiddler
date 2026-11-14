@@ -61,8 +61,6 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         private Point _mouseLoc;
         private bool _mouseInside;
         private (int X, int Y, int Z) _cursorCell = (int.MinValue, int.MinValue, int.MinValue);
-        private int _floorZ;
-        private bool _floorVisible;
         private int? _heightLimit;
         private (int Floor, int Ceiling)? _activeLevel;
         private bool _hideAboveLevel = true;
@@ -176,13 +174,12 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         {
             CancelTool();
             CompList = list;
-            CompList.SetFloorZ(_floorZ);
             _selection.Clear();
             HoverTile = null;
             _heightLimit = null;
             _activeLevel = null;
             _levelIndex = 0;
-            _floorBeforeLevels = null;
+            _workPlaneOffset = 0;
             Modified = false;
             _firstFloorZ = DetectFirstFloorZ();
             _levelDefinitions.Clear();
@@ -197,27 +194,12 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
 
         // ---------------------------------------------------------------- view options
 
-        public int FloorZ
-        {
-            get => _floorZ;
-            set
-            {
-                if (_floorZ == value)
-                {
-                    return;
-                }
-
-                _floorZ = value;
-                CompList.SetFloorZ(value);
-                OnViewChanged();
-            }
-        }
-
-        public bool FloorVisible
-        {
-            get => _floorVisible;
-            set => SetView(ref _floorVisible, value);
-        }
+        /// <summary>
+        /// The Z you build on: the work plane's, once a floor is chosen or the plane was moved.
+        /// Tiles below it cannot be edited, and drawing on an empty cell and the house tools land
+        /// on it. Null with all floors shown and the plane where it starts.
+        /// </summary>
+        public int? WorkZ => _levelIndex > 0 || _workPlaneOffset != 0 ? WorkPlaneZ : null;
 
         /// <summary>Highest Z drawn, or null to draw everything.</summary>
         public int? HeightLimit
@@ -275,8 +257,6 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             get => _showGrid;
             set => SetView(ref _showGrid, value);
         }
-
-        int IMultiViewSettings.DrawFloorZ => _floorZ;
 
         /// <summary>
         /// Highest Z you work on: the height limit, lowered to the active level's top. Tiles above
@@ -478,7 +458,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         /// <summary>True when a tile can be hovered, selected and edited with the current view.</summary>
         public bool IsEditable(MultiTile tile)
         {
-            return tile.Z <= EditMaxHeight && !(_floorVisible && _floorZ > tile.Z) && CompList.IsShown(tile);
+            return tile.Z <= EditMaxHeight && !(WorkZ is { } baseZ && baseZ > tile.Z) && CompList.IsShown(tile);
         }
 
         /// <summary>The topmost editable tile with a drawn pixel at a world point, or null.</summary>
@@ -737,13 +717,13 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         {
             if (Placement == PlacementMode.FixedZ)
             {
-                z = _floorZ;
+                z = WorkPlaneZ;
                 CellOnPlane(world, z, out x, out y);
                 return;
             }
 
             MultiTile hover = HoverTile;
-            if (hover != null && (!_floorVisible || hover.Z >= _floorZ))
+            if (hover != null && (WorkZ is not { } baseZ || hover.Z >= baseZ))
             {
                 x = hover.X;
                 y = hover.Y;
@@ -762,8 +742,8 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
                 return;
             }
 
-            // No tile under the mouse: the cell on the virtual floor, or on Z 0.
-            z = _floorVisible ? _floorZ : 0;
+            // No tile under the mouse: the cell on the work plane, or on Z 0.
+            z = WorkZ ?? 0;
             CellOnPlane(world, z, out x, out y);
         }
     }

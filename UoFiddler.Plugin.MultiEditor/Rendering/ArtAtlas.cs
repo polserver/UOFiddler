@@ -27,7 +27,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
         /// <summary>A solid white block, for filled shapes.</summary>
         public const int WhiteKey = -1;
 
-        /// <summary>The virtual floor diamond.</summary>
+        /// <summary>The work plane diamond.</summary>
         public const int FloorKey = -2;
 
         private const int Padding = 2;
