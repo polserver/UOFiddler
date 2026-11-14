@@ -540,7 +540,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _center = Command("View", "Center design", () => _canvas.CenterView(), Keys.Shift | Keys.Home, hasDoc, glyph: Glyphs.Center);
             _zoomIn = Command("View", "Zoom in", () => _canvas.ZoomStep(1), Keys.Add, glyph: Glyphs.ZoomIn, alt: Keys.Shift | Keys.Oemplus);
             _zoomOut = Command("View", "Zoom out", () => _canvas.ZoomStep(-1), Keys.Subtract, glyph: Glyphs.ZoomOut, alt: Keys.OemMinus);
-            _zoomReset = Command("View", "Zoom 100%", () => _canvas.SetZoom(1f), Keys.Control | Keys.D0, alt: Keys.Control | Keys.NumPad0);
+            _zoomReset = Command("View", "Zoom 100%", () => _canvas.SetZoom(1f), Keys.Control | Keys.D0, glyph: Glyphs.ActualSize, alt: Keys.Control | Keys.NumPad0);
             _performanceInfo = Command("View", "Performance info", TogglePerformanceInfo, Keys.F12, isChecked: () => _performanceShown);
 
             AddTool(ToolKind.Select, "Select", Keys.S, Glyphs.Select);
@@ -1173,12 +1173,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             InsertButtons(strip, _mainSeparator3, _cut, _copy, _paste, _delete);
             InsertButtons(strip, _mainSeparator4, _workPlane, _grid, _hideWalls);
 
-            // Zoom, then help, after the other groups: zoom out, the zoom, zoom in, fit and centre.
+            // Zoom, then help, after the other groups: zoom out, the zoom, zoom in, 100%, fit and centre.
             int at = strip.Items.IndexOf(_zoomLabel);
             strip.Items.Insert(at++, new ToolStripSeparator());
             strip.Items.Insert(at++, _commands.Button(_zoomOut));
             at++; // the zoom label
-            foreach (EditorCommand command in new[] { _zoomIn, _fit, _center })
+            foreach (EditorCommand command in new[] { _zoomIn, _zoomReset, _fit, _center })
             {
                 strip.Items.Insert(at++, _commands.Button(command));
             }

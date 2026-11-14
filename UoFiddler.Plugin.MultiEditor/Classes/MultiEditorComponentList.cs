@@ -23,7 +23,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
     /// </summary>
     internal partial class MultiEditorComponentList
     {
-        public const int DefaultUndoStackSize = 200;
+        public const int DefaultUndoStackSize = 400;
 
         public const int GapXMod = 44;
         public const int GapYMod = 22;

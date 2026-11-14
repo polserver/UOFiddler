@@ -47,8 +47,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 _start = Context.MouseLoc;
                 _moveDx = _moveDy = 0;
             }
-            else if (hover == null && !CtrlHeld)
+            else if (hover == null)
             {
+                // With Ctrl the box adds to the selection when it is let go.
                 _marquee = true;
                 _start = _end = Context.MouseLoc;
             }

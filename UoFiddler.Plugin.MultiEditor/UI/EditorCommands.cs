@@ -279,6 +279,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         public const string ZoomOut = "\uE71F";
         public const string Fit = "\uE9A6";
         public const string Center = "\uE81D";
+
+        /// <summary>Zoom 100%: Segoe MDL2 has no actual-size icon, so it is the text "1:1".</summary>
+        public const string ActualSize = "1:1";
         public const string RotateLeft = "\uE7AD";
         public const string RotateRight = "\uE7AD";
         public const string Help = "\uE897";
@@ -288,7 +291,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             var bitmap = new Bitmap(size, size);
             using Graphics g = Graphics.FromImage(bitmap);
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-            using var font = new Font("Segoe MDL2 Assets", size * 0.72f, GraphicsUnit.Pixel);
+
+            // Icons are private-use characters of the icon font; anything else is short text drawn in a UI font.
+            bool icon = glyph.Length > 0 && glyph[0] >= '' && glyph[0] <= '';
+            using var font = icon
+                ? new Font("Segoe MDL2 Assets", size * 0.72f, GraphicsUnit.Pixel)
+                : new Font("Segoe UI", size * 0.55f, FontStyle.Bold, GraphicsUnit.Pixel);
             using var brush = new SolidBrush(color);
             using var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
             g.DrawString(glyph, font, brush, new RectangleF(0, 0, size, size), format);

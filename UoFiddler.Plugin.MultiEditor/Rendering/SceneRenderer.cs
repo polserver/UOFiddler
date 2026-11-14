@@ -17,8 +17,8 @@ using UoFiddler.Plugin.MultiEditor.Editing;
 namespace UoFiddler.Plugin.MultiEditor.Rendering
 {
     /// <summary>
-    /// Turns an editor session into sprites and lines: the multi in draw order with its view
-    /// highlights, the grid, then what the active tool shows.
+    /// Turns an editor session into sprites and lines: the ground grid and outline, the multi in
+    /// draw order with its view highlights over them, then what the active tool shows.
     /// </summary>
     internal sealed class SceneRenderer : IDisposable, IToolOverlay
     {
@@ -104,21 +104,23 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             if (session.PlanMode)
             {
                 AddPlan(session);
+                LastSpriteCount += _sprites.Count;
+                _sprites.Flush(_atlas, camera, viewport);
+                _lines.Flush(camera, viewport);
             }
             else
             {
-                AddTiles(session);
-            }
-
-            LastSpriteCount += _sprites.Count;
-            _sprites.Flush(_atlas, camera, viewport);
-
-            if (!session.PlanMode)
-            {
+                // The grid and the outline lie on the ground (Z 0): drawn after the reference
+                // underlay but before the tiles, so whatever stands on the ground covers them.
+                LastSpriteCount += _sprites.Count;
+                _sprites.Flush(_atlas, camera, viewport);
                 AddGrid(session);
-            }
+                _lines.Flush(camera, viewport);
 
-            _lines.Flush(camera, viewport);
+                AddTiles(session);
+                LastSpriteCount += _sprites.Count;
+                _sprites.Flush(_atlas, camera, viewport);
+            }
 
             // Tool overlay: sprites first (ghost tiles), then the lines on top of them.
             session.ActiveTool.PaintOverlay(this);
