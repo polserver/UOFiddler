@@ -24,28 +24,13 @@ namespace UoFiddler.Plugin.MultiEditor.UI
     /// <summary>What an open/import produced.</summary>
     internal sealed record OpenedMulti(MultiComponentList Components, string Title, int? ClientId);
 
+    /// <summary>What an import read, and what it could not.</summary>
+    internal sealed record ImportResult(List<OpenedMulti> Opened, List<ImportFailure> Failures);
+
     /// <summary>Open, import, export, save-to-client and map-extract dialogs of the multi editor.</summary>
     internal static class DocumentIO
     {
         private const string _caption = "Multi Editor";
-
-        // Same formats and file masks as the old editor's import menu. Several share an extension
-        // (UOA text and plain text are both .txt, XML and WorldForge both .xml), so the type
-        // is taken from the selected filter entry, not the extension.
-        private static readonly (Multis.ImportType Type, string Description, string Pattern)[] _importTypes =
-        {
-            (Multis.ImportType.TXT, "Txt file", "*.txt"),
-            (Multis.ImportType.UOA, "UOA text file", "*.txt"),
-            (Multis.ImportType.UOAB, "UOA binary file", "*.uoa"),
-            (Multis.ImportType.WSC, "WSC file", "*.wsc"),
-            (Multis.ImportType.MULTICACHE, "MultiCache file", "Multicache.dat"),
-            (Multis.ImportType.UOADESIGN, "UOA design file", "Designs.*"),
-            (Multis.ImportType.CSV, "CSV file", "*.csv"),
-            (Multis.ImportType.UOX3, "UOX3 file", "*.uox3"),
-            (Multis.ImportType.XML, "XML file (UOFiddler export)", "*.xml"),
-            (Multis.ImportType.UOH, "UO House Editor design", "*.uoh"),
-            (Multis.ImportType.WORLDFORGE, "WorldForge export", "*.xml")
-        };
 
         private static readonly (Multis.ImportType Type, string Extension, string Description)[] _exportTypes =
         {
@@ -108,27 +93,26 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return null;
             }
 
-            return Pick(owner, "Open multi from client", entries, true).ConvertAll(p => new OpenedMulti(p.Components, p.Name, p.Id));
+            return Pick(owner, "Open multi from client", entries, true, true).ConvertAll(p => new OpenedMulti(p.Components, p.Name, p.Id));
         }
 
         /// <summary>
-        /// Asks for a file of any supported import type; multi-container files then show a pick list.
-        /// Null when cancelled or the file holds nothing.
+        /// Asks for one or more files of a supported import type and reads them. A file that fails
+        /// is skipped and listed in the result; the multis of files that hold several are chosen
+        /// from a list. Null when cancelled.
         /// </summary>
-        public static List<OpenedMulti> ImportFromFile(IWin32Window owner)
+        public static ImportResult ImportFromFile(IWin32Window owner)
         {
             var filters = new List<string>();
-            foreach ((_, string description, string pattern) in _importTypes)
+            foreach ((_, string description, string pattern) in MultiFileImport.Formats)
             {
                 filters.Add($"{description} ({pattern})|{pattern}");
             }
 
-            // RestoreDirectory stays off on purpose: Multis.LoadFromDesigner resolves the .idx/.bin
-            // through the working directory, which the dialog sets to the file's folder.
             using var dialog = new OpenFileDialog
             {
-                Title = "Import multi from file",
-                Multiselect = false,
+                Title = "Import multis from files",
+                Multiselect = true,
                 CheckFileExists = true,
                 Filter = string.Join("|", filters),
                 FilterIndex = 1
@@ -139,76 +123,74 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return null;
             }
 
-            Multis.ImportType type = _importTypes[dialog.FilterIndex - 1].Type;
-            string fileName = dialog.FileName;
-            string title = Path.GetFileNameWithoutExtension(fileName);
+            // Formats share extensions, so the type is the selected filter entry's, for every file.
+            Multis.ImportType type = MultiFileImport.Formats[dialog.FilterIndex - 1].Type;
+            string[] files = dialog.FileNames;
+            var opened = new List<OpenedMulti>();
+            var failures = new List<ImportFailure>();
+            var choices = new List<MultiPickEntry>();
 
+            Cursor previous = Cursor.Current;
+            Cursor.Current = Cursors.WaitCursor;
             try
             {
-                switch (type)
+                foreach (string file in files)
                 {
-                    case Multis.ImportType.MULTICACHE:
+                    List<ImportedMulti> multis;
+                    try
+                    {
+                        multis = MultiFileImport.Load(file, type);
+                    }
+                    catch (Exception ex)
+                    {
+                        failures.Add(new ImportFailure(file, MultiFileImport.Reason(ex)));
+                        continue;
+                    }
+
+                    foreach (ImportedMulti multi in multis)
+                    {
+                        MultiComponentList components;
+                        try
                         {
-                            List<MultiComponentList> list = Multis.LoadFromCache(fileName);
-                            var entries = new List<MultiPickEntry>();
-                            for (int i = 0; i < list.Count; ++i)
-                            {
-                                entries.Add(new MultiPickEntry(null, "Entry " + i, null, list[i]));
-                            }
-
-                            return PickFromContainer(owner, entries, title);
+                            components = multi.Components;
                         }
-                    case Multis.ImportType.UOAB:
+                        catch (Exception ex)
                         {
-                            // A .uoa can be a batch of designs: then one is picked from a list.
-                            List<UoaDesign> designs = UoaDesignFile.ReadHeaders(fileName);
-                            if (designs.Count == 1)
-                            {
-                                return FromDesign(designs[0]) is { } single ? new List<OpenedMulti> { single } : null;
-                            }
-
-                            var entries = new List<MultiPickEntry>();
-                            foreach (UoaDesign design in designs)
-                            {
-                                MultiComponentList multi = UoaDesignFile.Load(design);
-                                if (multi != MultiComponentList.Empty)
-                                {
-                                    entries.Add(new MultiPickEntry(null, DesignTitle(design), null, multi));
-                                }
-                            }
-
-                            return PickFromContainer(owner, entries, title);
+                            failures.Add(new ImportFailure(file, $"{multi.Name}: {MultiFileImport.Reason(ex)}"));
+                            continue;
                         }
-                    case Multis.ImportType.UOADESIGN:
+
+                        if (multis.Count == 1)
                         {
-                            List<object[]> list = Multis.LoadFromDesigner(fileName);
-                            var entries = new List<MultiPickEntry>();
-                            for (int i = 0; i < list.Count; ++i)
-                            {
-                                entries.Add(new MultiPickEntry(null, list[i][0] + "(" + i + ")", null, (MultiComponentList)list[i][1]));
-                            }
-
-                            return PickFromContainer(owner, entries, title);
+                            opened.Add(new OpenedMulti(components, multi.Name, null));
                         }
-                    default:
+                        else
                         {
-                            // LoadFromFile swallows parse errors and returns Empty.
-                            MultiComponentList multi = Multis.LoadFromFile(fileName, type);
-                            if (multi == null || multi == MultiComponentList.Empty)
-                            {
-                                MessageBox.Show(owner, "The file could not be read or holds no multi.", _caption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                return null;
-                            }
-
-                            return new List<OpenedMulti> { new OpenedMulti(multi, title, null) };
+                            choices.Add(new MultiPickEntry(null, multi.Name, Path.GetFileName(file), components));
                         }
+                    }
                 }
             }
-            catch (Exception ex)
+            finally
             {
-                MessageBox.Show(owner, $"Import failed: {ex.Message}", _caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
+                Cursor.Current = previous;
             }
+
+            // Files holding several multis (MultiCache, UOA batches and design sets) share one list.
+            if (choices.Count > 0)
+            {
+                string title = files.Length == 1 ? $"Choose multis from {Path.GetFileName(files[0])}" : "Choose multis to import";
+                opened.AddRange(Pick(owner, title, choices, files.Length > 1, false).ConvertAll(p => new OpenedMulti(p.Components, p.Name, null)));
+            }
+
+            return new ImportResult(opened, failures);
+        }
+
+        /// <summary>Lists the multis in every supported file under a folder and returns the chosen ones. Null when cancelled.</summary>
+        public static ImportResult ImportFromFolder(IWin32Window owner)
+        {
+            using var dialog = new FolderImportDialog();
+            return dialog.ShowDialog(owner) == DialogResult.OK ? new ImportResult(dialog.Opened, dialog.Failures) : null;
         }
 
         /// <summary>A UO Architect design as an opened multi, named after the design (or its file). Null when it holds no items.</summary>
@@ -417,21 +399,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             return tiles;
         }
 
-        private static List<OpenedMulti> PickFromContainer(IWin32Window owner, List<MultiPickEntry> entries, string title)
-        {
-            if (entries.Count == 0)
-            {
-                MessageBox.Show(owner, "The file holds no multis.", _caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return null;
-            }
-
-            return Pick(owner, $"Choose multis from {title}", entries, false).ConvertAll(p => new OpenedMulti(p.Components, $"{title} - {p.Name}", null));
-        }
-
         /// <summary>The rows picked in the list (several with Ctrl or Shift); empty when cancelled.</summary>
-        private static List<MultiPickEntry> Pick(IWin32Window owner, string title, List<MultiPickEntry> entries, bool showSource)
+        private static List<MultiPickEntry> Pick(IWin32Window owner, string title, List<MultiPickEntry> entries, bool showSource, bool clientSources)
         {
-            using var dialog = new DocumentIOPickDialog(title, entries, showSource);
+            using var dialog = new DocumentIOPickDialog(title, entries, showSource, clientSources);
             return dialog.ShowDialog(owner) == DialogResult.OK ? new List<MultiPickEntry>(dialog.SelectedEntries) : new List<MultiPickEntry>();
         }
 

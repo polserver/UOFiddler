@@ -82,6 +82,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// <summary>Folder the Designs page lists UO Architect designs from.</summary>
         public string DesignLibraryFolder { get; set; } = string.Empty;
 
+        /// <summary>Folder the Import from folder window scans.</summary>
+        public string ImportFolder { get; set; } = string.Empty;
+
+        /// <summary>Whether Import from folder also scans the folders below.</summary>
+        public bool ImportRecursive { get; set; } = true;
+
         /// <summary>Height of the pieces list under the House page's styles.</summary>
         public int HousePiecesHeight { get; set; } = 250;
 

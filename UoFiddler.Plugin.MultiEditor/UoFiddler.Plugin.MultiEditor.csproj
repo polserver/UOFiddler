@@ -53,6 +53,12 @@
 		<Compile Update="UI\DocumentIOPickDialog.Designer.cs">
 			<DependentUpon>DocumentIOPickDialog.cs</DependentUpon>
 		</Compile>
+		<Compile Update="UI\FolderImportDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\FolderImportDialog.Designer.cs">
+			<DependentUpon>FolderImportDialog.cs</DependentUpon>
+		</Compile>
 		<Compile Update="UI\DocumentIOSaveDialog.cs">
 			<SubType>Form</SubType>
 		</Compile>
