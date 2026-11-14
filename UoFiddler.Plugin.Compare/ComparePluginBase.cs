@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Plugin;
 using UoFiddler.Controls.Plugin.Interfaces;
+using UoFiddler.Controls.UserControls;
 using UoFiddler.Plugin.Compare.UserControls;
 
 namespace UoFiddler.Plugin.Compare
@@ -36,7 +37,7 @@ namespace UoFiddler.Plugin.Compare
             + "Compares 2 Texture files\r\n"
             + "Compares 2 AnimData files\r\n"
             + "Compares 2 RadarCol files\r\n"
-            + "(Adds 9 new Tabs)";
+            + "(Adds a Compare tab with 10 sub-tabs)";
 
         /// <summary>
         /// Author of the plugin
@@ -46,7 +47,7 @@ namespace UoFiddler.Plugin.Compare
         /// <summary>
         /// Version of the plugin
         /// </summary>
-        public override string Version { get; } = "1.8.0";
+        public override string Version { get; } = "1.9.0";
 
         /// <summary>
         /// Host of the plugin.
@@ -64,125 +65,40 @@ namespace UoFiddler.Plugin.Compare
 
         public override void ModifyTabPages(TabControl tabControl)
         {
+            ThemedTabControl compareTabs = new ThemedTabControl
+            {
+                Dock = DockStyle.Fill
+            };
+            AddPage(compareTabs, "Items", new CompareItemControl());
+            AddPage(compareTabs, "Land", new CompareLandControl());
+            AddPage(compareTabs, "CliLocs", new CompareCliLocControl());
+            AddPage(compareTabs, "Hues", new CompareHuesControl());
+            AddPage(compareTabs, "Gumps", new CompareGumpControl());
+            AddPage(compareTabs, "Map", new CompareMapControl());
+            AddPage(compareTabs, "Texture", new CompareTextureControl());
+            AddPage(compareTabs, "AnimData", new CompareAnimDataControl());
+            AddPage(compareTabs, "RadarCol", new CompareRadarColControl());
+            AddPage(compareTabs, "TileData", new CompareTileDataControl());
+
             TabPage page = new TabPage
             {
                 Tag = tabControl.TabCount + 1,
-                Text = "Compare Items"
+                Text = "Compare"
             };
-            CompareItemControl compArt = new CompareItemControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page.Controls.Add(compArt);
+            page.Controls.Add(compareTabs);
             tabControl.TabPages.Add(page);
+        }
 
-            TabPage page2 = new TabPage
+        private static void AddPage(TabControl tabs, string text, Control content)
+        {
+            TabPage page = new TabPage
             {
-                Tag = tabControl.TabCount + 1,
-                Text = "Compare Land"
+                Text = text,
+                UseVisualStyleBackColor = true
             };
-            CompareLandControl compLandControl = new CompareLandControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page2.Controls.Add(compLandControl);
-            tabControl.TabPages.Add(page2);
-
-            TabPage page3 = new TabPage
-            {
-                Tag = tabControl.TabCount + 1,
-                Text = "Compare CliLocs"
-            };
-            CompareCliLocControl compCli = new CompareCliLocControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page3.Controls.Add(compCli);
-            tabControl.TabPages.Add(page3);
-
-            TabPage page4 = new TabPage
-            {
-                Tag = tabControl.TabCount + 1,
-                Text = "Compare Hues"
-            };
-            CompareHuesControl compH = new CompareHuesControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page4.Controls.Add(compH);
-            tabControl.TabPages.Add(page4);
-
-            TabPage page5 = new TabPage
-            {
-                Tag = tabControl.TabCount + 1,
-                Text = "Compare Gumps"
-            };
-            CompareGumpControl compG = new CompareGumpControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page5.Controls.Add(compG);
-            tabControl.TabPages.Add(page5);
-
-            TabPage page6 = new TabPage
-            {
-                Tag = tabControl.TabCount + 1,
-                Text = "Compare Map"
-            };
-            CompareMapControl compM = new CompareMapControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page6.Controls.Add(compM);
-            tabControl.TabPages.Add(page6);
-
-            TabPage page7 = new TabPage
-            {
-                Tag = tabControl.TabCount + 1,
-                Text = "Compare Texture"
-            };
-            CompareTextureControl compTextureControl = new CompareTextureControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page7.Controls.Add(compTextureControl);
-            tabControl.TabPages.Add(page7);
-
-            TabPage page8 = new TabPage
-            {
-                Tag = tabControl.TabCount + 1,
-                Text = "Compare AnimData"
-            };
-            CompareAnimDataControl compAnimData = new CompareAnimDataControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page8.Controls.Add(compAnimData);
-            tabControl.TabPages.Add(page8);
-
-            TabPage page9 = new TabPage
-            {
-                Tag = tabControl.TabCount + 1,
-                Text = "Compare RadarCol"
-            };
-            CompareRadarColControl compRadarCol = new CompareRadarColControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page9.Controls.Add(compRadarCol);
-            tabControl.TabPages.Add(page9);
-
-            TabPage page10 = new TabPage
-            {
-                Tag = tabControl.TabCount + 1,
-                Text = "Compare TileData"
-            };
-            CompareTileDataControl compTileDataControl = new CompareTileDataControl
-            {
-                Dock = DockStyle.Fill
-            };
-            page10.Controls.Add(compTileDataControl);
-            tabControl.TabPages.Add(page10);
+            content.Dock = DockStyle.Fill;
+            page.Controls.Add(content);
+            tabs.TabPages.Add(page);
         }
 
         public override void ModifyPluginToolStrip(ToolStripDropDownButton toolStrip)

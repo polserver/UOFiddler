@@ -33,7 +33,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _centre = new System.Windows.Forms.Panel();
             _emptyHint = new System.Windows.Forms.Label();
             _canvas = new UoFiddler.Plugin.MultiEditor.Rendering.GlCanvas();
-            _docTabs = new DocumentTabControl();
+            _docTabs = new UoFiddler.Controls.UserControls.ThemedTabControl();
             _toolPalette = new System.Windows.Forms.ToolStrip();
             _editToolsLabel = new System.Windows.Forms.ToolStripLabel();
             _drawToolsLabel = new System.Windows.Forms.ToolStripLabel();
@@ -504,7 +504,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.Panel _centre;
         private System.Windows.Forms.Label _emptyHint;
         private UoFiddler.Plugin.MultiEditor.Rendering.GlCanvas _canvas;
-        private DocumentTabControl _docTabs;
+        private UoFiddler.Controls.UserControls.ThemedTabControl _docTabs;
         private System.Windows.Forms.ToolStrip _toolPalette;
         private System.Windows.Forms.ToolStripLabel _editToolsLabel;
         private System.Windows.Forms.ToolStripLabel _drawToolsLabel;
