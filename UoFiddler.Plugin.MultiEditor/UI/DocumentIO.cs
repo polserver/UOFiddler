@@ -45,7 +45,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             (Multis.ImportType.UOX3, "uox3", "UOX3"),
             (Multis.ImportType.XML, "xml", "XML"),
             (Multis.ImportType.UOH, "uoh", "UO House Editor design"),
-            (Multis.ImportType.WORLDFORGE, "xml", "WorldForge export")
+            (Multis.ImportType.WORLDFORGE, "xml", "WorldForge export"),
+            (Multis.ImportType.MULTIFORGE, "txt", "Multiforge text (POL)")
         };
 
         /// <summary>
@@ -239,7 +240,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             // The "All files" entry has no format of its own; fall back to the first one (text).
-            int index = Math.Min(dialog.FilterIndex, _exportTypes.Length) - 1;
+            int index = dialog.FilterIndex <= _exportTypes.Length ? dialog.FilterIndex - 1 : 0;
             (Multis.ImportType type, string ext, _) = _exportTypes[index];
 
             string fileName = dialog.FileName;
@@ -291,6 +292,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                         break;
                     case Multis.ImportType.WORLDFORGE:
                         sdkList.ExportToWorldForgeFile(fileName);
+                        break;
+                    case Multis.ImportType.MULTIFORGE:
+                        sdkList.ExportToMultiforgeFile(fileName);
                         break;
                 }
             }

@@ -646,6 +646,9 @@ namespace Ultima
                 case Multis.ImportType.WORLDFORGE:
                     parsed = ReadWorldForge(fileName);
                     break;
+                case Multis.ImportType.MULTIFORGE:
+                    parsed = ReadMultiforge(fileName);
+                    break;
             }
 
             if (parsed != null)
@@ -840,6 +843,50 @@ namespace Ultima
             foreach (var t in tiles)
             {
                 list.Add(Entry(t.Id, t.X - minX, t.Y - minY, t.Z - minZ));
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Text from the POL multiforge package, one item per line relative to the multi's centre:
+        /// id x y z hue [flag]. Its txtexport writes a hex id, a hex hue and the flag (1 part of the
+        /// multi, 0 a separate item); txtexport2 writes no flag, and older versions of it decimal ids.
+        /// A first line holding only a number is an item count. Hues are not part of a multi and are
+        /// dropped. Without a flag an item is part of the multi, except the 0x1 anchor.
+        /// </summary>
+        private static List<MultiTileEntry> ReadMultiforge(string fileName)
+        {
+            var list = new List<MultiTileEntry>();
+            int lineNumber = 0;
+            bool first = true;
+            foreach (string raw in File.ReadLines(fileName, Encoding.GetEncoding(1252)))
+            {
+                ++lineNumber;
+                string[] parts = raw.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 0)
+                {
+                    continue;
+                }
+
+                if (first && parts.Length == 1)
+                {
+                    // The item count some exports start with.
+                    first = false;
+                    _ = ParseNumber(parts[0]);
+                    continue;
+                }
+
+                first = false;
+                if (parts.Length < 5)
+                {
+                    throw new InvalidDataException($"Line {lineNumber} has {parts.Length} values, expected id x y z hue [flag]");
+                }
+
+                int id = ParseNumber(parts[0]);
+                _ = ParseNumber(parts[4]); // hue
+                int flags = parts.Length > 5 ? (ParseNumber(parts[5]) != 0 ? 1 : 0) : (id == 1 ? 0 : 1);
+                list.Add(Entry(id, ParseNumber(parts[1]), ParseNumber(parts[2]), ParseNumber(parts[3]), flags));
             }
 
             return list;
@@ -1209,6 +1256,29 @@ namespace Ultima
                 {
                     tex.WriteLine(
                         $"0x{SortedTiles[i].ItemId:X} {SortedTiles[i].OffsetX} {SortedTiles[i].OffsetY} {SortedTiles[i].OffsetZ} {SortedTiles[i].Flags}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Text for the POL multiforge package, as its txtexport writes it: the 0x1 anchor first, then
+        /// one item per line: hex id, x, y, z, hue (always 0x0, a multi has none) and the flag
+        /// (1 part of the multi, 0 a separate item).
+        /// </summary>
+        public void ExportToMultiforgeFile(string fileName)
+        {
+            using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            {
+                tex.NewLine = "\r\n";
+                bool hasAnchor = Array.Exists(SortedTiles, t => t.ItemId == 1 && t.OffsetX == 0 && t.OffsetY == 0 && t.OffsetZ == 0);
+                if (!hasAnchor)
+                {
+                    tex.WriteLine("0x1 0 0 0 0x0 0");
+                }
+
+                foreach (MultiTileEntry tile in SortedTiles)
+                {
+                    tex.WriteLine($"0x{tile.ItemId:X} {tile.OffsetX} {tile.OffsetY} {tile.OffsetZ} 0x0 {(tile.Flags != 0 ? 1 : 0)}");
                 }
             }
         }
