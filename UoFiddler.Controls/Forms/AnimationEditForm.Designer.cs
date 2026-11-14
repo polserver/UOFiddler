@@ -247,6 +247,7 @@
             AnimationListTreeView.Name = "AnimationListTreeView";
             AnimationListTreeView.Size = new System.Drawing.Size(232, 796);
             AnimationListTreeView.TabIndex = 0;
+            AnimationListTreeView.BeforeExpand += OnBeforeExpandBody;
             AnimationListTreeView.AfterSelect += AfterSelectTreeView;
             // 
             // ContextMenuStripTreeView
