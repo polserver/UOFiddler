@@ -492,10 +492,19 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
 
             MultiTile hit = null;
 
-            // Draw order: the last match is the one on top.
+            // Draw order: the last match is the one on top. Runs on every mouse move over every
+            // tile, so the point is first checked against the art's rectangle, which rules out
+            // almost all of them without a lookup.
             foreach (MultiTile tile in CompList.RealTiles)
             {
-                if (IsEditable(tile) && _masks.Hit(tile.Id, world.X - tile.XMod, world.Y - tile.YMod))
+                int px = world.X - tile.XMod;
+                int py = world.Y - tile.YMod;
+                if ((uint)px >= (uint)tile.ArtWidth || (uint)py >= (uint)tile.ArtHeight)
+                {
+                    continue;
+                }
+
+                if (IsEditable(tile) && _masks.Hit(tile.Id, px, py))
                 {
                     hit = tile;
                 }
@@ -504,9 +513,14 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             return hit;
         }
 
+        /// <summary>How long the last hover update's hit test took, for the performance box.</summary>
+        public double LastHitTestMs { get; private set; }
+
         private bool UpdateHover()
         {
+            long start = System.Diagnostics.Stopwatch.GetTimestamp();
             MultiTile hover = _mouseInside && HasDocument && !_previewMode ? HitTest(_mouseLoc) : null;
+            LastHitTestMs = System.Diagnostics.Stopwatch.GetElapsedTime(start).TotalMilliseconds;
             if (hover == HoverTile)
             {
                 return false;

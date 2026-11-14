@@ -336,6 +336,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             BuildToolPalette();
             BuildOptionsStrip();
             BuildMainStrip();
+
+            // The performance box floats over the canvas's top right corner (F12).
+            _performancePanel = new PerformancePanel { Visible = false };
+            _centre.Controls.Add(_performancePanel);
+            _performancePanel.BringToFront();
+            _performancePanel.Bind(_canvas.Stats, () => Session?.CompList.TileCount ?? 0);
+            _performancePanel.SizeChanged += (_, _) => PlacePerformancePanel();
+            _centre.Resize += (_, _) => PlacePerformancePanel();
             ResumeLayout(true);
 
             // Splitter distances only hold once the containers have their real size.
@@ -451,6 +459,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private bool _layingOutSidebars;
         private bool _applyingOwnSettings;
         private EditorCommand _settingsCommand;
+        private EditorCommand _performanceInfo;
+        private PerformancePanel _performancePanel;
+        private bool _performanceShown;
         private EditorCommand _savePattern;
         private bool _openingHousePage;
         private readonly List<EditorCommand> _terrainCommands = new List<EditorCommand>();
@@ -530,6 +541,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _zoomIn = Command("View", "Zoom in", () => _canvas.ZoomStep(1), Keys.Add, glyph: Glyphs.ZoomIn, alt: Keys.Shift | Keys.Oemplus);
             _zoomOut = Command("View", "Zoom out", () => _canvas.ZoomStep(-1), Keys.Subtract, glyph: Glyphs.ZoomOut, alt: Keys.OemMinus);
             _zoomReset = Command("View", "Zoom 100%", () => _canvas.SetZoom(1f), Keys.Control | Keys.D0, alt: Keys.Control | Keys.NumPad0);
+            _performanceInfo = Command("View", "Performance info", TogglePerformanceInfo, Keys.F12, isChecked: () => _performanceShown);
 
             AddTool(ToolKind.Select, "Select", Keys.S, Glyphs.Select);
             AddTool(ToolKind.Lasso, "Lasso", Keys.Q, Glyphs.Lasso);
@@ -1063,6 +1075,32 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _canvas.FitToView();
         }
 
+        /// <summary>Shows or hides the performance box; timings are only collected while it is shown.</summary>
+        private void TogglePerformanceInfo()
+        {
+            _performanceShown = !_performanceShown;
+            _canvas.CollectStats = _performanceShown;
+            _performancePanel.Visible = _performanceShown;
+            if (_performanceShown)
+            {
+                _performancePanel.UpdateNumbers();
+                PlacePerformancePanel();
+            }
+
+            _commands.RefreshStates();
+        }
+
+        private void PlacePerformancePanel()
+        {
+            if (_performancePanel == null)
+            {
+                return;
+            }
+
+            int margin = LogicalToDeviceUnits(8);
+            _performancePanel.Location = new Point(_centre.ClientSize.Width - _performancePanel.Width - margin, _canvas.Top + margin);
+        }
+
         private void MoveReferencePrompt()
         {
             (int x, int y, int z) = Session.ReferenceOffset;
@@ -1085,7 +1123,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden);
             Menu(_selectMenu, _selectAll, _invert, _selectConnected, _selectSameId, null, _replaceId);
             ToolStripDropDownButton view = Menu(_viewMenu, _preview, _planView, null, _plane, _floorPlane, _grid, _hideWalls, _hideAbove, _walkable, _doubleSurface, null,
-                _allFloors, _levelUp, _levelDown, _planeUp, _planeDown, null, _showBrowser, _showInspector, null, _fit, _zoomIn, _zoomOut, _zoomReset, null, _moveReference);
+                _allFloors, _levelUp, _levelDown, _planeUp, _planeDown, null, _showBrowser, _showInspector, null, _fit, _zoomIn, _zoomOut, _zoomReset, null, _moveReference, null, _performanceInfo);
             var terrainMenu = new ToolStripMenuItem("Preview ground");
             foreach (EditorCommand terrain in _terrainCommands)
             {

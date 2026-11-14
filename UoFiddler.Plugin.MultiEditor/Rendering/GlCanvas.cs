@@ -9,6 +9,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using OpenTK.GLControl;
@@ -80,6 +81,74 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             }
 
             Invalidate();
+        }
+
+        protected override void OnInvalidated(InvalidateEventArgs e)
+        {
+            base.OnInvalidated(e);
+
+            // A mouse move that asks for a frame starts the lag clock; moves that change nothing do not.
+            if (_inMouseMove && _unshownMove == 0)
+            {
+                _unshownMove = _moveStart;
+            }
+        }
+
+        // ---------------------------------------------------------------- performance box
+
+        /// <summary>Timings for the performance box. Only collected while <see cref="CollectStats"/> is on.</summary>
+        public FrameStats Stats { get; } = new FrameStats();
+
+        /// <summary>Times frames, mouse moves and (with timer queries) the GPU.</summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool CollectStats { get; set; }
+
+        private long _moveStart;
+        private bool _inMouseMove;
+
+        /// <summary>The first mouse move that asked for a frame not drawn yet; 0 when there is none.</summary>
+        private long _unshownMove;
+
+        // GPU timer queries, read a frame or two later so the CPU never waits for them.
+        private const int GpuQueryCount = 4;
+        private readonly int[] _gpuQueries = new int[GpuQueryCount];
+        private readonly bool[] _gpuPending = new bool[GpuQueryCount];
+        private int _gpuNext;
+
+        /// <summary>Collects finished GPU timings and starts a new query; -1 when all are still in flight.</summary>
+        private int BeginGpuQuery()
+        {
+            if (_gpuQueries[0] == 0)
+            {
+                GL.GenQueries(GpuQueryCount, _gpuQueries);
+            }
+
+            for (int i = 0; i < GpuQueryCount; i++)
+            {
+                if (!_gpuPending[i])
+                {
+                    continue;
+                }
+
+                GL.GetQueryObject(_gpuQueries[i], GetQueryObjectParam.QueryResultAvailable, out int available);
+                if (available != 0)
+                {
+                    GL.GetQueryObject(_gpuQueries[i], GetQueryObjectParam.QueryResult, out long nanoseconds);
+                    Stats.Gpu(nanoseconds / 1_000_000.0);
+                    _gpuPending[i] = false;
+                }
+            }
+
+            int next = _gpuNext;
+            if (_gpuPending[next])
+            {
+                return -1;
+            }
+
+            GL.BeginQuery(QueryTarget.TimeElapsed, _gpuQueries[next]);
+            _gpuPending[next] = true;
+            _gpuNext = (next + 1) % GpuQueryCount;
+            return next;
         }
 
         /// <summary>Art changed: forget the uploaded sprites.</summary>
@@ -190,14 +259,36 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
 
             try
             {
+                long start = Stopwatch.GetTimestamp();
                 MakeCurrent();
                 if (!_ready)
                 {
                     Initialize();
                 }
 
+                bool stats = CollectStats;
+                int query = stats ? BeginGpuQuery() : -1;
+                long drawStart = Stopwatch.GetTimestamp();
                 Render(size);
+                long drawEnd = Stopwatch.GetTimestamp();
+                if (query >= 0)
+                {
+                    GL.EndQuery(QueryTarget.TimeElapsed);
+                }
+
                 SwapBuffers();
+                long end = Stopwatch.GetTimestamp();
+                if (stats)
+                {
+                    Stats.Frame(FrameStats.Ms(drawStart, drawEnd), FrameStats.Ms(drawEnd, end),
+                        FrameStats.Ms(start, end), _renderer.LastSpriteCount);
+                    if (_unshownMove != 0)
+                    {
+                        Stats.Lag(FrameStats.Ms(_unshownMove, end));
+                    }
+                }
+
+                _unshownMove = 0;
             }
             catch (Exception ex)
             {
@@ -269,6 +360,10 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
                 {
                     MakeCurrent();
                     _renderer.Dispose();
+                    if (_gpuQueries[0] != 0)
+                    {
+                        GL.DeleteQueries(GpuQueryCount, _gpuQueries);
+                    }
                 }
                 catch (Exception)
                 {
@@ -308,6 +403,32 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (!CollectStats)
+            {
+                HandleMouseMove(e);
+                return;
+            }
+
+            long start = Stopwatch.GetTimestamp();
+            _moveStart = start;
+            _inMouseMove = true;
+            try
+            {
+                HandleMouseMove(e);
+            }
+            finally
+            {
+                _inMouseMove = false;
+            }
+
+            if (!_panning && _session != null)
+            {
+                Stats.Move(FrameStats.Ms(start, Stopwatch.GetTimestamp()), _session.LastHitTestMs);
+            }
+        }
+
+        private void HandleMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
 
