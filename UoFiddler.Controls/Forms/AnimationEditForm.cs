@@ -1851,17 +1851,15 @@ namespace UoFiddler.Controls.Forms
 
                 int animLength = Animations.GetAnimLength(_currentBody, _fileType);
                 // .vd file format: animType 0 = 22-action (monster), 1 = 13-action (animal),
-                // 2 = 35-action (human). Other lengths can't be represented; reject.
-                int currentType;
-                switch (animLength)
+                // 2 = 35-action (human). Bodies with another count (9-action sea monsters)
+                // use their whole idx block, as the export writes them.
+                int vdActionCount = AnimationEdit.GetVdActionCount(_currentBody, _fileType);
+                int currentType = AnimationEdit.GetVdType(vdActionCount);
+                if (currentType < 0)
                 {
-                    case 22: currentType = 0; break;
-                    case 13: currentType = 1; break;
-                    case 35: currentType = 2; break;
-                    default:
-                        MessageBox.Show($"Body action length {animLength} cannot be imported as .vd palette.",
-                            "Import", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-                        return;
+                    MessageBox.Show($"A body with {vdActionCount} actions can't be imported from a .vd.",
+                        "Import", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    return;
                 }
 
                 using (FileStream fs = new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -1890,7 +1888,17 @@ namespace UoFiddler.Controls.Forms
                                 MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
                             return;
                         }
-                        AnimationEdit.LoadFromVD(_fileType, _currentBody, bin);
+
+                        try
+                        {
+                            AnimationEdit.LoadFromVD(_fileType, _currentBody, bin);
+                        }
+                        catch (Exception ex) when (ex is IOException || ex is InvalidDataException || ex is ArgumentException || ex is OverflowException)
+                        {
+                            MessageBox.Show($"Could not read {Path.GetFileName(dialog.FileName)}: {ex.Message}", "Import",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
                     }
                 }
 
@@ -2097,7 +2105,7 @@ namespace UoFiddler.Controls.Forms
                     {
                         AnimationEdit.LoadActionFromVD(_fileType, body, action, bin);
                     }
-                    catch (Exception ex) when (ex is IOException || ex is ArgumentException || ex is OverflowException)
+                    catch (Exception ex) when (ex is IOException || ex is InvalidDataException || ex is ArgumentException || ex is OverflowException)
                     {
                         MessageBox.Show($"Could not read {Path.GetFileName(dialog.FileName)}: {ex.Message}", "Import",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
