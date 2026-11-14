@@ -218,7 +218,9 @@ namespace UoFiddler.Controls.UserControls
         private int _updateDepth;
         private bool _rowsDirty;
         private bool _suppressSelectionEvents;
-        private readonly ToolTip _toolTip = new ToolTip { InitialDelay = 500, ReshowDelay = 100, AutoPopDelay = 20000 };
+        private const int _toolTipDuration = 20000;
+        private readonly ToolTip _toolTip = new ToolTip();
+        private readonly Timer _toolTipTimer = new Timer { Interval = 500 };
         private VirtualTreeNode _toolTipNode;
 
         public VirtualTreeView()
@@ -234,6 +236,8 @@ namespace UoFiddler.Controls.UserControls
             OwnerDraw = true;
             DoubleBuffered = true;
             Columns.Add(string.Empty);
+
+            _toolTipTimer.Tick += OnToolTipTimer;
         }
 
         /// <summary>Raised before a node's children are shown; a lazy node fills them in here.</summary>
@@ -253,6 +257,8 @@ namespace UoFiddler.Controls.UserControls
         [DefaultValue(false)]
         public bool ShowNodeToolTips { get; set; }
 
+        // The tooltip is shown by hand for the row under the mouse. An automatic ToolTip treats the whole list as
+        // one area, so after it pops once or after a click it would not come back while the mouse stays inside.
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
@@ -264,36 +270,89 @@ namespace UoFiddler.Controls.UserControls
             }
 
             _toolTipNode = node;
-            string text = null;
-            if (node != null)
+            HideToolTip();
+            if (GetToolTipText(node) != null)
             {
-                if (ShowNodeToolTips && !string.IsNullOrEmpty(node.ToolTipText))
-                {
-                    text = node.ToolTipText;
-                }
-                else if (TextLeft(node) + TextRenderer.MeasureText(node.Text, Font).Width > ClientSize.Width)
-                {
-                    text = node.Text;
-                }
+                _toolTipTimer.Start();
+            }
+        }
+
+        private void OnToolTipTimer(object sender, EventArgs e)
+        {
+            _toolTipTimer.Stop();
+
+            Point mouse = PointToClient(Cursor.Position);
+            if (_toolTipNode == null || !ClientRectangle.Contains(mouse) || !ReferenceEquals(NodeAt(mouse), _toolTipNode))
+            {
+                return;
             }
 
-            // Re-arming the tooltip makes it wait its initial delay again for the new row
-            _toolTip.Active = false;
-            _toolTip.SetToolTip(this, text);
-            _toolTip.Active = text != null;
+            string text = GetToolTipText(_toolTipNode);
+            if (text != null)
+            {
+                _toolTip.Show(text, this, mouse.X + 12, mouse.Y + 20, _toolTipDuration);
+            }
+        }
+
+        private string GetToolTipText(VirtualTreeNode node)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+
+            if (ShowNodeToolTips && !string.IsNullOrEmpty(node.ToolTipText))
+            {
+                return node.ToolTipText;
+            }
+
+            return TextLeft(node) + TextRenderer.MeasureText(node.Text, Font).Width > ClientSize.Width ? node.Text : null;
+        }
+
+        private void HideToolTip()
+        {
+            _toolTipTimer.Stop();
+            _toolTip.Hide(this);
         }
 
         protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
             _toolTipNode = null;
-            _toolTip.SetToolTip(this, null);
+            HideToolTip();
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            // The rows move under the mouse; the next mouse move picks up the new row
+            _toolTipNode = null;
+            HideToolTip();
+            base.OnMouseWheel(e);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            // Hide the tooltip before the list handles a click or key: ListView runs its own click handling
+            // (drag detection, selection) before OnMouseDown is raised
+            switch (m.Msg)
+            {
+                case 0x0100: // WM_KEYDOWN
+                case 0x0201: // WM_LBUTTONDOWN
+                case 0x0203: // WM_LBUTTONDBLCLK
+                case 0x0204: // WM_RBUTTONDOWN
+                case 0x0207: // WM_MBUTTONDOWN
+                    HideToolTip();
+                    break;
+            }
+
+            base.WndProc(ref m);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
+                _toolTipTimer.Dispose();
                 _toolTip.Dispose();
             }
 
@@ -573,6 +632,9 @@ namespace UoFiddler.Controls.UserControls
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            // Like TreeView, a click hides the tooltip until the mouse moves to another row
+            HideToolTip();
+
             VirtualTreeNode node = NodeAt(e.Location);
             if (node != null && e.Button == MouseButtons.Left && node.Nodes.Count > 0)
             {
@@ -600,6 +662,8 @@ namespace UoFiddler.Controls.UserControls
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            HideToolTip();
+
             VirtualTreeNode node = _selectedNode;
             if (node != null)
             {
