@@ -218,6 +218,8 @@ namespace UoFiddler.Controls.UserControls
         private int _updateDepth;
         private bool _rowsDirty;
         private bool _suppressSelectionEvents;
+        private readonly ToolTip _toolTip = new ToolTip { InitialDelay = 500, ReshowDelay = 100, AutoPopDelay = 20000 };
+        private VirtualTreeNode _toolTipNode;
 
         public VirtualTreeView()
         {
@@ -244,11 +246,63 @@ namespace UoFiddler.Controls.UserControls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public VirtualTreeNodeCollection Nodes { get; }
 
+        /// <summary>
+        /// Show a node's <see cref="VirtualTreeNode.ToolTipText"/> when the mouse rests on it. A node without
+        /// one, or with this off, still gets its full text when the row cuts it off, as in <see cref="TreeView"/>.
+        /// </summary>
         [DefaultValue(false)]
-        public bool ShowNodeToolTips
+        public bool ShowNodeToolTips { get; set; }
+
+        protected override void OnMouseMove(MouseEventArgs e)
         {
-            get => ShowItemToolTips;
-            set => ShowItemToolTips = value;
+            base.OnMouseMove(e);
+
+            VirtualTreeNode node = NodeAt(e.Location);
+            if (ReferenceEquals(node, _toolTipNode))
+            {
+                return;
+            }
+
+            _toolTipNode = node;
+            string text = null;
+            if (node != null)
+            {
+                if (ShowNodeToolTips && !string.IsNullOrEmpty(node.ToolTipText))
+                {
+                    text = node.ToolTipText;
+                }
+                else if (TextLeft(node) + TextRenderer.MeasureText(node.Text, Font).Width > ClientSize.Width)
+                {
+                    text = node.Text;
+                }
+            }
+
+            // Re-arming the tooltip makes it wait its initial delay again for the new row
+            _toolTip.Active = false;
+            _toolTip.SetToolTip(this, text);
+            _toolTip.Active = text != null;
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+            _toolTipNode = null;
+            _toolTip.SetToolTip(this, null);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _toolTip.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        private static int TextLeft(VirtualTreeNode node)
+        {
+            return (node.Level * _indent) + _glyphSize + 2;
         }
 
         [Browsable(false)]
