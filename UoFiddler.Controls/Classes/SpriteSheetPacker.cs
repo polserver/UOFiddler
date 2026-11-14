@@ -122,6 +122,40 @@ namespace UoFiddler.Controls.Classes
             return sheet;
         }
 
+        /// <summary>
+        /// A 32bpp ARGB copy of <paramref name="source"/> resized by <paramref name="scale"/>. Pixels are
+        /// picked by nearest neighbour, so no new colours appear.
+        /// </summary>
+        public static unsafe Bitmap ScaleNearest(Bitmap source, double scale)
+        {
+            int width = Ultima.AnimIdx.ScaledLength(source.Width, scale);
+            int height = Ultima.AnimIdx.ScaledLength(source.Height, scale);
+            var target = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+            BitmapData src = source.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData dst = target.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+            try
+            {
+                for (int y = 0; y < height; ++y)
+                {
+                    int sy = Math.Min(source.Height - 1, (int)(y / scale));
+                    uint* srcLine = (uint*)((byte*)src.Scan0 + (sy * src.Stride));
+                    uint* dstLine = (uint*)((byte*)dst.Scan0 + (y * dst.Stride));
+                    for (int x = 0; x < width; ++x)
+                    {
+                        dstLine[x] = srcLine[Math.Min(source.Width - 1, (int)(x / scale))];
+                    }
+                }
+            }
+            finally
+            {
+                source.UnlockBits(src);
+                target.UnlockBits(dst);
+            }
+
+            return target;
+        }
+
         public static PackedMeta CreateMeta(string imageFile, Bitmap sheet)
         {
             return new PackedMeta

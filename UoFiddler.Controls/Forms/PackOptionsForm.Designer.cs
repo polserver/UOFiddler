@@ -39,10 +39,16 @@ namespace UoFiddler.Controls.Forms
             SpacingUpDown = new System.Windows.Forms.NumericUpDown();
             OneRowPerDirectionCheckBox = new System.Windows.Forms.CheckBox();
             ExportAllActionsCheckBox = new System.Windows.Forms.CheckBox();
+            ScaleLabel = new System.Windows.Forms.Label();
+            ScaleUpDown = new System.Windows.Forms.NumericUpDown();
+            FormatLabel = new System.Windows.Forms.Label();
+            SheetFormatRadioButton = new System.Windows.Forms.RadioButton();
+            FramesXmlFormatRadioButton = new System.Windows.Forms.RadioButton();
             OkButton = new System.Windows.Forms.Button();
             CancelDialogButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)MaxWidthUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)SpacingUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ScaleUpDown).BeginInit();
             SuspendLayout();
             //
             // DirectionsLabel
@@ -148,13 +154,63 @@ namespace UoFiddler.Controls.Forms
             ExportAllActionsCheckBox.TabIndex = 7;
             ExportAllActionsCheckBox.Text = "Export all actions of the body";
             ExportAllActionsCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // ScaleLabel
+            // 
+            ScaleLabel.AutoSize = true;
+            ScaleLabel.Location = new System.Drawing.Point(212, 142);
+            ScaleLabel.Name = "ScaleLabel";
+            ScaleLabel.Size = new System.Drawing.Size(88, 15);
+            ScaleLabel.Text = "Frame size (%):";
+            // 
+            // ScaleUpDown
+            // 
+            ScaleUpDown.Increment = new decimal(new int[] { 10, 0, 0, 0 });
+            ScaleUpDown.Location = new System.Drawing.Point(212, 160);
+            ScaleUpDown.Maximum = new decimal(new int[] { 400, 0, 0, 0 });
+            ScaleUpDown.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            ScaleUpDown.Name = "ScaleUpDown";
+            ScaleUpDown.Size = new System.Drawing.Size(80, 23);
+            ScaleUpDown.TabIndex = 8;
+            ScaleUpDown.Value = new decimal(new int[] { 100, 0, 0, 0 });
+            // 
+            // FormatLabel
+            // 
+            FormatLabel.AutoSize = true;
+            FormatLabel.Location = new System.Drawing.Point(12, 236);
+            FormatLabel.Name = "FormatLabel";
+            FormatLabel.Size = new System.Drawing.Size(48, 15);
+            FormatLabel.Text = "Format:";
+            // 
+            // SheetFormatRadioButton
+            // 
+            SheetFormatRadioButton.AutoSize = true;
+            SheetFormatRadioButton.Checked = true;
+            SheetFormatRadioButton.Location = new System.Drawing.Point(12, 254);
+            SheetFormatRadioButton.Name = "SheetFormatRadioButton";
+            SheetFormatRadioButton.Size = new System.Drawing.Size(170, 19);
+            SheetFormatRadioButton.TabIndex = 9;
+            SheetFormatRadioButton.TabStop = true;
+            SheetFormatRadioButton.Text = "Sprite sheet (.png + .json)";
+            SheetFormatRadioButton.UseVisualStyleBackColor = true;
+            SheetFormatRadioButton.CheckedChanged += OnCheckedChangedFormat;
+            // 
+            // FramesXmlFormatRadioButton
+            // 
+            FramesXmlFormatRadioButton.AutoSize = true;
+            FramesXmlFormatRadioButton.Location = new System.Drawing.Point(12, 279);
+            FramesXmlFormatRadioButton.Name = "FramesXmlFormatRadioButton";
+            FramesXmlFormatRadioButton.Size = new System.Drawing.Size(232, 19);
+            FramesXmlFormatRadioButton.TabIndex = 10;
+            FramesXmlFormatRadioButton.Text = "One image per frame (.png + .xml)";
+            FramesXmlFormatRadioButton.UseVisualStyleBackColor = true;
             //
             // OkButton
             //
-            OkButton.Location = new System.Drawing.Point(218, 240);
+            OkButton.Location = new System.Drawing.Point(218, 312);
             OkButton.Name = "OkButton";
             OkButton.Size = new System.Drawing.Size(75, 25);
-            OkButton.TabIndex = 8;
+            OkButton.TabIndex = 11;
             OkButton.Text = "OK";
             OkButton.UseVisualStyleBackColor = true;
             OkButton.Click += OnClickOk;
@@ -162,10 +218,10 @@ namespace UoFiddler.Controls.Forms
             // CancelDialogButton
             //
             CancelDialogButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            CancelDialogButton.Location = new System.Drawing.Point(299, 240);
+            CancelDialogButton.Location = new System.Drawing.Point(299, 312);
             CancelDialogButton.Name = "CancelDialogButton";
             CancelDialogButton.Size = new System.Drawing.Size(75, 25);
-            CancelDialogButton.TabIndex = 9;
+            CancelDialogButton.TabIndex = 12;
             CancelDialogButton.Text = "Cancel";
             CancelDialogButton.UseVisualStyleBackColor = true;
             //
@@ -173,7 +229,7 @@ namespace UoFiddler.Controls.Forms
             //
             AcceptButton = OkButton;
             CancelButton = CancelDialogButton;
-            ClientSize = new System.Drawing.Size(386, 277);
+            ClientSize = new System.Drawing.Size(386, 349);
             Controls.Add(DirectionsLabel);
             Controls.Add(DirectionsListBox);
             Controls.Add(MaxWidthLabel);
@@ -185,6 +241,11 @@ namespace UoFiddler.Controls.Forms
             Controls.Add(SpacingUpDown);
             Controls.Add(OneRowPerDirectionCheckBox);
             Controls.Add(ExportAllActionsCheckBox);
+            Controls.Add(ScaleLabel);
+            Controls.Add(ScaleUpDown);
+            Controls.Add(FormatLabel);
+            Controls.Add(SheetFormatRadioButton);
+            Controls.Add(FramesXmlFormatRadioButton);
             Controls.Add(OkButton);
             Controls.Add(CancelDialogButton);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -196,6 +257,7 @@ namespace UoFiddler.Controls.Forms
             Text = "Pack Frames";
             ((System.ComponentModel.ISupportInitialize)MaxWidthUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)SpacingUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ScaleUpDown).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -213,6 +275,11 @@ namespace UoFiddler.Controls.Forms
         private System.Windows.Forms.NumericUpDown SpacingUpDown;
         private System.Windows.Forms.CheckBox OneRowPerDirectionCheckBox;
         private System.Windows.Forms.CheckBox ExportAllActionsCheckBox;
+        private System.Windows.Forms.Label ScaleLabel;
+        private System.Windows.Forms.NumericUpDown ScaleUpDown;
+        private System.Windows.Forms.Label FormatLabel;
+        private System.Windows.Forms.RadioButton SheetFormatRadioButton;
+        private System.Windows.Forms.RadioButton FramesXmlFormatRadioButton;
         private System.Windows.Forms.Button OkButton;
         private System.Windows.Forms.Button CancelDialogButton;
     }
