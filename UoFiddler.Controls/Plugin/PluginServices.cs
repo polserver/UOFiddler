@@ -12,6 +12,8 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Plugin.Interfaces;
@@ -53,6 +55,8 @@ namespace UoFiddler.Controls.Plugin
                 return;
             }
 
+            RegisterDependencyResolver(path);
+
             foreach (string fileOn in Directory.GetFiles(path, "*.dll"))
             {
                 try
@@ -84,6 +88,57 @@ namespace UoFiddler.Controls.Plugin
             }
 
             AvailablePlugins.Clear();
+        }
+
+        private static string _dependencyRoot;
+
+        /// <summary>
+        /// Lets a plugin ship third-party libraries in a subfolder of the plugin directory
+        /// (plugins\PluginName\). Files directly in the plugin directory are all loaded as plugins,
+        /// so dependencies cannot sit there.
+        /// </summary>
+        private static void RegisterDependencyResolver(string pluginDirectory)
+        {
+            bool first = _dependencyRoot == null;
+            _dependencyRoot = pluginDirectory;
+            if (!first)
+            {
+                return;
+            }
+
+            AssemblyLoadContext.Default.Resolving += (context, name) =>
+            {
+                string path = FindDependency(name.Name + ".dll");
+                return path == null ? null : context.LoadFromAssemblyPath(path);
+            };
+
+            AssemblyLoadContext.Default.ResolvingUnmanagedDll += (_, libraryName) =>
+            {
+                string path = FindDependency(libraryName)
+                              ?? (libraryName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
+                                  ? null
+                                  : FindDependency(libraryName + ".dll"));
+                return path != null && NativeLibrary.TryLoad(path, out IntPtr handle) ? handle : IntPtr.Zero;
+            };
+        }
+
+        private static string FindDependency(string fileName)
+        {
+            if (!Directory.Exists(_dependencyRoot))
+            {
+                return null;
+            }
+
+            foreach (string directory in Directory.GetDirectories(_dependencyRoot))
+            {
+                string candidate = Path.Combine(directory, fileName);
+                if (File.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+
+            return null;
         }
 
         private void AddPlugin(string fileName)
