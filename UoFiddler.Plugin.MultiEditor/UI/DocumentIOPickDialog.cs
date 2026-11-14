@@ -29,7 +29,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private readonly List<RadioButton> _sourceButtons = new List<RadioButton>();
         private string _sourceFilter;
 
-        public DocumentIOPickDialog(string title, List<MultiPickEntry> entries, bool showSource)
+        /// <param name="showSource">Shows the File column: which file each multi comes from.</param>
+        /// <param name="clientSources">Adds the All / multi.mul / UOP buttons, for the client's multis.</param>
+        public DocumentIOPickDialog(string title, List<MultiPickEntry> entries, bool showSource, bool clientSources)
         {
             _entries = entries;
 
@@ -38,7 +40,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             // Which file the multis come from, as push buttons: all, multi.mul or the UOP collection.
             // A client without MultiCollection.uop (or without multi.mul) has that button greyed out.
-            if (showSource)
+            if (clientSources)
             {
                 sourceMul.Enabled = entries.Exists(e => e.Source == "multi.mul");
                 sourceUop.Enabled = entries.Exists(e => e.Source == "UOP");
@@ -54,8 +56,19 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 sourceAll.Dispose();
                 sourceMul.Dispose();
                 sourceUop.Dispose();
+            }
+
+            if (!showSource)
+            {
                 _list.Columns.Remove(columnHeaderFile);
                 columnHeaderName.Width = 260;
+            }
+            else if (!clientSources)
+            {
+                // File names are longer than "multi.mul" or "UOP".
+                columnHeaderFile.Width = 140;
+                columnHeaderName.Width = 210;
+                columnHeaderId.Width = 0;
             }
 
             Populate();

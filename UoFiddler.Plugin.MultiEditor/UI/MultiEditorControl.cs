@@ -432,7 +432,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             });
         }
 
-        private EditorCommand _new, _open, _import, _saveClient, _export, _savePrefab, _resize, _close;
+        private EditorCommand _new, _open, _import, _importFolder, _saveClient, _export, _savePrefab, _resize, _close;
         private EditorCommand _undo, _redo, _cut, _copy, _paste, _delete;
         private EditorCommand _selectAll, _invert, _selectConnected, _selectSameId, _replaceId;
         private EditorCommand _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, _hide, _showHidden;
@@ -460,7 +460,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             _new = Command("File", "New multi...", NewDocumentPrompt, Keys.Control | Keys.N, glyph: Glyphs.New);
             _open = Command("File", "Open from client...", OpenFromClient, Keys.Control | Keys.O, glyph: Glyphs.Open);
-            _import = Command("File", "Import file...", ImportFile, Keys.Control | Keys.I);
+            _import = Command("File", "Import files...", ImportFile, Keys.Control | Keys.I);
+            _importFolder = Command("File", "Import from folder...", ImportFolder, Keys.Control | Keys.Shift | Keys.I);
             _saveClient = Command("File", "Save to client...", SaveToClient, Keys.Control | Keys.S, hasDoc, glyph: Glyphs.Save);
             _export = Command("File", "Export file...", ExportFile, Keys.Control | Keys.E, hasDoc);
             _savePrefab = Command("File", "Save selection as blueprint...", SavePrefab, can: hasSelection);
@@ -1075,7 +1076,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             ToolStrip strip = _mainStrip;
 
-            Menu(_fileMenu, _new, _open, _import, null, _saveClient, _export, _savePrefab, _savePattern, null, _resize, _settingsCommand, null, _close);
+            Menu(_fileMenu, _new, _open, _import, _importFolder, null, _saveClient, _export, _savePrefab, _savePattern, null, _resize, _settingsCommand, null, _close);
             Menu(_editMenu, _undo, _redo, null, _cut, _copy, _paste, _delete, null,
                 _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden);
             Menu(_selectMenu, _selectAll, _invert, _selectConnected, _selectSameId, null, _replaceId);
@@ -1308,21 +1309,40 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void ImportFile()
         {
-            AddDocuments(DocumentIO.ImportFromFile(this));
+            AddImported(DocumentIO.ImportFromFile(this));
         }
 
-        /// <summary>Opens each multi in its own tab, after asking when there are a lot of them.</summary>
-        private void AddDocuments(List<OpenedMulti> opened)
+        private void ImportFolder()
         {
-            if (opened == null || !ConfirmOpenMany(opened.Count))
+            AddImported(DocumentIO.ImportFromFolder(this));
+        }
+
+        /// <summary>Opens what an import read, then lists what it could not.</summary>
+        private void AddImported(ImportResult result)
+        {
+            if (result == null)
             {
                 return;
+            }
+
+            int opened = AddDocuments(result.Opened);
+            MultiFileImport.ShowSummary(this, opened, result.Failures);
+        }
+
+        /// <summary>Opens each multi in its own tab, after asking when there are a lot of them. Returns how many opened.</summary>
+        private int AddDocuments(List<OpenedMulti> opened)
+        {
+            if (opened == null || opened.Count == 0 || !ConfirmOpenMany(opened.Count))
+            {
+                return 0;
             }
 
             foreach (OpenedMulti multi in opened)
             {
                 AddDocument(multi);
             }
+
+            return opened.Count;
         }
 
         /// <summary>Asks before a selection opens more tabs than anyone picks by accident.</summary>

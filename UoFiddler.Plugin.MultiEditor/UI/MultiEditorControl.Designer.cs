@@ -113,7 +113,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _emptyHint.Name = "_emptyHint";
             _emptyHint.Size = new System.Drawing.Size(532, 622);
             _emptyHint.TabIndex = 1;
-            _emptyHint.Text = "Open a multi from the client (Ctrl+O), import a file (Ctrl+I)\r\nor start a new one (Ctrl+N).";
+            _emptyHint.Text = "Open a multi from the client (Ctrl+O), import files (Ctrl+I),\r\nimport from a folder (Ctrl+Shift+I) or start a new one (Ctrl+N).";
             _emptyHint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             //
             // _canvas
