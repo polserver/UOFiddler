@@ -300,38 +300,36 @@ namespace Ultima
             }
         }
 
-        public static void ExportToVD(int fileType, int body, string file)
+        /// <summary>
+        /// Writes the body as a .vd file. A <paramref name="scale"/> other than 1 resizes every frame
+        /// and its center in the file only; the loaded animation is left as it is.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">A frame does not fit its run headers. Nothing is written.</exception>
+        public static void ExportToVD(int fileType, int body, string file, double scale = 1.0)
         {
             AnimIdx[] cache = GetCache(fileType);
             GetFileIndex(body, fileType, 0, 0, out FileIndex fileIndex, out int index);
 
-            int bodyLength = Animations.GetAnimLength(body, fileType) * 5;
-            for (int i = 0; i < bodyLength && cache != null && index + i < cache.Length; ++i)
+            int animLength = Animations.GetAnimLength(body, fileType);
+            var anims = new AnimIdx[animLength * 5];
+            for (int i = 0; i < anims.Length; ++i)
             {
-                EnsureFramesFit(cache[index + i], $"Body {body}, action {i / 5}, direction {i % 5}");
+                int slot = index + i;
+                AnimIdx anim = cache[slot] ?? (cache[slot] = new AnimIdx(slot, fileIndex));
+                anims[i] = ScaleForExport(anim, scale);
+                EnsureFramesFit(anims[i], $"Body {body}, action {i / 5}, direction {i % 5}");
             }
 
             using (var fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Write))
             using (var bin = new BinaryWriter(fs))
             {
                 bin.Write((short)6);
-                int animLength = Animations.GetAnimLength(body, fileType);
                 int currType = animLength == 22 ? 0 : animLength == 13 ? 1 : 2;
                 bin.Write((short)currType);
                 long indexPos = bin.BaseStream.Position;
                 long animPos = bin.BaseStream.Position + (12 * animLength * 5);
-                for (int i = index; i < index + (animLength * 5); i++)
+                foreach (AnimIdx anim in anims)
                 {
-                    AnimIdx anim;
-                    if (cache != null)
-                    {
-                        anim = cache[i] != null ? cache[i] : cache[i] = new AnimIdx(i, fileIndex);
-                    }
-                    else
-                    {
-                        anim = cache[i] = new AnimIdx(i, fileIndex);
-                    }
-
                     if (anim == null)
                     {
                         bin.BaseStream.Seek(indexPos, SeekOrigin.Begin);
@@ -377,11 +375,14 @@ namespace Ultima
         /// <summary>
         /// Writes one action as a .vd file: the body .vd layout with 5 index entries, one per direction.
         /// </summary>
-        public static void ExportActionToVD(int fileType, int body, int action, string file)
+        /// <exception cref="InvalidOperationException">A frame does not fit its run headers. Nothing is written.</exception>
+        public static void ExportActionToVD(int fileType, int body, int action, string file, double scale = 1.0)
         {
+            var anims = new AnimIdx[5];
             for (int dir = 0; dir < 5; ++dir)
             {
-                EnsureFramesFit(GetAnimation(fileType, body, action, dir), $"Body {body}, action {action}, direction {dir}");
+                anims[dir] = ScaleForExport(GetAnimation(fileType, body, action, dir), scale);
+                EnsureFramesFit(anims[dir], $"Body {body}, action {action}, direction {dir}");
             }
 
             using (var fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -393,9 +394,19 @@ namespace Ultima
                 long animPos = bin.BaseStream.Position + (12 * 5);
                 for (int dir = 0; dir < 5; ++dir)
                 {
-                    GetAnimation(fileType, body, action, dir).ExportToVD(bin, ref indexPos, ref animPos);
+                    anims[dir].ExportToVD(bin, ref indexPos, ref animPos);
                 }
             }
+        }
+
+        private static AnimIdx ScaleForExport(AnimIdx anim, double scale)
+        {
+            if (anim == null || scale == 1.0)
+            {
+                return anim;
+            }
+
+            return anim.ScaledCopy(scale);
         }
 
         /// <summary>
@@ -543,6 +554,11 @@ namespace Ultima
 
         public ushort[] Palette { get; private set; }
         public List<FrameEdit> Frames { get; private set; }
+
+        private AnimIdx()
+        {
+            Palette = new ushort[PaletteCapacity];
+        }
 
         public AnimIdx(int index, FileIndex fileIndex)
         {
@@ -1035,6 +1051,90 @@ namespace Ultima
             Array.Copy(source.Palette, Palette, PaletteCapacity);
             Frames = source.Frames?.ConvertAll(frame => new FrameEdit(frame));
             _idxExtra = source._idxExtra;
+        }
+
+        /// <summary>
+        /// A copy with every frame resized by <paramref name="scale"/>. Pixels are picked by nearest
+        /// neighbour, so no colours outside the palette appear. Centers scale with the frame, measured
+        /// from the frame's bottom so the feet stay on the same point.
+        /// </summary>
+        public unsafe AnimIdx ScaledCopy(double scale)
+        {
+            if (!(scale > 0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(scale), scale, "Scale must be greater than zero.");
+            }
+
+            var copy = new AnimIdx();
+            Array.Copy(Palette, copy.Palette, PaletteCapacity);
+            copy._idxExtra = _idxExtra;
+            if (Frames == null)
+            {
+                return copy;
+            }
+
+            copy.Frames = new List<FrameEdit>(Frames.Count);
+            Bitmap[] bits = GetFrames();
+            try
+            {
+                for (int i = 0; i < Frames.Count; ++i)
+                {
+                    FrameEdit frame = Frames[i];
+                    Bitmap source = bits?[i];
+                    if (source == null)
+                    {
+                        copy.Frames.Add(new FrameEdit(frame));
+                        continue;
+                    }
+
+                    int width = Math.Max(1, (int)Math.Round(source.Width * scale));
+                    int height = Math.Max(1, (int)Math.Round(source.Height * scale));
+                    int centerX = (int)Math.Round(frame.Center.X * scale);
+                    int centerY = (int)Math.Round((frame.Center.Y + source.Height) * scale) - height;
+
+                    using (var target = new Bitmap(width, height, PixelFormat.Format16bppArgb1555))
+                    {
+                        BitmapData sd = source.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.ReadOnly, PixelFormat.Format16bppArgb1555);
+                        BitmapData td = target.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format16bppArgb1555);
+                        try
+                        {
+                            var sp = (ushort*)sd.Scan0;
+                            var tp = (ushort*)td.Scan0;
+                            int sStride = sd.Stride >> 1;
+                            int tStride = td.Stride >> 1;
+                            for (int y = 0; y < height; ++y)
+                            {
+                                int sy = Math.Min(source.Height - 1, (int)(y / scale));
+                                ushort* sRow = sp + (sy * sStride);
+                                ushort* tRow = tp + (y * tStride);
+                                for (int x = 0; x < width; ++x)
+                                {
+                                    tRow[x] = sRow[Math.Min(source.Width - 1, (int)(x / scale))];
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            target.UnlockBits(td);
+                            source.UnlockBits(sd);
+                        }
+
+                        copy.Frames.Add(new FrameEdit(target, copy.Palette, centerX, centerY));
+                    }
+                }
+            }
+            finally
+            {
+                if (bits != null)
+                {
+                    foreach (Bitmap bit in bits)
+                    {
+                        bit?.Dispose();
+                    }
+                }
+            }
+
+            return copy;
         }
 
         public void ExportPalette(string filename, int type)
