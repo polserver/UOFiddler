@@ -12,7 +12,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -649,6 +651,13 @@ namespace Ultima
                 case Multis.ImportType.MULTIFORGE:
                     parsed = ReadMultiforge(fileName);
                     break;
+                case Multis.ImportType.CENTREDCSV:
+                    parsed = ReadCentredCsv(fileName);
+                    break;
+                case Multis.ImportType.TILESENTRY:
+                    // Every entry in one; ReadTilesEntries keeps them apart.
+                    parsed = ReadTilesEntries(fileName).SelectMany(e => e.Tiles).ToList();
+                    break;
             }
 
             if (parsed != null)
@@ -772,6 +781,72 @@ namespace Ultima
             }
 
             return list;
+        }
+
+        /// <summary>
+        /// A CentrED# blueprint: an "id,x,y,z,hue,flags" header, then one tile per line with the id in
+        /// decimal or 0x hex and X/Y around the blueprint's centre. CentrED# writes the flags as 0 and
+        /// never reads them, so every tile is visible; multis have no hue, so it is dropped.
+        /// </summary>
+        private static List<MultiTileEntry> ReadCentredCsv(string fileName)
+        {
+            var list = new List<MultiTileEntry>();
+            foreach (string raw in File.ReadLines(fileName))
+            {
+                string line = raw.Trim();
+                if (line.Length == 0 || line.StartsWith("id,", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                string[] parts = line.Split(',');
+                if (parts.Length < 4)
+                {
+                    throw new InvalidDataException($"Not a CentrED# blueprint line: {line}");
+                }
+
+                list.Add(Entry(ParseNumber(parts[0]), ParseNumber(parts[1]), ParseNumber(parts[2]), ParseNumber(parts[3])));
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// The entries of a CentrED# TilesEntry file: &lt;TilesEntry&gt;&lt;Entry Name&gt;&lt;Item ID X Y Z Hue /&gt;,
+        /// each a blueprint of its own. Missing attributes read as 0, like CentrED# reads them; an
+        /// entry without a name is "Unknown" and its index. Hues are dropped.
+        /// </summary>
+        public static List<(string Name, List<MultiTileEntry> Tiles)> ReadTilesEntries(string fileName)
+        {
+            var dom = new XmlDocument();
+            dom.Load(fileName);
+            if (dom.DocumentElement?.Name != "TilesEntry")
+            {
+                throw new InvalidDataException("Not a TilesEntry file");
+            }
+
+            static int Attribute(XmlElement element, string name)
+            {
+                string value = element.GetAttribute(name);
+                return value.Length > 0 ? ParseNumber(value) : 0;
+            }
+
+            var result = new List<(string, List<MultiTileEntry>)>();
+            int index = 0;
+            foreach (XmlElement entry in dom.DocumentElement.GetElementsByTagName("Entry"))
+            {
+                var tiles = new List<MultiTileEntry>();
+                foreach (XmlElement item in entry.GetElementsByTagName("Item"))
+                {
+                    tiles.Add(Entry(Attribute(item, "ID"), Attribute(item, "X"), Attribute(item, "Y"), Attribute(item, "Z")));
+                }
+
+                string name = entry.GetAttribute("Name");
+                result.Add((name.Length > 0 ? name : $"Unknown{index}", tiles));
+                ++index;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -1375,6 +1450,61 @@ namespace Ultima
                     tex.WriteLine($"0x{SortedTiles[i].ItemId:x4},{SortedTiles[i].OffsetX},{SortedTiles[i].OffsetY},{SortedTiles[i].OffsetZ},0x{SortedTiles[i].Flags:x},0x{SortedTiles[i].Unk1:x}");
                 }
             }
+        }
+
+        /// <summary>
+        /// A CentrED# blueprint, as its CsvWriter writes one: decimal ids, X and Y around the
+        /// blueprint's centre, Z from its lowest tile, hue and flags 0. CentrED# has no invisible
+        /// tiles, so every tile is written.
+        /// </summary>
+        public void ExportToCentredCsvFile(string fileName)
+        {
+            (int dx, int dy, int dz) = CentredOrigin();
+            using var writer = new StreamWriter(fileName);
+            writer.WriteLine("id,x,y,z,hue,flags");
+            foreach (MultiTileEntry e in SortedTiles)
+            {
+                writer.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{e.ItemId},{e.OffsetX - dx},{e.OffsetY - dy},{e.OffsetZ - dz},0,0"));
+            }
+        }
+
+        /// <summary>A CentrED# TilesEntry file holding this multi as its one entry, named <paramref name="name"/>.</summary>
+        public void ExportToTilesEntryFile(string fileName, string name)
+        {
+            (int dx, int dy, int dz) = CentredOrigin();
+            using XmlWriter xmlWriter = XmlWriter.Create(fileName, new XmlWriterSettings { Indent = true });
+            xmlWriter.WriteStartElement("TilesEntry");
+            xmlWriter.WriteStartElement("Entry");
+            xmlWriter.WriteAttributeString("Name", name);
+            foreach (MultiTileEntry e in SortedTiles)
+            {
+                xmlWriter.WriteStartElement("Item");
+                xmlWriter.WriteAttributeString("ID", $"0x{e.ItemId:X4}");
+                xmlWriter.WriteAttributeString("X", (e.OffsetX - dx).ToString(CultureInfo.InvariantCulture));
+                xmlWriter.WriteAttributeString("Y", (e.OffsetY - dy).ToString(CultureInfo.InvariantCulture));
+                xmlWriter.WriteAttributeString("Z", (e.OffsetZ - dz).ToString(CultureInfo.InvariantCulture));
+                xmlWriter.WriteAttributeString("Hue", "0");
+                xmlWriter.WriteEndElement(); // Item
+            }
+
+            xmlWriter.WriteEndElement(); // Entry
+            xmlWriter.WriteEndElement(); // TilesEntry
+        }
+
+        /// <summary>
+        /// What CentrED# subtracts to make a blueprint: the centre of its X/Y bounds (halfway,
+        /// rounded down, as its own save does) and its lowest Z.
+        /// </summary>
+        private (int X, int Y, int Z) CentredOrigin()
+        {
+            if (SortedTiles == null || SortedTiles.Length == 0)
+            {
+                return (0, 0, 0);
+            }
+
+            int minX = SortedTiles.Min(e => e.OffsetX), maxX = SortedTiles.Max(e => e.OffsetX);
+            int minY = SortedTiles.Min(e => e.OffsetY), maxY = SortedTiles.Max(e => e.OffsetY);
+            return (minX + ((maxX - minX + 1) / 2), minY + ((maxY - minY + 1) / 2), SortedTiles.Min(e => e.OffsetZ));
         }
 
         public void ExportToXmlFile(string fileName, string entryId)

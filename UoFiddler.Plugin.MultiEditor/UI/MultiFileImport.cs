@@ -81,7 +81,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             (Multis.ImportType.XML, "XML file (UOFiddler export)", "*.xml"),
             (Multis.ImportType.UOH, "UO House Editor design", "*.uoh"),
             (Multis.ImportType.WORLDFORGE, "WorldForge export", "*.xml"),
-            (Multis.ImportType.MULTIFORGE, "Multiforge text file (POL)", "*.txt")
+            (Multis.ImportType.MULTIFORGE, "Multiforge text file (POL)", "*.txt"),
+            (Multis.ImportType.CENTREDCSV, "CentrED# blueprint", "*.csv"),
+            (Multis.ImportType.TILESENTRY, "CentrED# TilesEntry", "*.xml")
         };
 
         /// <summary>Short format names for lists.</summary>
@@ -99,6 +101,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Multis.ImportType.UOH => "UO House Editor",
             Multis.ImportType.WORLDFORGE => "WorldForge",
             Multis.ImportType.MULTIFORGE => "Multiforge",
+            Multis.ImportType.CENTREDCSV => "CentrED# CSV",
+            Multis.ImportType.TILESENTRY => "CentrED# TilesEntry",
             _ => type.ToString()
         };
 
@@ -139,7 +143,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     ".xml" => DetectXml(path),
                     ".uoa" => Multis.ImportType.UOAB,
                     ".wsc" => Multis.ImportType.WSC,
-                    ".csv" => Multis.ImportType.CSV,
+                    ".csv" => DetectCsv(path),
                     ".uox3" => Multis.ImportType.UOX3,
                     ".uoh" => Multis.ImportType.UOH,
                     ".idx" => IsDesignSet(path) ? Multis.ImportType.UOADESIGN : null,
@@ -191,6 +195,23 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                         {
                             string name = designs.Count == 1 ? DocumentIO.DesignTitle(design) : $"{title} - {DocumentIO.DesignTitle(design)}";
                             result.Add(new ImportedMulti(name, type, path, design.ItemCount, () => LoadDesign(design)));
+                        }
+
+                        break;
+                    }
+                case Multis.ImportType.TILESENTRY:
+                    {
+                        // Each entry is a blueprint of its own, like the designs of a UOA batch.
+                        List<(string Name, List<MultiComponentList.MultiTileEntry> Tiles)> entries = MultiComponentList.ReadTilesEntries(path);
+                        foreach ((string name, List<MultiComponentList.MultiTileEntry> tiles) in entries)
+                        {
+                            int count = tiles.Count;
+                            if (count > 0)
+                            {
+                                // The constructor empties the list it is given.
+                                var multi = new MultiComponentList(tiles);
+                                result.Add(new ImportedMulti(entries.Count == 1 ? title : $"{title} - {name}", type, path, count, multi));
+                            }
                         }
 
                         break;
@@ -349,7 +370,29 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private static int ParseNumber(string text) => TryParseNumber(text, out int value) ? value : -1;
 
-        /// <summary>A UOFiddler export has Item elements with an ID; a WorldForge export has tile elements with an id.</summary>
+        /// <summary>
+        /// A CentrED# blueprint starts with an "id,x,y,z" header; anything else is read as Punt's
+        /// multi tool CSV ("TileID,OffsetX..." header, hex ids).
+        /// </summary>
+        private static Multis.ImportType DetectCsv(string path)
+        {
+            using var reader = new StreamReader(path);
+            while (reader.ReadLine() is { } line)
+            {
+                line = line.Trim();
+                if (line.Length > 0)
+                {
+                    return line.StartsWith("id,x,y,z", StringComparison.OrdinalIgnoreCase) ? Multis.ImportType.CENTREDCSV : Multis.ImportType.CSV;
+                }
+            }
+
+            return Multis.ImportType.CSV;
+        }
+
+        /// <summary>
+        /// A UOFiddler export has Item elements with an ID; a WorldForge export has tile elements with an id;
+        /// a CentrED# TilesEntry file has a TilesEntry root.
+        /// </summary>
         private static Multis.ImportType? DetectXml(string path)
         {
             var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore, XmlResolver = null };
@@ -361,6 +404,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     if (reader.NodeType != XmlNodeType.Element)
                     {
                         continue;
+                    }
+
+                    // CentrED# names the root; its Item elements look like a UOFiddler export's.
+                    if (reader.LocalName == "TilesEntry")
+                    {
+                        return Multis.ImportType.TILESENTRY;
                     }
 
                     if (reader.LocalName == "Item" && reader.GetAttribute("ID") != null)
