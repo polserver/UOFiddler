@@ -43,6 +43,8 @@
             fromvdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             actionFromVdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             actionToVdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tovdScaledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            actionToVdScaledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             copyActionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exportToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             tovdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -331,7 +333,7 @@
             // 
             // exportToolStripMenuItem1
             // 
-            exportToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tovdToolStripMenuItem, actionToVdToolStripMenuItem });
+            exportToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { tovdToolStripMenuItem, actionToVdToolStripMenuItem, tovdScaledToolStripMenuItem, actionToVdScaledToolStripMenuItem });
             exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
             exportToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             exportToolStripMenuItem1.Text = "Export..";
@@ -350,6 +352,22 @@
             actionToVdToolStripMenuItem.Text = "Action to .vd";
             actionToVdToolStripMenuItem.ToolTipText = "Export the selected action, all directions, as a single-action .vd";
             actionToVdToolStripMenuItem.Click += OnClickExportActionToVD;
+            //
+            // tovdScaledToolStripMenuItem
+            //
+            tovdScaledToolStripMenuItem.Name = "tovdScaledToolStripMenuItem";
+            tovdScaledToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            tovdScaledToolStripMenuItem.Text = "Body to .vd, scaled...";
+            tovdScaledToolStripMenuItem.ToolTipText = "Export the body as a .vd with every frame and center resized";
+            tovdScaledToolStripMenuItem.Click += OnClickExportScaledToVD;
+            //
+            // actionToVdScaledToolStripMenuItem
+            //
+            actionToVdScaledToolStripMenuItem.Name = "actionToVdScaledToolStripMenuItem";
+            actionToVdScaledToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            actionToVdScaledToolStripMenuItem.Text = "Action to .vd, scaled...";
+            actionToVdScaledToolStripMenuItem.ToolTipText = "Export the selected action as a single-action .vd with every frame and center resized";
+            actionToVdScaledToolStripMenuItem.Click += OnClickExportActionScaledToVD;
             // 
             // AnimationFileToolStrip
             // 
@@ -1739,6 +1757,8 @@
         private System.Windows.Forms.ToolStripMenuItem fromvdToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem actionFromVdToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem actionToVdToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tovdScaledToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem actionToVdScaledToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyActionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem1;

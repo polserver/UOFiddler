@@ -36,6 +36,7 @@ namespace UoFiddler.Controls.Forms
         private static bool _drawEmpty;
         private static bool _drawFull;
         private static int _lastAddFilterIndex = 1;
+        private static int _lastExportScale = 100;
 
         private float _zoomFactor = 1.0f;
 
@@ -1913,19 +1914,78 @@ namespace UoFiddler.Controls.Forms
 
         private void OnClickExportToVD(object sender, EventArgs e)
         {
+            ExportBodyToVD(100);
+        }
+
+        private void OnClickExportScaledToVD(object sender, EventArgs e)
+        {
+            if (_fileType != 0 && TryAskExportScale(out int percent))
+            {
+                ExportBodyToVD(percent);
+            }
+        }
+
+        private void ExportBodyToVD(int percent)
+        {
             if (_fileType == 0)
             {
                 return;
             }
 
-            string path = Options.OutputPath;
-            string fileName = Path.Combine(path, $"anim{_fileType}_{Utils.FormatExportId(_currentBody)}.vd");
-            if (!TryRunAnimationWrite(() => AnimationEdit.ExportToVD(_fileType, _currentBody, fileName), "Export"))
+            string fileName = Path.Combine(Options.OutputPath, $"anim{_fileType}_{Utils.FormatExportId(_currentBody)}{ScaleSuffix(percent)}.vd");
+            if (!TryRunAnimationWrite(() => AnimationEdit.ExportToVD(_fileType, _currentBody, fileName, percent / 100.0), "Export"))
             {
                 return;
             }
 
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Animation saved successfully.");
+        }
+
+        private static string ScaleSuffix(int percent)
+        {
+            return percent == 100 ? string.Empty : $"_scale{percent}";
+        }
+
+        /// <summary>
+        /// Asks for the size of exported frames, in percent of the original.
+        /// </summary>
+        private bool TryAskExportScale(out int percent)
+        {
+            using var dialog = new Form
+            {
+                Text = "Export scaled",
+                ClientSize = new Size(260, 84),
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterParent,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                ShowInTaskbar = false,
+            };
+            var label = new Label { Text = "Frame size (%):", AutoSize = true, Location = new Point(12, 16) };
+            var scale = new NumericUpDown
+            {
+                Minimum = 10,
+                Maximum = 400,
+                Increment = 10,
+                Value = _lastExportScale,
+                Location = new Point(130, 12),
+                Width = 70,
+            };
+            var ok = new Button { Text = "Export", DialogResult = DialogResult.OK, Location = new Point(92, 48) };
+            var cancel = new Button { Text = "Cancel", DialogResult = DialogResult.Cancel, Location = new Point(173, 48) };
+            dialog.Controls.AddRange(new Control[] { label, scale, ok, cancel });
+            dialog.AcceptButton = ok;
+            dialog.CancelButton = cancel;
+
+            percent = 100;
+            if (dialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return false;
+            }
+
+            percent = (int)scale.Value;
+            _lastExportScale = percent;
+            return true;
         }
 
         private void OnTreeViewContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1934,6 +1994,7 @@ namespace UoFiddler.Controls.Forms
             copyActionToolStripMenuItem.Enabled = actionSelected;
             actionFromVdToolStripMenuItem.Enabled = actionSelected;
             actionToVdToolStripMenuItem.Enabled = actionSelected;
+            actionToVdScaledToolStripMenuItem.Enabled = actionSelected;
         }
 
         private bool TryGetSelectedAction(out int body, out int action)
@@ -1953,13 +2014,26 @@ namespace UoFiddler.Controls.Forms
 
         private void OnClickExportActionToVD(object sender, EventArgs e)
         {
+            ExportActionToVD(100);
+        }
+
+        private void OnClickExportActionScaledToVD(object sender, EventArgs e)
+        {
+            if (_fileType != 0 && TryGetSelectedAction(out _, out _) && TryAskExportScale(out int percent))
+            {
+                ExportActionToVD(percent);
+            }
+        }
+
+        private void ExportActionToVD(int percent)
+        {
             if (_fileType == 0 || !TryGetSelectedAction(out int body, out int action))
             {
                 return;
             }
 
-            string fileName = Path.Combine(Options.OutputPath, $"anim{_fileType}_{Utils.FormatExportId(body)}_action{action}.vd");
-            if (!TryRunAnimationWrite(() => AnimationEdit.ExportActionToVD(_fileType, body, action, fileName), "Export"))
+            string fileName = Path.Combine(Options.OutputPath, $"anim{_fileType}_{Utils.FormatExportId(body)}_action{action}{ScaleSuffix(percent)}.vd");
+            if (!TryRunAnimationWrite(() => AnimationEdit.ExportActionToVD(_fileType, body, action, fileName, percent / 100.0), "Export"))
             {
                 return;
             }
