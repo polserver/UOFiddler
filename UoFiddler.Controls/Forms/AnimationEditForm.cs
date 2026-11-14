@@ -855,6 +855,17 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
+        /// <summary>
+        /// The overlay body's action matching the primary body's current action, or -1 if it has none.
+        /// </summary>
+        private int GetSecondAnimAction()
+        {
+            MobType primary = Animations.GetBodyMobType(_currentBody, _fileType);
+            MobType overlay = Animations.GetBodyMobType(_secondAnimId, _secondAnimFileIndex);
+            int action = MobActionMap.MapAction(primary, _currentAction, overlay);
+            return action >= 0 && AnimationEdit.IsActionInRange(_secondAnimFileIndex, _secondAnimId, action) ? action : -1;
+        }
+
         private void DrawSecondAnimation(Graphics graphics)
         {
             if (!_secondAnimActivated || _secondAnimFileIndex < 1 || _secondAnimFileIndex > 5)
@@ -862,9 +873,16 @@ namespace UoFiddler.Controls.Forms
                 return;
             }
 
-            // Action and direction follow the primary selection — equipment shares the human
-            // action set, so no action remapping is needed for the matching use case.
-            AnimIdx edit = AnimationEdit.GetAnimation(_secondAnimFileIndex, _secondAnimId, _currentAction, _currentDir);
+            // The direction follows the primary selection. The action does too when both bodies share an
+            // action layout (equipment uses the human one); otherwise the overlay plays its closest action,
+            // so a mount under a rider walks, runs and stands with the rider's horse actions.
+            int action = GetSecondAnimAction();
+            if (action < 0)
+            {
+                return;
+            }
+
+            AnimIdx edit = AnimationEdit.GetAnimation(_secondAnimFileIndex, _secondAnimId, action, _currentDir);
             Bitmap[] frames = edit?.GetFrames();
             if (frames == null || frames.Length == 0)
             {
@@ -953,7 +971,8 @@ namespace UoFiddler.Controls.Forms
             int primaryCount = FramesTrackBar.Maximum + 1;
 
             int overlayCount = 0;
-            AnimIdx overlay = AnimationEdit.GetAnimation(_secondAnimFileIndex, _secondAnimId, _currentAction, _currentDir);
+            int action = GetSecondAnimAction();
+            AnimIdx overlay = action < 0 ? null : AnimationEdit.GetAnimation(_secondAnimFileIndex, _secondAnimId, action, _currentDir);
             Bitmap[] frames = overlay?.GetFrames();
             if (frames != null)
             {
