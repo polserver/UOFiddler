@@ -251,6 +251,19 @@ namespace UoFiddler.Classes
                 }
             }
 
+            if (Options.PluginSettings.Count > 0)
+            {
+                comment = dom.CreateComment("Plugin settings");
+                sr.AppendChild(comment);
+                foreach (KeyValuePair<string, string> setting in System.Linq.Enumerable.OrderBy(Options.PluginSettings, s => s.Key, StringComparer.Ordinal))
+                {
+                    XmlElement xmlSetting = dom.CreateElement("PluginSetting");
+                    xmlSetting.SetAttribute("name", setting.Key);
+                    xmlSetting.SetAttribute("value", setting.Value ?? string.Empty);
+                    sr.AppendChild(xmlSetting);
+                }
+            }
+
             comment = dom.CreateComment("Path settings");
             sr.AppendChild(comment);
             elem = dom.CreateElement("RootPath");
@@ -485,6 +498,12 @@ namespace UoFiddler.Classes
                 string name = xPlug.GetAttribute("name");
                 _log.LogInformation("LoadProfile: adding plugin to load: {PluginName}", name);
                 Options.PluginsToLoad.Add(name);
+            }
+
+            Options.PluginSettings.Clear();
+            foreach (XmlElement xSetting in xOptions.SelectNodes("PluginSetting"))
+            {
+                Options.PluginSettings[xSetting.GetAttribute("name")] = xSetting.GetAttribute("value");
             }
 
             elem = (XmlElement)xOptions.SelectSingleNode("RootPath");

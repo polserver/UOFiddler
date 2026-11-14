@@ -87,6 +87,12 @@ namespace UoFiddler.Controls.Classes
         public static List<string> PluginsToLoad { get; set; } = new List<string>();
 
         /// <summary>
+        /// Settings plugins keep in the profile, by name. A plugin prefixes its names with its own
+        /// (e.g. "MultiEditor.Grid"); the values are saved and loaded with the profile as text.
+        /// </summary>
+        public static Dictionary<string, string> PluginSettings { get; set; } = new Dictionary<string, string>();
+
+        /// <summary>
         /// Defines which muls are loaded
         /// <para>
         /// <list type="bullet">
