@@ -88,6 +88,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public int YMod { get; private set; }
 
+        /// <summary>Size of the tile's art, at <see cref="XMod"/>, <see cref="YMod"/>; 0 when it has none.</summary>
+        public int ArtWidth { get; private set; }
+
+        public int ArtHeight { get; private set; }
+
         public int Z
         {
             get => _z;
@@ -219,9 +224,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
             else if (!ArtMetrics.TryGetSize(Id, out width, out height))
             {
+                ArtWidth = ArtHeight = 0;
                 return;
             }
 
+            ArtWidth = width;
+            ArtHeight = height;
             XMod = ((_x - _y) * 22) - (width / 2) + MultiEditorComponentList.GapXMod;
             YMod = ((_x + _y) * 22) - (_z * 4) - height + MultiEditorComponentList.GapYMod;
         }
