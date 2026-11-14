@@ -118,7 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.27.0
+    <value>Version 4.28.0
+- Multi Editor: replaced by an OpenGL editor (3.0.0) with a tool palette, document tabs, a tile browser with house styles, blueprints and UO Architect designs, floors, a plan view and a preview
+- Multi Editor: document tabs have close buttons and Close all designs, and the mouse wheel over the tab strip switches designs
+- Multi Editor: one work plane follows the chosen floor and moves a Z at a time with Ctrl+PgUp/PgDn; its Z shows in the status bar
+- Multi Editor: designs stay centred when the canvas resizes until panned or zoomed, and Center design centres them again
+- Multi Editor: rotating turns each piece by its art and the client's house tables, so classic roofs and stair corners keep their facing
+- Multi Editor: import several multi files or every multi in a folder at once; files that fail are skipped and listed
+- Multi Editor: reads and writes UO Architect (.uoa and Designs.idx/bin), UOHE, WorldForge and POL multiforge designs, and exports every importable format
+- Multi Editor: 1,697 more tiles in the tile groups and a tile rotation table
+- Multi Editor: faster hover hit test and a performance box (F12) with frame, GPU, draw and lag timings
+- Compare plugin: the compare views are sub-tabs of one Compare tab; the mouse wheel over the strip switches them
+- Multis: the preview no longer flickers when switching entries
+- Plugins: dependencies load from plugins\&lt;plugin name&gt;\, settings are kept in the profile, and plugins can add items to the Map tab's context menu
+- Plugins: new ThemedTabControl with mouse wheel tab switching and dark mode painting
+
+Version 4.27.0
 - Animations: pack an action's frames, or every action of a body, into a sprite sheet with a Json descriptor, and import sheets back into an action or a whole body. Directions 5-7 can be packed and are flipped back on import
 - Items: export and import item ranges as sprite sheets
 - Animations: export frames aligned on one canvas, centered like the Gif export, with a transparent background for Png and Tiff
