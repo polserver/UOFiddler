@@ -21,13 +21,13 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     /// </summary>
     internal enum PlacementMode
     {
-        /// <summary>On top of the hovered tile, or on the virtual floor.</summary>
+        /// <summary>On top of the hovered tile, or on an empty cell on the work plane (Z 0 with all floors and the plane not moved).</summary>
         Stack,
 
         /// <summary>At the hovered tile's own Z, replacing tiles of the same kind (flat or tall) there.</summary>
         Replace,
 
-        /// <summary>At the floor Z value, in the cell under the cursor on that plane.</summary>
+        /// <summary>At the work plane's Z, in the cell under the cursor on that plane.</summary>
         FixedZ
     }
 
@@ -60,9 +60,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// <summary>Amount the altitude tool adds to Z.</summary>
         int ZStep { get; }
 
-        bool FloorVisible { get; }
-
-        int FloorZ { get; }
+        /// <summary>The work plane's Z once a floor is chosen or the plane was moved, where house parts go; otherwise null.</summary>
+        int? WorkZ { get; }
 
         /// <summary>Highest Z drawn (the height slider).</summary>
         int MaxHeight { get; }

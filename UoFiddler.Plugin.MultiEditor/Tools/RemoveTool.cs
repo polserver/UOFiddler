@@ -16,7 +16,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 {
     /// <summary>
     /// Click removes the hovered tile. Dragging removes every shown tile in the rectangle between
-    /// the virtual floor and the height slider.
+    /// the work plane (once a floor is chosen or it was moved) and the height slider.
     /// </summary>
     internal sealed class RemoveTool : CellDragTool
     {
@@ -24,7 +24,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         {
         }
 
-        private int MinZ => Context.FloorVisible ? Context.FloorZ : sbyte.MinValue;
+        private int MinZ => Context.WorkZ ?? sbyte.MinValue;
 
         protected override void Commit(int z)
         {

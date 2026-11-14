@@ -123,14 +123,14 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         protected override string ActionName => "Roof";
 
         /// <summary>
-        /// The eaves go on the virtual floor, or on top of what the mouse points at (a wall top).
+        /// The eaves go on the work plane, or on top of what the mouse points at (a wall top).
         /// </summary>
         protected override void BaseCell(out int x, out int y, out int z)
         {
             Context.CellAt(Context.MouseLoc, out x, out y, out z);
-            if (Context.FloorVisible)
+            if (Context.WorkZ is { } baseZ)
             {
-                z = Context.FloorZ;
+                z = baseZ;
                 Context.PlaneCell(Context.MouseLoc, z, out x, out y);
             }
         }

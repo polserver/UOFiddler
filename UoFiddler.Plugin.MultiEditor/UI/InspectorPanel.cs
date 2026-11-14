@@ -147,16 +147,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Apply(() => _session.HideWalls = _hideWalls.Checked);
         }
 
-        private void ShowPlane_CheckedChanged(object sender, EventArgs e)
-        {
-            Apply(() => _session.FloorVisible = _showPlane.Checked);
-        }
-
-        private void PlaneZ_ValueChanged(object sender, EventArgs e)
-        {
-            Apply(() => _session.FloorZ = (int)_planeZ.Value);
-        }
-
         private void Limit_CheckedChanged(object sender, EventArgs e)
         {
             Apply(() => _session.HeightLimit = _limit.Checked ? _limitBar.Value : null);
@@ -548,7 +538,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             try
             {
                 bool enabled = _session != null;
-                _floorList.Enabled = _hideAbove.Enabled = _hideWalls.Enabled = _showPlane.Enabled = _planeZ.Enabled = _limit.Enabled = enabled;
+                _floorList.Enabled = _hideAbove.Enabled = _hideWalls.Enabled = _limit.Enabled = enabled;
 
                 if (_session == null)
                 {
@@ -562,8 +552,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _firstFloor.Value = _session.FirstFloorZ;
                 _editFloors.Text = _session.CustomLevels ? "Edit floors... *" : "Edit floors...";
                 _hideWalls.Checked = _session.HideWalls;
-                _showPlane.Checked = _session.FloorVisible;
-                _planeZ.Value = Math.Clamp(_session.FloorZ, (int)_planeZ.Minimum, (int)_planeZ.Maximum);
 
                 MultiEditorComponentList list = _session.CompList;
                 int min = Math.Min(list.ZMin, list.ZMax);

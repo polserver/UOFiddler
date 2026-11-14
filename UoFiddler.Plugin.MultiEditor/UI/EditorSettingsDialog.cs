@@ -33,13 +33,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             ColorRow(swatchBackground, null, () => _settings.EffectiveBackground);
             ColorRow(swatchWorkPlane, alphaWorkPlane, () => _settings.WorkPlane);
-            ColorRow(swatchFloorPlane, alphaFloorPlane, () => _settings.FloorPlane);
             ColorRow(swatchGrid, alphaGrid, () => _settings.Grid);
             ColorRow(swatchOutline, alphaOutline, () => _settings.Outline);
             ColorRow(swatchSelection, null, () => _settings.SelectionBox);
 
             CheckRow(checkWorkPlane, () => _settings.StartWithWorkPlane);
-            CheckRow(checkFloorPlane, () => _settings.StartWithFloorPlane);
             CheckRow(checkGrid, () => _settings.StartWithGrid);
             CheckRow(checkHideFloorsAbove, () => _settings.HideFloorsAbove);
         }
@@ -97,11 +95,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             PickColor(swatchWorkPlane, () => _settings.WorkPlane, c => _settings.WorkPlane = c);
         }
 
-        private void SwatchFloorPlane_Click(object sender, EventArgs e)
-        {
-            PickColor(swatchFloorPlane, () => _settings.FloorPlane, c => _settings.FloorPlane = c);
-        }
-
         private void SwatchGrid_Click(object sender, EventArgs e)
         {
             PickColor(swatchGrid, () => _settings.Grid, c => _settings.Grid = c);
@@ -122,11 +115,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             ChangeOpacity(alphaWorkPlane, () => _settings.WorkPlane, c => _settings.WorkPlane = c);
         }
 
-        private void AlphaFloorPlane_ValueChanged(object sender, EventArgs e)
-        {
-            ChangeOpacity(alphaFloorPlane, () => _settings.FloorPlane, c => _settings.FloorPlane = c);
-        }
-
         private void AlphaGrid_ValueChanged(object sender, EventArgs e)
         {
             ChangeOpacity(alphaGrid, () => _settings.Grid, c => _settings.Grid = c);
@@ -140,11 +128,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private void CheckWorkPlane_CheckedChanged(object sender, EventArgs e)
         {
             _settings.StartWithWorkPlane = checkWorkPlane.Checked;
-        }
-
-        private void CheckFloorPlane_CheckedChanged(object sender, EventArgs e)
-        {
-            _settings.StartWithFloorPlane = checkFloorPlane.Checked;
         }
 
         private void CheckGrid_CheckedChanged(object sender, EventArgs e)

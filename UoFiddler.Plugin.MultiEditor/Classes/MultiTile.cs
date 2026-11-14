@@ -15,18 +15,6 @@ using Ultima;
 
 namespace UoFiddler.Plugin.MultiEditor.Classes
 {
-    public partial class FloorTile : MultiTile
-    {
-        public FloorTile(int x, int y, int z)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-        }
-
-        public override bool IsVirtualFloor => true;
-    }
-
     public partial class MultiTile : IComparable
     {
         private int _x;
@@ -61,8 +49,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         public int Height => TileData.ItemTable[Id].Height;
 
         public ushort Id { get; internal set; }
-
-        public virtual bool IsVirtualFloor => false;
 
         public int X
         {
@@ -160,13 +146,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 return -1;
             }
 
-            // One key for every tile, the virtual floor included, so the order is transitive and a
-            // cell sorts the same whatever order its tiles were added in. The floor counts as
-            // threshold -1: below real tiles of the same sort Z.
+            // One key for every tile, so the order is transitive and a cell sorts the same whatever
+            // order its tiles were added in.
             int ourThreshold = SortThreshold;
             int theirThreshold = multiTile.SortThreshold;
 
-            int res = (Z + Math.Max(0, ourThreshold)).CompareTo(multiTile.Z + Math.Max(0, theirThreshold));
+            int res = (Z + ourThreshold).CompareTo(multiTile.Z + theirThreshold);
             if (res == 0)
             {
                 res = ourThreshold.CompareTo(theirThreshold);
@@ -180,15 +165,13 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             return res;
         }
 
+        /// <summary>The height a tile sorts at in its cell's stack: its Z, raised for tall and non-background tiles.</summary>
+        public int SortKey => Z + SortThreshold;
+
         private int SortThreshold
         {
             get
             {
-                if (IsVirtualFloor)
-                {
-                    return -1;
-                }
-
                 ItemData data = TileData.ItemTable[Id];
                 int threshold = 0;
                 if (data.Height > 0)
@@ -215,14 +198,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         private void RecalculateMod()
         {
-            int width;
-            int height;
-            if (IsVirtualFloor)
-            {
-                width = 44;
-                height = 44;
-            }
-            else if (!ArtMetrics.TryGetSize(Id, out width, out height))
+            if (!ArtMetrics.TryGetSize(Id, out int width, out int height))
             {
                 ArtWidth = ArtHeight = 0;
                 return;

@@ -15,7 +15,7 @@ using System.Windows.Forms;
 namespace UoFiddler.Plugin.MultiEditor.Tools
 {
     /// <summary>
-    /// Places the draw tile on the hovered tile or the virtual floor, with the chosen brush size.
+    /// Places the draw tile on the hovered tile or an empty cell, with the chosen brush size.
     /// </summary>
     internal sealed class DrawTool : EditorTool
     {

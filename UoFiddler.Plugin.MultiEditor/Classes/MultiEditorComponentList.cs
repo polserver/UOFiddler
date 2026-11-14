@@ -34,10 +34,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         private readonly List<MultiTile> _scratch = new();
 
         private List<MultiTile>[] _cells;
-        private int _floorZ;
         private int _tileCount;
         private long _solverCounter;
-        private bool _modified;
         private EditCommand _current;
 
         public int WalkableCount;
@@ -49,10 +47,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         public MultiEditorComponentList(int width, int height, IMultiViewSettings parent)
         {
             _parent = parent;
-            _floorZ = parent.DrawFloorZ;
             RebuildGrid(width, height, Array.Empty<MultiTile>());
 
-            _modified = true;
             RecalculateMinMax();
         }
 
@@ -62,7 +58,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         public MultiEditorComponentList(MultiComponentList list, IMultiViewSettings parent)
         {
             _parent = parent;
-            _floorZ = parent.DrawFloorZ;
 
             var tiles = new List<MultiTile>();
             for (int x = 0; x < list.Width; ++x)
@@ -82,7 +77,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
             RebuildGrid(list.Width, list.Height, tiles);
 
-            _modified = true;
             RecalculateMinMax();
         }
 
@@ -91,24 +85,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         public int Width { get; private set; }
 
         /// <summary>
-        /// Every tile, virtual floor tiles included, in draw order.
-        /// </summary>
-        public IEnumerable<MultiTile> Tiles
-        {
-            get
-            {
-                foreach (List<MultiTile> cell in _cells)
-                {
-                    foreach (MultiTile tile in cell)
-                    {
-                        yield return tile;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Every real tile (no virtual floor) in draw order.
+        /// Every tile, in draw order.
         /// </summary>
         public IEnumerable<MultiTile> RealTiles
         {
@@ -118,10 +95,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 {
                     foreach (MultiTile tile in cell)
                     {
-                        if (!tile.IsVirtualFloor)
-                        {
-                            yield return tile;
-                        }
+                        yield return tile;
                     }
                 }
             }
@@ -216,7 +190,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public bool Contains(MultiTile tile)
         {
-            return tile != null && !tile.IsVirtualFloor && InBounds(tile.X, tile.Y) && Cell(tile.X, tile.Y).Contains(tile);
+            return tile != null && InBounds(tile.X, tile.Y) && Cell(tile.X, tile.Y).Contains(tile);
         }
 
         /// <summary>
@@ -224,70 +198,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public List<MultiTile> GetTilesAt(int x, int y)
         {
-            var result = new List<MultiTile>();
-            if (!InBounds(x, y))
-            {
-                return result;
-            }
-
-            foreach (MultiTile tile in Cell(x, y))
-            {
-                if (!tile.IsVirtualFloor)
-                {
-                    result.Add(tile);
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Sets XMin/YMin, the canvas origin, for the current tiles and virtual floor. Call before
-        /// hit testing or converting coordinates.
-        /// </summary>
-        public void UpdateViewBounds(bool drawFloor)
-        {
-            if (_modified)
-            {
-                RecalculateMinMax();
-            }
-
-            XMin = XMinOrg;
-            XMax = XMaxOrg;
-            YMin = YMinOrg;
-            YMax = YMaxOrg;
-
-            if (drawFloor)
-            {
-                int floorZMod = (-_floorZ * 4) - 44;
-                if (YMin > floorZMod)
-                {
-                    YMin = floorZMod;
-                }
-
-                floorZMod = ((Width + Height) * 22) - (_floorZ * 4);
-                if (YMaxOrg < floorZMod)
-                {
-                    YMax = floorZMod;
-                }
-            }
-        }
-
-        public void SetFloorZ(int z)
-        {
-            _floorZ = z;
-            foreach (List<MultiTile> cell in _cells)
-            {
-                foreach (MultiTile tile in cell)
-                {
-                    if (tile.IsVirtualFloor)
-                    {
-                        tile.Z = z;
-                    }
-                }
-
-                cell.Sort();
-            }
+            return InBounds(x, y) ? new List<MultiTile>(Cell(x, y)) : new List<MultiTile>();
         }
 
         // ---------------------------------------------------------------- edits
@@ -780,7 +691,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
-            _modified = true;
             RecalculateMinMax();
         }
 
@@ -806,7 +716,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             TrimToSize(_undoList);
             _redoList.Clear();
 
-            _modified = true;
             RecalculateMinMax();
         }
 
@@ -837,7 +746,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
             foreach (MultiTile other in Cell(x, y))
             {
-                if (!other.IsVirtualFloor && other.Id == id && other.Z == z)
+                if (other.Id == id && other.Z == z)
                 {
                     return null;
                 }
@@ -892,6 +801,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         private List<MultiTile> Cell(int x, int y) => _cells[(x * Height) + y];
 
+        /// <summary>The tiles of one cell in draw order. Cells are drawn x by x, and y by y within each x.</summary>
+        public IReadOnlyList<MultiTile> TilesIn(int x, int y) => Cell(x, y);
+
         private void GridInsert(MultiTile tile)
         {
             List<MultiTile> cell = Cell(tile.X, tile.Y);
@@ -920,7 +832,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             {
                 for (int y = 0; y < height; ++y)
                 {
-                    _cells[(x * height) + y] = new List<MultiTile> { new FloorTile(x, y, _floorZ) };
+                    _cells[(x * height) + y] = new List<MultiTile>();
                 }
             }
 
@@ -993,13 +905,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         private void FillScratch(List<MultiTile> cell)
         {
             _scratch.Clear();
-            foreach (MultiTile tile in cell)
-            {
-                if (!tile.IsVirtualFloor)
-                {
-                    _scratch.Add(tile);
-                }
-            }
+            _scratch.AddRange(cell);
         }
 
         /// <summary>
@@ -1033,7 +939,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 ZMin = Math.Min(ZMin, tile.Z);
             }
 
-            _modified = false;
             XMinOrg = XMin;
             XMaxOrg = XMax;
             YMinOrg = YMin;

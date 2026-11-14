@@ -524,9 +524,9 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         private void BaseCell(out int x, out int y, out int z)
         {
             Context.CellAt(Context.MouseLoc, out x, out y, out z);
-            if (Context.FloorVisible)
+            if (Context.WorkZ is { } baseZ)
             {
-                z = Context.FloorZ;
+                z = baseZ;
                 Context.PlaneCell(Context.MouseLoc, z, out x, out y);
             }
         }

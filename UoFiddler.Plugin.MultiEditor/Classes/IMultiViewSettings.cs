@@ -17,9 +17,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
     /// </summary>
     internal interface IMultiViewSettings
     {
-        /// <summary>Z of the virtual floor.</summary>
-        int DrawFloorZ { get; }
-
         /// <summary>Tiles flagged as walls are not shown, and so not removed by area edits.</summary>
         bool HideWalls { get; }
 

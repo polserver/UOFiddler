@@ -61,7 +61,6 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
 
         /// <summary>Storeys between the foundation and the roof, as in the client's house designer.</summary>
         public const int FloorCount = 4;
-        private (bool Visible, int Z)? _floorBeforeLevels;
 
         // ---------------------------------------------------------------- clipboard
 
@@ -435,23 +434,63 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             Invalidated?.Invoke();
         }
 
-        // ---------------------------------------------------------------- floor plane
+        // ---------------------------------------------------------------- work plane
 
-        private bool _showFloorPlane;
+        private bool _showWorkPlane;
 
         /// <summary>
-        /// Shows the footprint of the multi at the base of the floor being built, as a fixed
-        /// reference under the tiles. Unlike the work plane it does not move with the placement Z
-        /// and takes no part in editing.
+        /// Shows the footprint of the multi as a green plane at <see cref="WorkPlaneZ"/>, drawn among
+        /// the tiles at its height so the floors below show through it. Fixed Z placement draws on it.
         /// </summary>
-        public bool ShowFloorPlane
+        public bool ShowWorkPlane
         {
-            get => _showFloorPlane;
-            set => SetView(ref _showFloorPlane, value);
+            get => _showWorkPlane;
+            set => SetView(ref _showWorkPlane, value);
         }
 
-        /// <summary>Z of the floor plane: the active floor's base, or the first floor with all floors shown.</summary>
-        public int FloorPlaneZ => _levelIndex > 0 ? _levels[_levelIndex - 1].BaseZ : _firstFloorZ;
+        /// <summary>How far the work plane was moved from its floor's base; back to 0 when the floor changes.</summary>
+        private int _workPlaneOffset;
+
+        /// <summary>
+        /// Z of the work plane: the active floor's base, or the first floor with all floors shown,
+        /// moved up or down by <see cref="MoveWorkPlane"/>.
+        /// </summary>
+        public int WorkPlaneZ => Math.Clamp(WorkPlaneBaseZ + _workPlaneOffset, sbyte.MinValue, sbyte.MaxValue);
+
+        /// <summary>How far the work plane stands above (or below) its floor's base.</summary>
+        public int WorkPlaneOffset => WorkPlaneZ - WorkPlaneBaseZ;
+
+        private int WorkPlaneBaseZ => _levelIndex > 0 ? _levels[_levelIndex - 1].BaseZ : _firstFloorZ;
+
+        /// <summary>
+        /// Moves the work plane up or down by <paramref name="dz"/>, within the Z a multi can hold.
+        /// With a floor chosen, moving out of its Z range switches to the floor the plane moved
+        /// into; the plane stays where it was moved.
+        /// </summary>
+        public void MoveWorkPlane(int dz)
+        {
+            int z = Math.Clamp(WorkPlaneZ + dz, sbyte.MinValue, sbyte.MaxValue);
+            bool floorChanged = false;
+            if (_levelIndex > 0)
+            {
+                int level = _levels.FindIndex(l => z >= l.Floor && z < l.Ceiling) + 1;
+                if (level > 0 && level != _levelIndex)
+                {
+                    _levelIndex = level;
+                    _activeLevel = (_levels[level - 1].Floor, _levels[level - 1].Ceiling);
+                    floorChanged = true;
+                }
+            }
+
+            int offset = z - WorkPlaneBaseZ;
+            if (offset == _workPlaneOffset && !floorChanged)
+            {
+                return;
+            }
+
+            _workPlaneOffset = offset;
+            OnViewChanged();
+        }
 
         // ---------------------------------------------------------------- plan view
 
@@ -477,8 +516,8 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             }
         }
 
-        /// <summary>Lowest Z you work on: the work plane when it is shown.</summary>
-        public int EditMinZ => _floorVisible ? _floorZ : int.MinValue;
+        /// <summary>Lowest Z you work on: the work plane's, once a floor is chosen or the plane was moved.</summary>
+        public int EditMinZ => WorkZ ?? int.MinValue;
 
         public PlanView Plan => new PlanView(CompList, PlanShapeOf);
 
@@ -772,30 +811,21 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             }
         }
 
-        /// <summary>Puts the work plane on the chosen level, so drawing lands there.</summary>
+        /// <summary>
+        /// Limits the view to the chosen level and puts the work plane on its base, where drawing
+        /// then lands (<see cref="WorkZ"/>).
+        /// </summary>
         private void ApplyLevel()
         {
+            _workPlaneOffset = 0;
             if (_levelIndex > 0)
             {
                 EditorLevel level = _levels[_levelIndex - 1];
-
-                // Entering level mode: remember the plane as the user had it.
-                _floorBeforeLevels ??= (_floorVisible, _floorZ);
                 _activeLevel = (level.Floor, level.Ceiling);
-                _floorVisible = true;
-                _floorZ = level.BaseZ;
-                CompList.SetFloorZ(_floorZ);
             }
             else
             {
                 _activeLevel = null;
-                if (_floorBeforeLevels is { } before)
-                {
-                    _floorBeforeLevels = null;
-                    _floorVisible = before.Visible;
-                    _floorZ = before.Z;
-                    CompList.SetFloorZ(_floorZ);
-                }
             }
 
             OnViewChanged();

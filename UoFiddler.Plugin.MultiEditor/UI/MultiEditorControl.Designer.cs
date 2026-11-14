@@ -74,6 +74,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _statusStrip = new System.Windows.Forms.StatusStrip();
             _statusHint = new System.Windows.Forms.ToolStripStatusLabel();
             _statusCell = new System.Windows.Forms.ToolStripStatusLabel();
+            _statusPlane = new System.Windows.Forms.ToolStripStatusLabel();
             _statusHover = new System.Windows.Forms.ToolStripStatusLabel();
             _statusSelection = new System.Windows.Forms.ToolStripStatusLabel();
             _statusSize = new System.Windows.Forms.ToolStripStatusLabel();
@@ -424,7 +425,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             //
             // _statusStrip
             //
-            _statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { _statusHint, _statusCell, _statusHover, _statusSelection, _statusSize });
+            _statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { _statusHint, _statusCell, _statusPlane, _statusHover, _statusSelection, _statusSize });
             _statusStrip.Location = new System.Drawing.Point(0, 696);
             _statusStrip.Name = "_statusStrip";
             _statusStrip.SizingGrip = false;
@@ -444,6 +445,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _statusCell.Name = "_statusCell";
             _statusCell.Size = new System.Drawing.Size(110, 23);
             _statusCell.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            //
+            // _statusPlane
+            //
+            _statusPlane.AutoSize = false;
+            _statusPlane.Name = "_statusPlane";
+            _statusPlane.Size = new System.Drawing.Size(160, 23);
+            _statusPlane.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            _statusPlane.ToolTipText = "Height of the work plane: the chosen floor's base, or the first floor with all floors shown; Ctrl+PgUp / Ctrl+PgDn move it. At plane Z placement draws there.";
             //
             // _statusHover
             //
@@ -543,6 +552,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.StatusStrip _statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel _statusHint;
         private System.Windows.Forms.ToolStripStatusLabel _statusCell;
+        private System.Windows.Forms.ToolStripStatusLabel _statusPlane;
         private System.Windows.Forms.ToolStripStatusLabel _statusHover;
         private System.Windows.Forms.ToolStripStatusLabel _statusSelection;
         private System.Windows.Forms.ToolStripStatusLabel _statusSize;

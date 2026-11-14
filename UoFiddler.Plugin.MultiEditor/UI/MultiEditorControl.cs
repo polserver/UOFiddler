@@ -447,10 +447,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private EditorCommand _undo, _redo, _cut, _copy, _paste, _delete;
         private EditorCommand _selectAll, _invert, _selectConnected, _selectSameId, _replaceId;
         private EditorCommand _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, _hide, _showHidden;
-        private EditorCommand _plane, _grid, _hideWalls, _walkable, _doubleSurface, _hideAbove, _levelUp, _levelDown;
+        private EditorCommand _grid, _hideWalls, _walkable, _doubleSurface, _hideAbove, _levelUp, _levelDown;
         private EditorCommand _fit, _zoomIn, _zoomOut, _zoomReset, _shortcuts;
         private EditorCommand _zUp, _zDown, _planeUp, _planeDown, _cyclePlacement, _escape;
-        private EditorCommand _drawWithSelected, _floorPlane;
+        private EditorCommand _drawWithSelected, _workPlane;
         private ContextMenuStrip _canvasMenu;
         private ToolStripMenuItem _canvasMenuTitle;
         private EditorCommand _preview, _moveReference, _planView, _allFloors, _showBrowser, _showInspector;
@@ -511,9 +511,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _hide = Command("Arrange", "Hide selection", () => Session.HideSelection(), Keys.H, hasSelection);
             _showHidden = Command("Arrange", "Show hidden tiles", () => Session.ShowHiddenTiles(), Keys.Shift | Keys.H, hasDoc);
 
-            _plane = Command("View", "Work plane", () => Session.FloorVisible = !Session.FloorVisible, Keys.F, hasDoc, () => Session?.FloorVisible == true);
-            _floorPlane = Command("View", "Floor plane", () => Session.ShowFloorPlane = !Session.ShowFloorPlane,
-                Keys.Shift | Keys.F, hasDoc, () => Session?.ShowFloorPlane == true);
+            _workPlane = Command("View", "Work plane", () => Session.ShowWorkPlane = !Session.ShowWorkPlane,
+                Keys.F, hasDoc, () => Session?.ShowWorkPlane == true);
             _grid = Command("View", "Grid", () => Session.ShowGrid = !Session.ShowGrid, Keys.G, hasDoc, () => Session?.ShowGrid == true, Glyphs.Grid);
             _hideWalls = Command("View", "Hide walls", () => Session.HideWalls = !Session.HideWalls, Keys.W, hasDoc, () => Session?.HideWalls == true);
             _walkable = Command("View", "Mark walkable tiles", () => Session.ShowWalkables = !Session.ShowWalkables, can: hasDoc, isChecked: () => Session?.ShowWalkables == true);
@@ -521,9 +520,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _hideAbove = Command("View", "Hide floors above the active one", () => Session.HideAboveLevel = !Session.HideAboveLevel, can: hasDoc, isChecked: () => Session?.HideAboveLevel == true);
             _levelUp = Command("View", "Floor up", () => Session.StepLevel(1), Keys.PageUp, hasDoc);
             _levelDown = Command("View", "Floor down", () => Session.StepLevel(-1), Keys.PageDown, hasDoc);
+            _planeUp = Command("View", "Work plane up 1", () => Session.MoveWorkPlane(1), Keys.Control | Keys.PageUp, hasDoc);
+            _planeDown = Command("View", "Work plane down 1", () => Session.MoveWorkPlane(-1), Keys.Control | Keys.PageDown, hasDoc);
             _allFloors = Command("View", "All floors", () => Session.LevelIndex = 0, Keys.Control | Keys.Home, hasDoc, () => Session?.LevelIndex == 0);
-            _planeUp = Command("View", "Work plane up 1", () => Session.FloorZ = Math.Min(127, Session.FloorZ + 1), Keys.Control | Keys.PageUp, hasDoc);
-            _planeDown = Command("View", "Work plane down 1", () => Session.FloorZ = Math.Max(-128, Session.FloorZ - 1), Keys.Control | Keys.PageDown, hasDoc);
             _showBrowser = Command("View", "Tile browser sidebar", () => ToggleSidebar(browser: true), Keys.F9, isChecked: () => _browserShown);
             _showInspector = Command("View", "Floors and selection sidebar", () => ToggleSidebar(browser: false), Keys.F10, isChecked: () => _inspectorShown);
             _preview = Command("View", "Preview as in the client", () => Session.PreviewMode = !Session.PreviewMode,
@@ -746,7 +745,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             _canvasMenu.Items.Add(new ToolStripSeparator());
-            foreach (EditorCommand command in new[] { _plane, _floorPlane, _grid, _fit })
+            foreach (EditorCommand command in new[] { _workPlane, _grid, _fit })
             {
                 _canvasMenu.Items.Add(_commands.MenuItem(command));
             }
@@ -1122,7 +1121,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Menu(_editMenu, _undo, _redo, null, _cut, _copy, _paste, _delete, null,
                 _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden);
             Menu(_selectMenu, _selectAll, _invert, _selectConnected, _selectSameId, null, _replaceId);
-            ToolStripDropDownButton view = Menu(_viewMenu, _preview, _planView, null, _plane, _floorPlane, _grid, _hideWalls, _hideAbove, _walkable, _doubleSurface, null,
+            ToolStripDropDownButton view = Menu(_viewMenu, _preview, _planView, null, _workPlane, _grid, _hideWalls, _hideAbove, _walkable, _doubleSurface, null,
                 _allFloors, _levelUp, _levelDown, _planeUp, _planeDown, null, _showBrowser, _showInspector, null, _fit, _zoomIn, _zoomOut, _zoomReset, null, _moveReference, null, _performanceInfo);
             var terrainMenu = new ToolStripMenuItem("Preview ground");
             foreach (EditorCommand terrain in _terrainCommands)
@@ -1142,7 +1141,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             InsertButtons(strip, _mainSeparator1, _new, _open, _saveClient);
             InsertButtons(strip, _mainSeparator2, _undo, _redo);
             InsertButtons(strip, _mainSeparator3, _cut, _copy, _paste, _delete);
-            InsertButtons(strip, _mainSeparator4, _plane, _floorPlane, _grid, _hideWalls);
+            InsertButtons(strip, _mainSeparator4, _workPlane, _grid, _hideWalls);
 
             // Right side: zoom and help. Right-aligned items run from the right edge in item order.
             int at = strip.Items.IndexOf(_zoomLabel);
@@ -1406,8 +1405,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             var session = new EditorSession(_masks, _houseStyles) { Title = title };
             EditorSettings settings = EditorSettings.Current;
-            session.FloorVisible = settings.StartWithWorkPlane;
-            session.ShowFloorPlane = settings.StartWithFloorPlane;
+            session.ShowWorkPlane = settings.StartWithWorkPlane;
             session.ShowGrid = settings.StartWithGrid;
             session.HideAboveLevel = settings.HideFloorsAbove;
             session.PreviewTerrain = (PreviewTerrain)Math.Clamp(settings.PreviewTerrain, 0, 4);
@@ -1781,6 +1779,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             SyncLevels();
             _commands.RefreshStates();
+            UpdateStatus();
         }
 
         /// <summary>
@@ -1917,7 +1916,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             if (session == null)
             {
                 _statusHint.Text = string.Empty;
-                _statusCell.Text = _statusHover.Text = _statusSelection.Text = _statusSize.Text = string.Empty;
+                _statusCell.Text = _statusPlane.Text = _statusHover.Text = _statusSelection.Text = _statusSize.Text = string.Empty;
                 return;
             }
 
@@ -1927,6 +1926,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             (int x, int y, int z) = session.CursorCell;
             _statusCell.Text = session.MouseInside && session.CompList.InBounds(x, y) ? $"Cell {x}, {y}, Z {z}" : string.Empty;
+            int offset = session.WorkPlaneOffset;
+            _statusPlane.Text = $"Work plane Z {session.WorkPlaneZ}" + (offset != 0 ? $" (floor {offset:+0;-0})" : string.Empty) +
+                                (session.ShowWorkPlane ? string.Empty : " (hidden)");
 
             MultiTile hover = session.HoverTile;
             _statusHover.Text = hover != null ? $"0x{hover.Id:X4} {TileName(hover.Id)}  Z {hover.Z}  H {hover.Height}" : string.Empty;
