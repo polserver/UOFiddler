@@ -84,6 +84,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// <summary>Whether Import from folder also scans the folders below.</summary>
         public bool ImportRecursive { get; set; } = true;
 
+        /// <summary>
+        /// Blueprint groups shown as buttons beside the group drop-down, joined by '|' (a character
+        /// folder names cannot hold).
+        /// </summary>
+        public string FavoriteBlueprintGroups { get; set; } = string.Empty;
+
         /// <summary>Height of the pieces list under the House page's styles.</summary>
         public int HousePiecesHeight { get; set; } = 250;
 

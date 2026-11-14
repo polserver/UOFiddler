@@ -168,24 +168,33 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>The height a tile sorts at in its cell's stack: its Z, raised for tall and non-background tiles.</summary>
         public int SortKey => Z + SortThreshold;
 
-        private int SortThreshold
+        private int SortThreshold => SortThresholdOf(Id);
+
+        /// <summary>
+        /// What a tile adds to its Z when its cell is stacked: one for a tile with height, one for a
+        /// tile that is not background. So foliage (low, not background) goes over its trunk (tall,
+        /// background) at the same Z. Shared with the blueprint thumbnails so they stack the same way.
+        /// </summary>
+        public static int SortThresholdOf(ushort id)
         {
-            get
+            if (TileData.ItemTable == null || id >= TileData.ItemTable.Length)
             {
-                ItemData data = TileData.ItemTable[Id];
-                int threshold = 0;
-                if (data.Height > 0)
-                {
-                    ++threshold;
-                }
-
-                if (!data.Background)
-                {
-                    ++threshold;
-                }
-
-                return threshold;
+                return 0;
             }
+
+            ItemData data = TileData.ItemTable[id];
+            int threshold = 0;
+            if (data.Height > 0)
+            {
+                ++threshold;
+            }
+
+            if (!data.Background)
+            {
+                ++threshold;
+            }
+
+            return threshold;
         }
 
         public void Set(ushort id, int z)

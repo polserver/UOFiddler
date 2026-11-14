@@ -47,6 +47,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _info = new System.Windows.Forms.Label();
             _status = new System.Windows.Forms.Label();
             _ok = new System.Windows.Forms.Button();
+            _saveBlueprints = new System.Windows.Forms.Button();
             cancel = new System.Windows.Forms.Button();
             _previewTimer = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)_preview).BeginInit();
@@ -207,8 +208,21 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _status.AutoEllipsis = true;
             _status.Location = new System.Drawing.Point(10, 524);
             _status.Name = "_status";
-            _status.Size = new System.Drawing.Size(700, 18);
+            _status.Size = new System.Drawing.Size(540, 18);
             _status.TabIndex = 11;
+            //
+            // _saveBlueprints
+            //
+            _saveBlueprints.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            _saveBlueprints.Enabled = false;
+            _saveBlueprints.Location = new System.Drawing.Point(560, 520);
+            _saveBlueprints.Name = "_saveBlueprints";
+            _saveBlueprints.Size = new System.Drawing.Size(155, 25);
+            _saveBlueprints.TabIndex = 14;
+            _saveBlueprints.Text = "Save as blueprints...";
+            _saveBlueprints.UseVisualStyleBackColor = true;
+            _saveBlueprints.Visible = false;
+            _saveBlueprints.Click += SaveBlueprints_Click;
             //
             // _ok
             //
@@ -256,6 +270,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Controls.Add(_info);
             Controls.Add(_status);
             Controls.Add(_ok);
+            Controls.Add(_saveBlueprints);
             Controls.Add(cancel);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             MinimizeBox = false;
@@ -289,6 +304,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.Label _info;
         private System.Windows.Forms.Label _status;
         private System.Windows.Forms.Button _ok;
+        private System.Windows.Forms.Button _saveBlueprints;
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.Timer _previewTimer;
     }

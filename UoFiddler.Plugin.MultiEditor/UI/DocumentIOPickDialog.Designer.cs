@@ -37,6 +37,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _preview = new System.Windows.Forms.PictureBox();
             _info = new System.Windows.Forms.Label();
             _ok = new System.Windows.Forms.Button();
+            _saveBlueprints = new System.Windows.Forms.Button();
             cancel = new System.Windows.Forms.Button();
             sourceAll = new System.Windows.Forms.RadioButton();
             sourceMul = new System.Windows.Forms.RadioButton();
@@ -122,6 +123,18 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _ok.UseVisualStyleBackColor = true;
             _ok.Click += Ok_Click;
             //
+            // _saveBlueprints
+            //
+            _saveBlueprints.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            _saveBlueprints.Location = new System.Drawing.Point(445, 425);
+            _saveBlueprints.Name = "_saveBlueprints";
+            _saveBlueprints.Size = new System.Drawing.Size(145, 23);
+            _saveBlueprints.TabIndex = 10;
+            _saveBlueprints.Text = "Save as blueprints...";
+            _saveBlueprints.UseVisualStyleBackColor = true;
+            _saveBlueprints.Visible = false;
+            _saveBlueprints.Click += SaveBlueprints_Click;
+            //
             // cancel
             //
             cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
@@ -183,6 +196,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Controls.Add(_preview);
             Controls.Add(_info);
             Controls.Add(_ok);
+            Controls.Add(_saveBlueprints);
             Controls.Add(cancel);
             Controls.Add(sourceAll);
             Controls.Add(sourceMul);
@@ -209,6 +223,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.PictureBox _preview;
         private System.Windows.Forms.Label _info;
         private System.Windows.Forms.Button _ok;
+        private System.Windows.Forms.Button _saveBlueprints;
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.RadioButton sourceAll;
         private System.Windows.Forms.RadioButton sourceMul;

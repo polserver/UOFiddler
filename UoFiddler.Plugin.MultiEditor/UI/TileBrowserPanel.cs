@@ -24,7 +24,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 {
     /// <summary>
     /// The editor's tile picker: one search box over pages of tiles (the multieditor.xml tree),
-    /// favorites, recently placed tiles, house part styles and prefabs. Data files are read on
+    /// favorites, recently placed tiles, house part styles and blueprints. Data files are read on
     /// first show, and a missing file only leaves its page empty.
     /// </summary>
     internal sealed partial class TileBrowserPanel : UserControl
@@ -78,7 +78,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private int _favoritesVersion = -1;
         private int _recentVersion = -1;
         private int _houseVersion = -1;
-        private int _prefabsVersion = -1;
+        private int _blueprintsVersion = -1;
 
         /// <summary>
         /// House styles are not passed here: they arrive through <see cref="SetHouseStyles"/>,
@@ -140,8 +140,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// <summary>The user picked the foundation entry of the House page.</summary>
         public event Action FoundationChosen;
 
-        /// <summary>The user activated a prefab: the shell starts a paste with these tiles.</summary>
-        public event Action<List<ClipboardTile>> PrefabChosen;
+        /// <summary>The user activated a blueprint: the shell starts a paste with these tiles.</summary>
+        public event Action<List<ClipboardTile>> BlueprintChosen;
 
         /// <summary>
         /// The House page's swap button: swap the selected pieces to the same columns of this style
@@ -187,12 +187,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
         }
 
-        /// <summary>Re-reads the prefab folder.</summary>
-        public void RefreshPrefabs()
+        /// <summary>Re-reads the blueprint folder.</summary>
+        public void RefreshBlueprints()
         {
-            if (_prefabsLoaded)
+            if (_blueprintsLoaded)
             {
-                LoadPrefabs();
+                LoadBlueprints();
             }
         }
 
@@ -212,9 +212,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _categoryBeforeSearch = FindCategory(beforeSearchPath);
 
             ReloadHouseIcons();
-            if (_prefabsLoaded)
+            if (_blueprintsLoaded)
             {
-                LoadPrefabs();
+                LoadBlueprints();
             }
 
             _filterVersion++;
@@ -284,6 +284,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private void DesignLibrary_PlaceRequested(UoaDesign design)
         {
             DesignPlaceRequested?.Invoke(design);
+        }
+
+        /// <summary>Designs were saved as blueprints: the Blueprints page shows them next time, the Designs page stays up.</summary>
+        private void DesignLibrary_BlueprintsSaved(string showGroup)
+        {
+            ReloadBlueprints(showGroup, bringToFront: false);
         }
 
         private void TilesSplit_SizeChanged(object sender, EventArgs e)
@@ -452,9 +458,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     {
                         _houseGallery.Focus();
                     }
-                    else if (_tabs.SelectedTab == _prefabsPage)
+                    else if (_tabs.SelectedTab == _blueprintsPage)
                     {
-                        _prefabList.Focus();
+                        _blueprintList.Focus();
                     }
 
                     e.Handled = true;
@@ -478,10 +484,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             {
                 ActivateFirstHouseNode();
             }
-            else if (_tabs.SelectedTab == _prefabsPage && _prefabList.Items.Count > 0)
+            else if (_tabs.SelectedTab == _blueprintsPage && _blueprintList.Items.Count > 0)
             {
-                _prefabList.Items[0].Selected = true;
-                PlaceSelectedPrefab();
+                _blueprintList.Items[0].Selected = true;
+                PlaceSelectedBlueprint();
             }
         }
 
@@ -555,13 +561,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     RebuildHouseTree();
                 }
             }
-            else if (page == _prefabsPage)
+            else if (page == _blueprintsPage)
             {
-                EnsurePrefabs();
-                if (_prefabsVersion != _filterVersion)
+                EnsureBlueprints();
+                if (_blueprintsVersion != _filterVersion)
                 {
-                    RebuildPrefabList();
+                    RebuildBlueprintList();
                 }
+
+                StartThumbnails();
             }
 
             // Results start at the top; only a first fill looks for the current tile.
@@ -600,7 +608,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
             else
             {
-                list = _prefabList.Items.Count == 0 && _query == null ? "No blueprints saved yet" : $"{_prefabList.Items.Count} blueprints";
+                list = _blueprintList.Items.Count == 0 && _query == null ? "No blueprints saved yet" : $"{_blueprintList.Items.Count} blueprints";
+                if (SelectedBlueprint is { } blueprint)
+                {
+                    list += $"  |  {blueprint.Name}: {Blueprints.FootprintText(blueprint.Footprint, true)}, {blueprint.TileCount:N0} tiles";
+                }
             }
 
             string current = _currentTile >= 0 ? $"Current 0x{_currentTile:X4} {TileBrowserThumbnails.NameOf(_currentTile)}" : string.Empty;
@@ -1657,25 +1669,55 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         // ---------------------------------------------------------------- blueprints page
 
-        private const int _prefabIconSize = 80;
+        private const int _blueprintIconSize = 80;
 
-        private readonly List<PrefabEntry> _prefabs = new List<PrefabEntry>();
-        private readonly List<string> _prefabGroups = new List<string>();
-        private bool _prefabsLoaded;
+        private readonly List<BlueprintEntry> _blueprints = new List<BlueprintEntry>();
+        private readonly List<string> _blueprintGroups = new List<string>();
+        private bool _blueprintsLoaded;
 
         /// <summary>The group shown: null for all, empty for the blueprints in no group, else a group name.</summary>
-        private string _prefabGroup;
+        private string _blueprintGroup;
 
-        /// <summary>A blueprint file. Group is the subfolder it is in, empty for the blueprint folder itself.</summary>
-        private sealed record PrefabEntry(string Name, string Group, string Path, int TileCount, int ImageIndex, HashSet<int> Ids);
+        /// <summary>Blueprints whose thumbnail is not drawn yet; they show the blank image 0 meanwhile.</summary>
+        private readonly HashSet<BlueprintEntry> _thumbsPending = new HashSet<BlueprintEntry>();
+        private Timer _thumbTimer;
+
+        /// <summary>
+        /// A blueprint file. Group is the subfolder it is in, empty for the blueprint folder itself;
+        /// ImageIndex is 0 (blank) until its thumbnail is drawn.
+        /// </summary>
+        private sealed class BlueprintEntry
+        {
+            public BlueprintEntry(string name, string group, string path, int tileCount, (int Width, int Depth, int Height) footprint,
+                HashSet<int> ids)
+            {
+                Name = name;
+                Group = group;
+                Path = path;
+                TileCount = tileCount;
+                Footprint = footprint;
+                Ids = ids;
+            }
+
+            public string Name { get; }
+            public string Group { get; }
+            public string Path { get; }
+            public int TileCount { get; }
+
+            /// <summary>Cells along X and Y and how high it is in Z.</summary>
+            public (int Width, int Depth, int Height) Footprint { get; }
+
+            public HashSet<int> Ids { get; }
+            public int ImageIndex { get; set; }
+        }
 
         /// <summary>
         /// One click places a blueprint, like picking a tile; a right click opens its menu
         /// without starting a paste.
         /// </summary>
-        private void PrefabList_MouseClick(object sender, MouseEventArgs e)
+        private void BlueprintList_MouseClick(object sender, MouseEventArgs e)
         {
-            if (_prefabList.GetItemAt(e.X, e.Y) is not { } item)
+            if (_blueprintList.GetItemAt(e.X, e.Y) is not { } item)
             {
                 return;
             }
@@ -1683,53 +1725,71 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             item.Selected = true;
             if (e.Button == MouseButtons.Left)
             {
-                PlaceSelectedPrefab();
+                PlaceSelectedBlueprint();
             }
             else if (e.Button == MouseButtons.Right)
             {
-                ShowPrefabMenu(e.Location);
+                ShowBlueprintMenu(e.Location);
             }
         }
 
-        private void PrefabList_KeyDown(object sender, KeyEventArgs e)
+        private void BlueprintList_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
-                DeleteSelectedPrefab();
+                DeleteSelectedBlueprint();
                 e.Handled = true;
             }
             else if (e.KeyCode == Keys.Enter)
             {
-                PlaceSelectedPrefab();
+                PlaceSelectedBlueprint();
                 e.Handled = e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.F2)
             {
-                RenameSelectedPrefab();
+                RenameSelectedBlueprint();
                 e.Handled = true;
             }
         }
 
-        private void EnsurePrefabs()
+        private void EnsureBlueprints()
         {
-            if (!_prefabsLoaded)
+            if (!_blueprintsLoaded)
             {
-                LoadPrefabs();
+                LoadBlueprints();
             }
         }
 
+        /// <summary>The group a new blueprint goes to: the one shown, empty (no group) when all are shown.</summary>
+        public string ShownBlueprintGroup => _blueprintGroup ?? string.Empty;
+
         /// <summary>
         /// Saves tiles as a blueprint in the group being shown (no group when all are shown) and
-        /// brings up the Blueprints page.
+        /// brings up the Blueprints page. A name that is taken asks whether to replace it.
         /// </summary>
         public void SaveBlueprint(string name, List<ClipboardTile> tiles)
         {
             EnsureLoaded();
+            string folder = Blueprints.GroupFolder(ShownBlueprintGroup);
+            string path = Path.Combine(folder, Blueprints.SafeName(name) + ".txt");
+            if (File.Exists(path))
+            {
+                DialogResult answer = MessageBox.Show(this, $"A blueprint named \"{name}\" already exists. Replace it?\n\nNo saves this one under a new name.",
+                    _messageTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (answer == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                if (answer == DialogResult.No)
+                {
+                    (path, name) = Blueprints.UniqueName(folder, name);
+                }
+            }
+
             try
             {
-                string folder = GroupFolder(_prefabGroup ?? string.Empty);
-                Directory.CreateDirectory(folder);
-                File.WriteAllText(Path.Combine(folder, Prefabs.SafeName(name) + ".txt"), ClipboardTile.Format(tiles));
+                Blueprints.Write(path, tiles, name);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
@@ -1737,233 +1797,361 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
-            if (_tabs.SelectedTab != _prefabsPage)
-            {
-                _tabs.SelectedTab = _prefabsPage;
-            }
-
-            LoadPrefabs();
-        }
-
-        private static string GroupFolder(string group)
-        {
-            return string.IsNullOrEmpty(group) ? Prefabs.Folder : Path.Combine(Prefabs.Folder, group);
+            ReloadBlueprints(_blueprintGroup);
         }
 
         /// <summary>
-        /// Reads every blueprint file and draws its thumbnail; unreadable files are skipped. A
-        /// subfolder of the blueprint folder is a group, also when it is empty.
+        /// Re-reads the blueprint folder and shows a group (null for all) on the Blueprints page,
+        /// after blueprints were written elsewhere; the page is brought up unless told not to.
         /// </summary>
-        private void LoadPrefabs()
+        public void ReloadBlueprints(string showGroup, bool bringToFront = true)
         {
-            _prefabsLoaded = true;
-            _prefabs.Clear();
-            _prefabGroups.Clear();
-            _prefabList.Items.Clear();
-            _prefabIcons.Images.Clear();
+            EnsureLoaded();
+            _blueprintGroup = showGroup;
 
+            // A page never shown reads the folder when it first shows.
+            bool wasLoaded = _blueprintsLoaded;
+            if (bringToFront && _tabs.SelectedTab != _blueprintsPage)
+            {
+                _tabs.SelectedTab = _blueprintsPage;
+            }
+
+            if (wasLoaded)
+            {
+                LoadBlueprints();
+            }
+        }
+
+        private static string GroupFolder(string group) => Blueprints.GroupFolder(group);
+
+        /// <summary>
+        /// Reads every blueprint file; unreadable files are skipped. Thumbnails are drawn afterwards,
+        /// the ones in view first. A subfolder of the blueprint folder is a group, also when it is empty.
+        /// </summary>
+        private void LoadBlueprints()
+        {
+            _blueprintsLoaded = true;
+            _blueprints.Clear();
+            _thumbsPending.Clear();
+            _blueprintGroups.Clear();
+            _blueprintList.Items.Clear();
+            _blueprintIcons.Images.Clear();
+            using (var blank = new Bitmap(_blueprintIconSize, _blueprintIconSize))
+            {
+                _blueprintIcons.Images.Add(blank);
+            }
+
+            bool complete = true;
             try
             {
-                if (Directory.Exists(Prefabs.Folder))
+                if (Directory.Exists(Blueprints.Folder))
                 {
-                    AddPrefabsOf(string.Empty);
-                    foreach (string folder in Directory.EnumerateDirectories(Prefabs.Folder).OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
+                    AddBlueprintsOf(string.Empty);
+                    foreach (string folder in Directory.EnumerateDirectories(Blueprints.Folder).OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
                     {
                         string group = Path.GetFileName(folder);
-                        _prefabGroups.Add(group);
-                        AddPrefabsOf(group);
+                        _blueprintGroups.Add(group);
+                        AddBlueprintsOf(group);
                     }
                 }
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
                 // What could be read is shown.
+                complete = false;
             }
 
-            if (!string.IsNullOrEmpty(_prefabGroup) && !_prefabGroups.Contains(_prefabGroup))
+            if (!string.IsNullOrEmpty(_blueprintGroup) && !_blueprintGroups.Contains(_blueprintGroup))
             {
-                _prefabGroup = null;
+                _blueprintGroup = null;
             }
 
-            RebuildPrefabGroupBar();
-            RebuildPrefabList();
+            // Only a full read says a group is gone; a failed one may just have stopped early.
+            if (complete)
+            {
+                DropMissingFavoriteGroups();
+            }
+
+            RebuildBlueprintGroupBar();
+            RebuildBlueprintList();
         }
 
-        private void AddPrefabsOf(string group)
+        private void AddBlueprintsOf(string group)
         {
             foreach (string path in Directory.EnumerateFiles(GroupFolder(group), "*.txt").OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
             {
-                List<ClipboardTile> tiles = LoadPrefab(path);
+                (List<ClipboardTile> tiles, string name) = Blueprints.Read(path);
                 if (tiles == null || tiles.Count == 0)
                 {
                     continue;
                 }
 
-                using (Bitmap thumb = Prefabs.Thumbnail(tiles, _prefabIconSize))
+                var entry = new BlueprintEntry(name, group, path, tiles.Count,
+                    Blueprints.Footprint(tiles), tiles.Select(t => (int)t.Id).ToHashSet());
+                _blueprints.Add(entry);
+                _thumbsPending.Add(entry);
+            }
+        }
+
+        private static List<ClipboardTile> LoadBlueprint(string path) => Blueprints.Read(path).Tiles;
+
+        /// <summary>Starts drawing the thumbnails still missing, while the Blueprints page shows.</summary>
+        private void StartThumbnails()
+        {
+            if (_thumbsPending.Count == 0)
+            {
+                return;
+            }
+
+            if (_thumbTimer == null)
+            {
+                _thumbTimer = new Timer(components) { Interval = 15 };
+                _thumbTimer.Tick += ThumbTimer_Tick;
+            }
+
+            _thumbTimer.Start();
+        }
+
+        /// <summary>
+        /// Draws missing thumbnails for a few milliseconds: the blueprints in view first, then the
+        /// rest of the list. Stops when the page is hidden or every listed one is drawn.
+        /// </summary>
+        private void ThumbTimer_Tick(object sender, EventArgs e)
+        {
+            if (!_blueprintList.Visible || _thumbsPending.Count == 0)
+            {
+                _thumbTimer.Stop();
+                return;
+            }
+
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            Rectangle view = _blueprintList.ClientRectangle;
+            var inView = new List<ListViewItem>();
+            var later = new List<ListViewItem>();
+            foreach (ListViewItem item in _blueprintList.Items)
+            {
+                if (item.Tag is BlueprintEntry entry && _thumbsPending.Contains(entry))
                 {
-                    _prefabIcons.Images.Add(thumb);
+                    (item.Bounds.IntersectsWith(view) ? inView : later).Add(item);
+                }
+            }
+
+            if (inView.Count == 0 && later.Count == 0)
+            {
+                // What is left is filtered out; it is drawn when it shows again.
+                _thumbTimer.Stop();
+                return;
+            }
+
+            // Setting an item's image repaints only that item, so no BeginUpdate (it would repaint the list).
+            foreach (ListViewItem item in inView.Concat(later))
+            {
+                var entry = (BlueprintEntry)item.Tag;
+                _thumbsPending.Remove(entry);
+                if (LoadBlueprint(entry.Path) is { Count: > 0 } tiles)
+                {
+                    using Bitmap thumb = Blueprints.Thumbnail(tiles, _blueprintIconSize);
+                    _blueprintIcons.Images.Add(thumb);
+                    entry.ImageIndex = _blueprintIcons.Images.Count - 1;
+                    item.ImageIndex = entry.ImageIndex;
                 }
 
-                _prefabs.Add(new PrefabEntry(Path.GetFileNameWithoutExtension(path), group, path, tiles.Count,
-                    _prefabIcons.Images.Count - 1, tiles.Select(t => (int)t.Id).ToHashSet()));
+                if (watch.ElapsedMilliseconds > 30)
+                {
+                    break;
+                }
             }
         }
 
-        private static List<ClipboardTile> LoadPrefab(string path)
+        /// <summary>
+        /// The group bar: one drop-down to choose the group shown (a bulk save can make dozens of
+        /// groups, too many for a button each), which also renames or removes the group shown,
+        /// then New group and Refresh.
+        /// </summary>
+        private void RebuildBlueprintGroupBar()
         {
-            try
-            {
-                return File.Exists(path) ? ClipboardTile.Parse(File.ReadAllText(path)) : null;
-            }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-            {
-                return null;
-            }
-        }
+            _blueprintGroupBar.Items.Clear();
 
-        private void RebuildPrefabGroupBar()
-        {
-            _prefabGroupBar.Items.Clear();
+            int CountOf(string group) => group == null ? _blueprints.Count : _blueprints.Count(p => p.Group == group);
+            static string Label(string group) => group == null ? "All" : group.Length == 0 ? "Ungrouped" : group;
 
-            void Add(string text, string group, string tip)
+            // A favorite shown is marked by its own button; the drop-down then just says what it is.
+            List<string> favorites = FavoriteGroups();
+            bool favoriteShown = favorites.Contains(_blueprintGroup);
+            var chooser = new ToolStripDropDownButton(favoriteShown ? "Groups" : $"{Label(_blueprintGroup)} ({CountOf(_blueprintGroup)})")
             {
-                int count = group == null ? _prefabs.Count : _prefabs.Count(p => p.Group == group);
-                var button = new ToolStripButton($"{text} ({count})")
+                DisplayStyle = ToolStripItemDisplayStyle.Text,
+                ToolTipText = "The group shown",
+                AutoToolTip = false
+            };
+
+            void Add(string group)
+            {
+                var item = new ToolStripMenuItem($"{Label(group)} ({CountOf(group)})") { Checked = _blueprintGroup == group };
+                item.Click += (_, _) =>
+                {
+                    _blueprintGroup = group;
+                    RebuildBlueprintGroupBar();
+                    RebuildBlueprintList();
+                };
+                chooser.DropDownItems.Add(item);
+            }
+
+            Add(null);
+            Add(string.Empty);
+            if (_blueprintGroups.Count > 0)
+            {
+                chooser.DropDownItems.Add(new ToolStripSeparator());
+                foreach (string group in _blueprintGroups)
+                {
+                    Add(group);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(_blueprintGroup))
+            {
+                string shown = _blueprintGroup;
+                bool favorite = favorites.Contains(shown, StringComparer.OrdinalIgnoreCase);
+                chooser.DropDownItems.Add(new ToolStripSeparator());
+                chooser.DropDownItems.Add(favorite ? $"Remove \"{shown}\" from favorites" : $"Add \"{shown}\" to favorites", null,
+                    (_, _) => SetFavoriteGroup(shown, !favorite));
+                chooser.DropDownItems.Add($"Rename \"{shown}\"...", null, (_, _) => RenameBlueprintGroup(shown));
+                chooser.DropDownItems.Add($"Remove \"{shown}\" (its blueprints become ungrouped)", null, (_, _) => RemoveBlueprintGroup(shown));
+            }
+
+            _blueprintGroupBar.Items.Add(chooser);
+
+            // Favorite groups stay on the bar, one click away; right click takes one off.
+            foreach (string group in favorites)
+            {
+                string favorite = group;
+                var button = new ToolStripButton("★ " + favorite)
                 {
                     DisplayStyle = ToolStripItemDisplayStyle.Text,
-                    Checked = _prefabGroup == group,
-                    ToolTipText = tip,
-                    AutoToolTip = false,
-                    Margin = new Padding(1, 1, 0, 2)
+                    Checked = _blueprintGroup == favorite,
+                    ToolTipText = $"{favorite}: {CountOf(favorite)} blueprints. Right click to remove it from favorites.",
+                    AutoToolTip = false
                 };
                 button.Click += (_, _) =>
                 {
-                    _prefabGroup = group;
-                    RebuildPrefabGroupBar();
-                    RebuildPrefabList();
+                    _blueprintGroup = favorite;
+                    RebuildBlueprintGroupBar();
+                    RebuildBlueprintList();
                 };
-                if (!string.IsNullOrEmpty(group))
+                button.MouseUp += (_, e) =>
                 {
-                    // A named group can be renamed or removed from its own button.
-                    button.MouseUp += (_, e) =>
+                    if (e.Button == MouseButtons.Right)
                     {
-                        if (e.Button == MouseButtons.Right)
-                        {
-                            ShowGroupMenu(group, _prefabGroupBar.PointToClient(Cursor.Position));
-                        }
-                    };
-                }
-
-                _prefabGroupBar.Items.Add(button);
-            }
-
-            Add("All", null, "Every blueprint");
-            Add("Ungrouped", string.Empty, "Blueprints in no group");
-            foreach (string group in _prefabGroups)
-            {
-                Add(group, group, "Right click to rename or remove this group");
+                        _blueprintMenu.Items.Clear();
+                        _blueprintMenu.Items.Add($"Remove \"{favorite}\" from favorites", null, (_, _) => SetFavoriteGroup(favorite, false));
+                        _blueprintMenu.Show(_blueprintGroupBar, _blueprintGroupBar.PointToClient(Cursor.Position));
+                    }
+                };
+                _blueprintGroupBar.Items.Add(button);
             }
 
             var create = new ToolStripButton("+ Group") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "Make a new group", AutoToolTip = false };
-            create.Click += (_, _) => CreatePrefabGroup(null);
-            _prefabGroupBar.Items.Add(new ToolStripSeparator());
-            _prefabGroupBar.Items.Add(create);
+            create.Click += (_, _) => CreateBlueprintGroup(null);
+            _blueprintGroupBar.Items.Add(new ToolStripSeparator());
+            _blueprintGroupBar.Items.Add(create);
             var refresh = new ToolStripButton("Refresh") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "Read the blueprint folder again", AutoToolTip = false };
-            refresh.Click += (_, _) => LoadPrefabs();
-            _prefabGroupBar.Items.Add(refresh);
+            refresh.Click += (_, _) => LoadBlueprints();
+            _blueprintGroupBar.Items.Add(refresh);
         }
 
         /// <summary>Shows the blueprints of the chosen group whose name matches the search, or that hold a searched id.</summary>
-        private void RebuildPrefabList()
+        private void RebuildBlueprintList()
         {
             TileBrowserQuery query = _query;
-            string selected = (_prefabList.SelectedItems.Count > 0 ? _prefabList.SelectedItems[0].Tag as PrefabEntry : null)?.Path;
-            _prefabList.BeginUpdate();
+            string selected = (_blueprintList.SelectedItems.Count > 0 ? _blueprintList.SelectedItems[0].Tag as BlueprintEntry : null)?.Path;
+            _blueprintList.BeginUpdate();
             try
             {
-                _prefabList.Items.Clear();
-                foreach (PrefabEntry prefab in _prefabs)
+                _blueprintList.Items.Clear();
+                foreach (BlueprintEntry blueprint in _blueprints)
                 {
-                    if (_prefabGroup != null && prefab.Group != _prefabGroup)
+                    if (_blueprintGroup != null && blueprint.Group != _blueprintGroup)
                     {
                         continue;
                     }
 
-                    if (query != null && !(query.IsIdQuery ? prefab.Ids.Any(query.MatchesId) : query.MatchesText(prefab.Group + " " + prefab.Name)))
+                    if (query != null && !(query.IsIdQuery ? blueprint.Ids.Any(query.MatchesId) : query.MatchesText(blueprint.Group + " " + blueprint.Name)))
                     {
                         continue;
                     }
 
-                    string where = prefab.Group.Length > 0 ? $" (group {prefab.Group})" : string.Empty;
-                    var item = new ListViewItem(prefab.Name, prefab.ImageIndex)
+                    // Thumbnails are all scaled to one size, so the label says how big it really is.
+                    string where = blueprint.Group.Length > 0 ? $"\ngroup {blueprint.Group}" : string.Empty;
+                    var item = new ListViewItem($"{blueprint.Name} ({Blueprints.FootprintText(blueprint.Footprint, false)})", blueprint.ImageIndex)
                     {
-                        Tag = prefab,
-                        ToolTipText = $"{prefab.Name}: {prefab.TileCount} tiles{where}"
+                        Tag = blueprint,
+                        ToolTipText = $"{blueprint.Name}\n{Blueprints.FootprintText(blueprint.Footprint, true)}, {blueprint.TileCount:N0} tiles{where}"
                     };
-                    _prefabList.Items.Add(item);
-                    item.Selected = prefab.Path == selected;
+                    _blueprintList.Items.Add(item);
+                    item.Selected = blueprint.Path == selected;
                 }
             }
             finally
             {
-                _prefabList.EndUpdate();
+                _blueprintList.EndUpdate();
             }
 
-            _prefabsVersion = _filterVersion;
+            StartThumbnails();
+            _blueprintsVersion = _filterVersion;
             UpdateStatus();
         }
 
-        private PrefabEntry SelectedPrefab => _prefabList.SelectedItems.Count > 0 ? _prefabList.SelectedItems[0].Tag as PrefabEntry : null;
+        private BlueprintEntry SelectedBlueprint => _blueprintList.SelectedItems.Count > 0 ? _blueprintList.SelectedItems[0].Tag as BlueprintEntry : null;
 
-        private void PlaceSelectedPrefab()
+        private void PlaceSelectedBlueprint()
         {
-            if (SelectedPrefab is not { } prefab)
+            if (SelectedBlueprint is not { } blueprint)
             {
                 return;
             }
 
             // Read again so the shell gets its own list and sees the file as it is now.
-            List<ClipboardTile> tiles = LoadPrefab(prefab.Path);
+            List<ClipboardTile> tiles = LoadBlueprint(blueprint.Path);
             if (tiles != null && tiles.Count > 0)
             {
-                PrefabChosen?.Invoke(tiles);
+                BlueprintChosen?.Invoke(tiles);
             }
         }
 
-        private void ShowPrefabMenu(Point location)
+        private void ShowBlueprintMenu(Point location)
         {
-            if (SelectedPrefab is not { } prefab)
+            if (SelectedBlueprint is not { } blueprint)
             {
                 return;
             }
 
-            _prefabMenu.Items.Clear();
-            _prefabMenu.Items.Add("Place", null, (_, _) => PlaceSelectedPrefab());
+            _blueprintMenu.Items.Clear();
+            _blueprintMenu.Items.Add("Place", null, (_, _) => PlaceSelectedBlueprint());
 
             var move = new ToolStripMenuItem("Move to group");
             void Target(string text, string group)
             {
-                var item = new ToolStripMenuItem(text) { Checked = prefab.Group == group, Enabled = prefab.Group != group };
-                item.Click += (_, _) => MovePrefab(prefab, group);
+                var item = new ToolStripMenuItem(text) { Checked = blueprint.Group == group, Enabled = blueprint.Group != group };
+                item.Click += (_, _) => MoveBlueprint(blueprint, group);
                 move.DropDownItems.Add(item);
             }
 
             Target("Ungrouped", string.Empty);
-            foreach (string group in _prefabGroups)
+            foreach (string group in _blueprintGroups)
             {
                 Target(group, group);
             }
 
             move.DropDownItems.Add(new ToolStripSeparator());
-            move.DropDownItems.Add("New group...", null, (_, _) => CreatePrefabGroup(prefab));
-            _prefabMenu.Items.Add(move);
-            _prefabMenu.Items.Add("Rename...", null, (_, _) => RenameSelectedPrefab());
-            _prefabMenu.Items.Add("Delete", null, (_, _) => DeleteSelectedPrefab());
-            _prefabMenu.Show(_prefabList, location);
+            move.DropDownItems.Add("New group...", null, (_, _) => CreateBlueprintGroup(blueprint));
+            _blueprintMenu.Items.Add(move);
+            _blueprintMenu.Items.Add("Rename...", null, (_, _) => RenameSelectedBlueprint());
+            _blueprintMenu.Items.Add("Delete", null, (_, _) => DeleteSelectedBlueprint());
+            _blueprintMenu.Show(_blueprintList, location);
         }
 
         /// <summary>Runs a file operation on the blueprint folder, shows why when it fails, and re-reads the folder.</summary>
-        private void PrefabFileAction(string what, Action action)
+        private void BlueprintFileAction(string what, Action action)
         {
             try
             {
@@ -1974,29 +2162,29 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 MessageBox.Show(this, $"Could not {what}: {ex.Message}", _messageTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            LoadPrefabs();
+            LoadBlueprints();
         }
 
-        private void MovePrefab(PrefabEntry prefab, string group)
+        private void MoveBlueprint(BlueprintEntry blueprint, string group)
         {
-            PrefabFileAction("move the blueprint", () =>
+            BlueprintFileAction("move the blueprint", () =>
             {
                 string folder = GroupFolder(group);
                 Directory.CreateDirectory(folder);
-                File.Move(prefab.Path, Path.Combine(folder, Path.GetFileName(prefab.Path)));
+                File.Move(blueprint.Path, Path.Combine(folder, Path.GetFileName(blueprint.Path)));
             });
         }
 
         /// <summary>Asks for a group name and makes it; with a blueprint, moves that one into it.</summary>
-        private void CreatePrefabGroup(PrefabEntry moveIn)
+        private void CreateBlueprintGroup(BlueprintEntry moveIn)
         {
-            if (Prompt.Text(this, "New blueprint group", "Group name:") is not { } typed || Prefabs.SafeName(typed).Length == 0)
+            if (Prompt.Text(this, "New blueprint group", "Group name:") is not { } typed || Blueprints.SafeName(typed).Length == 0)
             {
                 return;
             }
 
-            string group = Prefabs.SafeName(typed);
-            PrefabFileAction("make the group", () =>
+            string group = Blueprints.SafeName(typed);
+            BlueprintFileAction("make the group", () =>
             {
                 Directory.CreateDirectory(GroupFolder(group));
                 if (moveIn != null)
@@ -2005,67 +2193,150 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 }
             });
 
-            _prefabGroup = _prefabGroups.Contains(group) ? group : _prefabGroup;
-            RebuildPrefabGroupBar();
-            RebuildPrefabList();
+            _blueprintGroup = _blueprintGroups.Contains(group) ? group : _blueprintGroup;
+            RebuildBlueprintGroupBar();
+            RebuildBlueprintList();
         }
 
-        private void ShowGroupMenu(string group, Point location)
+        /// <summary>
+        /// The favorite groups that still exist, by their folder's own spelling, in the order they
+        /// were added.
+        /// </summary>
+        private List<string> FavoriteGroups()
         {
-            _prefabMenu.Items.Clear();
-            _prefabMenu.Items.Add("Rename group...", null, (_, _) =>
+            var favorites = new List<string>();
+            foreach (string saved in EditorSettings.Current.FavoriteBlueprintGroups.Split('|', StringSplitOptions.RemoveEmptyEntries))
             {
-                if (Prompt.Text(this, "Rename blueprint group", "Group name:", group) is { } typed &&
-                    Prefabs.SafeName(typed) is { Length: > 0 } name && name != group)
+                string group = _blueprintGroups.Find(g => string.Equals(g, saved, StringComparison.OrdinalIgnoreCase));
+                if (group != null && !favorites.Contains(group, StringComparer.OrdinalIgnoreCase))
                 {
-                    if (_prefabGroup == group)
-                    {
-                        _prefabGroup = name;
-                    }
+                    favorites.Add(group);
+                }
+            }
 
-                    PrefabFileAction("rename the group", () => Directory.Move(GroupFolder(group), GroupFolder(name)));
+            return favorites;
+        }
+
+        private static void SaveFavoriteGroups(IEnumerable<string> groups)
+        {
+            string text = string.Join('|', groups.Distinct(StringComparer.OrdinalIgnoreCase));
+            if (text != EditorSettings.Current.FavoriteBlueprintGroups)
+            {
+                EditorSettings settings = EditorSettings.Current.Clone();
+                settings.FavoriteBlueprintGroups = text;
+                settings.Apply();
+            }
+        }
+
+        /// <summary>Adds a group to the favorites or takes it off, and redraws the bar.</summary>
+        private void SetFavoriteGroup(string group, bool favorite)
+        {
+            List<string> favorites = FavoriteGroups();
+            favorites.RemoveAll(g => string.Equals(g, group, StringComparison.OrdinalIgnoreCase));
+            if (favorite)
+            {
+                favorites.Add(group);
+            }
+
+            SaveFavoriteGroups(favorites);
+            RebuildBlueprintGroupBar();
+        }
+
+        /// <summary>
+        /// Forgets favorites whose folder is gone (deleted or renamed outside the editor), after the
+        /// blueprint folder was read.
+        /// </summary>
+        private void DropMissingFavoriteGroups()
+        {
+            SaveFavoriteGroups(FavoriteGroups());
+        }
+
+        private void RenameBlueprintGroup(string group)
+        {
+            if (Prompt.Text(this, "Rename blueprint group", "Group name:", group) is not { } typed ||
+                Blueprints.SafeName(typed) is not { Length: > 0 } name || name == group)
+            {
+                return;
+            }
+
+            if (_blueprintGroup == group)
+            {
+                _blueprintGroup = name;
+            }
+
+            // A favorite keeps its place under the new name, once the folder has moved.
+            List<string> favorites = FavoriteGroups().ConvertAll(g => string.Equals(g, group, StringComparison.OrdinalIgnoreCase) ? name : g);
+            BlueprintFileAction("rename the group", () =>
+            {
+                Directory.Move(GroupFolder(group), GroupFolder(name));
+                SaveFavoriteGroups(favorites);
+            });
+        }
+
+        /// <summary>Moves a group's blueprints to no group and removes the group's folder once it is empty.</summary>
+        private void RemoveBlueprintGroup(string group)
+        {
+            if (_blueprintGroup == group)
+            {
+                _blueprintGroup = string.Empty;
+            }
+
+            BlueprintFileAction("remove the group", () =>
+            {
+                foreach (string path in Directory.EnumerateFiles(GroupFolder(group), "*.txt").ToList())
+                {
+                    // A name already taken in no group gets " (2)"..., so nothing is overwritten or left behind.
+                    (string target, _) = Blueprints.UniqueName(Blueprints.Folder, Path.GetFileNameWithoutExtension(path));
+                    File.Move(path, target);
+                }
+
+                // Only an empty folder goes: anything else in it is not ours to delete.
+                if (!Directory.EnumerateFileSystemEntries(GroupFolder(group)).Any())
+                {
+                    Directory.Delete(GroupFolder(group));
                 }
             });
-            _prefabMenu.Items.Add("Remove group (its blueprints become ungrouped)", null, (_, _) =>
+        }
+
+        /// <summary>
+        /// Renames a blueprint: the name line in the file and the file itself, which gets " (2)"...
+        /// when another blueprint in the group has that file name.
+        /// </summary>
+        private void RenameSelectedBlueprint()
+        {
+            if (SelectedBlueprint is not { } blueprint ||
+                Prompt.Text(this, "Rename blueprint", "Blueprint name:", blueprint.Name) is not { } typed ||
+                typed.Trim() is not { Length: > 0 } wanted || wanted == blueprint.Name || Blueprints.SafeName(wanted).Length == 0)
             {
-                PrefabFileAction("remove the group", () =>
+                return;
+            }
+
+            BlueprintFileAction("rename the blueprint", () =>
+            {
+                (List<ClipboardTile> tiles, _) = Blueprints.Read(blueprint.Path);
+                if (tiles == null)
                 {
-                    foreach (string path in Directory.EnumerateFiles(GroupFolder(group), "*.txt").ToList())
-                    {
-                        File.Move(path, Path.Combine(Prefabs.Folder, Path.GetFileName(path)));
-                    }
+                    throw new IOException("the file could not be read.");
+                }
 
-                    // Only an empty folder goes: anything else in it is not ours to delete.
-                    if (!Directory.EnumerateFileSystemEntries(GroupFolder(group)).Any())
-                    {
-                        Directory.Delete(GroupFolder(group));
-                    }
-                });
+                (string path, string name) = Blueprints.UniqueName(Path.GetDirectoryName(blueprint.Path), wanted, own: blueprint.Path);
+                Blueprints.Write(path, tiles, name);
+                if (!string.Equals(Path.GetFullPath(path), Path.GetFullPath(blueprint.Path), StringComparison.OrdinalIgnoreCase))
+                {
+                    File.Delete(blueprint.Path);
+                }
             });
-            _prefabMenu.Show(_prefabGroupBar, location);
         }
 
-        private void RenameSelectedPrefab()
+        private void DeleteSelectedBlueprint()
         {
-            if (SelectedPrefab is not { } prefab ||
-                Prompt.Text(this, "Rename blueprint", "Blueprint name:", prefab.Name) is not { } typed ||
-                Prefabs.SafeName(typed) is not { Length: > 0 } name || name == prefab.Name)
+            if (SelectedBlueprint is not { } blueprint ||
+                MessageBox.Show(this, $"Delete the blueprint \"{blueprint.Name}\"?", _messageTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
             {
                 return;
             }
 
-            PrefabFileAction("rename the blueprint", () => File.Move(prefab.Path, Path.Combine(Path.GetDirectoryName(prefab.Path), name + ".txt")));
-        }
-
-        private void DeleteSelectedPrefab()
-        {
-            if (SelectedPrefab is not { } prefab ||
-                MessageBox.Show(this, $"Delete the blueprint \"{prefab.Name}\"?", _messageTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
-            {
-                return;
-            }
-
-            PrefabFileAction("delete the blueprint", () => File.Delete(prefab.Path));
+            BlueprintFileAction("delete the blueprint", () => File.Delete(blueprint.Path));
         }
     }
 }

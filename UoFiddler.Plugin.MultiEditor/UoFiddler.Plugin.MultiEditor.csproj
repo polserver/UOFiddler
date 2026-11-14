@@ -41,6 +41,12 @@
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Update="UI\BlueprintSaveDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\BlueprintSaveDialog.Designer.cs">
+			<DependentUpon>BlueprintSaveDialog.cs</DependentUpon>
+		</Compile>
 		<Compile Update="UI\DesignLibraryPanel.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
@@ -127,6 +133,9 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Update="UI\BlueprintSaveDialog.resx">
+			<DependentUpon>BlueprintSaveDialog.cs</DependentUpon>
+		</EmbeddedResource>
 		<EmbeddedResource Update="UI\DesignLibraryPanel.resx">
 			<DependentUpon>DesignLibraryPanel.cs</DependentUpon>
 		</EmbeddedResource>

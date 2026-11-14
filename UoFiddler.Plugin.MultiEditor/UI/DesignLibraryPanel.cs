@@ -120,6 +120,46 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
         }
 
+        /// <summary>Saves the selected designs as blueprints, optionally one group per design category.</summary>
+        private void SaveBlueprints_Click(object sender, EventArgs e)
+        {
+            List<UoaDesign> designs = SelectedDesigns;
+            if (designs.Count == 0)
+            {
+                return;
+            }
+
+            var designOf = new Dictionary<BlueprintSource, UoaDesign>();
+            var sources = new List<BlueprintSource>();
+            foreach (UoaDesign design in designs)
+            {
+                var source = new BlueprintSource(DocumentIO.DesignTitle(design), design.ItemCount,
+                    () => Blueprints.FromComponents(UoaDesignFile.Load(design)));
+                sources.Add(source);
+                designOf[source] = design;
+            }
+
+            if (BlueprintSaveDialog.Run(FindForm(), sources, out string showGroup, "One group per design category (designs without one go to the group above)",
+                    s => CategoryGroup(designOf[s])) is { } result)
+            {
+                _info.Text = BlueprintSaveDialog.Describe(result, showGroup);
+                BlueprintsSaved?.Invoke(showGroup);
+            }
+        }
+
+        /// <summary>The group a design goes to by its category: "Category - Subsection", empty without a category.</summary>
+        private static string CategoryGroup(UoaDesign design)
+        {
+            string category = design.Category?.Trim() ?? string.Empty;
+            string subsection = design.Subsection?.Trim() ?? string.Empty;
+            if (category.Length == 0)
+            {
+                return subsection;
+            }
+
+            return Blueprints.SafeName(subsection.Length == 0 ? category : $"{category} - {subsection}");
+        }
+
         private void PreviewTimer_Tick(object sender, EventArgs e)
         {
             _previewTimer.Stop();
@@ -131,6 +171,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         /// <summary>Place the design into the multi being edited.</summary>
         public event Action<UoaDesign> PlaceRequested;
+
+        /// <summary>Designs were saved as blueprints; carries the group to show (null for all).</summary>
+        public event Action<string> BlueprintsSaved;
 
         private List<UoaDesign> SelectedDesigns
         {
@@ -307,6 +350,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             // Placing is a paste under the cursor: one design at a time.
             _place.Enabled = count == 1;
+            _saveBlueprints.Enabled = design != null;
+            _saveBlueprints.Text = count > 1 ? $"Save {count} as blueprints..." : "Save as blueprint...";
             if (design == null)
             {
                 SetPreview(null);
@@ -341,7 +386,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             try
             {
                 MultiComponentList multi = UoaDesignFile.Load(design);
-                SetPreview(multi == MultiComponentList.Empty ? null : Prefabs.Thumbnail(ToTiles(multi), _previewSize));
+                SetPreview(multi == MultiComponentList.Empty ? null : Blueprints.Thumbnail(ToTiles(multi), _previewSize));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {

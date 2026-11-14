@@ -59,16 +59,16 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _houseKindBar = new System.Windows.Forms.ToolStrip();
             _foundationButton = new System.Windows.Forms.ToolStripButton();
             _patternsButton = new System.Windows.Forms.ToolStripButton();
-            _prefabsPage = new System.Windows.Forms.TabPage();
-            _prefabList = new System.Windows.Forms.ListView();
-            _prefabIcons = new System.Windows.Forms.ImageList(components);
-            _prefabGroupBar = new System.Windows.Forms.ToolStrip();
+            _blueprintsPage = new System.Windows.Forms.TabPage();
+            _blueprintList = new System.Windows.Forms.ListView();
+            _blueprintIcons = new System.Windows.Forms.ImageList(components);
+            _blueprintGroupBar = new System.Windows.Forms.ToolStrip();
             _designsPage = new System.Windows.Forms.TabPage();
             _designLibrary = new DesignLibraryPanel();
             _toolTip = new System.Windows.Forms.ToolTip(components);
             _searchTimer = new System.Windows.Forms.Timer(components);
             _tileMenu = new System.Windows.Forms.ContextMenuStrip(components);
-            _prefabMenu = new System.Windows.Forms.ContextMenuStrip(components);
+            _blueprintMenu = new System.Windows.Forms.ContextMenuStrip(components);
             _filterBar.SuspendLayout();
             _tabs.SuspendLayout();
             _tilesPage.SuspendLayout();
@@ -81,7 +81,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _recentBar.SuspendLayout();
             _housePage.SuspendLayout();
             _houseKindBar.SuspendLayout();
-            _prefabsPage.SuspendLayout();
+            _blueprintsPage.SuspendLayout();
             _designsPage.SuspendLayout();
             SuspendLayout();
             // 
@@ -144,7 +144,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _tabs.Controls.Add(_favoritesPage);
             _tabs.Controls.Add(_recentPage);
             _tabs.Controls.Add(_housePage);
-            _tabs.Controls.Add(_prefabsPage);
+            _tabs.Controls.Add(_blueprintsPage);
             _tabs.Controls.Add(_designsPage);
             _tabs.Dock = System.Windows.Forms.DockStyle.Fill;
             _tabs.Location = new System.Drawing.Point(0, 52);
@@ -387,44 +387,44 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _patternsButton.ToolTipText = "Bordered floors: corner, side and fill pieces laid as one. Save your own from a selection (File menu).";
             _patternsButton.Click += PatternsButton_Click;
             // 
-            // _prefabsPage
+            // _blueprintsPage
             // 
-            _prefabsPage.Controls.Add(_prefabList);
-            _prefabsPage.Controls.Add(_prefabGroupBar);
-            _prefabsPage.Location = new System.Drawing.Point(4, 44);
-            _prefabsPage.Name = "_prefabsPage";
-            _prefabsPage.Size = new System.Drawing.Size(192, 52);
-            _prefabsPage.TabIndex = 4;
-            _prefabsPage.Text = "Blueprints";
+            _blueprintsPage.Controls.Add(_blueprintList);
+            _blueprintsPage.Controls.Add(_blueprintGroupBar);
+            _blueprintsPage.Location = new System.Drawing.Point(4, 44);
+            _blueprintsPage.Name = "_blueprintsPage";
+            _blueprintsPage.Size = new System.Drawing.Size(192, 52);
+            _blueprintsPage.TabIndex = 4;
+            _blueprintsPage.Text = "Blueprints";
             // 
-            // _prefabList
+            // _blueprintList
             // 
-            _prefabList.Dock = System.Windows.Forms.DockStyle.Fill;
-            _prefabList.LargeImageList = _prefabIcons;
-            _prefabList.Location = new System.Drawing.Point(0, 0);
-            _prefabList.MultiSelect = false;
-            _prefabList.Name = "_prefabList";
-            _prefabList.ShowItemToolTips = true;
-            _prefabList.Size = new System.Drawing.Size(192, 52);
-            _prefabList.TabIndex = 0;
-            _prefabList.UseCompatibleStateImageBehavior = false;
-            _prefabList.KeyDown += PrefabList_KeyDown;
-            _prefabList.MouseClick += PrefabList_MouseClick;
+            _blueprintList.Dock = System.Windows.Forms.DockStyle.Fill;
+            _blueprintList.LargeImageList = _blueprintIcons;
+            _blueprintList.Location = new System.Drawing.Point(0, 0);
+            _blueprintList.MultiSelect = false;
+            _blueprintList.Name = "_blueprintList";
+            _blueprintList.ShowItemToolTips = true;
+            _blueprintList.Size = new System.Drawing.Size(192, 52);
+            _blueprintList.TabIndex = 0;
+            _blueprintList.UseCompatibleStateImageBehavior = false;
+            _blueprintList.KeyDown += BlueprintList_KeyDown;
+            _blueprintList.MouseClick += BlueprintList_MouseClick;
             // 
-            // _prefabIcons
+            // _blueprintIcons
             // 
-            _prefabIcons.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            _prefabIcons.ImageSize = new System.Drawing.Size(80, 80);
-            _prefabIcons.TransparentColor = System.Drawing.Color.Transparent;
+            _blueprintIcons.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            _blueprintIcons.ImageSize = new System.Drawing.Size(80, 80);
+            _blueprintIcons.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // _prefabGroupBar
+            // _blueprintGroupBar
             // 
-            _prefabGroupBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            _prefabGroupBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            _prefabGroupBar.Location = new System.Drawing.Point(0, 0);
-            _prefabGroupBar.Name = "_prefabGroupBar";
-            _prefabGroupBar.Size = new System.Drawing.Size(192, 0);
-            _prefabGroupBar.TabIndex = 1;
+            _blueprintGroupBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            _blueprintGroupBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            _blueprintGroupBar.Location = new System.Drawing.Point(0, 0);
+            _blueprintGroupBar.Name = "_blueprintGroupBar";
+            _blueprintGroupBar.Size = new System.Drawing.Size(192, 0);
+            _blueprintGroupBar.TabIndex = 1;
             // 
             // _designsPage
             // 
@@ -444,6 +444,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _designLibrary.TabIndex = 0;
             _designLibrary.OpenRequested += DesignLibrary_OpenRequested;
             _designLibrary.PlaceRequested += DesignLibrary_PlaceRequested;
+            _designLibrary.BlueprintsSaved += DesignLibrary_BlueprintsSaved;
             // 
             // _searchTimer
             // 
@@ -455,10 +456,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _tileMenu.Name = "_tileMenu";
             _tileMenu.Size = new System.Drawing.Size(61, 4);
             // 
-            // _prefabMenu
+            // _blueprintMenu
             // 
-            _prefabMenu.Name = "_prefabMenu";
-            _prefabMenu.Size = new System.Drawing.Size(61, 4);
+            _blueprintMenu.Name = "_blueprintMenu";
+            _blueprintMenu.Size = new System.Drawing.Size(61, 4);
             // 
             // TileBrowserPanel
             // 
@@ -486,8 +487,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _housePage.PerformLayout();
             _houseKindBar.ResumeLayout(false);
             _houseKindBar.PerformLayout();
-            _prefabsPage.ResumeLayout(false);
-            _prefabsPage.PerformLayout();
+            _blueprintsPage.ResumeLayout(false);
+            _blueprintsPage.PerformLayout();
             _designsPage.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -525,15 +526,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.ToolStrip _houseKindBar;
         private System.Windows.Forms.ToolStripButton _foundationButton;
         private System.Windows.Forms.ToolStripButton _patternsButton;
-        private System.Windows.Forms.TabPage _prefabsPage;
-        private System.Windows.Forms.ListView _prefabList;
-        private System.Windows.Forms.ImageList _prefabIcons;
-        private System.Windows.Forms.ToolStrip _prefabGroupBar;
+        private System.Windows.Forms.TabPage _blueprintsPage;
+        private System.Windows.Forms.ListView _blueprintList;
+        private System.Windows.Forms.ImageList _blueprintIcons;
+        private System.Windows.Forms.ToolStrip _blueprintGroupBar;
         private System.Windows.Forms.TabPage _designsPage;
         private DesignLibraryPanel _designLibrary;
         private System.Windows.Forms.ToolTip _toolTip;
         private System.Windows.Forms.Timer _searchTimer;
         private System.Windows.Forms.ContextMenuStrip _tileMenu;
-        private System.Windows.Forms.ContextMenuStrip _prefabMenu;
+        private System.Windows.Forms.ContextMenuStrip _blueprintMenu;
     }
 }
