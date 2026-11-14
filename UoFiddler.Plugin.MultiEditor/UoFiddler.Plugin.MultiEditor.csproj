@@ -3,14 +3,17 @@
 		<AssemblyName>MultiEditor</AssemblyName>
 		<TargetFramework>net10.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AssemblyTitle>MultiEditor</AssemblyTitle>
 		<Product>MultiEditor</Product>
 		<Copyright>Copyright © 2026</Copyright>
-		<AssemblyVersion>1.7.0.0</AssemblyVersion>
-		<FileVersion>1.7.0.0</FileVersion>
+		<AssemblyVersion>3.0.0.0</AssemblyVersion>
+		<FileVersion>3.0.0.0</FileVersion>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<GenerateResourceWarnOnBinaryFormatterUse>false</GenerateResourceWarnOnBinaryFormatterUse>
+		<!-- Package DLLs go to plugins\MultiEditor\ (see CopyPluginDependencies), not next to the plugin. -->
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 	<PropertyGroup>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -25,23 +28,7 @@
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Update="Forms\ShortcutsHelpForm.cs">
-			<SubType>Form</SubType>
-		</Compile>
-		<Compile Update="Forms\ShortcutsHelpForm.Designer.cs">
-			<DependentUpon>ShortcutsHelpForm.cs</DependentUpon>
-		</Compile>
-		<Compile Update="UserControls\MultiEditorControl.cs">
-			<SubType>UserControl</SubType>
-		</Compile>
-		<Compile Update="UserControls\MultiEditorControl.Designer.cs">
-			<DependentUpon>MultiEditorControl.cs</DependentUpon>
-		</Compile>
-		<Compile Update="Properties\Resources.Designer.cs">
-			<AutoGen>True</AutoGen>
-			<DesignTime>True</DesignTime>
-			<DependentUpon>Resources.resx</DependentUpon>
-		</Compile>
+		<PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Ultima\Ultima.csproj">
@@ -54,20 +41,143 @@
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Update="Forms\ShortcutsHelpForm.resx">
-			<DependentUpon>ShortcutsHelpForm.cs</DependentUpon>
+		<Compile Update="UI\DesignLibraryPanel.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UI\DesignLibraryPanel.Designer.cs">
+			<DependentUpon>DesignLibraryPanel.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\DocumentIOPickDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\DocumentIOPickDialog.Designer.cs">
+			<DependentUpon>DocumentIOPickDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\DocumentIOSaveDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\DocumentIOSaveDialog.Designer.cs">
+			<DependentUpon>DocumentIOSaveDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\EditorSettingsDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\EditorSettingsDialog.Designer.cs">
+			<DependentUpon>EditorSettingsDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\FloorsDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\FloorsDialog.Designer.cs">
+			<DependentUpon>FloorsDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\InspectorPanel.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UI\InspectorPanel.Designer.cs">
+			<DependentUpon>InspectorPanel.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\MapExtractForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\MapExtractForm.Designer.cs">
+			<DependentUpon>MapExtractForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\MultiEditorControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UI\MultiEditorControl.Designer.cs">
+			<DependentUpon>MultiEditorControl.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\NewMultiDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\NewMultiDialog.Designer.cs">
+			<DependentUpon>NewMultiDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\NumbersPromptForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\NumbersPromptForm.Designer.cs">
+			<DependentUpon>NumbersPromptForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\ShortcutsForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\ShortcutsForm.Designer.cs">
+			<DependentUpon>ShortcutsForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\TextPromptForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\TextPromptForm.Designer.cs">
+			<DependentUpon>TextPromptForm.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\TileBrowserPanel.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UI\TileBrowserPanel.Designer.cs">
+			<DependentUpon>TileBrowserPanel.cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="UI\DesignLibraryPanel.resx">
+			<DependentUpon>DesignLibraryPanel.cs</DependentUpon>
 		</EmbeddedResource>
-		<EmbeddedResource Update="UserControls\MultiEditorControl.resx">
+		<EmbeddedResource Update="UI\DocumentIOPickDialog.resx">
+			<DependentUpon>DocumentIOPickDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\DocumentIOSaveDialog.resx">
+			<DependentUpon>DocumentIOSaveDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\EditorSettingsDialog.resx">
+			<DependentUpon>EditorSettingsDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\FloorsDialog.resx">
+			<DependentUpon>FloorsDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\InspectorPanel.resx">
+			<DependentUpon>InspectorPanel.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\MapExtractForm.resx">
+			<DependentUpon>MapExtractForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\MultiEditorControl.resx">
 			<DependentUpon>MultiEditorControl.cs</DependentUpon>
 		</EmbeddedResource>
-		<EmbeddedResource Update="Properties\Resources.resx">
-			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		<EmbeddedResource Update="UI\NewMultiDialog.resx">
+			<DependentUpon>NewMultiDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\NumbersPromptForm.resx">
+			<DependentUpon>NumbersPromptForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\ShortcutsForm.resx">
+			<DependentUpon>ShortcutsForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\TextPromptForm.resx">
+			<DependentUpon>TextPromptForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\TileBrowserPanel.resx">
+			<DependentUpon>TileBrowserPanel.cs</DependentUpon>
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="multieditor.xml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="MultiRotationTable.xml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
+	<!--
+		The host loads every dll in plugins\ as a plugin, so the OpenTK assemblies and the native
+		GLFW library live in a subfolder named after this assembly. PluginServices resolves them from there.
+	-->
+	<Target Name="CopyPluginDependencies" AfterTargets="Build" DependsOnTargets="ResolvePackageAssets">
+		<ItemGroup>
+			<_PluginDependency Include="@(RuntimeCopyLocalItems)" />
+			<_PluginDependency Include="@(RuntimeTargetsCopyLocalItems)" Condition="'%(RuntimeTargetsCopyLocalItems.RuntimeIdentifier)' == 'win-x64'" />
+		</ItemGroup>
+		<Copy SourceFiles="@(_PluginDependency)" DestinationFolder="$(OutDir)$(AssemblyName)\" SkipUnchangedFiles="true" />
+	</Target>
 </Project>

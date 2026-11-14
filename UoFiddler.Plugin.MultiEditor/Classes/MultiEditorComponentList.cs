@@ -1,9 +1,9 @@
 ﻿/***************************************************************************
  *
  * $Author: MuadDib & Turley
- * 
+ *
  * "THE BEER-WARE LICENSE"
- * As long as you retain this notice you can do whatever you want with 
+ * As long as you retain this notice you can do whatever you want with
  * this stuff. If we meet some day, and you think this stuff is worth it,
  * you can buy me a beer in return.
  *
@@ -11,25 +11,34 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using Ultima;
 using UoFiddler.Controls.Classes;
-using UoFiddler.Plugin.MultiEditor.UserControls;
 
 namespace UoFiddler.Plugin.MultiEditor.Classes
 {
-    internal class MultiEditorComponentList
+    /// <summary>
+    /// The edited multi. Tiles are kept per cell, each cell sorted in draw order with its virtual
+    /// floor tile, so walking the cells x-major then y gives the draw order of the whole multi.
+    /// Every edit is recorded as an <see cref="EditCommand"/> for undo and redo.
+    /// </summary>
+    internal partial class MultiEditorComponentList
     {
-        public const int DefaultUndoStackSize = 50;
-        private int _undoListMaxSize = DefaultUndoStackSize;
-
-        private bool _modified;
-        private static MultiEditorControl _parent;
-        private static Rectangle _drawDestRectangle;
+        public const int DefaultUndoStackSize = 200;
 
         public const int GapXMod = 44;
         public const int GapYMod = 22;
+
+        private readonly IMultiViewSettings _parent;
+        private readonly List<EditCommand> _undoList = new();
+        private readonly List<EditCommand> _redoList = new();
+        private readonly List<MultiTile> _scratch = new();
+
+        private List<MultiTile>[] _cells;
+        private int _floorZ;
+        private int _tileCount;
+        private long _solverCounter;
+        private bool _modified;
+        private EditCommand _current;
 
         public int WalkableCount;
         public int DoubleSurfaceCount;
@@ -37,21 +46,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>
         /// Create a blank ComponentList
         /// </summary>
-        public MultiEditorComponentList(int width, int height, MultiEditorControl parent)
+        public MultiEditorComponentList(int width, int height, IMultiViewSettings parent)
         {
             _parent = parent;
-            Width = width;
-            Height = height;
-            Tiles = new List<MultiTile>();
-            for (int x = 0; x < Width; ++x)
-            {
-                for (int y = 0; y < Height; ++y)
-                {
-                    Tiles.Add(new FloorTile(x, y, _parent.DrawFloorZ));
-                }
-            }
+            _floorZ = parent.DrawFloorZ;
+            RebuildGrid(width, height, Array.Empty<MultiTile>());
 
-            UndoList = new List<UndoStruct>();
             _modified = true;
             RecalculateMinMax();
         }
@@ -59,49 +59,79 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>
         /// Create a ComponentList from UltimaSDK
         /// </summary>
-        public MultiEditorComponentList(MultiComponentList list, MultiEditorControl parent)
+        public MultiEditorComponentList(MultiComponentList list, IMultiViewSettings parent)
         {
             _parent = parent;
-            Width = list.Width;
-            Height = list.Height;
-            Tiles = new List<MultiTile>();
-            for (int x = 0; x < Width; ++x)
+            _floorZ = parent.DrawFloorZ;
+
+            var tiles = new List<MultiTile>();
+            for (int x = 0; x < list.Width; ++x)
             {
-                for (int y = 0; y < Height; ++y)
+                for (int y = 0; y < list.Height; ++y)
                 {
-                    for (int i = 0; i < list.Tiles[x][y].Length; ++i)
+                    foreach (MTile mTile in list.Tiles[x][y])
                     {
-                        Tiles.Add(new MultiTile(
-                            list.Tiles[x][y][i].Id,
-                            x,
-                            y,
-                            list.Tiles[x][y][i].Z,
-                            list.Tiles[x][y][i].Flag)
+                        tiles.Add(new MultiTile(mTile.Id, x, y, mTile.Z, mTile.Flag)
                         {
-                            Extra = list.Tiles[x][y][i].Unk1
+                            Extra = mTile.Unk1,
+                            Solver = ++_solverCounter
                         });
                     }
-
-                    Tiles.Add(new FloorTile(x, y, _parent.DrawFloorZ));
                 }
             }
 
-            CalcSolver();
-            Tiles.Sort();
-            UndoList = new List<UndoStruct>();
+            RebuildGrid(list.Width, list.Height, tiles);
+
             _modified = true;
             RecalculateMinMax();
         }
 
         public int Height { get; private set; }
 
-        public List<MultiTile> Tiles { get; private set; }
-
-        public List<UndoStruct> UndoList { get; private set; }
-
-        public List<UndoStruct> RedoList { get; private set; } = new List<UndoStruct>();
-
         public int Width { get; private set; }
+
+        /// <summary>
+        /// Every tile, virtual floor tiles included, in draw order.
+        /// </summary>
+        public IEnumerable<MultiTile> Tiles
+        {
+            get
+            {
+                foreach (List<MultiTile> cell in _cells)
+                {
+                    foreach (MultiTile tile in cell)
+                    {
+                        yield return tile;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Every real tile (no virtual floor) in draw order.
+        /// </summary>
+        public IEnumerable<MultiTile> RealTiles
+        {
+            get
+            {
+                foreach (List<MultiTile> cell in _cells)
+                {
+                    foreach (MultiTile tile in cell)
+                    {
+                        if (!tile.IsVirtualFloor)
+                        {
+                            yield return tile;
+                        }
+                    }
+                }
+            }
+        }
+
+        public int TileCount => _tileCount;
+
+        public IReadOnlyList<EditCommand> UndoList => _undoList;
+
+        public IReadOnlyList<EditCommand> RedoList => _redoList;
 
         public int XMax { get; private set; }
 
@@ -135,7 +165,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public MultiComponentList ConvertToSdk()
         {
-            int count = 0;
             var tiles = new MTileList[Width][];
             for (int x = 0; x < Width; ++x)
             {
@@ -146,30 +175,78 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
-            foreach (MultiTile tile in Tiles)
+            foreach (MultiTile tile in RealTiles)
             {
-                if (tile.IsVirtualFloor)
-                {
-                    continue;
-                }
-
                 tiles[tile.X][tile.Y].Add(tile.Id, (sbyte)tile.Z, tile.Invisible ? (sbyte)0 : (sbyte)1, tile.Extra);
-                ++count;
             }
 
-            return new MultiComponentList(tiles, count, Width, Height);
+            return new MultiComponentList(tiles, _tileCount, Width, Height);
+        }
+
+        public bool InBounds(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
+
+        /// <summary>
+        /// False for tiles hidden one by one and, while walls are hidden, for tiles flagged as walls.
+        /// </summary>
+        public bool IsShown(MultiTile tile)
+        {
+            return !tile.Hidden && !(_parent.HideWalls && (TileData.ItemTable[tile.Id].Flags & TileFlag.Wall) != 0);
+        }
+
+        public int HiddenCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (MultiTile tile in RealTiles)
+                {
+                    if (tile.Hidden)
+                    {
+                        ++count;
+                    }
+                }
+
+                return count;
+            }
         }
 
         /// <summary>
-        /// Gets Bitmap of Multi and sets HoverTile
+        /// True while the tile is part of the multi. A tile removed by an edit or undo keeps its
+        /// coordinates, so the lookup goes straight to its cell.
         /// </summary>
-        public void GetImage(Graphics gfx, int xOff, int yOff, int maxHeight, Point mouseLoc, bool drawFloor)
+        public bool Contains(MultiTile tile)
         {
-            if (Width == 0 || Height == 0)
+            return tile != null && !tile.IsVirtualFloor && InBounds(tile.X, tile.Y) && Cell(tile.X, tile.Y).Contains(tile);
+        }
+
+        /// <summary>
+        /// The real tiles of one cell, bottom to top.
+        /// </summary>
+        public List<MultiTile> GetTilesAt(int x, int y)
+        {
+            var result = new List<MultiTile>();
+            if (!InBounds(x, y))
             {
-                return;
+                return result;
             }
 
+            foreach (MultiTile tile in Cell(x, y))
+            {
+                if (!tile.IsVirtualFloor)
+                {
+                    result.Add(tile);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Sets XMin/YMin, the canvas origin, for the current tiles and virtual floor. Call before
+        /// hit testing or converting coordinates.
+        /// </summary>
+        public void UpdateViewBounds(bool drawFloor)
+        {
             if (_modified)
             {
                 RecalculateMinMax();
@@ -182,262 +259,128 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
             if (drawFloor)
             {
-                int floorZMod = (-_parent.DrawFloorZ * 4) - 44;
+                int floorZMod = (-_floorZ * 4) - 44;
                 if (YMin > floorZMod)
                 {
                     YMin = floorZMod;
                 }
 
-                floorZMod = ((Width + Height) * 22) - (_parent.DrawFloorZ * 4);
+                floorZMod = ((Width + Height) * 22) - (_floorZ * 4);
                 if (YMaxOrg < floorZMod)
                 {
                     YMax = floorZMod;
                 }
             }
-
-            _parent.HoverTile = GetSelected(mouseLoc, maxHeight, drawFloor);
-
-            Rectangle clipBounds = Rectangle.Round(gfx.ClipBounds);
-
-            foreach (MultiTile tile in Tiles)
-            {
-                if (!tile.IsVirtualFloor && tile.Z > maxHeight)
-                {
-                    continue;
-                }
-
-                Bitmap bmp = tile.GetBitmap();
-                if (bmp == null)
-                {
-                    continue;
-                }
-
-                _drawDestRectangle.X = tile.XMod;
-                _drawDestRectangle.Y = tile.YMod;
-                _drawDestRectangle.X -= XMin + xOff;
-                _drawDestRectangle.Y -= YMin + yOff;
-                _drawDestRectangle.Width = bmp.Width;
-                _drawDestRectangle.Height = bmp.Height;
-
-                if (!clipBounds.IntersectsWith(_drawDestRectangle))
-                {
-                    continue;
-                }
-
-                if (tile.IsVirtualFloor)
-                {
-                    if (drawFloor)
-                        gfx.DrawImageUnscaled(bmp, _drawDestRectangle);
-                }
-                else
-                {
-                    if (_parent.HoverTile != null && _parent.HoverTile == tile)
-                    {
-                        gfx.DrawImage(bmp, _drawDestRectangle, 0, 0, _drawDestRectangle.Width,
-                            _drawDestRectangle.Height, GraphicsUnit.Pixel, MultiTile.HoverColor);
-                    }
-                    else if (_parent.SelectedTile != null && _parent.SelectedTile == tile)
-                    {
-                        gfx.DrawImage(bmp, _drawDestRectangle, 0, 0, _drawDestRectangle.Width,
-                            _drawDestRectangle.Height, GraphicsUnit.Pixel, MultiTile.SelectedColor);
-                    }
-                    else if (_parent.SelectedTiles.Count > 1 && _parent.SelectedTiles.Contains(tile))
-                    {
-                        gfx.DrawImage(bmp, _drawDestRectangle, 0, 0, _drawDestRectangle.Width,
-                            _drawDestRectangle.Height, GraphicsUnit.Pixel, MultiTile.MultiSelectedColor);
-                    }
-                    else if (tile.Transparent)
-                    {
-                        gfx.DrawImage(bmp, _drawDestRectangle, 0, 0, _drawDestRectangle.Width,
-                            _drawDestRectangle.Height, GraphicsUnit.Pixel, MultiTile.TransColor);
-                    }
-                    else if (_parent.ShowWalkables && tile.Walkable)
-                    {
-                        gfx.DrawImage(bmp, _drawDestRectangle, 0, 0, _drawDestRectangle.Width,
-                            _drawDestRectangle.Height, GraphicsUnit.Pixel, MultiTile.StandableColor);
-                    }
-                    else if (_parent.ShowDoubleSurface && tile.DoubleSurface)
-                    {
-                        gfx.DrawImage(bmp, _drawDestRectangle, 0, 0, _drawDestRectangle.Width,
-                            _drawDestRectangle.Height, GraphicsUnit.Pixel, MultiTile.StandableColor);
-                    }
-                    else
-                    {
-                        gfx.DrawImageUnscaled(bmp, _drawDestRectangle);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets <see cref="MultiTile"/> from given Pixel Location
-        /// </summary>
-        private MultiTile GetSelected(Point mouseLoc, int maxHeight, bool drawFloor)
-        {
-            if (Width == 0 || Height == 0)
-            {
-                return null;
-            }
-
-            if (mouseLoc == Point.Empty)
-            {
-                return null;
-            }
-
-            MultiTile selected = null;
-            for (int i = Tiles.Count - 1; i >= 0; --i) // inverse for speedup
-            {
-                MultiTile tile = Tiles[i];
-                if (tile.IsVirtualFloor)
-                {
-                    continue;
-                }
-
-                if (tile.Z > maxHeight)
-                {
-                    continue;
-                }
-
-                if (drawFloor && _parent.DrawFloorZ > tile.Z)
-                {
-                    continue;
-                }
-
-                Bitmap bmp = tile.GetBitmap();
-                if (bmp == null)
-                {
-                    continue;
-                }
-
-                int px = tile.XMod;
-                int py = tile.YMod;
-                px -= XMin;
-                py -= YMin;
-
-                if (mouseLoc.X <= px || mouseLoc.X >= px + bmp.Width || mouseLoc.Y <= py || mouseLoc.Y >= py + bmp.Height)
-                {
-                    continue;
-                }
-
-                // Check for transparent part
-                Color p = bmp.GetPixel(mouseLoc.X - px, mouseLoc.Y - py);
-                if (p.R == 0 && p.G == 0 && p.B == 0)
-                {
-                    continue;
-                }
-
-                selected = tile;
-                break;
-            }
-
-            return selected;
-        }
-
-        /// <summary>
-        /// Resizes Multi size
-        /// </summary>
-        public void Resize(int width, int height)
-        {
-            AddToUndoList("Resize");
-            if (Width > width || Height > height)
-            {
-                for (int i = Tiles.Count - 1; i >= 0; --i)
-                {
-                    MultiTile tile = Tiles[i];
-                    if (tile.X >= width)
-                    {
-                        Tiles.RemoveAt(i);
-                    }
-                    else if (tile.Y >= height)
-                    {
-                        Tiles.RemoveAt(i);
-                    }
-                }
-            }
-
-            if (Width < width || Height < height)
-            {
-                for (int x = 0; x < width; ++x)
-                {
-                    for (int y = 0; y < height; ++y)
-                    {
-                        if (x < Width && y < Height)
-                        {
-                            continue;
-                        }
-
-                        Tiles.Add(new FloorTile(x, y, _parent.DrawFloorZ));
-                    }
-                }
-            }
-
-            Width = width;
-            Height = height;
-            _modified = true;
-            RecalculateMinMax();
         }
 
         public void SetFloorZ(int z)
         {
-            foreach (MultiTile tile in Tiles)
+            _floorZ = z;
+            foreach (List<MultiTile> cell in _cells)
             {
-                if (tile.IsVirtualFloor)
+                foreach (MultiTile tile in cell)
                 {
-                    tile.Z = z;
+                    if (tile.IsVirtualFloor)
+                    {
+                        tile.Z = z;
+                    }
+                }
+
+                cell.Sort();
+            }
+        }
+
+        // ---------------------------------------------------------------- edits
+
+        /// <summary>
+        /// Resizes Multi size. Tiles outside the new size are removed.
+        /// </summary>
+        public void Resize(int width, int height)
+        {
+            if (width == Width && height == Height)
+            {
+                return;
+            }
+
+            BeginEdit("Resize");
+
+            var outside = new List<MultiTile>();
+            foreach (MultiTile tile in RealTiles)
+            {
+                if (tile.X >= width || tile.Y >= height)
+                {
+                    outside.Add(tile);
                 }
             }
 
-            Tiles.Sort();
+            foreach (MultiTile tile in outside)
+            {
+                RecordRemove(tile);
+            }
+
+            RebuildGrid(width, height, new List<MultiTile>(RealTiles));
+            EndEdit();
         }
 
         /// <summary>
         /// Adds an <see cref="MultiTile"/> to specific location
         /// </summary>
-        public void TileAdd(int x, int y, int z, ushort id)
+        public void TileAdd(int x, int y, int z, ushort id, bool replace = false)
         {
-            if (x > Width || y > Height)
-            {
-                return;
-            }
-
-            AddToUndoList("Add Tile");
-            MultiTile tile = new MultiTile(id, x, y, ClampZ(z), 1);
-            Tiles.Add(tile);
-            CalcSolver(x, y);
-            _modified = true;
-            Tiles.Sort();
-            RecalculateMinMax(tile);
+            BeginEdit("Add Tile");
+            RecordNew(id, x, y, z, false, 0, replace);
+            EndEdit();
         }
-
-        /// <summary>
-        /// Z is saved as a signed byte; larger values would wrap around.
-        /// </summary>
-        private static int ClampZ(int z) => Math.Clamp(z, sbyte.MinValue, sbyte.MaxValue);
 
         /// <summary>
         /// Moves given <see cref="MultiTile"/>
         /// </summary>
         public void TileMove(MultiTile tile, int newX, int newY)
         {
-            if (Width == 0 || Height == 0)
+            // A tile from another multi is not in the list.
+            if (!InBounds(newX, newY) || !Contains(tile))
             {
                 return;
             }
 
-            // A tile from before an undo or another multi is no longer in the list.
-            if (tile == null || newX < 0 || newX >= Width || newY < 0 || newY >= Height || !Tiles.Contains(tile))
+            BeginEdit("Move Tile");
+            RecordChange(tile, tile.Id, newX, newY, tile.Z, tile.Invisible);
+            EndEdit();
+        }
+
+        /// <summary>
+        /// Moves a group of tiles by an offset in one undo step. Nothing moves when any tile would
+        /// leave the multi. Returns true when the group moved.
+        /// </summary>
+        public bool TileMoveBatch(IEnumerable<MultiTile> tiles, int dx, int dy, int dz, string action = "Move Tiles")
+        {
+            var group = new List<MultiTile>();
+            foreach (MultiTile tile in tiles)
             {
-                return;
+                if (Contains(tile))
+                {
+                    if (!InBounds(tile.X + dx, tile.Y + dy))
+                    {
+                        return false;
+                    }
+
+                    group.Add(tile);
+                }
             }
 
-            AddToUndoList("Move Tile");
+            if (group.Count == 0 || (dx == 0 && dy == 0 && dz == 0))
+            {
+                return false;
+            }
 
-            tile.X = newX;
-            tile.Y = newY;
-            CalcSolver(newX, newY);
-            Tiles.Sort();
-            _modified = true;
-            RecalculateMinMax(tile);
+            BeginEdit(action);
+            foreach (MultiTile tile in group)
+            {
+                RecordChange(tile, tile.Id, tile.X + dx, tile.Y + dy, ClampZ(tile.Z + dz), tile.Invisible);
+            }
+
+            EndEdit();
+            return true;
         }
 
         /// <summary>
@@ -445,17 +388,24 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public void TileRemoveRect(int x0, int y0, int x1, int y1, int minZ, int maxZ = int.MaxValue)
         {
-            if (Width == 0 || Height == 0)
+            BeginEdit("Remove Rect");
+
+            for (int x = Math.Max(0, x0); x <= Math.Min(Width - 1, x1); ++x)
             {
-                return;
+                for (int y = Math.Max(0, y0); y <= Math.Min(Height - 1, y1); ++y)
+                {
+                    foreach (MultiTile tile in GetTilesAt(x, y))
+                    {
+                        // What is not shown is not removed.
+                        if (tile.Z >= minZ && tile.Z <= maxZ && IsShown(tile))
+                        {
+                            RecordRemove(tile);
+                        }
+                    }
+                }
             }
 
-            AddToUndoList("Remove Rect");
-
-            Tiles.RemoveAll(t => !t.IsVirtualFloor && t.X >= x0 && t.X <= x1 && t.Y >= y0 && t.Y <= y1 && t.Z >= minZ && t.Z <= maxZ);
-
-            _modified = true;
-            RecalculateMinMax();
+            EndEdit();
         }
 
         /// <summary>
@@ -463,20 +413,13 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public void TileRemoveBatch(IEnumerable<MultiTile> tiles)
         {
-            if (Width == 0 || Height == 0)
+            BeginEdit("Remove Tiles");
+            foreach (MultiTile tile in new List<MultiTile>(tiles))
             {
-                return;
+                RecordRemove(tile);
             }
 
-            AddToUndoList("Remove Tiles");
-
-            foreach (MultiTile tile in tiles)
-            {
-                Tiles.Remove(tile);
-            }
-
-            _modified = true;
-            RecalculateMinMax();
+            EndEdit();
         }
 
         /// <summary>
@@ -484,21 +427,14 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public void TileRemove(MultiTile tile)
         {
-            if (Width == 0 || Height == 0)
+            if (!Contains(tile))
             {
                 return;
             }
 
-            if (tile == null || !Tiles.Contains(tile))
-            {
-                return;
-            }
-
-            AddToUndoList("Remove Tile");
-
-            Tiles.Remove(tile);
-            _modified = true;
-            RecalculateMinMax(tile);
+            BeginEdit("Remove Tile");
+            RecordRemove(tile);
+            EndEdit();
         }
 
         /// <summary>
@@ -506,22 +442,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public void TileZMod(MultiTile tile, int modZ)
         {
-            AddToUndoList("Modify Z");
-            tile.Z += modZ;
-            if (tile.Z > 127)
-            {
-                tile.Z = 127;
-            }
-
-            if (tile.Z < -128)
-            {
-                tile.Z = -128;
-            }
-
-            CalcSolver(tile.X, tile.Y);
-            Tiles.Sort();
-            _modified = true;
-            RecalculateMinMax(tile);
+            TileZMod(new[] { tile }, modZ, "Modify Z");
         }
 
         /// <summary>
@@ -529,104 +450,88 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public void TileZSet(MultiTile tile, int setZ)
         {
-            AddToUndoList("Set Z");
-            tile.Z = setZ;
-            if (tile.Z > 127)
-            {
-                tile.Z = 127;
-            }
-
-            if (tile.Z < -128)
-            {
-                tile.Z = -128;
-            }
-
-            CalcSolver(tile.X, tile.Y);
-            Tiles.Sort();
-            _modified = true;
-            RecalculateMinMax(tile);
+            TileZSet(new[] { tile }, setZ, "Set Z");
         }
 
         /// <summary>
         /// Adjusts Z for a group of tiles in a single undo step.
         /// </summary>
-        public void TileZMod(IEnumerable<MultiTile> tiles, int modZ)
+        public void TileZMod(IEnumerable<MultiTile> tiles, int modZ, string action = "Group Modify Z")
         {
-            AddToUndoList("Group Modify Z");
-            foreach (MultiTile tile in tiles)
+            BeginEdit(action);
+            foreach (MultiTile tile in new List<MultiTile>(tiles))
             {
-                tile.Z = Math.Clamp(tile.Z + modZ, -128, 127);
-                CalcSolver(tile.X, tile.Y);
+                if (Contains(tile))
+                {
+                    RecordChange(tile, tile.Id, tile.X, tile.Y, ClampZ(tile.Z + modZ), tile.Invisible);
+                }
             }
 
-            _modified = true;
-            Tiles.Sort();
-            RecalculateMinMax();
+            EndEdit();
         }
 
         /// <summary>
         /// Sets Z for a group of tiles in a single undo step.
         /// </summary>
-        public void TileZSet(IEnumerable<MultiTile> tiles, int setZ)
+        public void TileZSet(IEnumerable<MultiTile> tiles, int setZ, string action = "Group Set Z")
         {
-            AddToUndoList("Group Set Z");
-            int clampedZ = Math.Clamp(setZ, -128, 127);
-            foreach (MultiTile tile in tiles)
+            BeginEdit(action);
+            int z = ClampZ(setZ);
+            foreach (MultiTile tile in new List<MultiTile>(tiles))
             {
-                tile.Z = clampedZ;
-                CalcSolver(tile.X, tile.Y);
+                if (Contains(tile))
+                {
+                    RecordChange(tile, tile.Id, tile.X, tile.Y, z, tile.Invisible);
+                }
             }
 
-            _modified = true;
-            Tiles.Sort();
-            RecalculateMinMax();
+            EndEdit();
+        }
+
+        /// <summary>
+        /// Sets a tile's Dynamic (invisible) flag as an undoable change.
+        /// </summary>
+        public void TileSetInvisible(MultiTile tile, bool invisible)
+        {
+            if (!Contains(tile) || tile.Invisible == invisible)
+            {
+                return;
+            }
+
+            BeginEdit("Dynamic");
+            RecordChange(tile, tile.Id, tile.X, tile.Y, tile.Z, invisible);
+            EndEdit();
         }
 
         /// <summary>
         /// Fills a rectangular area with a tile at the given Z level.
         /// </summary>
-        public void TileAddRect(int x0, int y0, int x1, int y1, int z, ushort id)
+        public void TileAddRect(int x0, int y0, int x1, int y1, int z, ushort id, bool replace = false)
         {
-            AddToUndoList("Rectangle Fill");
+            BeginEdit("Rectangle Fill");
             for (int x = x0; x <= x1; x++)
             {
                 for (int y = y0; y <= y1; y++)
                 {
-                    if (x < 0 || x >= Width || y < 0 || y >= Height)
-                    {
-                        continue;
-                    }
-
-                    Tiles.Add(new MultiTile(id, x, y, ClampZ(z), 1));
-                    CalcSolver(x, y);
+                    RecordNew(id, x, y, z, false, 0, replace);
                 }
             }
 
-            _modified = true;
-            Tiles.Sort();
-            RecalculateMinMax();
+            EndEdit();
         }
 
         /// <summary>
         /// Places tiles along a Bresenham line at the given Z level.
         /// </summary>
-        public void TileAddLine(int x0, int y0, int x1, int y1, int z, ushort id)
+        public void TileAddLine(int x0, int y0, int x1, int y1, int z, ushort id, bool replace = false)
         {
-            AddToUndoList("Line Draw");
+            BeginEdit("Line Draw");
             foreach (var (x, y) in BresenhamLine(x0, y0, x1, y1))
             {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                {
-                    continue;
-                }
-
-                Tiles.Add(new MultiTile(id, x, y, ClampZ(z), 1));
-                CalcSolver(x, y);
+                RecordNew(id, x, y, z, false, 0, replace);
             }
 
-            _modified = true;
-            Tiles.Sort();
-            RecalculateMinMax();
+            EndEdit();
         }
 
         public static IEnumerable<(int x, int y)> BresenhamLinePublic(int x0, int y0, int x1, int y1)
@@ -666,29 +571,94 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>
         /// Places an NxN brush of tiles centered on (cx, cy) at the given Z level.
         /// </summary>
-        public void TileAddBrush(int cx, int cy, int z, ushort id, int brushSize)
+        public void TileAddBrush(int cx, int cy, int z, ushort id, int brushSize, bool replace = false)
         {
-            AddToUndoList("Draw Brush");
+            BeginEdit("Draw Brush");
             int half = brushSize / 2;
             for (int dx = -half; dx <= half; dx++)
             {
                 for (int dy = -half; dy <= half; dy++)
                 {
-                    int x = cx + dx;
-                    int y = cy + dy;
-                    if (x < 0 || x >= Width || y < 0 || y >= Height)
-                    {
-                        continue;
-                    }
-
-                    Tiles.Add(new MultiTile(id, x, y, ClampZ(z), 1));
-                    CalcSolver(x, y);
+                    RecordNew(id, cx + dx, cy + dy, z, false, 0, replace);
                 }
             }
 
-            _modified = true;
-            Tiles.Sort();
-            RecalculateMinMax();
+            EndEdit();
+        }
+
+        /// <summary>
+        /// Gives tiles new ids in one undo step; position, Z and flags stay.
+        /// </summary>
+        public void TileSetIds(IEnumerable<(MultiTile Tile, ushort Id)> changes, string action)
+        {
+            BeginEdit(action);
+            foreach (var (tile, id) in new List<(MultiTile, ushort)>(changes))
+            {
+                if (Contains(tile))
+                {
+                    RecordChange(tile, id, tile.X, tile.Y, tile.Z, tile.Invisible);
+                }
+            }
+
+            EndEdit();
+        }
+
+        /// <summary>
+        /// Removes some tiles and adds others in one undo step (wall and house part tools).
+        /// </summary>
+        public void ReplaceTiles(IEnumerable<MultiTile> remove, IEnumerable<(ushort Id, int X, int Y, int Z)> add, string action)
+        {
+            BeginEdit(action);
+            foreach (MultiTile tile in new List<MultiTile>(remove))
+            {
+                RecordRemove(tile);
+            }
+
+            foreach (var (id, x, y, z) in add)
+            {
+                RecordNew(id, x, y, z, false, 0);
+            }
+
+            EndEdit();
+        }
+
+        /// <summary>
+        /// Replaces a group of tiles with new ones, optionally at a new multi size, in one undo
+        /// step (rotate and mirror). Returns the tiles added.
+        /// </summary>
+        public List<MultiTile> ReplaceTiles(IEnumerable<MultiTile> remove,
+            IEnumerable<(ushort Id, int X, int Y, int Z, bool Invisible, int Extra)> add, string action, int width, int height)
+        {
+            BeginEdit(action);
+            foreach (MultiTile tile in new List<MultiTile>(remove))
+            {
+                RecordRemove(tile);
+            }
+
+            if (width != Width || height != Height)
+            {
+                foreach (MultiTile tile in new List<MultiTile>(RealTiles))
+                {
+                    if (tile.X >= width || tile.Y >= height)
+                    {
+                        RecordRemove(tile);
+                    }
+                }
+
+                RebuildGrid(width, height, new List<MultiTile>(RealTiles));
+            }
+
+            var added = new List<MultiTile>();
+            foreach (var (id, x, y, z, invisible, extra) in add)
+            {
+                if (RecordNew(id, x, y, z, invisible, extra) is { } tile)
+                {
+                    added.Add(tile);
+                }
+            }
+
+            EndEdit();
+            return added;
         }
 
         /// <summary>
@@ -696,42 +666,20 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public void TileAddBatch(List<(ushort id, int x, int y, int z, bool invisible, int extra)> tiles)
         {
-            AddToUndoList("Paste");
+            BeginEdit("Paste");
             foreach (var (id, x, y, z, invisible, extra) in tiles)
             {
-                if (x < 0 || x >= Width || y < 0 || y >= Height)
-                {
-                    continue;
-                }
-
-                Tiles.Add(new MultiTile(id, x, y, ClampZ(z), invisible) { Extra = extra });
-                CalcSolver(x, y);
+                RecordNew(id, x, y, z, invisible, extra);
             }
 
-            _modified = true;
-            Tiles.Sort();
-            RecalculateMinMax();
+            EndEdit();
         }
 
-        private void RestoreSnapshot(UndoStruct entry)
-        {
-            Width = entry.Width;
-            Height = entry.Height;
-            Tiles = new List<MultiTile>();
-            foreach (MultiTile tile in entry.Tiles)
-            {
-                Tiles.Add(tile.IsVirtualFloor
-                    ? new FloorTile(tile.X, tile.Y, tile.Z)
-                    : new MultiTile(tile.Id, tile.X, tile.Y, tile.Z, tile.Invisible) { Extra = tile.Extra });
-            }
-
-            _modified = true;
-            RecalculateMinMax();
-        }
+        // ---------------------------------------------------------------- undo / redo
 
         public void Undo(int index)
         {
-            if (index < 0 || index >= UndoList.Count)
+            if (index < 0 || index >= _undoList.Count)
             {
                 return;
             }
@@ -744,246 +692,314 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
         }
 
-        /// <summary>
-        /// Sets a tile's Dynamic (invisible) flag as an undoable change.
-        /// </summary>
-        public void TileSetInvisible(MultiTile tile, bool invisible)
-        {
-            if (tile == null || tile.Invisible == invisible || !Tiles.Contains(tile))
-            {
-                return;
-            }
-
-            AddToUndoList("Dynamic");
-            tile.Invisible = invisible;
-            _modified = true;
-        }
-
-        /// <summary>Single-step undo (Ctrl+Z). Pushes current state to redo stack.</summary>
+        /// <summary>Single-step undo (Ctrl+Z). Moves the step to the redo stack.</summary>
         public bool UndoStep()
         {
-            if (UndoList.Count == 0)
+            if (_undoList.Count == 0)
             {
                 return false;
             }
 
-            RedoList.Insert(0, SnapshotCurrent(UndoList[0].Action));
-            if (RedoList.Count > _undoListMaxSize)
-            {
-                RedoList.RemoveAt(RedoList.Count - 1);
-            }
+            EditCommand command = _undoList[0];
+            _undoList.RemoveAt(0);
+            Apply(command, undo: true);
 
-            RestoreSnapshot(UndoList[0]);
-            UndoList.RemoveAt(0);
+            _redoList.Insert(0, command);
+            TrimToSize(_redoList);
             return true;
         }
 
-        /// <summary>Single-step redo (Ctrl+Y). Pushes current state back onto undo stack.</summary>
+        /// <summary>Single-step redo (Ctrl+Y). Moves the step back to the undo stack.</summary>
         public bool RedoStep()
         {
-            if (RedoList.Count == 0)
+            if (_redoList.Count == 0)
             {
                 return false;
             }
 
-            UndoList.Insert(0, SnapshotCurrent(RedoList[0].Action));
-            if (UndoList.Count > _undoListMaxSize)
-            {
-                UndoList.RemoveAt(UndoList.Count - 1);
-            }
+            EditCommand command = _redoList[0];
+            _redoList.RemoveAt(0);
+            Apply(command, undo: false);
 
-            RestoreSnapshot(RedoList[0]);
-            RedoList.RemoveAt(0);
+            _undoList.Insert(0, command);
+            TrimToSize(_undoList);
             return true;
         }
 
         public void UndoClear()
         {
-            UndoList.Clear();
-            RedoList.Clear();
+            _undoList.Clear();
+            _redoList.Clear();
         }
+
+        private static void TrimToSize(List<EditCommand> list)
+        {
+            if (list.Count > DefaultUndoStackSize)
+            {
+                list.RemoveRange(DefaultUndoStackSize, list.Count - DefaultUndoStackSize);
+            }
+        }
+
+        private void Apply(EditCommand command, bool undo)
+        {
+            HashSet<MultiTile> toAdd = undo ? command.Removed : command.Added;
+            HashSet<MultiTile> toRemove = undo ? command.Added : command.Removed;
+            Dictionary<MultiTile, TileState> states = undo ? command.Before : command.After;
+            int width = undo ? command.OldWidth : command.NewWidth;
+            int height = undo ? command.OldHeight : command.NewHeight;
+
+            foreach (MultiTile tile in toRemove)
+            {
+                GridRemove(tile);
+            }
+
+            if (width != Width || height != Height)
+            {
+                // Positions may only fit the other size, so set every tile and rebuild the grid.
+                var all = new List<MultiTile>(RealTiles);
+                foreach (var (tile, state) in states)
+                {
+                    state.ApplyTo(tile);
+                }
+
+                all.AddRange(toAdd);
+                RebuildGrid(width, height, all);
+            }
+            else
+            {
+                foreach (var (tile, state) in states)
+                {
+                    GridRemove(tile);
+                    state.ApplyTo(tile);
+                    GridInsert(tile);
+                }
+
+                foreach (MultiTile tile in toAdd)
+                {
+                    GridInsert(tile);
+                }
+            }
+
+            _modified = true;
+            RecalculateMinMax();
+        }
+
+        private void BeginEdit(string action)
+        {
+            _current = new EditCommand(action, Width, Height);
+        }
+
+        private void EndEdit()
+        {
+            EditCommand command = _current;
+            _current = null;
+
+            command.NewWidth = Width;
+            command.NewHeight = Height;
+            command.CaptureAfter();
+            if (command.IsEmpty)
+            {
+                return;
+            }
+
+            _undoList.Insert(0, command);
+            TrimToSize(_undoList);
+            _redoList.Clear();
+
+            _modified = true;
+            RecalculateMinMax();
+        }
+
+        /// <summary>
+        /// Adds a new tile unless it is out of bounds or the same id already sits at the same Z in
+        /// that cell. With <paramref name="replace"/>, other tiles of the same kind at that Z go
+        /// first: a flat tile replaces flat tiles, a tile with height replaces tiles with height.
+        /// </summary>
+        private MultiTile RecordNew(ushort id, int x, int y, int z, bool invisible, int extra, bool replace = false)
+        {
+            if (!InBounds(x, y))
+            {
+                return null;
+            }
+
+            z = ClampZ(z);
+            if (replace)
+            {
+                bool flat = TileData.ItemTable[id].Height == 0;
+                foreach (MultiTile other in GetTilesAt(x, y))
+                {
+                    if (other.Z == z && other.Id != id && (other.Height == 0) == flat)
+                    {
+                        RecordRemove(other);
+                    }
+                }
+            }
+
+            foreach (MultiTile other in Cell(x, y))
+            {
+                if (!other.IsVirtualFloor && other.Id == id && other.Z == z)
+                {
+                    return null;
+                }
+            }
+
+            var tile = new MultiTile(id, x, y, z, invisible) { Extra = extra, Solver = ++_solverCounter };
+            GridInsert(tile);
+            _current.Added.Add(tile);
+            return tile;
+        }
+
+        private void RecordRemove(MultiTile tile)
+        {
+            if (!GridRemove(tile))
+            {
+                return;
+            }
+
+            if (_current.Added.Remove(tile))
+            {
+                return;
+            }
+
+            if (_current.Before.Remove(tile, out TileState before))
+            {
+                // Undo puts it back as it was before this edit, not as it was when removed.
+                before.ApplyTo(tile);
+            }
+
+            _current.Removed.Add(tile);
+        }
+
+        private void RecordChange(MultiTile tile, ushort id, int x, int y, int z, bool invisible)
+        {
+            var target = new TileState(id, x, y, z, invisible);
+            if (TileState.Of(tile) == target || !InBounds(x, y))
+            {
+                return;
+            }
+
+            if (!_current.Added.Contains(tile) && !_current.Before.ContainsKey(tile))
+            {
+                _current.Before[tile] = TileState.Of(tile);
+            }
+
+            GridRemove(tile);
+            target.ApplyTo(tile);
+            GridInsert(tile);
+        }
+
+        // ---------------------------------------------------------------- grid
+
+        private List<MultiTile> Cell(int x, int y) => _cells[(x * Height) + y];
+
+        private void GridInsert(MultiTile tile)
+        {
+            List<MultiTile> cell = Cell(tile.X, tile.Y);
+            cell.Add(tile);
+            cell.Sort();
+            ++_tileCount;
+        }
+
+        private bool GridRemove(MultiTile tile)
+        {
+            if (!InBounds(tile.X, tile.Y) || !Cell(tile.X, tile.Y).Remove(tile))
+            {
+                return false;
+            }
+
+            --_tileCount;
+            return true;
+        }
+
+        private void RebuildGrid(int width, int height, IEnumerable<MultiTile> tiles)
+        {
+            Width = width;
+            Height = height;
+            _cells = new List<MultiTile>[width * height];
+            for (int x = 0; x < width; ++x)
+            {
+                for (int y = 0; y < height; ++y)
+                {
+                    _cells[(x * height) + y] = new List<MultiTile> { new FloorTile(x, y, _floorZ) };
+                }
+            }
+
+            _tileCount = 0;
+            foreach (MultiTile tile in tiles)
+            {
+                if (InBounds(tile.X, tile.Y))
+                {
+                    Cell(tile.X, tile.Y).Add(tile);
+                    ++_tileCount;
+                }
+            }
+
+            foreach (List<MultiTile> cell in _cells)
+            {
+                cell.Sort();
+            }
+        }
+
+        /// <summary>
+        /// Z is saved as a signed byte; larger values would wrap around.
+        /// </summary>
+        private static int ClampZ(int z) => Math.Clamp(z, sbyte.MinValue, sbyte.MaxValue);
+
+        // ---------------------------------------------------------------- analysis
 
         public void CalcWalkable()
         {
-            const int lastX = -1;
-            const int lastY = -1;
-
-            List<MultiTile> xyArray = new List<MultiTile>();
             WalkableCount = 0;
-            foreach (MultiTile tile in Tiles)
+            foreach (List<MultiTile> cell in _cells)
             {
-                if (tile.IsVirtualFloor)
+                FillScratch(cell);
+                foreach (MultiTile tile in _scratch)
                 {
-                    continue;
-                }
+                    ItemData itemData = TileData.ItemTable[tile.Id];
+                    if ((itemData.Flags & TileFlag.Surface) == 0)
+                    {
+                        continue;
+                    }
 
-                ItemData itemData = TileData.ItemTable[tile.Id];
-                if ((itemData.Flags & TileFlag.Surface) == 0)
-                {
-                    continue;
-                }
-
-                if (tile.X != lastX && tile.Y != lastY)
-                {
-                    xyArray = GetMultiTileLitAtCoordinate(tile.X, tile.Y);
-                }
-
-                int start = tile.Z + itemData.CalcHeight;
-                if (tile.IsWalkable(start, xyArray))
-                {
-                    ++WalkableCount;
+                    if (tile.IsWalkable(tile.Z + itemData.CalcHeight, _scratch))
+                    {
+                        ++WalkableCount;
+                    }
                 }
             }
         }
 
         public void CalcDoubleSurface()
         {
-            const int lastX = -1;
-            const int lastY = -1;
-            List<MultiTile> xyArray = new List<MultiTile>();
             DoubleSurfaceCount = 0;
-            foreach (MultiTile tile in Tiles)
+            foreach (List<MultiTile> cell in _cells)
             {
-                if (tile.IsVirtualFloor)
+                FillScratch(cell);
+                foreach (MultiTile tile in _scratch)
                 {
-                    continue;
-                }
+                    if ((TileData.ItemTable[tile.Id].Flags & TileFlag.Surface) == 0)
+                    {
+                        continue;
+                    }
 
-                ItemData itemData = TileData.ItemTable[tile.Id];
-                if ((itemData.Flags & TileFlag.Surface) == 0)
-                {
-                    continue;
-                }
-
-                if (tile.X != lastX && tile.Y != lastY)
-                {
-                    xyArray = GetMultiTileLitAtCoordinate(tile.X, tile.Y);
-                }
-
-                if (tile.IsDoubleSurface(xyArray))
-                {
-                    ++DoubleSurfaceCount;
+                    if (tile.IsDoubleSurface(_scratch))
+                    {
+                        ++DoubleSurfaceCount;
+                    }
                 }
             }
         }
 
-        private void CalcSolver()
+        private void FillScratch(List<MultiTile> cell)
         {
-            for (int x = 0; x < Width; ++x)
+            _scratch.Clear();
+            foreach (MultiTile tile in cell)
             {
-                for (int y = 0; y < Height; ++y)
+                if (!tile.IsVirtualFloor)
                 {
-                    CalcSolver(x, y);
+                    _scratch.Add(tile);
                 }
             }
-        }
-
-        private void CalcSolver(int x, int y)
-        {
-            List<MultiTile> multiTiles = GetMultiTileLitAtCoordinate(x, y);
-            for (int i = 0; i < multiTiles.Count; ++i)
-            {
-                multiTiles[i].Solver = i;
-            }
-        }
-
-        public List<MultiTile> GetMultiTileLitAtCoordinate(int x, int y)
-        {
-            List<MultiTile> multiTiles = new List<MultiTile>();
-            foreach (MultiTile tile in Tiles)
-            {
-                if (tile.IsVirtualFloor)
-                {
-                    continue;
-                }
-
-                if (tile.X != x)
-                {
-                    continue;
-                }
-
-                if (tile.Y != y)
-                {
-                    continue;
-                }
-
-                multiTiles.Add(tile);
-            }
-
-            return multiTiles;
-        }
-
-        /// <summary>
-        /// Returns all tiles whose bitmaps overlap the given screen-space rectangle.
-        /// xOff/yOff are the current scrollbar values.
-        /// </summary>
-        public List<MultiTile> GetTilesInScreenRect(Rectangle screenRect, int xOff, int yOff, int maxHeight, bool drawFloor)
-        {
-            var result = new List<MultiTile>();
-            foreach (MultiTile tile in Tiles)
-            {
-                if (tile.IsVirtualFloor)
-                {
-                    continue;
-                }
-
-                if (tile.Z > maxHeight)
-                {
-                    continue;
-                }
-
-                if (drawFloor && _parent.DrawFloorZ > tile.Z)
-                {
-                    continue;
-                }
-
-                Bitmap bmp = tile.GetBitmap();
-                if (bmp == null)
-                {
-                    continue;
-                }
-
-                int px = tile.XMod - XMin - xOff;
-                int py = tile.YMod - YMin - yOff;
-                var tileBounds = new Rectangle(px, py, bmp.Width, bmp.Height);
-                if (tileBounds.IntersectsWith(screenRect))
-                {
-                    result.Add(tile);
-                }
-            }
-
-            return result;
-        }
-
-        private UndoStruct SnapshotCurrent(string action)
-        {
-            var entry = new UndoStruct
-            {
-                Action = action,
-                Tiles = new List<MultiTile>(),
-                Width = Width,
-                Height = Height
-            };
-
-            foreach (MultiTile tile in Tiles)
-            {
-                entry.Tiles.Add(tile.IsVirtualFloor
-                    ? new FloorTile(tile.X, tile.Y, tile.Z)
-                    : new MultiTile(tile.Id, tile.X, tile.Y, tile.Z, tile.Invisible) { Extra = tile.Extra });
-            }
-
-            return entry;
-        }
-
-        private void AddToUndoList(string action)
-        {
-            UndoList.Insert(0, SnapshotCurrent(action));
-            if (UndoList.Count > _undoListMaxSize)
-            {
-                UndoList.RemoveAt(UndoList.Count - 1);
-            }
-
-            RedoList.Clear();
         }
 
         /// <summary>
@@ -999,14 +1015,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             ZMin = 127;
             ZMax = -128;
 
-            foreach (MultiTile tile in Tiles)
+            foreach (MultiTile tile in RealTiles)
             {
-                if (tile.IsVirtualFloor)
-                {
-                    continue;
-                }
-
-                if (tile.GetBitmap() == null)
+                if (!ArtMetrics.TryGetSize(tile.Id, out int width, out int height))
                 {
                     continue;
                 }
@@ -1014,27 +1025,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 int px = tile.XMod - GapXMod;
                 int py = tile.YMod - GapYMod;
 
-                if (px < XMin)
-                {
-                    XMin = px;
-                }
-
-                if (py < YMin)
-                {
-                    YMin = py;
-                }
-
-                px += tile.GetBitmap().Width;
-                py += tile.GetBitmap().Height;
-
-                if (px > XMax)
-                    XMax = px;
-                if (py > YMax)
-                    YMax = py;
-                if (tile.Z > ZMax)
-                    ZMax = tile.Z;
-                if (tile.Z < ZMin)
-                    ZMin = tile.Z;
+                XMin = Math.Min(XMin, px);
+                YMin = Math.Min(YMin, py);
+                XMax = Math.Max(XMax, px + width);
+                YMax = Math.Max(YMax, py + height);
+                ZMax = Math.Max(ZMax, tile.Z);
+                ZMin = Math.Min(ZMin, tile.Z);
             }
 
             _modified = false;
@@ -1052,539 +1048,6 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             {
                 CalcDoubleSurface();
             }
-        }
-
-        private void RecalculateMinMax(MultiTile tile)
-        {
-            if (tile.IsVirtualFloor)
-            {
-                return;
-            }
-
-            if (tile.GetBitmap() == null)
-            {
-                return;
-            }
-
-            int px = tile.XMod - GapXMod;
-            int py = tile.YMod - GapYMod;
-
-            if (px < XMin)
-            {
-                XMin = px;
-            }
-
-            if (py < YMin)
-            {
-                YMin = py;
-            }
-
-            px += tile.GetBitmap().Width;
-            py += tile.GetBitmap().Height;
-
-            if (px > XMax)
-            {
-                XMax = px;
-            }
-
-            if (py > YMax)
-            {
-                YMax = py;
-            }
-
-            if (tile.Z > ZMax)
-            {
-                ZMax = tile.Z;
-            }
-
-            if (tile.Z < ZMin)
-            {
-                ZMin = tile.Z;
-            }
-
-            _modified = false;
-
-            XMinOrg = XMin;
-            XMaxOrg = XMax;
-            YMinOrg = YMin;
-            YMaxOrg = YMax;
-
-            if (_parent.ShowWalkables)
-            {
-                CalcWalkable();
-            }
-
-            if (_parent.ShowDoubleSurface)
-            {
-                CalcDoubleSurface();
-            }
-        }
-
-        public struct UndoStruct
-        {
-            public string Action;
-            public int Height;
-            public List<MultiTile> Tiles;
-            public int Width;
-        }
-    }
-
-    public class FloorTile : MultiTile
-    {
-        private static Bitmap _floorBmp;
-
-        public FloorTile(int x, int y, int z)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-        }
-
-        public override bool IsVirtualFloor => true;
-
-        public override Bitmap GetBitmap()
-        {
-            if (_floorBmp != null)
-            {
-                return _floorBmp;
-            }
-
-            _floorBmp = new Bitmap(44, 44);
-
-            using (Graphics g = Graphics.FromImage(_floorBmp))
-            {
-                using (Brush floorBrush = new SolidBrush(Color.FromArgb(96, 32, 192, 32)))
-                {
-                    Point[] drawFloorPoint = new Point[4];
-                    drawFloorPoint[0].X = 22;
-                    drawFloorPoint[0].Y = 0;
-                    drawFloorPoint[1].X = 44;
-                    drawFloorPoint[1].Y = 22;
-                    drawFloorPoint[2].X = 22;
-                    drawFloorPoint[2].Y = 44;
-                    drawFloorPoint[3].X = 0;
-                    drawFloorPoint[3].Y = 22;
-
-                    g.FillPolygon(floorBrush, drawFloorPoint);
-                    g.DrawPolygon(Pens.White, drawFloorPoint);
-                }
-            }
-
-            return _floorBmp;
-        }
-    }
-
-    public class MultiTile : IComparable
-    {
-        private static readonly ColorMatrix _removeHighlightMatrix = new ColorMatrix(new float[][]
-        {
-            new float[] {1, 0, 0, 0, 0},
-            new float[] {0, 0, 0, 0, 0},
-            new float[] {0, 0, 0, 0, 0},
-            new float[] {0, 0, 0, .7f, 0},
-            new float[] {.4f, 0, 0, 0, 1}
-        });
-
-        private static readonly ColorMatrix _multiSelectedMatrix = new ColorMatrix(new float[][]
-        {
-            new float[] {0, 0, 1, 0, 0},
-            new float[] {0, 1, 0, 0, 0},
-            new float[] {1, 0, 0, 0, 0},
-            new float[] {0, 0, 0, 1, 0},
-            new float[] {0, .4f, .4f, 0, 1}
-        });
-
-        private static readonly ColorMatrix _drawMatrix = new ColorMatrix(new float[][]
-        {
-            new float[] {0, 0, 0, 0, 0},
-            new float[] {0, 0, 0, 0, 0},
-            new float[] {0, 0, 0, 0, 0},
-            new float[] {0, 0, 0, .5f, 0},
-            new float[] {0, 0, 0, 0, 1}
-        });
-
-        private static readonly ColorMatrix _hoverMatrix = new ColorMatrix(new float[][]
-        {
-            new float[] {1, 0, 0, 0, 0},
-            new float[] {0, 1, 0, 0, 0},
-            new float[] {0, 0, 1, 0, 0},
-            new float[] {0, 0, 0, 1, 0},
-            new float[] {0, 0, .8f, 0, 1}
-        });
-
-        private static readonly ColorMatrix _selectedMatrix = new ColorMatrix(new float[][]
-        {
-            new float[] {0, 1, 0, 0, 0},
-            new float[] {0, 0, 1, 0, 0},
-            new float[] {1, 0, 0, 0, 0},
-            new float[] {0, 0, 0, 1, 0},
-            new float[] {.8f, 0, 0, 0, 1}
-        });
-
-        private static readonly ColorMatrix _transMatrix = new ColorMatrix(new float[][]
-        {
-            new float[] {1, 0, 0, 0, 0},
-            new float[] {0, 1, 0, 0, 0},
-            new float[] {0, 0, 1, 0, 0},
-            new float[] {0, 0, 0, .3f, 0},
-            new float[] {0, 0, 0, 0, 1}
-        });
-
-        private static readonly ColorMatrix _standableMatrix = new ColorMatrix(new float[][]
-        {
-            new float[] {0, 0, .5f, 0, 0},
-            new float[] {0, .8f, 0, .8f, 0},
-            new float[] {.8f, 0, 0, 0, .8f},
-            new float[] {0, .8f, 0, .8f, 0},
-            new float[] {0, 0, .5f, 0, 0}
-        });
-
-        private int _x;
-        private int _y;
-        private int _z;
-
-        public MultiTile(ushort id, int x, int y, int z, int flag)
-        {
-            Id = id;
-            X = x;
-            Y = y;
-            Z = z;
-            Invisible = flag == 0;
-            Solver = 0;
-        }
-
-        public MultiTile(ushort id, int x, int y, int z, bool flag)
-        {
-            Id = id;
-            X = x;
-            Y = y;
-            Z = z;
-            Invisible = flag;
-            Solver = 0;
-        }
-
-        public MultiTile()
-        {
-            Id = 0xFFFF;
-        }
-
-        static MultiTile()
-        {
-            if (HoverColor == null)
-            {
-                HoverColor = new ImageAttributes();
-                HoverColor.SetColorMatrix(_hoverMatrix);
-            }
-
-            if (SelectedColor == null)
-            {
-                SelectedColor = new ImageAttributes();
-                SelectedColor.SetColorMatrix(_selectedMatrix);
-            }
-
-            if (MultiSelectedColor == null)
-            {
-                MultiSelectedColor = new ImageAttributes();
-                MultiSelectedColor.SetColorMatrix(_multiSelectedMatrix);
-            }
-
-            if (DrawColor == null)
-            {
-                DrawColor = new ImageAttributes();
-                DrawColor.SetColorMatrix(_drawMatrix);
-            }
-
-            if (TransColor == null)
-            {
-                TransColor = new ImageAttributes();
-                TransColor.SetColorMatrix(_transMatrix);
-            }
-
-            if (RemoveHighlightColor == null)
-            {
-                RemoveHighlightColor = new ImageAttributes();
-                RemoveHighlightColor.SetColorMatrix(_removeHighlightMatrix);
-            }
-
-            if (StandableColor == null)
-            {
-                StandableColor = new ImageAttributes();
-                StandableColor.SetColorMatrix(_standableMatrix);
-            }
-        }
-
-        public static ImageAttributes RemoveHighlightColor { get; private set; }
-
-        public static ImageAttributes DrawColor { get; }
-
-        public static ImageAttributes MultiSelectedColor { get; }
-
-        public int Height => TileData.ItemTable[Id].Height;
-
-        public static ImageAttributes HoverColor { get; }
-
-        public ushort Id { get; private set; }
-
-        public virtual bool IsVirtualFloor => false;
-
-        public static ImageAttributes SelectedColor { get; }
-
-        public static ImageAttributes TransColor { get; }
-
-        public static ImageAttributes StandableColor { get; }
-
-        public int X
-        {
-            get => _x;
-            set
-            {
-                _x = value;
-                RecalculateMod();
-            }
-        }
-
-        public int XMod { get; private set; }
-
-        public int Y
-        {
-            get => _y;
-            set
-            {
-                _y = value;
-                RecalculateMod();
-            }
-        }
-
-        public int YMod { get; private set; }
-
-        public int Z
-        {
-            get => _z;
-            set
-            {
-                _z = value;
-                RecalculateMod();
-            }
-        }
-
-        public bool Invisible { get; set; }
-
-        /// <summary>
-        /// The multi.mul extra field (MultiTileEntry.Unk1), kept so a save writes it back.
-        /// </summary>
-        public int Extra { get; set; }
-
-        public bool Walkable { get; private set; }
-
-        public bool DoubleSurface { get; private set; }
-
-        public bool Transparent { get; set; }
-
-        public int Solver { get; set; }
-
-        public int CompareTo(object obj)
-        {
-            if (obj == null)
-            {
-                return 1;
-            }
-
-            if (obj is not MultiTile multiTile)
-            {
-                throw new ArgumentNullException(nameof(obj));
-            }
-
-            if (X > multiTile.X)
-            {
-                return 1;
-            }
-
-            if (X < multiTile.X)
-            {
-                return -1;
-            }
-
-            if (Y > multiTile.Y)
-            {
-                return 1;
-            }
-
-            if (Y < multiTile.Y)
-            {
-                return -1;
-            }
-
-            if (!multiTile.IsVirtualFloor && !IsVirtualFloor)
-            {
-                ItemData ourData = TileData.ItemTable[Id];
-                ItemData theirData = TileData.ItemTable[multiTile.Id];
-
-                int ourThreshold = 0;
-                if (ourData.Height > 0)
-                {
-                    ++ourThreshold;
-                }
-
-                if (!ourData.Background)
-                {
-                    ++ourThreshold;
-                }
-
-                int ourZ = Z;
-
-                int theirThreshold = 0;
-                if (theirData.Height > 0)
-                {
-                    ++theirThreshold;
-                }
-
-                if (!theirData.Background)
-                {
-                    ++theirThreshold;
-                }
-
-                int theirZ = multiTile.Z;
-
-                ourZ += ourThreshold;
-                theirZ += theirThreshold;
-
-                int res = ourZ - theirZ;
-                if (res == 0)
-                {
-                    res = ourThreshold - theirThreshold;
-                }
-
-                if (res == 0)
-                {
-                    res = Solver - multiTile.Solver;
-                }
-
-                return res;
-            }
-            else
-            {
-                if (Z > multiTile.Z)
-                {
-                    return 1;
-                }
-
-                if (multiTile.Z > Z)
-                {
-                    return -1;
-                }
-
-                if (multiTile.IsVirtualFloor)
-                {
-                    return 1;
-                }
-
-                if (IsVirtualFloor)
-                {
-                    return -1;
-                }
-            }
-
-            return 0;
-        }
-
-        public virtual Bitmap GetBitmap()
-        {
-            return Id != 0xFFFF
-                ? Art.GetStatic(Id)
-                : null;
-        }
-
-        public void Set(ushort id, int z)
-        {
-            Id = id;
-            Z = z;
-
-            RecalculateMod();
-        }
-
-        private void RecalculateMod()
-        {
-            if (GetBitmap() != null)
-            {
-                XMod = (_x - _y) * 22;
-                XMod -= GetBitmap().Width / 2;
-                XMod += MultiEditorComponentList.GapXMod;
-                YMod = (_x + _y) * 22;
-                YMod -= _z * 4;
-                YMod -= GetBitmap().Height;
-                YMod += MultiEditorComponentList.GapYMod;
-            }
-            else if (IsVirtualFloor)
-            {
-                XMod = (_x - _y) * 22;
-                XMod -= 44 / 2;
-                XMod += MultiEditorComponentList.GapXMod;
-                YMod = (_x + _y) * 22;
-                YMod -= _z * 4;
-                YMod -= 44;
-                YMod += MultiEditorComponentList.GapYMod;
-            }
-        }
-
-        private const TileFlag _impassableOrSurface = TileFlag.Impassable | TileFlag.Surface;
-
-        public bool IsWalkable(int z, List<MultiTile> tiles)
-        {
-            int top = z + 16; // Player Height
-
-            foreach (MultiTile tile in tiles)
-            {
-                ItemData itemData = TileData.ItemTable[tile.Id];
-                if ((itemData.Flags & _impassableOrSurface) == 0)
-                {
-                    continue;
-                }
-
-                if ((itemData.Flags & TileFlag.Door) != 0)
-                {
-                    continue;
-                }
-
-                int checkTop = tile.Z + itemData.CalcHeight;
-                if (checkTop <= z || tile.Z >= top)
-                {
-                    continue;
-                }
-
-                Walkable = false;
-                return false;
-            }
-
-            Walkable = true;
-            return true;
-        }
-
-        public bool IsDoubleSurface(List<MultiTile> tiles)
-        {
-            foreach (MultiTile tile in tiles)
-            {
-                if (tile.Z != Z)
-                {
-                    continue;
-                }
-
-                ItemData itemData = TileData.ItemTable[tile.Id];
-                if ((itemData.Flags & TileFlag.Surface) == 0)
-                {
-                    continue;
-                }
-
-                if (tile == this)
-                {
-                    continue;
-                }
-
-                DoubleSurface = true;
-                return true;
-            }
-
-            DoubleSurface = false;
-            return false;
         }
     }
 }
