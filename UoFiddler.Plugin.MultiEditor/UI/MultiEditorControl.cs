@@ -55,6 +55,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             InitializeComponent();
             SplitterGrip.Attach(_sideSplit);
+
+            // Room after each tab's text for its close button, at any DPI.
+            _docTabs.Padding = new Point((CloseGlyphSize + LogicalToDeviceUnits(16)) / 2, _docTabs.Padding.Y);
         }
 
         internal EditorSession Session => _active?.Session;
@@ -432,7 +435,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             });
         }
 
-        private EditorCommand _new, _open, _import, _importFolder, _saveClient, _export, _savePrefab, _resize, _close;
+        private EditorCommand _new, _open, _import, _importFolder, _saveClient, _export, _savePrefab, _resize, _close, _closeAll;
         private EditorCommand _undo, _redo, _cut, _copy, _paste, _delete;
         private EditorCommand _selectAll, _invert, _selectConnected, _selectSameId, _replaceId;
         private EditorCommand _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, _hide, _showHidden;
@@ -468,7 +471,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _savePattern = Command("File", "Save selection as floor pattern...", SaveFloorPattern, can: hasSelection);
             _resize = Command("File", "Resize multi...", ResizePrompt, can: hasDoc);
             _settingsCommand = Command("File", "Settings...", ShowSettings);
-            _close = Command("File", "Close document", () => CloseDocument(_active), Keys.Control | Keys.W, hasDoc);
+            _close = Command("File", "Close design", () => CloseDocument(_active), Keys.Control | Keys.W, hasDoc);
+            _closeAll = Command("File", "Close all designs", CloseAllDocuments, Keys.Control | Keys.Shift | Keys.W, hasDoc);
 
             _undo = Command("Edit", "Undo", () => Session.Undo(), Keys.Control | Keys.Z,
                 () => Session != null && Session.CompList.UndoList.Count > 0, glyph: Glyphs.Undo);
@@ -1076,7 +1080,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             ToolStrip strip = _mainStrip;
 
-            Menu(_fileMenu, _new, _open, _import, _importFolder, null, _saveClient, _export, _savePrefab, _savePattern, null, _resize, _settingsCommand, null, _close);
+            Menu(_fileMenu, _new, _open, _import, _importFolder, null, _saveClient, _export, _savePrefab, _savePattern, null, _resize, _settingsCommand, null, _close, _closeAll);
             Menu(_editMenu, _undo, _redo, null, _cut, _copy, _paste, _delete, null,
                 _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden);
             Menu(_selectMenu, _selectAll, _invert, _selectConnected, _selectSameId, null, _replaceId);
@@ -1434,14 +1438,35 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
         }
 
-        private void CloseDocument(EditorDocument document)
+        /// <summary>Closes every tab, asking once when any of them has unsaved changes.</summary>
+        private void CloseAllDocuments()
+        {
+            int modified = _documents.Count(d => d.Session.Modified);
+            if (modified > 0 && MessageBox.Show(this,
+                    (modified == 1 ? "1 design has" : $"{modified} designs have") +
+                    " changes that were not saved to the client or exported.\r\nClose all designs anyway?",
+                    "Multi Editor", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+            {
+                return;
+            }
+
+            // The others first, the active one last, so no other tab is opened on the way.
+            foreach (EditorDocument document in _documents.Where(d => d != _active).Reverse().ToList())
+            {
+                CloseDocument(document, ask: false);
+            }
+
+            CloseDocument(_active, ask: false);
+        }
+
+        private void CloseDocument(EditorDocument document, bool ask = true)
         {
             if (document == null)
             {
                 return;
             }
 
-            if (document.Session.Modified && MessageBox.Show(this,
+            if (ask && document.Session.Modified && MessageBox.Show(this,
                     $"\"{document.Session.Title}\" has changes that were not saved to the client or exported.\r\nClose it anyway?",
                     "Multi Editor", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
             {
@@ -1455,7 +1480,16 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             _documents.RemoveAt(index);
-            _docTabs.TabPages.RemoveAt(index);
+            _removingTab = true;
+            try
+            {
+                _docTabs.TabPages.RemoveAt(index);
+            }
+            finally
+            {
+                _removingTab = false;
+            }
+
             Activate(_docTabs.SelectedIndex);
         }
 
@@ -1467,13 +1501,141 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
+            int index = TabAt(e.Location);
+            if (index >= 0)
+            {
+                CloseDocument(_documents[index]);
+            }
+        }
+
+        // ---------------------------------------------------------------- tab close buttons
+
+        /// <summary>Tab whose close button is under the mouse, or -1.</summary>
+        private int _hotCloseTab = -1;
+
+        /// <summary>Set while a tab is removed, so the selection that follows is never cancelled.</summary>
+        private bool _removingTab;
+
+        private int CloseGlyphSize => LogicalToDeviceUnits(14);
+
+        private int TabAt(Point location)
+        {
             for (int i = 0; i < _docTabs.TabCount; i++)
             {
-                if (_docTabs.GetTabRect(i).Contains(e.Location))
+                if (_docTabs.GetTabRect(i).Contains(location))
                 {
-                    CloseDocument(_documents[i]);
-                    return;
+                    return i;
                 }
+            }
+
+            return -1;
+        }
+
+        /// <summary>The close button of a tab: a square at the right end of its header.</summary>
+        private Rectangle CloseRect(Rectangle tab)
+        {
+            int size = CloseGlyphSize;
+            return new Rectangle(tab.Right - size - LogicalToDeviceUnits(4), tab.Top + ((tab.Height - size) / 2), size, size);
+        }
+
+        private int CloseButtonAt(Point location)
+        {
+            int index = TabAt(location);
+            return index >= 0 && CloseRect(_docTabs.GetTabRect(index)).Contains(location) ? index : -1;
+        }
+
+        private void DocTabs_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0 || e.Index >= _docTabs.TabCount)
+            {
+                return;
+            }
+
+            bool selected = e.Index == _docTabs.SelectedIndex;
+            Rectangle bounds = e.Bounds;
+            using (var back = new SolidBrush(_docTabs.TabBackColor(selected)))
+            {
+                e.Graphics.FillRectangle(back, bounds);
+            }
+
+            Rectangle close = CloseRect(bounds);
+            int inset = LogicalToDeviceUnits(6);
+            var textBounds = new Rectangle(bounds.Left + inset, bounds.Top, close.Left - bounds.Left - inset, bounds.Height);
+            TextRenderer.DrawText(e.Graphics, _docTabs.TabPages[e.Index].Text, _docTabs.Font, textBounds,
+                _docTabs.TabTextColor(selected),
+                // NoPadding: the tab's width was measured from the bare text.
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis |
+                TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding);
+
+            bool hot = e.Index == _hotCloseTab;
+            if (hot)
+            {
+                using var hotBack = new SolidBrush(Color.FromArgb(232, 17, 35));
+                e.Graphics.FillRectangle(hotBack, close);
+            }
+
+            // The cross, a little inside the button.
+            int pad = LogicalToDeviceUnits(4);
+            Color crossColor = hot ? Color.White : _docTabs.GlyphColor(selected);
+            using var pen = new Pen(crossColor, Math.Max(1f, LogicalToDeviceUnits(1) * 1.4f));
+            System.Drawing.Drawing2D.SmoothingMode previous = e.Graphics.SmoothingMode;
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            e.Graphics.DrawLine(pen, close.Left + pad, close.Top + pad, close.Right - pad - 1, close.Bottom - pad - 1);
+            e.Graphics.DrawLine(pen, close.Right - pad - 1, close.Top + pad, close.Left + pad, close.Bottom - pad - 1);
+            e.Graphics.SmoothingMode = previous;
+        }
+
+        private void DocTabs_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            // A press on another tab's close button closes it without switching to it first.
+            if (!_removingTab && (MouseButtons & MouseButtons.Left) != 0 && CloseButtonAt(_docTabs.PointToClient(MousePosition)) >= 0)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void DocTabs_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
+
+            int index = CloseButtonAt(e.Location);
+            if (index >= 0)
+            {
+                SetHotCloseTab(-1);
+                CloseDocument(_documents[index]);
+            }
+        }
+
+        private void DocTabs_MouseMove(object sender, MouseEventArgs e)
+        {
+            SetHotCloseTab(CloseButtonAt(e.Location));
+        }
+
+        private void DocTabs_MouseLeave(object sender, EventArgs e)
+        {
+            SetHotCloseTab(-1);
+        }
+
+        private void SetHotCloseTab(int index)
+        {
+            if (index == _hotCloseTab)
+            {
+                return;
+            }
+
+            InvalidateTab(_hotCloseTab);
+            _hotCloseTab = index;
+            InvalidateTab(_hotCloseTab);
+        }
+
+        private void InvalidateTab(int index)
+        {
+            if (index >= 0 && index < _docTabs.TabCount)
+            {
+                _docTabs.Invalidate(_docTabs.GetTabRect(index));
             }
         }
 
