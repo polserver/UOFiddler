@@ -346,10 +346,6 @@ namespace UoFiddler.Controls.Forms
                     {
                         MobType mobType = Animations.GetBodyMobType(i, _fileType);
                         int animLength = Animations.GetAnimLength(i, _fileType);
-                        string[] names = ResolveActionNames(mobType);
-                        // mobtypes.txt is keyed by server body id; reverse-map for anim2..6.
-                        int serverBody = _fileType == 1 ? i : BodyConverter.GetTrueBody(_fileType, i);
-                        uint mobFlags = MobTypes.IsLoaded && serverBody >= 0 ? MobTypes.GetFlags(serverBody) : 0u;
                         char typeTag = _typeTag[(int)mobType];
                         TreeNode node = new TreeNode
                         {
@@ -358,35 +354,16 @@ namespace UoFiddler.Controls.Forms
                         };
 
                         bool valid = false;
-                        for (int j = 0; j < animLength; ++j)
+                        for (int j = 0; j < animLength && !valid; ++j)
                         {
-                            string name = j < names.Length ? names[j] : $"Action{j}";
-                            TreeNode treeNode = new TreeNode
-                            {
-                                Tag = j,
-                                Text = string.Format("{0:D2} {1}", j, name)
-                            };
+                            valid = AnimationEdit.IsActionDefined(_fileType, i, j);
+                        }
 
-                            if (AnimationEdit.IsActionDefined(_fileType, i, j))
-                            {
-                                valid = true;
-                            }
-                            else
-                            {
-                                treeNode.ForeColor = _invalidColor;
-                            }
-
-                            if (MobTypes.IsLoaded && treeNode.ForeColor != _invalidColor)
-                            {
-                                string missing = GetMissingActionFlag(mobType, mobFlags, j);
-                                if (missing != null)
-                                {
-                                    treeNode.ForeColor = Color.Gray;
-                                    treeNode.ToolTipText = BuildDimmedTooltip(missing, mobFlags);
-                                }
-                            }
-
-                            node.Nodes.Add(treeNode);
+                        // Action nodes are made when the body is first expanded: a native tree item costs
+                        // a fraction of a millisecond to create and to destroy, and every body has 13-35 actions.
+                        if (animLength > 0)
+                        {
+                            node.Nodes.Add(new TreeNode { Tag = _actionsPlaceholder });
                         }
 
                         if (!valid)
@@ -447,6 +424,101 @@ namespace UoFiddler.Controls.Forms
             _showOnlyValid = false;
             ShowOnlyValidToolStripMenuItem.Checked = false;
             OnLoad(null);
+        }
+
+        // Tag of the single child a body node holds until its action nodes are made.
+        private static readonly object _actionsPlaceholder = new object();
+
+        private static bool HasActionNodes(TreeNode body)
+        {
+            return body.Nodes.Count > 0 && body.Nodes[0].Tag != _actionsPlaceholder;
+        }
+
+        private void OnBeforeExpandBody(object sender, TreeViewCancelEventArgs e)
+        {
+            if (e.Node.Parent == null)
+            {
+                EnsureActionNodes(e.Node);
+            }
+        }
+
+        /// <summary>
+        /// Replaces a body node's placeholder with its action nodes.
+        /// </summary>
+        private void EnsureActionNodes(TreeNode body)
+        {
+            if (body.Nodes.Count == 0 || HasActionNodes(body))
+            {
+                return;
+            }
+
+            int bodyId = (int)body.Tag;
+            int animLength = Animations.GetAnimLength(bodyId, _fileType);
+            string[] names = ResolveActionNames(Animations.GetBodyMobType(bodyId, _fileType));
+            var actions = new TreeNode[animLength];
+            for (int j = 0; j < animLength; ++j)
+            {
+                string name = j < names.Length ? names[j] : $"Action{j}";
+                actions[j] = new TreeNode
+                {
+                    Tag = j,
+                    Text = string.Format("{0:D2} {1}", j, name)
+                };
+                StyleActionNode(actions[j], bodyId, j);
+            }
+
+            AnimationListTreeView.BeginUpdate();
+            try
+            {
+                body.Nodes.Clear();
+                body.Nodes.AddRange(actions);
+            }
+            finally
+            {
+                AnimationListTreeView.EndUpdate();
+            }
+        }
+
+        /// <summary>
+        /// Colours an action node: invalid when it has no frames, grey with a tooltip when mobtypes.txt
+        /// says the body lacks the action.
+        /// </summary>
+        private void StyleActionNode(TreeNode actionNode, int body, int action)
+        {
+            actionNode.ToolTipText = string.Empty;
+            if (!AnimationEdit.IsActionDefined(_fileType, body, action))
+            {
+                actionNode.ForeColor = _invalidColor;
+                return;
+            }
+
+            actionNode.ForeColor = Color.Empty;
+            if (!MobTypes.IsLoaded)
+            {
+                return;
+            }
+
+            // mobtypes.txt is keyed by server body id; reverse-map for anim2..6.
+            int serverBody = _fileType == 1 ? body : BodyConverter.GetTrueBody(_fileType, body);
+            uint mobFlags = serverBody >= 0 ? MobTypes.GetFlags(serverBody) : 0u;
+            string missing = GetMissingActionFlag(Animations.GetBodyMobType(body, _fileType), mobFlags, action);
+            if (missing != null)
+            {
+                actionNode.ForeColor = Color.Gray;
+                actionNode.ToolTipText = BuildDimmedTooltip(missing, mobFlags);
+            }
+        }
+
+        /// <summary>
+        /// Recolours one action node of <paramref name="body"/> from the animation data. A body whose actions
+        /// were never expanded has nothing to recolour; its nodes get the current state when they are made.
+        /// </summary>
+        private void RefreshActionNode(TreeNode body, int action)
+        {
+            if (HasActionNodes(body) && action >= 0 && action < body.Nodes.Count)
+            {
+                StyleActionNode(body.Nodes[action], (int)body.Tag, action);
+            }
         }
 
         private TreeNode GetNode(int tag)
@@ -1420,15 +1492,18 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                AnimationListTreeView.SelectedNode.ForeColor = _invalidColor;
-                for (int i = 0; i < AnimationListTreeView.SelectedNode.Nodes.Count; ++i)
+                TreeNode bodyNode = AnimationListTreeView.SelectedNode;
+                bodyNode.ForeColor = _invalidColor;
+                int actionCount = Animations.GetAnimLength(_currentBody, _fileType);
+                for (int i = 0; i < actionCount; ++i)
                 {
-                    AnimationListTreeView.SelectedNode.Nodes[i].ForeColor = _invalidColor;
                     for (int d = 0; d < 5; ++d)
                     {
                         AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, i, d);
                         edit?.ClearFrames();
                     }
+
+                    RefreshActionNode(bodyNode, i);
                 }
 
                 if (_showOnlyValid)
@@ -1454,7 +1529,7 @@ namespace UoFiddler.Controls.Forms
                     edit?.ClearFrames();
                 }
 
-                AnimationListTreeView.SelectedNode.Parent.Nodes[_currentAction].ForeColor = _invalidColor;
+                RefreshActionNode(AnimationListTreeView.SelectedNode.Parent, _currentAction);
                 bool valid = false;
                 foreach (TreeNode node in AnimationListTreeView.SelectedNode.Parent.Nodes)
                 {
@@ -1651,7 +1726,7 @@ namespace UoFiddler.Controls.Forms
                                         if (node != null)
                                         {
                                             node.ForeColor = Color.Empty;
-                                            node.Nodes[_currentAction].ForeColor = Color.Empty;
+                                            RefreshActionNode(node, _currentAction);
                                         }
 
                                         int i = edit.Frames.Count - 1;
@@ -1718,7 +1793,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -1927,15 +2002,8 @@ namespace UoFiddler.Controls.Forms
                 {
                     for (int j = 0; j < animLength; ++j)
                     {
-                        if (AnimationEdit.IsActionDefined(_fileType, _currentBody, j))
-                        {
-                            node.Nodes[j].ForeColor = Color.Empty;
-                            valid = true;
-                        }
-                        else
-                        {
-                            node.Nodes[j].ForeColor = _invalidColor;
-                        }
+                        valid |= AnimationEdit.IsActionDefined(_fileType, _currentBody, j);
+                        RefreshActionNode(node, j);
                     }
                     node.ForeColor = valid ? Color.Empty : _invalidColor;
                 }
@@ -2208,20 +2276,11 @@ namespace UoFiddler.Controls.Forms
             }
 
             bool valid = false;
-            foreach (TreeNode child in node.Nodes)
+            int animLength = Animations.GetAnimLength(body, _fileType);
+            for (int action = 0; action < animLength; ++action)
             {
-                if (AnimationEdit.IsActionDefined(_fileType, body, (int)child.Tag))
-                {
-                    valid = true;
-                    if (child.ForeColor == _invalidColor)
-                    {
-                        child.ForeColor = Color.Empty;
-                    }
-                }
-                else
-                {
-                    child.ForeColor = _invalidColor;
-                }
+                valid |= AnimationEdit.IsActionDefined(_fileType, body, action);
+                RefreshActionNode(node, action);
             }
 
             node.ForeColor = valid ? Color.Empty : _invalidColor;
@@ -2585,7 +2644,7 @@ namespace UoFiddler.Controls.Forms
             if (node != null)
             {
                 node.ForeColor = Color.Empty;
-                node.Nodes[_currentAction].ForeColor = Color.Empty;
+                RefreshActionNode(node, _currentAction);
             }
 
             Options.ChangedUltimaClass["Animations"] = true;
@@ -3185,7 +3244,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -3646,7 +3705,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -3693,7 +3752,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -3740,7 +3799,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -3787,7 +3846,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -3834,7 +3893,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -4331,7 +4390,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -4378,7 +4437,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -4425,7 +4484,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -4472,7 +4531,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
@@ -4519,7 +4578,7 @@ namespace UoFiddler.Controls.Forms
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
-                    node.Nodes[_currentAction].ForeColor = Color.Empty;
+                    RefreshActionNode(node, _currentAction);
                 }
 
                 int i = edit.Frames.Count - 1;
