@@ -60,7 +60,8 @@ namespace Ultima
             UOADESIGN,
             XML,
             UOH, // UO House Editor (UOHE) design
-            WORLDFORGE // WorldForge tile export
+            WORLDFORGE, // WorldForge tile export
+            MULTIFORGE // POL multiforge package text: id x y z hue [multi flag]
         }
 
         /// <summary>

@@ -80,7 +80,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             (Multis.ImportType.UOX3, "UOX3 file", "*.uox3"),
             (Multis.ImportType.XML, "XML file (UOFiddler export)", "*.xml"),
             (Multis.ImportType.UOH, "UO House Editor design", "*.uoh"),
-            (Multis.ImportType.WORLDFORGE, "WorldForge export", "*.xml")
+            (Multis.ImportType.WORLDFORGE, "WorldForge export", "*.xml"),
+            (Multis.ImportType.MULTIFORGE, "Multiforge text file (POL)", "*.txt")
         };
 
         /// <summary>Short format names for lists.</summary>
@@ -97,6 +98,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Multis.ImportType.XML => "UOFiddler XML",
             Multis.ImportType.UOH => "UO House Editor",
             Multis.ImportType.WORLDFORGE => "WorldForge",
+            Multis.ImportType.MULTIFORGE => "Multiforge",
             _ => type.ToString()
         };
 
@@ -261,42 +263,91 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             string.Equals(Path.GetFileName(path), "Multicache.dat", StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
-        /// UO Architect text starts with "6 version"; plain multi text has an item on every line:
-        /// id (hex, 0x optional), x, y, z and flags.
+        /// Tells the three text formats apart:
+        /// <list type="bullet">
+        /// <item>UO Architect text starts with "6 version".</item>
+        /// <item>Plain multi text (UOFiddler's) has "0xID x y z flags" on every line, flags 0 or 1 and mostly 1.</item>
+        /// <item>Multiforge (POL) has "id x y z hue flag", or without the flag "id x y z hue", where the
+        /// hue is mostly 0; older exports write decimal ids, some start with an item count.</item>
+        /// </list>
+        /// Only the first lines are read.
         /// </summary>
         private static Multis.ImportType? DetectText(string path)
         {
-            using var reader = new StreamReader(path);
-            string line;
-            do
+            const int sampled = 500;
+            var lines = new List<string[]>();
+            using (var reader = new StreamReader(path))
             {
-                line = reader.ReadLine();
+                while (lines.Count < sampled && reader.ReadLine() is { } line)
+                {
+                    string[] parts = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length > 0)
+                    {
+                        lines.Add(parts);
+                    }
+                }
             }
-            while (line != null && line.Trim().Length == 0);
 
-            if (line == null)
+            if (lines.Count == 0)
             {
                 return null;
             }
 
-            string[] parts = line.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 2 && int.TryParse(parts[0], out _) && parts[1].Equals("version", StringComparison.OrdinalIgnoreCase))
+            string[] first = lines[0];
+            if (first.Length == 2 && int.TryParse(first[0], out _) && first[1].Equals("version", StringComparison.OrdinalIgnoreCase))
             {
                 return Multis.ImportType.UOA;
             }
 
-            if (parts.Length == 5)
+            // A multiforge export that starts with its item count.
+            if (first.Length == 1 && int.TryParse(first[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
             {
-                string id = parts[0].StartsWith("0x", StringComparison.OrdinalIgnoreCase) ? parts[0][2..] : parts[0];
-                if (ushort.TryParse(id, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out _) &&
-                    parts.Skip(1).All(p => int.TryParse(p, NumberStyles.Integer, CultureInfo.InvariantCulture, out _)))
-                {
-                    return Multis.ImportType.TXT;
-                }
+                return lines.Count > 1 && IsItemLine(lines[1], 5, 6) ? Multis.ImportType.MULTIFORGE : null;
             }
 
-            return null;
+            if (!IsItemLine(first, 5, 6))
+            {
+                return null;
+            }
+
+            // Lines that are not items make the import fail with a reason; here they say nothing.
+            lines.RemoveAll(parts => !IsItemLine(parts, 5, 6));
+
+            // Plain multi text never has six values or decimal ids.
+            if (lines.Exists(parts => parts.Length == 6 || !parts[0].StartsWith("0x", StringComparison.OrdinalIgnoreCase)))
+            {
+                return Multis.ImportType.MULTIFORGE;
+            }
+
+            // Five hex-id values either way: the fifth is a 0/1 flag or a hue. A value above 1 is a
+            // hue; a 1 among zeros is a flag. All zeros can be either: read as flags, every tile
+            // would be invisible, so they are taken as unhued multiforge items. (Of the client's own
+            // multis exported as multi text, only a few boat and tent pieces are all zeros.)
+            bool anyOne = false;
+            foreach (string[] parts in lines)
+            {
+                int fifth = ParseNumber(parts[4]);
+                if (fifth is not (0 or 1))
+                {
+                    return Multis.ImportType.MULTIFORGE;
+                }
+
+                anyOne |= fifth == 1;
+            }
+
+            return anyOne ? Multis.ImportType.TXT : Multis.ImportType.MULTIFORGE;
         }
+
+        /// <summary>A line of numbers (decimal or 0x hex) with a count in the given range.</summary>
+        private static bool IsItemLine(string[] parts, int min, int max) =>
+            parts.Length >= min && parts.Length <= max && Array.TrueForAll(parts, p => TryParseNumber(p, out _));
+
+        private static bool TryParseNumber(string text, out int value) =>
+            text.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
+                ? int.TryParse(text.AsSpan(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value)
+                : int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+
+        private static int ParseNumber(string text) => TryParseNumber(text, out int value) ? value : -1;
 
         /// <summary>A UOFiddler export has Item elements with an ID; a WorldForge export has tile elements with an id.</summary>
         private static Multis.ImportType? DetectXml(string path)
