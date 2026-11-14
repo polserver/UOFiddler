@@ -118,7 +118,17 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.28.0
+    <value>Version 4.28.1
+- Multi Editor: prefabs are now blueprints, kept in MultiEditorBlueprints; an existing MultiEditorPrefabs folder is moved there on first use
+- Multi Editor: save picked multis and UO Architect designs as blueprints in bulk from Open from client, Import files, Import from folder and the Designs page
+- Multi Editor: blueprints keep their name in the file and show their footprint; the Blueprints page has a group drop-down and favorite groups
+- Multi Editor: blueprint previews stack tiles like the canvas, so tree foliage covers the trunk, and are drawn as they scroll into view
+- Multi Editor: imports and exports CentrED# blueprints (CSV and TilesEntry XML)
+- Multi Editor: the inspector lists the selected tiles; rows highlight their tiles on the canvas and can be taken out of the selection
+- Multi Editor: tile tooltips show the height and the building flags only
+- Multi Editor: Zoom 100% toolbar button, every key in the shortcuts list (F1), the grid and outline drawn under the tiles, 400 undo steps, and Ctrl+drag adds a box to the selection
+
+Version 4.28.0
 - Multi Editor: replaced by an OpenGL editor (3.0.0) with a tool palette, document tabs, a tile browser with house styles, blueprints and UO Architect designs, floors, a plan view and a preview
 - Multi Editor: document tabs have close buttons and Close all designs, and the mouse wheel over the tab strip switches designs
 - Multi Editor: one work plane follows the chosen floor and moves a Z at a time with Ctrl+PgUp/PgDn; its Z shows in the status bar
