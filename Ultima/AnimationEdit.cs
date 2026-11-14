@@ -1116,6 +1116,26 @@ namespace Ultima
         }
 
         /// <summary>
+        /// Width or height of a frame resized by <paramref name="scale"/>, at least 1.
+        /// </summary>
+        public static int ScaledLength(int length, double scale)
+        {
+            return Math.Max(1, (int)Math.Round(length * scale));
+        }
+
+        /// <summary>
+        /// Center of a frame <paramref name="height"/> pixels high once it is resized by <paramref name="scale"/>
+        /// to <paramref name="scaledHeight"/>. The point the center marks, left edge plus X and bottom edge plus Y,
+        /// moves with the scale, so the feet stay where they were.
+        /// </summary>
+        public static Point ScaleCenter(Point center, int height, int scaledHeight, double scale)
+        {
+            return new Point(
+                (int)Math.Round(center.X * scale),
+                (int)Math.Round((center.Y + height) * scale) - scaledHeight);
+        }
+
+        /// <summary>
         /// A copy with every frame resized by <paramref name="scale"/>. Pixels are picked by nearest
         /// neighbour, so no colours outside the palette appear. Centers scale with the frame, measured
         /// from the frame's bottom so the feet stay on the same point.
@@ -1149,10 +1169,11 @@ namespace Ultima
                         continue;
                     }
 
-                    int width = Math.Max(1, (int)Math.Round(source.Width * scale));
-                    int height = Math.Max(1, (int)Math.Round(source.Height * scale));
-                    int centerX = (int)Math.Round(frame.Center.X * scale);
-                    int centerY = (int)Math.Round((frame.Center.Y + source.Height) * scale) - height;
+                    int width = ScaledLength(source.Width, scale);
+                    int height = ScaledLength(source.Height, scale);
+                    Point center = ScaleCenter(frame.Center, source.Height, height, scale);
+                    int centerX = center.X;
+                    int centerY = center.Y;
 
                     using (var target = new Bitmap(width, height, PixelFormat.Format16bppArgb1555))
                     {

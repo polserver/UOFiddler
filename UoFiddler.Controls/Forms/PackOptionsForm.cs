@@ -63,6 +63,12 @@ namespace UoFiddler.Controls.Forms
 
         public bool ExportAllActions => ExportAllActionsCheckBox.Checked;
 
+        /// <summary>Size of the exported frames relative to the stored ones; 1 keeps them as they are.</summary>
+        public double FrameScale => (double)ScaleUpDown.Value / 100.0;
+
+        /// <summary>Save one image per frame and a frames XML file instead of a sprite sheet.</summary>
+        public bool FramesXmlFormat => FramesXmlFormatRadioButton.Checked;
+
         private void OnClickPreset(object sender, EventArgs e)
         {
             MaxWidthUpDown.Value = decimal.Parse(((Button)sender).Text);
@@ -70,8 +76,23 @@ namespace UoFiddler.Controls.Forms
 
         private void OnCheckedChangedOneRowPerDirection(object sender, EventArgs e)
         {
+            UpdateSheetOptions();
+        }
+
+        private void OnCheckedChangedFormat(object sender, EventArgs e)
+        {
+            UpdateSheetOptions();
+        }
+
+        private void UpdateSheetOptions()
+        {
+            // The layout options only shape a sprite sheet
+            bool sheet = SheetFormatRadioButton.Checked;
+            SpacingUpDown.Enabled = sheet;
+            OneRowPerDirectionCheckBox.Enabled = sheet;
+
             // Rows follow the directions, so the width limit does not apply
-            bool limitWidth = !OneRowPerDirectionCheckBox.Checked;
+            bool limitWidth = sheet && !OneRowPerDirectionCheckBox.Checked;
             MaxWidthUpDown.Enabled = limitWidth;
             Preset1024Button.Enabled = limitWidth;
             Preset2048Button.Enabled = limitWidth;

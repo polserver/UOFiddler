@@ -1500,16 +1500,19 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
+            string files = optionsForm.FramesXmlFormat ? ".xml and _frames folder" : ".png, .json and _guide.png";
             string message = saved.Count == 1
-                ? $"Packed sheet {Path.GetFileName(saved[0])} (.png, .json and _guide.png) saved successfully."
-                : $"{saved.Count} packed sheets anim_{body}_<action> (.png, .json and _guide.png) saved successfully.";
+                ? $"Packed {Path.GetFileName(saved[0])} ({files}) saved successfully."
+                : $"{saved.Count} packed actions anim_{body}_<action> ({files}) saved successfully.";
             FileSavedDialog.Show(FindForm(), outDir, message);
         }
 
         /// <summary>
         /// Packs the frames of the chosen directions of one action into <c>anim_{body}_{action}.png</c>
         /// with a <c>.json</c> descriptor, a <c>_guide.png</c> showing frame bounds and anchors and, with one
-        /// row per direction, a <c>_rows.txt</c> naming the rows.
+        /// row per direction, a <c>_rows.txt</c> naming the rows. In the frames XML format each frame is saved
+        /// as its own image in <c>anim_{body}_{action}_frames</c>, listed in <c>anim_{body}_{action}.xml</c>.
+        /// Frames and centers are resized by the chosen frame size.
         /// </summary>
         /// <returns>The output path without extension, or null if the action has no frames.</returns>
         private static string PackAnimation(string outDir, int body, int action, PackOptionsForm options)
@@ -1517,7 +1520,9 @@ namespace UoFiddler.Controls.UserControls
             var layout = new SpriteSheetLayout(options.MaxWidth, options.Spacing);
             var entries = new List<PackedFrameEntry>();
             var images = new List<Bitmap>();
+            var xmlFrames = new List<(int Direction, int Index, Point Center, Bitmap Image)>();
             var rows = new StringBuilder();
+            double scale = options.FrameScale;
             int rowCount = 0;
 
             try
@@ -1532,7 +1537,7 @@ namespace UoFiddler.Controls.UserControls
                         continue;
                     }
 
-                    if (options.OneRowPerDirection)
+                    if (options.OneRowPerDirection && !options.FramesXmlFormat)
                     {
                         layout.NewRow();
                         rows.AppendLine($"Row {rowCount++}: {direction} {PackOptionsForm.DirectionNames[direction]}");
@@ -1546,18 +1551,49 @@ namespace UoFiddler.Controls.UserControls
                             continue;
                         }
 
-                        PackedRect rect = layout.Place(frame.Bitmap.Width, frame.Bitmap.Height, wrap: !options.OneRowPerDirection);
+                        // The frames are cache-owned, so pack copies
+                        Bitmap image;
+                        Point center = frame.Center;
+                        if (scale != 1.0)
+                        {
+                            image = SpriteSheetPacker.ScaleNearest(frame.Bitmap, scale);
+                            center = AnimIdx.ScaleCenter(frame.Center, frame.Bitmap.Height, image.Height, scale);
+                        }
+                        else
+                        {
+                            image = new Bitmap(frame.Bitmap);
+                        }
+
+                        images.Add(image);
+
+                        if (options.FramesXmlFormat)
+                        {
+                            xmlFrames.Add((direction, i, center, image));
+                            continue;
+                        }
+
+                        PackedRect rect = layout.Place(image.Width, image.Height, wrap: !options.OneRowPerDirection);
                         entries.Add(new PackedFrameEntry
                         {
                             Direction = direction,
                             Index = i,
                             Frame = rect,
-                            Center = new PackedPoint { X = frame.Center.X, Y = frame.Center.Y }
+                            Center = new PackedPoint { X = center.X, Y = center.Y }
                         });
-
-                        // The frames are cache-owned
-                        images.Add(new Bitmap(frame.Bitmap));
                     }
+                }
+
+                string baseName = Path.Combine(outDir, $"anim_{body}_{action}");
+
+                if (options.FramesXmlFormat)
+                {
+                    if (xmlFrames.Count == 0)
+                    {
+                        return null;
+                    }
+
+                    FramesXml.Write(baseName + ".xml", xmlFrames);
+                    return baseName;
                 }
 
                 if (entries.Count == 0)
@@ -1565,7 +1601,6 @@ namespace UoFiddler.Controls.UserControls
                     return null;
                 }
 
-                string baseName = Path.Combine(outDir, $"anim_{body}_{action}");
                 string imageFile = baseName + ".png";
                 List<PackedRect> rects = entries.Select(entry => entry.Frame).ToList();
 
@@ -1673,8 +1708,8 @@ namespace UoFiddler.Controls.UserControls
             using var fileDialog = new OpenFileDialog
             {
                 InitialDirectory = SpriteSheetPacker.LastFolder,
-                Filter = "Packed sheet (*.json)|*.json|All files (*.*)|*.*",
-                Title = "Select the Json file of a packed sheet"
+                Filter = "Packed frames (*.json, *.xml)|*.json;*.xml|Packed sheet (*.json)|*.json|Frames XML (*.xml)|*.xml|All files (*.*)|*.*",
+                Title = "Select the Json file of a packed sheet or a frames XML file"
             };
             if (fileDialog.ShowDialog(this) != DialogResult.OK)
             {
@@ -1728,7 +1763,7 @@ namespace UoFiddler.Controls.UserControls
 
             using var folderDialog = new FolderBrowserDialog
             {
-                Description = $"Select the folder holding the packed sheets anim_{body}_<action>.json",
+                Description = $"Select the folder holding the packed sheets anim_{body}_<action>.json or frames XML files anim_{body}_<action>.xml",
                 ShowNewFolderButton = false,
                 SelectedPath = SpriteSheetPacker.LastFolder
             };
@@ -1739,14 +1774,23 @@ namespace UoFiddler.Controls.UserControls
 
             SpriteSheetPacker.LastFolder = folderDialog.SelectedPath;
 
-            // Only sheets of the selected body are imported; their actions come from the file names
+            // Only files of the selected body are imported; their actions come from the file names.
+            // A sheet wins over a frames XML file of the same action.
             var sheets = new SortedDictionary<int, string>();
             int otherFiles = 0;
-            foreach (string file in Directory.GetFiles(folderDialog.SelectedPath, "*.json"))
+            foreach (string file in Directory.GetFiles(folderDialog.SelectedPath, "*.json")
+                         .Concat(Directory.GetFiles(folderDialog.SelectedPath, "*.xml")))
             {
                 if (TryParsePackedAnimationName(file, out int packedBody, out int packedAction) && packedBody == body)
                 {
-                    sheets[packedAction] = file;
+                    if (!sheets.ContainsKey(packedAction))
+                    {
+                        sheets[packedAction] = file;
+                    }
+                    else
+                    {
+                        otherFiles++;
+                    }
                 }
                 else
                 {
@@ -1756,7 +1800,7 @@ namespace UoFiddler.Controls.UserControls
 
             if (sheets.Count == 0)
             {
-                MessageBox.Show($"No packed sheets anim_{body}_<action>.json found in {folderDialog.SelectedPath}.",
+                MessageBox.Show($"No packed sheets anim_{body}_<action>.json or frames XML files anim_{body}_<action>.xml found in {folderDialog.SelectedPath}.",
                     title, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -1799,7 +1843,7 @@ namespace UoFiddler.Controls.UserControls
             string message = $"Imported {imported} of {sheets.Count} sheet(s), {frames} frames, into body {body}.";
             if (otherFiles > 0)
             {
-                message += $"\nIgnored {otherFiles} other Json file(s).";
+                message += $"\nIgnored {otherFiles} other Json or XML file(s).";
             }
 
             if (errors.Count > 0)
@@ -1832,19 +1876,100 @@ namespace UoFiddler.Controls.UserControls
             public string Info { get; set; } = string.Empty;
         }
 
+        private static bool IsFramesXml(string file)
+        {
+            return string.Equals(Path.GetExtension(file), ".xml", StringComparison.OrdinalIgnoreCase);
+        }
+
         /// <summary>
-        /// Imports a packed sheet into <paramref name="action"/> of <paramref name="body"/> (a MUL body).
-        /// The sheet is read and checked before anything changes, so a failure leaves the animation as it was.
+        /// The frames listed in a packed sheet (.json) or a frames XML file (.xml), each with the image it is
+        /// cut from: the sheet, or the frame's own image with a rect covering all of it.
+        /// </summary>
+        private sealed class PackedFrames : IDisposable
+        {
+            public List<(PackedFrameEntry Entry, Bitmap Source)> Frames { get; } = new();
+
+            public List<Bitmap> Images { get; } = new();
+
+            /// <summary>Frames of a frames XML file whose image file was not found.</summary>
+            public int MissingImages { get; set; }
+
+            public void Dispose()
+            {
+                foreach (Bitmap image in Images)
+                {
+                    image.Dispose();
+                }
+            }
+        }
+
+        private static PackedFrames ReadPackedFrames(string file)
+        {
+            string name = Path.GetFileName(file);
+            var result = new PackedFrames();
+            try
+            {
+                if (IsFramesXml(file))
+                {
+                    foreach (FramesXmlFrame frame in FramesXml.Read(file))
+                    {
+                        string imageFile = FramesXml.FindImage(file, frame);
+                        if (imageFile == null)
+                        {
+                            result.MissingImages++;
+                            continue;
+                        }
+
+                        Bitmap image = FramesXml.LoadImage(imageFile);
+                        result.Images.Add(image);
+                        result.Frames.Add((new PackedFrameEntry
+                        {
+                            Direction = frame.Direction,
+                            Index = frame.Index,
+                            Frame = new PackedRect { X = 0, Y = 0, W = image.Width, H = image.Height },
+                            Center = new PackedPoint { X = frame.Center.X, Y = frame.Center.Y }
+                        }, image));
+                    }
+
+                    if (result.Frames.Count == 0 && result.MissingImages == 0)
+                    {
+                        throw new InvalidDataException($"{name} lists no frames.");
+                    }
+                }
+                else
+                {
+                    PackedAnimation packed = SpriteSheetPacker.ReadJson<PackedAnimation>(file);
+                    if (packed.Frames == null || packed.Frames.Count == 0)
+                    {
+                        throw new InvalidDataException($"{name} lists no frames.");
+                    }
+
+                    Bitmap sheet = SpriteSheetPacker.LoadSheet(file, packed.Meta);
+                    result.Images.Add(sheet);
+                    foreach (PackedFrameEntry entry in packed.Frames.Where(entry => entry != null))
+                    {
+                        result.Frames.Add((entry, sheet));
+                    }
+                }
+            }
+            catch
+            {
+                result.Dispose();
+                throw;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Imports a packed sheet (.json) or frames XML file (.xml) into <paramref name="action"/> of
+        /// <paramref name="body"/> (a MUL body). The file is read and checked before anything changes, so a
+        /// failure leaves the animation as it was.
         /// </summary>
         /// <param name="replace">Replace each imported direction's frames instead of appending to them.</param>
-        private static UnpackResult UnpackAnimation(string jsonFile, int body, int action, bool replace)
+        private static UnpackResult UnpackAnimation(string packedFile, int body, int action, bool replace)
         {
-            string name = Path.GetFileName(jsonFile);
-            PackedAnimation packed = SpriteSheetPacker.ReadJson<PackedAnimation>(jsonFile);
-            if (packed.Frames == null || packed.Frames.Count == 0)
-            {
-                throw new InvalidDataException($"{name} lists no frames.");
-            }
+            string name = Path.GetFileName(packedFile);
 
             int fileBody = body;
             Animations.Translate(ref fileBody);
@@ -1861,17 +1986,22 @@ namespace UoFiddler.Controls.UserControls
             int skippedFrames = 0;
             var directions = new SortedDictionary<int, List<(Bitmap Bitmap, int CenterX, int CenterY)>>();
 
-            // A mirrored direction (5-7) is only imported when the sheet does not also hold the stored one
-            var storedOnSheet = packed.Frames
-                .Where(entry => entry != null && entry.Direction >= 0 && entry.Direction < PackOptionsForm.StoredDirections)
-                .Select(entry => entry.Direction)
-                .ToHashSet();
-
             try
             {
-                using (Bitmap sheet = SpriteSheetPacker.LoadSheet(jsonFile, packed.Meta))
+                using (PackedFrames packed = ReadPackedFrames(packedFile))
                 {
-                    foreach (PackedFrameEntry entry in packed.Frames.Where(entry => entry != null).OrderBy(entry => entry.Index))
+                    if (packed.MissingImages > 0)
+                    {
+                        result.Notes += $"\nSkipped {packed.MissingImages} frame(s) whose image file was not found.";
+                    }
+
+                    // A mirrored direction (5-7) is only imported when the file does not also hold the stored one
+                    var storedOnSheet = packed.Frames
+                        .Where(frame => frame.Entry.Direction >= 0 && frame.Entry.Direction < PackOptionsForm.StoredDirections)
+                        .Select(frame => frame.Entry.Direction)
+                        .ToHashSet();
+
+                    foreach (var (entry, sheet) in packed.Frames.OrderBy(frame => frame.Entry.Index))
                     {
                         if (entry.Direction < 0 || entry.Direction >= PackOptionsForm.DirectionNames.Length)
                         {
