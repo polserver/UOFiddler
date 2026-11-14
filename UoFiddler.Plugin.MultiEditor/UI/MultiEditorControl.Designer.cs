@@ -47,7 +47,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _toolLabel = new System.Windows.Forms.ToolStripLabel();
             _optionsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             _placeLabel = new System.Windows.Forms.ToolStripLabel();
-            _placementCombo = new UoFiddler.Plugin.MultiEditor.UI.ToolStripChoice(110, "On top", "Replace", "At plane Z");
             _brushLabel = new System.Windows.Forms.ToolStripLabel();
             _zStepLabel = new System.Windows.Forms.ToolStripLabel();
             _zStepCombo = new UoFiddler.Plugin.MultiEditor.UI.ToolStripChoice(50, "1", "2", "3", "4", "5", "10", "20");
@@ -243,7 +242,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _optionsStrip
             //
             _optionsStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            _optionsStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { _toolLabel, _optionsSeparator1, _placeLabel, _placementCombo, _brushLabel, _zStepLabel, _zStepCombo, _optionsSeparator2, _floorLabel, _optionsSeparator3, _drawTileLabel, _ridgeSeparator, _ridgeLabel, _gablesSeparator, _gablesLabel, _gableFillSeparator, _gableFillLabel });
+            _optionsStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { _toolLabel, _optionsSeparator1, _placeLabel, _brushLabel, _zStepLabel, _zStepCombo, _optionsSeparator2, _floorLabel, _optionsSeparator3, _drawTileLabel, _ridgeSeparator, _ridgeLabel, _gablesSeparator, _gablesLabel, _gableFillSeparator, _gableFillLabel });
             _optionsStrip.Location = new System.Drawing.Point(0, 25);
             _optionsStrip.Name = "_optionsStrip";
             _optionsStrip.Size = new System.Drawing.Size(1280, 25);
@@ -267,12 +266,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _placeLabel.Name = "_placeLabel";
             _placeLabel.Size = new System.Drawing.Size(35, 22);
             _placeLabel.Text = "Place";
-            //
-            // _placementCombo
-            //
-            _placementCombo.Name = "_placementCombo";
-            _placementCombo.ToolTipText = "Where new tiles go: on top of the tile under the cursor, replacing the tile at its Z, or on the work plane (M)";
-            _placementCombo.SelectedIndexChanged += PlacementCombo_SelectedIndexChanged;
+            _placeLabel.ToolTipText = "Where new tiles go (M steps through the modes)";
             //
             // _brushLabel
             //
@@ -417,7 +411,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             //
             // _zoomLabel
             //
-            _zoomLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             _zoomLabel.AutoSize = false;
             _zoomLabel.Name = "_zoomLabel";
             _zoomLabel.Size = new System.Drawing.Size(48, 23);
@@ -525,7 +518,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.ToolStripLabel _toolLabel;
         private System.Windows.Forms.ToolStripSeparator _optionsSeparator1;
         private System.Windows.Forms.ToolStripLabel _placeLabel;
-        private UoFiddler.Plugin.MultiEditor.UI.ToolStripChoice _placementCombo;
         private System.Windows.Forms.ToolStripLabel _brushLabel;
         private System.Windows.Forms.ToolStripLabel _zStepLabel;
         private UoFiddler.Plugin.MultiEditor.UI.ToolStripChoice _zStepCombo;
