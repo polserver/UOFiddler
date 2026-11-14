@@ -748,7 +748,16 @@ namespace UoFiddler.Controls.Forms
             AnimIdx edit = AnimationEdit.GetAnimation(_fileType, _currentBody, _currentAction, _currentDir);
             Bitmap[] currentBits = edit?.GetFrames();
 
-            if (edit != null && currentBits?.Length > 0 && FramesTrackBar.Value < currentBits.Length && currentBits[FramesTrackBar.Value] != null)
+            bool hasFrame = edit != null && currentBits?.Length > 0 && FramesTrackBar.Value < currentBits.Length && currentBits[FramesTrackBar.Value] != null;
+            string frameSize = hasFrame && (_drawEmpty || _drawFull)
+                ? $"{currentBits[FramesTrackBar.Value].Width}x{currentBits[FramesTrackBar.Value].Height}"
+                : string.Empty;
+            if (FrameSizeToolStripLabel.Text != frameSize)
+            {
+                FrameSizeToolStripLabel.Text = frameSize;
+            }
+
+            if (hasFrame)
             {
                 int varW;
                 int varH;
