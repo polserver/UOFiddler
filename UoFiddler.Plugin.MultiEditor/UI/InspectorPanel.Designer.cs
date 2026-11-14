@@ -76,6 +76,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             groupSetZButton = new System.Windows.Forms.Button();
             groupDeleteButton = new System.Windows.Forms.Button();
             groupHideButton = new System.Windows.Forms.Button();
+            selectionUnselectButton = new System.Windows.Forms.Button();
+            selectionKeepButton = new System.Windows.Forms.Button();
+            _groupById = new System.Windows.Forms.CheckBox();
+            _selectionList = new System.Windows.Forms.ListView();
+            selectionColumnTile = new System.Windows.Forms.ColumnHeader();
+            selectionColumnZ = new System.Windows.Forms.ColumnHeader();
+            selectionColumnWhere = new System.Windows.Forms.ColumnHeader();
+            selectionColumnName = new System.Windows.Forms.ColumnHeader();
             _hint = new System.Windows.Forms.Label();
             floorsBox.SuspendLayout();
             floorsPage.SuspendLayout();
@@ -471,12 +479,17 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _group.Controls.Add(groupSetZButton);
             _group.Controls.Add(groupDeleteButton);
             _group.Controls.Add(groupHideButton);
+            _group.Controls.Add(selectionUnselectButton);
+            _group.Controls.Add(selectionKeepButton);
+            _group.Controls.Add(_groupById);
+            _group.Controls.Add(_selectionList);
             _group.Dock = System.Windows.Forms.DockStyle.Fill;
             _group.Location = new System.Drawing.Point(0, 0);
             _group.Name = "_group";
             _group.Size = new System.Drawing.Size(144, 0);
             _group.TabIndex = 1;
             _group.Visible = false;
+            _group.Resize += Group_Resize;
             // 
             // _groupLabel
             // 
@@ -581,6 +594,82 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             groupHideButton.UseVisualStyleBackColor = true;
             groupHideButton.Click += GroupHideButton_Click;
             // 
+            // selectionUnselectButton
+            // 
+            selectionUnselectButton.Location = new System.Drawing.Point(124, 146);
+            selectionUnselectButton.Margin = new System.Windows.Forms.Padding(1);
+            selectionUnselectButton.Name = "selectionUnselectButton";
+            selectionUnselectButton.Size = new System.Drawing.Size(70, 26);
+            selectionUnselectButton.TabIndex = 10;
+            selectionUnselectButton.Text = "Unselect";
+            selectionUnselectButton.UseVisualStyleBackColor = true;
+            selectionUnselectButton.Click += SelectionUnselectButton_Click;
+            // 
+            // selectionKeepButton
+            // 
+            selectionKeepButton.Location = new System.Drawing.Point(198, 146);
+            selectionKeepButton.Margin = new System.Windows.Forms.Padding(1);
+            selectionKeepButton.Name = "selectionKeepButton";
+            selectionKeepButton.Size = new System.Drawing.Size(76, 26);
+            selectionKeepButton.TabIndex = 11;
+            selectionKeepButton.Text = "Keep only";
+            selectionKeepButton.UseVisualStyleBackColor = true;
+            selectionKeepButton.Click += SelectionKeepButton_Click;
+            // 
+            // _groupById
+            // 
+            _groupById.AutoSize = true;
+            _groupById.Location = new System.Drawing.Point(6, 180);
+            _groupById.Name = "_groupById";
+            _groupById.Size = new System.Drawing.Size(110, 19);
+            _groupById.TabIndex = 12;
+            _groupById.Text = "Group by tile id";
+            _groupById.UseVisualStyleBackColor = true;
+            _groupById.CheckedChanged += GroupById_CheckedChanged;
+            // 
+            // _selectionList
+            // 
+            _selectionList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { selectionColumnTile, selectionColumnZ, selectionColumnWhere, selectionColumnName });
+            _selectionList.FullRowSelect = true;
+            _selectionList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            _selectionList.HideSelection = false;
+            _selectionList.Location = new System.Drawing.Point(4, 204);
+            _selectionList.Name = "_selectionList";
+            _selectionList.Size = new System.Drawing.Size(280, 100);
+            _selectionList.SmallImageList = _icons;
+            _selectionList.TabIndex = 13;
+            _selectionList.UseCompatibleStateImageBehavior = false;
+            _selectionList.View = System.Windows.Forms.View.Details;
+            _selectionList.VirtualMode = true;
+            _selectionList.RetrieveVirtualItem += SelectionList_RetrieveVirtualItem;
+            _selectionList.SelectedIndexChanged += SelectionList_SelectedIndexChanged;
+            _selectionList.VirtualItemsSelectionRangeChanged += SelectionList_VirtualItemsSelectionRangeChanged;
+            _selectionList.DoubleClick += SelectionList_DoubleClick;
+            _selectionList.KeyDown += SelectionList_KeyDown;
+            _selectionList.MouseMove += SelectionList_MouseMove;
+            _selectionList.MouseLeave += SelectionList_MouseLeave;
+            _selectionList.MouseUp += SelectionList_MouseUp;
+            // 
+            // selectionColumnTile
+            // 
+            selectionColumnTile.Text = "Tile";
+            selectionColumnTile.Width = 96;
+            // 
+            // selectionColumnZ
+            // 
+            selectionColumnZ.Text = "Z";
+            selectionColumnZ.Width = 44;
+            // 
+            // selectionColumnWhere
+            // 
+            selectionColumnWhere.Text = "X, Y";
+            selectionColumnWhere.Width = 56;
+            // 
+            // selectionColumnName
+            // 
+            selectionColumnName.Text = "Name";
+            selectionColumnName.Width = 120;
+            // 
             // _hint
             // 
             _hint.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -666,6 +755,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.Button groupSetZButton;
         private System.Windows.Forms.Button groupDeleteButton;
         private System.Windows.Forms.Button groupHideButton;
+        private System.Windows.Forms.Button selectionUnselectButton;
+        private System.Windows.Forms.Button selectionKeepButton;
+        private System.Windows.Forms.CheckBox _groupById;
+        private System.Windows.Forms.ListView _selectionList;
+        private System.Windows.Forms.ColumnHeader selectionColumnTile;
+        private System.Windows.Forms.ColumnHeader selectionColumnZ;
+        private System.Windows.Forms.ColumnHeader selectionColumnWhere;
+        private System.Windows.Forms.ColumnHeader selectionColumnName;
         private System.Windows.Forms.Label _hint;
     }
 }

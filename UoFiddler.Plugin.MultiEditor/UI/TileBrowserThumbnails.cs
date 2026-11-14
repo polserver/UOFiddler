@@ -27,29 +27,38 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         // Enough for several screens of 64 px cells; a full clear past it is cheap and rare.
         private const int _maxEntries = 3000;
 
-        private static readonly (TileFlag Flag, string Name)[] _summaryFlags =
+        /// <summary>The tiledata flags that matter when building a multi, with the names shown for them.</summary>
+        private static readonly (TileFlag Flag, string Name)[] _buildFlags =
         {
-            (TileFlag.Background, "Background"),
-            (TileFlag.Wall, "Wall"),
             (TileFlag.Impassable, "Impassable"),
+            (TileFlag.Wall, "Wall"),
+            (TileFlag.NoShoot, "No shoot"),
             (TileFlag.Surface, "Surface"),
             (TileFlag.Bridge, "Bridge"),
-            (TileFlag.Roof, "Roof"),
+            (TileFlag.StairBack, "Stair back"),
+            (TileFlag.StairRight, "Stair right"),
             (TileFlag.Door, "Door"),
             (TileFlag.Window, "Window"),
-            (TileFlag.StairBack, "StairBack"),
-            (TileFlag.StairRight, "StairRight"),
+            (TileFlag.Roof, "Roof"),
+            (TileFlag.Background, "Background"),
             (TileFlag.Foliage, "Foliage"),
-            (TileFlag.Container, "Container"),
-            (TileFlag.LightSource, "Light"),
-            (TileFlag.Translucent, "Translucent"),
-            (TileFlag.Transparent, "Transparent"),
-            (TileFlag.Animation, "Animated"),
-            (TileFlag.Wet, "Wet"),
-            (TileFlag.NoShoot, "NoShoot"),
-            (TileFlag.HoverOver, "HoverOver"),
-            (TileFlag.Generic, "Generic")
+            (TileFlag.HoverOver, "Hover over")
         };
+
+        /// <summary>The names of the building flags a tile has, in a fixed order.</summary>
+        public static List<string> BuildFlagNames(TileFlag flags)
+        {
+            var names = new List<string>();
+            foreach ((TileFlag flag, string name) in _buildFlags)
+            {
+                if ((flags & flag) != 0)
+                {
+                    names.Add(name);
+                }
+            }
+
+            return names;
+        }
 
         private readonly Dictionary<(int Id, int Box), Bitmap> _cache = new Dictionary<(int, int), Bitmap>();
 
@@ -137,17 +146,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 text.Append(CultureInfo.InvariantCulture, $" (calc {data.CalcHeight})");
             }
 
-            text.Append(CultureInfo.InvariantCulture, $", weight {data.Weight}");
-
-            var flags = new List<string>();
-            foreach ((TileFlag flag, string flagName) in _summaryFlags)
-            {
-                if ((data.Flags & flag) != 0)
-                {
-                    flags.Add(flagName);
-                }
-            }
-
+            List<string> flags = BuildFlagNames(data.Flags);
             if (flags.Count > 0)
             {
                 text.AppendLine();

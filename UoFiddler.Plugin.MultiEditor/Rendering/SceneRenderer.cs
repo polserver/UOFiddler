@@ -202,7 +202,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             }
 
             SpriteTint tint;
-            if (tile == hover)
+            if (tile == hover || session.IsListHighlighted(tile))
             {
                 tint = _hover;
             }
@@ -503,10 +503,20 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
 
             if (session.HoverTile is { } hover)
             {
-                Point o = PlanView.CellOrigin(hover.X, hover.Y);
-                _lines.Rectangle(new RectangleF(o.X + 1, o.Y + 1, cell - 2, cell - 2), _marqueeLine);
-                _lines.Rectangle(new RectangleF(o.X + 2, o.Y + 2, cell - 4, cell - 4), _marqueeLine);
+                OutlinePlanCell(hover, cell);
             }
+
+            foreach (MultiTile tile in session.ListHighlight)
+            {
+                OutlinePlanCell(tile, cell);
+            }
+        }
+
+        private void OutlinePlanCell(MultiTile tile, int cell)
+        {
+            Point o = PlanView.CellOrigin(tile.X, tile.Y);
+            _lines.Rectangle(new RectangleF(o.X + 1, o.Y + 1, cell - 2, cell - 2), _marqueeLine);
+            _lines.Rectangle(new RectangleF(o.X + 2, o.Y + 2, cell - 4, cell - 4), _marqueeLine);
         }
 
         private static MultiTile TopFill(EditorSession session, System.Collections.Generic.List<MultiTile> tiles, int maxHeight, bool skipCovers)

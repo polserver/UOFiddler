@@ -455,6 +455,46 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             Invalidated?.Invoke();
         }
 
+        /// <summary>Takes tiles out of the selection, with one change notice.</summary>
+        public void Deselect(IEnumerable<MultiTile> tiles)
+        {
+            bool changed = false;
+            foreach (MultiTile tile in tiles)
+            {
+                changed |= _selection.Remove(tile);
+            }
+
+            if (changed)
+            {
+                SelectionChanged?.Invoke();
+                Invalidated?.Invoke();
+            }
+        }
+
+        private HashSet<MultiTile> _listHighlight = new HashSet<MultiTile>();
+
+        /// <summary>
+        /// Tiles pointed at outside the canvas (a row of the selection list), drawn like the hovered
+        /// tile. Empty for none.
+        /// </summary>
+        public IReadOnlyCollection<MultiTile> ListHighlight
+        {
+            get => _listHighlight;
+            set
+            {
+                var next = value == null ? new HashSet<MultiTile>() : new HashSet<MultiTile>(value);
+                if (next.SetEquals(_listHighlight))
+                {
+                    return;
+                }
+
+                _listHighlight = next;
+                Invalidated?.Invoke();
+            }
+        }
+
+        public bool IsListHighlighted(MultiTile tile) => _listHighlight.Count > 0 && _listHighlight.Contains(tile);
+
         /// <summary>True when a tile can be hovered, selected and edited with the current view.</summary>
         public bool IsEditable(MultiTile tile)
         {

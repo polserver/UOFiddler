@@ -25,12 +25,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
     internal sealed partial class InspectorPanel : UserControl
     {
         private const int _iconSize = 32;
-        private const TileFlag _shownFlags = TileFlag.Surface | TileFlag.Impassable | TileFlag.Wall | TileFlag.Bridge |
-                                             TileFlag.Roof | TileFlag.Door | TileFlag.Window | TileFlag.Foliage |
-                                             TileFlag.Wet | TileFlag.Background | TileFlag.Translucent | TileFlag.Damaging;
 
         private readonly Dictionary<ushort, int> _iconIndex = new Dictionary<ushort, int>();
         private readonly List<(string Name, int Floor, int Ceiling)> _levels = new List<(string Name, int Floor, int Ceiling)>();
+
+        /// <summary>Rows of the selection list: one tile each, or every selected tile of one id when grouped.</summary>
+        private readonly List<MultiTile[]> _selectionRows = new List<MultiTile[]>();
+        private bool _groupedRows;
+        private int _hoverRow = -1;
+        private ContextMenuStrip _selectionMenu;
 
         private EditorSession _session;
         private bool _updating;
@@ -48,6 +51,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void InspectorPanel_Disposed(object sender, EventArgs e)
         {
+            _selectionMenu?.Dispose();
             if (_session != null)
             {
                 _session.SelectionChanged -= Session_SelectionChanged;
@@ -132,6 +136,134 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _session?.HideSelection();
         }
 
+        private void SelectionUnselectButton_Click(object sender, EventArgs e)
+        {
+            UnselectRows();
+        }
+
+        private void SelectionKeepButton_Click(object sender, EventArgs e)
+        {
+            KeepRows(SelectedRowTiles());
+        }
+
+        private void GroupById_CheckedChanged(object sender, EventArgs e)
+        {
+            RebuildSelectionList();
+        }
+
+        private void Group_Resize(object sender, EventArgs e)
+        {
+            // Sized by hand: the list fills the rest of the panel below the buttons.
+            _selectionList.Size = new Size(Math.Max(40, _group.ClientSize.Width - 8),
+                Math.Max(40, _group.ClientSize.Height - _selectionList.Top - 4));
+        }
+
+        private void SelectionList_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            MultiTile[] row = e.ItemIndex < _selectionRows.Count ? _selectionRows[e.ItemIndex] : Array.Empty<MultiTile>();
+            if (row.Length == 0)
+            {
+                e.Item = new ListViewItem(string.Empty);
+                e.Item.SubItems.Add(string.Empty);
+                e.Item.SubItems.Add(string.Empty);
+                e.Item.SubItems.Add(string.Empty);
+                return;
+            }
+
+            MultiTile first = row[0];
+            if (_groupedRows)
+            {
+                int min = row.Min(t => t.Z);
+                int max = row.Max(t => t.Z);
+                e.Item = new ListViewItem($"0x{first.Id:X4}", IconFor(first.Id));
+                e.Item.SubItems.Add(row.Length.ToString("N0"));
+                e.Item.SubItems.Add(min == max ? min.ToString() : $"{min}–{max}");
+            }
+            else
+            {
+                e.Item = new ListViewItem(first.Invisible ? $"0x{first.Id:X4} *" : $"0x{first.Id:X4}", IconFor(first.Id));
+                e.Item.SubItems.Add(first.Z.ToString());
+                e.Item.SubItems.Add($"{first.X}, {first.Y}");
+            }
+
+            e.Item.SubItems.Add(TileName(first.Id));
+        }
+
+        private void SelectionList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateListHighlight();
+        }
+
+        // Shift ranges in a virtual list.
+        private void SelectionList_VirtualItemsSelectionRangeChanged(object sender, ListViewVirtualItemsSelectionRangeChangedEventArgs e)
+        {
+            UpdateListHighlight();
+        }
+
+        private void SelectionList_DoubleClick(object sender, EventArgs e)
+        {
+            int index = _selectionList.FocusedItem?.Index ?? -1;
+            if (index >= 0 && index < _selectionRows.Count)
+            {
+                KeepRows(_selectionRows[index]);
+            }
+        }
+
+        private void SelectionList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                UnselectRows();
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                KeepRows(SelectedRowTiles());
+                e.Handled = e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.A && e.Control)
+            {
+                _selectionList.BeginUpdate();
+                for (int i = 0; i < _selectionRows.Count; ++i)
+                {
+                    _selectionList.SelectedIndices.Add(i);
+                }
+
+                _selectionList.EndUpdate();
+                e.Handled = e.SuppressKeyPress = true;
+            }
+        }
+
+        private void SelectionList_MouseMove(object sender, MouseEventArgs e)
+        {
+            int row = _selectionList.GetItemAt(e.X, e.Y)?.Index ?? -1;
+            if (row != _hoverRow)
+            {
+                _hoverRow = row;
+                UpdateListHighlight();
+            }
+        }
+
+        private void SelectionList_MouseLeave(object sender, EventArgs e)
+        {
+            _hoverRow = -1;
+            UpdateListHighlight();
+        }
+
+        private void SelectionList_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right || _selectionList.SelectedIndices.Count == 0)
+            {
+                return;
+            }
+
+            _selectionMenu ??= new ContextMenuStrip();
+            _selectionMenu.Items.Clear();
+            _selectionMenu.Items.Add("Unselect", null, (_, _) => UnselectRows());
+            _selectionMenu.Items.Add("Keep only these", null, (_, _) => KeepRows(SelectedRowTiles()));
+            _selectionMenu.Show(_selectionList, e.Location);
+        }
+
         private void FloorList_SelectedIndexChanged(object sender, EventArgs e)
         {
             OnFloorChosen();
@@ -193,6 +325,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             if (_session != null)
             {
+                _session.ListHighlight = null;
                 _session.SelectionChanged -= Session_SelectionChanged;
                 _session.DocumentChanged -= Session_DocumentChanged;
                 _session.ViewChanged -= Session_ViewChanged;
@@ -264,6 +397,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     _groupLabel.Text = $"{count} tiles selected, Z {min}–{max}";
                     _groupZ.Value = Math.Clamp(min, (int)_groupZ.Minimum, (int)_groupZ.Maximum);
                 }
+
+                RebuildSelectionList();
             }
             finally
             {
@@ -271,13 +406,109 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
         }
 
+        /// <summary>
+        /// Fills the list of selected tiles (several only): one row per tile, top Z first, or one
+        /// row per tile id with the most used first.
+        /// </summary>
+        private void RebuildSelectionList()
+        {
+            _selectionRows.Clear();
+            _groupedRows = _groupById.Checked;
+            if (_session != null && _session.Selection.Count > 1)
+            {
+                IEnumerable<MultiTile> sorted = _session.Selection.OrderByDescending(t => t.Z).ThenBy(t => t.Y).ThenBy(t => t.X);
+                if (_groupedRows)
+                {
+                    _selectionRows.AddRange(sorted.GroupBy(t => t.Id).OrderByDescending(g => g.Count()).ThenBy(g => g.Key).Select(g => g.ToArray()));
+                }
+                else
+                {
+                    _selectionRows.AddRange(sorted.Select(t => new[] { t }));
+                }
+            }
+
+            selectionColumnZ.Text = _groupedRows ? "Count" : "Z";
+            selectionColumnWhere.Text = _groupedRows ? "Z" : "X, Y";
+            _hoverRow = -1;
+            _selectionList.SelectedIndices.Clear();
+            _selectionList.VirtualListSize = _selectionRows.Count;
+            _selectionList.Invalidate();
+            UpdateListHighlight();
+        }
+
+        private List<MultiTile> SelectedRowTiles()
+        {
+            var tiles = new List<MultiTile>();
+            foreach (int index in _selectionList.SelectedIndices)
+            {
+                if (index < _selectionRows.Count)
+                {
+                    tiles.AddRange(_selectionRows[index]);
+                }
+            }
+
+            return tiles;
+        }
+
+        /// <summary>The tiles of the row under the mouse glow on the canvas, else those of the chosen rows.</summary>
+        private void UpdateListHighlight()
+        {
+            if (_session == null)
+            {
+                return;
+            }
+
+            _session.ListHighlight = _hoverRow >= 0 && _hoverRow < _selectionRows.Count ? _selectionRows[_hoverRow] : SelectedRowTiles();
+        }
+
+        /// <summary>Takes the chosen rows out of the selection and moves to the row that took their place.</summary>
+        private void UnselectRows()
+        {
+            List<MultiTile> tiles = SelectedRowTiles();
+            if (_session == null || tiles.Count == 0)
+            {
+                return;
+            }
+
+            int first = _selectionList.SelectedIndices[0];
+            _session.Deselect(tiles);
+            if (_selectionRows.Count > 0)
+            {
+                int index = Math.Min(first, _selectionRows.Count - 1);
+                _selectionList.SelectedIndices.Add(index);
+                _selectionList.FocusedItem = _selectionList.Items[index];
+                _selectionList.EnsureVisible(index);
+            }
+        }
+
+        private void KeepRows(IReadOnlyCollection<MultiTile> tiles)
+        {
+            if (_session != null && tiles.Count > 0)
+            {
+                // Selecting rebuilds this list, so let the ListView finish its own event first.
+                var keep = tiles.ToList();
+                BeginInvoke(() => _session?.SetSelection(keep, add: false));
+            }
+        }
+
+        private static string TileName(ushort id) => TileBrowserThumbnails.NameOf(id);
+
         private void ShowSingle(MultiTile tile)
         {
-            ItemData data = TileData.ItemTable[tile.Id];
             _thumb.Image = Art.GetStatic(tile.Id);
-            _idLabel.Text = $"0x{tile.Id:X4}  {data.Name}";
-            TileFlag flags = data.Flags & _shownFlags;
-            _infoLabel.Text = $"Height {data.Height}\r\n{(flags == 0 ? "no flags" : flags.ToString())}";
+            if (TileBrowserThumbnails.HasItemData(tile.Id))
+            {
+                ItemData data = TileData.ItemTable[tile.Id];
+                _idLabel.Text = $"0x{tile.Id:X4}  {data.Name}";
+                List<string> flags = TileBrowserThumbnails.BuildFlagNames(data.Flags);
+                string height = (data.Flags & TileFlag.Bridge) != 0 ? $"Height {data.Height} (calc {data.CalcHeight})" : $"Height {data.Height}";
+                _infoLabel.Text = $"{height}\r\n{(flags.Count == 0 ? "no flags" : string.Join(", ", flags))}";
+            }
+            else
+            {
+                _idLabel.Text = $"0x{tile.Id:X4}";
+                _infoLabel.Text = "No tiledata entry";
+            }
 
             _x.Maximum = Math.Max(0, _session.CompList.Width - 1);
             _y.Maximum = Math.Max(0, _session.CompList.Height - 1);
@@ -295,10 +526,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 for (int i = cell.Count - 1; i >= 0; --i)
                 {
                     MultiTile entry = cell[i];
-                    ItemData entryData = TileData.ItemTable[entry.Id];
                     var item = new ListViewItem(entry.Invisible ? $"0x{entry.Id:X4} *" : $"0x{entry.Id:X4}", IconFor(entry.Id)) { Tag = entry };
                     item.SubItems.Add(entry.Z.ToString());
-                    item.SubItems.Add(entryData.Name ?? string.Empty);
+                    item.SubItems.Add(TileName(entry.Id));
                     _stack.Items.Add(item);
                     if (entry == tile)
                     {
