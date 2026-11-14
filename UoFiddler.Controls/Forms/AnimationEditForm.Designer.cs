@@ -105,6 +105,7 @@
             ZoomLabel = new System.Windows.Forms.ToolStripLabel();
             ZoomComboBox = new System.Windows.Forms.ToolStripComboBox();
             zoomToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            FrameSizeToolStripLabel = new System.Windows.Forms.ToolStripLabel();
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             DrawFullRectangleToolStripButton = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -947,7 +948,7 @@
             AnimationEditToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom;
             AnimationEditToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             AnimationEditToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            AnimationEditToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ZoomLabel, ZoomComboBox, zoomToolStripSeparator, toolStripSeparator7, DrawFullRectangleToolStripButton, toolStripSeparator5, DrawEmptyRectangleToolStripButton, toolStripSeparator6, DrawReferencialPointToolStripButton, toolStripSeparator10 });
+            AnimationEditToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { ZoomLabel, ZoomComboBox, zoomToolStripSeparator, FrameSizeToolStripLabel, toolStripSeparator7, DrawFullRectangleToolStripButton, toolStripSeparator5, DrawEmptyRectangleToolStripButton, toolStripSeparator6, DrawReferencialPointToolStripButton, toolStripSeparator10 });
             AnimationEditToolStrip.Location = new System.Drawing.Point(0, 702);
             AnimationEditToolStrip.Name = "AnimationEditToolStrip";
             AnimationEditToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -973,6 +974,12 @@
             // 
             zoomToolStripSeparator.Name = "zoomToolStripSeparator";
             zoomToolStripSeparator.Size = new System.Drawing.Size(6, 27);
+            //
+            // FrameSizeToolStripLabel
+            //
+            FrameSizeToolStripLabel.Name = "FrameSizeToolStripLabel";
+            FrameSizeToolStripLabel.Size = new System.Drawing.Size(0, 24);
+            FrameSizeToolStripLabel.ToolTipText = "Frame size in pixels, shown while a frame rectangle is drawn";
             // 
             // toolStripSeparator7
             // 
@@ -1856,6 +1863,7 @@
         private System.Windows.Forms.ToolStripLabel ZoomLabel;
         private System.Windows.Forms.ToolStripComboBox ZoomComboBox;
         private System.Windows.Forms.ToolStripSeparator zoomToolStripSeparator;
+        private System.Windows.Forms.ToolStripLabel FrameSizeToolStripLabel;
         private System.Windows.Forms.GroupBox SecondAnimGroupBox;
         private System.Windows.Forms.CheckBox SecondAnimCheckBox;
         private System.Windows.Forms.ComboBox SecondAnimFileComboBox;
