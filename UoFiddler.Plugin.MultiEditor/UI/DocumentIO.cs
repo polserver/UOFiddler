@@ -51,9 +51,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         /// <summary>
         /// Lists the client's multis (multi.mul and the UOP collection when present) and returns the chosen one.
-        /// Null when cancelled.
+        /// Null when cancelled. The list can also save the chosen multis as blueprints, after which
+        /// <paramref name="blueprintsSaved"/> gets the group to show (null for all).
         /// </summary>
-        public static List<OpenedMulti> OpenFromClient(IWin32Window owner)
+        public static List<OpenedMulti> OpenFromClient(IWin32Window owner, Action<string> blueprintsSaved = null)
         {
             Dictionary<int, string> names = LoadNames();
             var entries = new List<MultiPickEntry>();
@@ -94,15 +95,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return null;
             }
 
-            return Pick(owner, "Open multi from client", entries, true, true).ConvertAll(p => new OpenedMulti(p.Components, p.Name, p.Id));
+            return Pick(owner, "Open multi from client", entries, true, true, SaveEntriesAction(blueprintsSaved))
+                .ConvertAll(p => new OpenedMulti(p.Components, p.Name, p.Id));
         }
 
         /// <summary>
-        /// Asks for one or more files of a supported import type and reads them. A file that fails
-        /// is skipped and listed in the result; the multis of files that hold several are chosen
-        /// from a list. Null when cancelled.
+        /// Asks for one or more files of a supported import type. Null when cancelled. Formats share
+        /// extensions, so the type is the selected filter entry's, for every file.
         /// </summary>
-        public static ImportResult ImportFromFile(IWin32Window owner)
+        private static (string[] Files, Multis.ImportType Type)? AskImportFiles(IWin32Window owner, string title)
         {
             var filters = new List<string>();
             foreach ((_, string description, string pattern) in MultiFileImport.Formats)
@@ -112,21 +113,74 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             using var dialog = new OpenFileDialog
             {
-                Title = "Import multis from files",
+                Title = title,
                 Multiselect = true,
                 CheckFileExists = true,
                 Filter = string.Join("|", filters),
                 FilterIndex = 1
             };
 
-            if (dialog.ShowDialog(owner) != DialogResult.OK)
+            return dialog.ShowDialog(owner) == DialogResult.OK
+                ? (dialog.FileNames, MultiFileImport.Formats[dialog.FilterIndex - 1].Type)
+                : null;
+        }
+
+        /// <summary>A multi read from a file, as a blueprint with its name; its items are read when it is written.</summary>
+        public static BlueprintSource BlueprintFromImport(ImportedMulti multi)
+        {
+            return new BlueprintSource(multi.Name, multi.TileCount, () => Blueprints.FromComponents(multi.Components));
+        }
+
+        /// <summary>A picked row as a blueprint, with the name the list shows for it.</summary>
+        private static BlueprintSource BlueprintFromEntry(MultiPickEntry entry)
+        {
+            return new BlueprintSource(entry.Name, entry.Components.SortedTiles?.Length ?? 0, () => Blueprints.FromComponents(entry.Components));
+        }
+
+        /// <summary>The pick list's "Save as blueprints" action; null (no button) without a callback.</summary>
+        private static Func<IWin32Window, List<MultiPickEntry>, string> SaveEntriesAction(Action<string> blueprintsSaved, Func<MultiPickEntry, string> fileOf = null)
+        {
+            if (blueprintsSaved == null)
             {
                 return null;
             }
 
-            // Formats share extensions, so the type is the selected filter entry's, for every file.
-            Multis.ImportType type = MultiFileImport.Formats[dialog.FilterIndex - 1].Type;
-            string[] files = dialog.FileNames;
+            return (dialog, picked) =>
+            {
+                List<BlueprintSource> sources = picked.ConvertAll(BlueprintFromEntry);
+                var entryOf = new Dictionary<BlueprintSource, MultiPickEntry>();
+                for (int i = 0; i < sources.Count; ++i)
+                {
+                    entryOf[sources[i]] = picked[i];
+                }
+
+                BlueprintSaveResult result = fileOf == null
+                    ? BlueprintSaveDialog.Run(dialog, sources, out string showGroup)
+                    : BlueprintSaveDialog.Run(dialog, sources, out showGroup, "One group per file", s => fileOf(entryOf[s]));
+                if (result == null)
+                {
+                    return null;
+                }
+
+                blueprintsSaved(showGroup);
+                return BlueprintSaveDialog.Describe(result, showGroup);
+            };
+        }
+
+        /// <summary>
+        /// Asks for one or more files of a supported import type and reads them. A file that fails
+        /// is skipped and listed in the result; the multis of files that hold several are chosen
+        /// from a list, which can also save them as blueprints. Null when cancelled.
+        /// </summary>
+        public static ImportResult ImportFromFile(IWin32Window owner, Action<string> blueprintsSaved = null)
+        {
+            if (AskImportFiles(owner, "Import multis from files") is not { } picked)
+            {
+                return null;
+            }
+
+            Multis.ImportType type = picked.Type;
+            string[] files = picked.Files;
             var opened = new List<OpenedMulti>();
             var failures = new List<ImportFailure>();
             var choices = new List<MultiPickEntry>();
@@ -181,16 +235,21 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             if (choices.Count > 0)
             {
                 string title = files.Length == 1 ? $"Choose multis from {Path.GetFileName(files[0])}" : "Choose multis to import";
-                opened.AddRange(Pick(owner, title, choices, files.Length > 1, false).ConvertAll(p => new OpenedMulti(p.Components, p.Name, null)));
+                opened.AddRange(Pick(owner, title, choices, files.Length > 1, false,
+                    SaveEntriesAction(blueprintsSaved, files.Length > 1 ? e => Path.GetFileNameWithoutExtension(e.Source) : null))
+                    .ConvertAll(p => new OpenedMulti(p.Components, p.Name, null)));
             }
 
             return new ImportResult(opened, failures);
         }
 
-        /// <summary>Lists the multis in every supported file under a folder and returns the chosen ones. Null when cancelled.</summary>
-        public static ImportResult ImportFromFolder(IWin32Window owner)
+        /// <summary>
+        /// Lists the multis in every supported file under a folder and returns the chosen ones. Null when cancelled.
+        /// The list can also save the chosen multis as blueprints.
+        /// </summary>
+        public static ImportResult ImportFromFolder(IWin32Window owner, Action<string> blueprintsSaved = null)
         {
-            using var dialog = new FolderImportDialog();
+            using var dialog = new FolderImportDialog(blueprintsSaved);
             return dialog.ShowDialog(owner) == DialogResult.OK ? new ImportResult(dialog.Opened, dialog.Failures) : null;
         }
 
@@ -404,9 +463,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         }
 
         /// <summary>The rows picked in the list (several with Ctrl or Shift); empty when cancelled.</summary>
-        private static List<MultiPickEntry> Pick(IWin32Window owner, string title, List<MultiPickEntry> entries, bool showSource, bool clientSources)
+        private static List<MultiPickEntry> Pick(IWin32Window owner, string title, List<MultiPickEntry> entries, bool showSource, bool clientSources,
+            Func<IWin32Window, List<MultiPickEntry>, string> saveBlueprints = null)
         {
-            using var dialog = new DocumentIOPickDialog(title, entries, showSource, clientSources);
+            using var dialog = new DocumentIOPickDialog(title, entries, showSource, clientSources, saveBlueprints);
             return dialog.ShowDialog(owner) == DialogResult.OK ? new List<MultiPickEntry>(dialog.SelectedEntries) : new List<MultiPickEntry>();
         }
 

@@ -27,16 +27,24 @@ namespace UoFiddler.Plugin.MultiEditor.UI
     {
         private readonly List<MultiPickEntry> _entries;
         private readonly List<RadioButton> _sourceButtons = new List<RadioButton>();
+        private readonly Func<IWin32Window, List<MultiPickEntry>, string> _saveBlueprintsAction;
         private string _sourceFilter;
 
         /// <param name="showSource">Shows the File column: which file each multi comes from.</param>
         /// <param name="clientSources">Adds the All / multi.mul / UOP buttons, for the client's multis.</param>
-        public DocumentIOPickDialog(string title, List<MultiPickEntry> entries, bool showSource, bool clientSources)
+        /// <param name="saveBlueprints">
+        /// Adds a "Save as blueprints" button that hands it the selected rows; it returns the text
+        /// to show afterwards, or null when nothing was saved. The dialog stays open.
+        /// </param>
+        public DocumentIOPickDialog(string title, List<MultiPickEntry> entries, bool showSource, bool clientSources,
+            Func<IWin32Window, List<MultiPickEntry>, string> saveBlueprints = null)
         {
             _entries = entries;
+            _saveBlueprintsAction = saveBlueprints;
 
             InitializeComponent();
             Text = title;
+            _saveBlueprints.Visible = saveBlueprints != null;
 
             // Which file the multis come from, as push buttons: all, multi.mul or the UOP collection.
             // A client without MultiCollection.uop (or without multi.mul) has that button greyed out.
@@ -151,6 +159,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Accept();
         }
 
+        private void SaveBlueprints_Click(object sender, EventArgs e)
+        {
+            List<MultiPickEntry> picked = Picked();
+            if (picked.Count > 0 && _saveBlueprintsAction(this, picked) is { } done)
+            {
+                _info.Text = done;
+            }
+        }
+
         private void Populate()
         {
             string text = _filter.Text.Trim();
@@ -205,7 +222,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             old?.Dispose();
 
             MultiPickEntry entry = Current();
-            _ok.Enabled = entry != null;
+            _ok.Enabled = _saveBlueprints.Enabled = entry != null;
             if (entry == null)
             {
                 _info.Text = string.Empty;
@@ -232,6 +249,20 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             return _list.SelectedItems.Count > 0 ? _list.SelectedItems[0].Tag as MultiPickEntry : null;
         }
 
+        private List<MultiPickEntry> Picked()
+        {
+            var picked = new List<MultiPickEntry>();
+            foreach (ListViewItem item in _list.SelectedItems)
+            {
+                if (item.Tag is MultiPickEntry entry)
+                {
+                    picked.Add(entry);
+                }
+            }
+
+            return picked;
+        }
+
         private void Accept()
         {
             if (_list.SelectedItems.Count == 0)
@@ -240,14 +271,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             SelectedEntries.Clear();
-            foreach (ListViewItem item in _list.SelectedItems)
-            {
-                if (item.Tag is MultiPickEntry entry)
-                {
-                    SelectedEntries.Add(entry);
-                }
-            }
-
+            SelectedEntries.AddRange(Picked());
             DialogResult = DialogResult.OK;
             Close();
         }

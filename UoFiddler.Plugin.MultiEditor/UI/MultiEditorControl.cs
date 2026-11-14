@@ -319,7 +319,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     Session.SwapSelectionToHouseStyle();
                 }
             };
-            _browser.PrefabChosen += tiles =>
+            _browser.BlueprintChosen += tiles =>
             {
                 Session?.BeginPaste(tiles);
                 _canvas.Focus();
@@ -443,7 +443,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             });
         }
 
-        private EditorCommand _new, _open, _import, _importFolder, _saveClient, _export, _savePrefab, _resize, _close, _closeAll;
+        private EditorCommand _new, _open, _import, _importFolder, _saveClient, _export, _saveBlueprint, _resize, _close, _closeAll;
         private EditorCommand _undo, _redo, _cut, _copy, _paste, _delete;
         private EditorCommand _selectAll, _invert, _selectConnected, _selectSameId, _replaceId;
         private EditorCommand _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, _hide, _showHidden;
@@ -478,7 +478,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _importFolder = Command("File", "Import from folder...", ImportFolder, Keys.Control | Keys.Shift | Keys.I);
             _saveClient = Command("File", "Save to client...", SaveToClient, Keys.Control | Keys.S, hasDoc, glyph: Glyphs.Save);
             _export = Command("File", "Export file...", ExportFile, Keys.Control | Keys.E, hasDoc);
-            _savePrefab = Command("File", "Save selection as blueprint...", SavePrefab, can: hasSelection);
+            _saveBlueprint = Command("File", "Save as blueprint...", SaveBlueprint, can: hasDoc);
             _savePattern = Command("File", "Save selection as floor pattern...", SaveFloorPattern, can: hasSelection);
             _resize = Command("File", "Resize multi...", ResizePrompt, can: hasDoc);
             _settingsCommand = Command("File", "Settings...", ShowSettings);
@@ -711,16 +711,30 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _statusHint.Text = $"Replaced {count} tile(s)" + (selectionOnly ? " in the selection" : string.Empty);
         }
 
-        private void SavePrefab()
+        /// <summary>Saves the selection as a blueprint, or the whole design when nothing is selected.</summary>
+        private void SaveBlueprint()
         {
-            List<ClipboardTile> tiles = Session.SelectionAsClipboard();
-            string name = tiles != null ? Prompt.Text(this, "Save blueprint", "Blueprint name:") : null;
-            if (name == null)
+            bool whole = Session.Selection.Count == 0;
+            List<ClipboardTile> tiles = whole ? Session.DesignAsClipboard() : Session.SelectionAsClipboard();
+            if (tiles == null)
             {
                 return;
             }
 
-            _browser.SaveBlueprint(name, tiles);
+            if (tiles.Count > Blueprints.LargeBlueprintTiles &&
+                MessageBox.Show(this, $"This blueprint has {tiles.Count:N0} tiles. Large blueprints are slow to place and to preview.\r\nSave it anyway?",
+                    "Save blueprint", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
+            {
+                return;
+            }
+
+            string name = Prompt.Text(this, whole ? "Save design as blueprint" : "Save blueprint", "Blueprint name:", whole ? Session.Title : string.Empty);
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
+            _browser.SaveBlueprint(name.Trim(), tiles);
         }
 
         private void DrawWithSelected()
@@ -755,7 +769,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             _canvasMenu.Items.Add(new ToolStripSeparator());
-            foreach (EditorCommand command in new[] { _selectConnected, _selectSameId, _selectAll, _savePrefab, _savePattern })
+            foreach (EditorCommand command in new[] { _selectConnected, _selectSameId, _selectAll, _saveBlueprint, _savePattern })
             {
                 _canvasMenu.Items.Add(_commands.MenuItem(command));
             }
@@ -1133,7 +1147,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             ToolStrip strip = _mainStrip;
 
-            Menu(_fileMenu, _new, _open, _import, _importFolder, null, _saveClient, _export, _savePrefab, _savePattern, null, _resize, _settingsCommand, null, _close, _closeAll);
+            Menu(_fileMenu, _new, _open, _import, _importFolder, null, _saveClient, _export, _saveBlueprint, _savePattern, null, _resize, _settingsCommand, null, _close, _closeAll);
             Menu(_editMenu, _undo, _redo, null, _cut, _copy, _paste, _delete, null,
                 _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden);
             Menu(_selectMenu, _selectAll, _invert, _selectConnected, _selectSameId, null, _replaceId);
@@ -1393,17 +1407,23 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void OpenFromClient()
         {
-            AddDocuments(DocumentIO.OpenFromClient(this));
+            AddDocuments(DocumentIO.OpenFromClient(this, BlueprintsSaved));
         }
 
         private void ImportFile()
         {
-            AddImported(DocumentIO.ImportFromFile(this));
+            AddImported(DocumentIO.ImportFromFile(this, BlueprintsSaved));
         }
 
         private void ImportFolder()
         {
-            AddImported(DocumentIO.ImportFromFolder(this));
+            AddImported(DocumentIO.ImportFromFolder(this, BlueprintsSaved));
+        }
+
+        /// <summary>Blueprints were written by an open or import dialog: the Blueprints page shows the group (null for all).</summary>
+        private void BlueprintsSaved(string showGroup)
+        {
+            _browser.ReloadBlueprints(showGroup);
         }
 
         /// <summary>Opens what an import read, then lists what it could not.</summary>

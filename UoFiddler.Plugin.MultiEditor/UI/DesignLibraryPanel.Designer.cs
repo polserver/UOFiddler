@@ -41,6 +41,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             buttons = new System.Windows.Forms.FlowLayoutPanel();
             _open = new System.Windows.Forms.Button();
             _place = new System.Windows.Forms.Button();
+            _saveBlueprints = new System.Windows.Forms.Button();
             _filter = new System.Windows.Forms.TextBox();
             bar = new System.Windows.Forms.ToolStrip();
             chooseButton = new System.Windows.Forms.ToolStripButton();
@@ -142,6 +143,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // 
             buttons.Controls.Add(_open);
             buttons.Controls.Add(_place);
+            buttons.Controls.Add(_saveBlueprints);
+            buttons.AutoSize = true;
+            buttons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             buttons.Dock = System.Windows.Forms.DockStyle.Bottom;
             buttons.Location = new System.Drawing.Point(0, 118);
             buttons.Name = "buttons";
@@ -169,6 +173,17 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _place.Text = "Place in this multi";
             _place.UseVisualStyleBackColor = true;
             _place.Click += Place_Click;
+            // 
+            // _saveBlueprints
+            // 
+            _saveBlueprints.Enabled = false;
+            _saveBlueprints.Location = new System.Drawing.Point(3, 67);
+            _saveBlueprints.Name = "_saveBlueprints";
+            _saveBlueprints.Size = new System.Drawing.Size(150, 26);
+            _saveBlueprints.TabIndex = 2;
+            _saveBlueprints.Text = "Save as blueprints...";
+            _saveBlueprints.UseVisualStyleBackColor = true;
+            _saveBlueprints.Click += SaveBlueprints_Click;
             // 
             // _filter
             // 
@@ -252,6 +267,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.FlowLayoutPanel buttons;
         private System.Windows.Forms.Button _open;
         private System.Windows.Forms.Button _place;
+        private System.Windows.Forms.Button _saveBlueprints;
         private System.Windows.Forms.TextBox _filter;
         private System.Windows.Forms.ToolStrip bar;
         private System.Windows.Forms.ToolStripButton chooseButton;

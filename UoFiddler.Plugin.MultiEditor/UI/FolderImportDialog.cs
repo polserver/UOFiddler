@@ -17,6 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ultima;
+using UoFiddler.Plugin.MultiEditor.Classes;
 
 namespace UoFiddler.Plugin.MultiEditor.UI
 {
@@ -65,10 +66,21 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private int _multiCount;
         private int _failedCount;
         private bool _bulkSelecting;
+        private readonly Action<string> _blueprintsSaved;
 
         public FolderImportDialog()
+            : this(null)
+        {
+        }
+
+        /// <param name="blueprintsSaved">
+        /// Adds a "Save as blueprints" button; after a save it gets the group to show (null for all).
+        /// </param>
+        public FolderImportDialog(Action<string> blueprintsSaved)
         {
             InitializeComponent();
+            _blueprintsSaved = blueprintsSaved;
+            _saveBlueprints.Visible = blueprintsSaved != null;
 
             EditorSettings settings = EditorSettings.Current;
             _folder.Text = settings.ImportFolder ?? string.Empty;
@@ -253,6 +265,31 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private void Ok_Click(object sender, EventArgs e)
         {
             Accept();
+        }
+
+        /// <summary>Saves the selected multis as blueprints, optionally one group per file; the dialog stays open.</summary>
+        private void SaveBlueprints_Click(object sender, EventArgs e)
+        {
+            List<Row> rows = SelectedRows().Where(r => r.Multi != null).ToList();
+            if (rows.Count == 0)
+            {
+                return;
+            }
+
+            var fileOf = new Dictionary<BlueprintSource, string>();
+            var sources = new List<BlueprintSource>();
+            foreach (Row row in rows)
+            {
+                BlueprintSource source = DocumentIO.BlueprintFromImport(row.Multi);
+                sources.Add(source);
+                fileOf[source] = Path.GetFileNameWithoutExtension(row.File);
+            }
+
+            if (BlueprintSaveDialog.Run(this, sources, out string showGroup, "One group per file", s => fileOf[s]) is { } result)
+            {
+                _blueprintsSaved(showGroup);
+                _status.Text = BlueprintSaveDialog.Describe(result, showGroup);
+            }
         }
 
         private void PreviewTimer_Tick(object sender, EventArgs e)
@@ -531,7 +568,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             List<Row> rows = SelectedRows();
             int openable = rows.Count(r => r.Multi != null);
-            _ok.Enabled = openable > 0;
+            _ok.Enabled = _saveBlueprints.Enabled = openable > 0;
             _ok.Text = openable > 1 ? $"Open {openable:N0}" : "Open";
 
             if (rows.Count > 1)

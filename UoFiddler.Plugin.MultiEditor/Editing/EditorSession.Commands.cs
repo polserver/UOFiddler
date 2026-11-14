@@ -104,10 +104,17 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
 
         public bool CanPaste => _clipboard != null || ClipboardHasTiles();
 
-        /// <summary>The selection as tiles relative to its lowest X, Y and Z (also used to save a prefab).</summary>
+        /// <summary>The selection as tiles relative to its lowest X, Y and Z (also used to save a blueprint).</summary>
         public List<ClipboardTile> SelectionAsClipboard()
         {
             return _selection.Count == 0 ? null : ToClipboard(_selection);
+        }
+
+        /// <summary>Every tile of the design, relative to its lowest X, Y and Z; null when it is empty.</summary>
+        public List<ClipboardTile> DesignAsClipboard()
+        {
+            List<MultiTile> tiles = CompList.RealTiles.ToList();
+            return tiles.Count == 0 ? null : ToClipboard(tiles);
         }
 
         private static List<ClipboardTile> ToClipboard(IReadOnlyCollection<MultiTile> tiles)
