@@ -389,13 +389,54 @@ namespace Ultima
                 EnsureFramesFit(anims[i], $"Body {body}, action {i / 5}, direction {i % 5}");
             }
 
+            WriteBodyVD(file, GetVdType(animLength), anims);
+        }
+
+        /// <summary>
+        /// Writes <paramref name="body"/> as a .vd in another body type's action layout. Action
+        /// <c>t</c> of the file holds action <c>sourceActions[t]</c> of the body, or nothing where that is -1.
+        /// A sea monster layout (9 actions) is written as a 22-action monster .vd with the rest left empty,
+        /// the way sea monster bodies are stored.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">A frame does not fit its run headers. Nothing is written.</exception>
+        public static void ExportRemappedToVD(int fileType, int body, MobType layout, IReadOnlyList<int> sourceActions, string file, double scale = 1.0)
+        {
+            int layoutActions = MobTypes.GetActionCount(layout == MobType.Equipment ? MobType.Human : layout);
+            int vdActions = GetVdType(layoutActions) >= 0 ? layoutActions : 22;
+
+            var anims = new AnimIdx[vdActions * 5];
+            for (int target = 0; target < layoutActions && target < sourceActions.Count; ++target)
+            {
+                int source = sourceActions[target];
+                if (source < 0 || !IsActionInRange(fileType, body, source))
+                {
+                    continue;
+                }
+
+                for (int dir = 0; dir < 5; ++dir)
+                {
+                    AnimIdx anim = ScaleForExport(GetAnimation(fileType, body, source, dir), scale);
+                    EnsureFramesFit(anim, $"Body {body}, action {source}, direction {dir}");
+                    anims[(target * 5) + dir] = anim;
+                }
+            }
+
+            WriteBodyVD(file, GetVdType(vdActions), anims);
+        }
+
+        /// <summary>
+        /// Writes a body .vd: the header, one index entry per action and direction, then each animation.
+        /// A null animation gets an empty entry.
+        /// </summary>
+        private static void WriteBodyVD(string file, short vdType, AnimIdx[] anims)
+        {
             using (var fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Write))
             using (var bin = new BinaryWriter(fs))
             {
                 bin.Write((short)6);
-                bin.Write(GetVdType(animLength));
+                bin.Write(vdType);
                 long indexPos = bin.BaseStream.Position;
-                long animPos = bin.BaseStream.Position + (12 * animLength * 5);
+                long animPos = bin.BaseStream.Position + (12 * anims.Length);
                 foreach (AnimIdx anim in anims)
                 {
                     if (anim == null)
