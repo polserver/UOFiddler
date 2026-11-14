@@ -34,7 +34,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             public EditorSession Session;
             public Camera2D Camera = new Camera2D();
             public int? ClientId;
-            public bool Fitted;
         }
 
         private readonly ArtMasks _masks = new ArtMasks();
@@ -448,7 +447,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private EditorCommand _selectAll, _invert, _selectConnected, _selectSameId, _replaceId;
         private EditorCommand _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, _hide, _showHidden;
         private EditorCommand _grid, _hideWalls, _walkable, _doubleSurface, _hideAbove, _levelUp, _levelDown;
-        private EditorCommand _fit, _zoomIn, _zoomOut, _zoomReset, _shortcuts;
+        private EditorCommand _fit, _center, _zoomIn, _zoomOut, _zoomReset, _shortcuts;
         private EditorCommand _zUp, _zDown, _planeUp, _planeDown, _cyclePlacement, _escape;
         private EditorCommand _drawWithSelected, _workPlane;
         private ContextMenuStrip _canvasMenu;
@@ -537,6 +536,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             _moveReference = Command("View", "Move reference...", MoveReferencePrompt, can: () => Session?.Reference != null);
             _fit = Command("View", "Fit to window", () => _canvas.FitToView(), Keys.Home, hasDoc, glyph: Glyphs.Fit);
+            _center = Command("View", "Center design", () => _canvas.CenterView(), Keys.Shift | Keys.Home, hasDoc, glyph: Glyphs.Center);
             _zoomIn = Command("View", "Zoom in", () => _canvas.ZoomStep(1), Keys.Add, glyph: Glyphs.ZoomIn, alt: Keys.Shift | Keys.Oemplus);
             _zoomOut = Command("View", "Zoom out", () => _canvas.ZoomStep(-1), Keys.Subtract, glyph: Glyphs.ZoomOut, alt: Keys.OemMinus);
             _zoomReset = Command("View", "Zoom 100%", () => _canvas.SetZoom(1f), Keys.Control | Keys.D0, alt: Keys.Control | Keys.NumPad0);
@@ -745,7 +745,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             _canvasMenu.Items.Add(new ToolStripSeparator());
-            foreach (EditorCommand command in new[] { _workPlane, _grid, _fit })
+            foreach (EditorCommand command in new[] { _workPlane, _grid, _fit, _center })
             {
                 _canvasMenu.Items.Add(_commands.MenuItem(command));
             }
@@ -1122,7 +1122,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden);
             Menu(_selectMenu, _selectAll, _invert, _selectConnected, _selectSameId, null, _replaceId);
             ToolStripDropDownButton view = Menu(_viewMenu, _preview, _planView, null, _workPlane, _grid, _hideWalls, _hideAbove, _walkable, _doubleSurface, null,
-                _allFloors, _levelUp, _levelDown, _planeUp, _planeDown, null, _showBrowser, _showInspector, null, _fit, _zoomIn, _zoomOut, _zoomReset, null, _moveReference, null, _performanceInfo);
+                _allFloors, _levelUp, _levelDown, _planeUp, _planeDown, null, _showBrowser, _showInspector, null, _fit, _center, _zoomIn, _zoomOut, _zoomReset, null, _moveReference, null, _performanceInfo);
             var terrainMenu = new ToolStripMenuItem("Preview ground");
             foreach (EditorCommand terrain in _terrainCommands)
             {
@@ -1145,7 +1145,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             // Right side: zoom and help. Right-aligned items run from the right edge in item order.
             int at = strip.Items.IndexOf(_zoomLabel);
-            foreach (EditorCommand command in new[] { _shortcuts, _fit, _zoomIn })
+            foreach (EditorCommand command in new[] { _shortcuts, _center, _fit, _zoomIn })
             {
                 ToolStripButton button = _commands.Button(command);
                 button.Alignment = ToolStripItemAlignment.Right;
@@ -1726,11 +1726,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 session.TileUsed += _browser.RecordRecent;
 
                 _canvas.Show(session, document.Camera);
-                if (!document.Fitted)
-                {
-                    document.Fitted = true;
-                    _canvas.FitToView();
-                }
 
                 _inspector.Bind(session);
                 if (session.DrawTileId != 0)

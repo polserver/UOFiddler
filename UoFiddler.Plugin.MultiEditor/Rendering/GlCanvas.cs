@@ -80,6 +80,12 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
                 _session.Invalidated += Invalidate;
             }
 
+            // A design nobody has panned or zoomed yet is shown whole, for the canvas as it is now.
+            if (Camera.ShowsFit)
+            {
+                FitToView();
+            }
+
             Invalidate();
         }
 
@@ -175,6 +181,18 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             OnCameraChanged();
         }
 
+        /// <summary>Centres the multi in the canvas at the current zoom.</summary>
+        public void CenterView()
+        {
+            if (_session == null || !_session.HasDocument)
+            {
+                return;
+            }
+
+            Camera.CenterOn(SceneBounds(), ClientSize);
+            OnCameraChanged();
+        }
+
         public void SetZoom(float zoom)
         {
             Camera.ZoomAt(new Point(ClientSize.Width / 2, ClientSize.Height / 2), zoom);
@@ -244,6 +262,14 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
+
+            // Keeps a fitted design centred when the canvas changes size (layout, sidebars, window),
+            // until it is panned or zoomed by hand.
+            if (Camera.ShowsFit)
+            {
+                FitToView();
+            }
+
             Invalidate();
         }
 
