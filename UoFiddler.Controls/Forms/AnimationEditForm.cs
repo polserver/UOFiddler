@@ -1977,6 +1977,40 @@ namespace UoFiddler.Controls.Forms
             FileSavedDialog.Show(FindForm(), Options.OutputPath, "Animation saved successfully.");
         }
 
+        private void OnClickExportRemappedToVD(object sender, EventArgs e)
+        {
+            if (_fileType == 0)
+            {
+                return;
+            }
+
+            int body = _currentBody;
+            MobType sourceType = Animations.GetBodyMobType(body, _fileType);
+            var hasFrames = new bool[Animations.GetAnimLength(body, _fileType)];
+            for (int action = 0; action < hasFrames.Length; ++action)
+            {
+                hasFrames[action] = AnimationEdit.IsActionDefined(_fileType, body, action);
+            }
+
+            using var form = new VdRemapForm(body, sourceType, hasFrames, ResolveActionNames);
+            if (form.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            MobType layout = form.TargetLayout;
+            int[] sourceActions = form.SourceActions;
+            int percent = form.ScalePercent;
+            string fileName = Path.Combine(Options.OutputPath,
+                $"anim{_fileType}_{Utils.FormatExportId(body)}_as_{layout.ToString().ToLowerInvariant()}{ScaleSuffix(percent)}.vd");
+            if (!TryRunAnimationWrite(() => AnimationEdit.ExportRemappedToVD(_fileType, body, layout, sourceActions, fileName, percent / 100.0), "Export"))
+            {
+                return;
+            }
+
+            FileSavedDialog.Show(FindForm(), Options.OutputPath, "Animation saved successfully.");
+        }
+
         private static string ScaleSuffix(int percent)
         {
             return percent == 100 ? string.Empty : $"_scale{percent}";
