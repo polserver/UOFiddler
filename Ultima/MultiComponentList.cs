@@ -203,6 +203,7 @@ namespace Ultima
             _min = _max = Point.Empty;
 
             int itemCount;
+            List<MultiTileEntry> parsed = null;
 
             switch (type)
             {
@@ -350,7 +351,17 @@ namespace Ultima
                         using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                         using (var reader = new BinaryReader(fs))
                         {
-                            if (reader.ReadInt16() != 1) // Version check
+                            // Version 1 holds one design; version 2 is a batch, of which the first
+                            // design is read here (UoaDesignFile reads them all).
+                            short uoaVersion = reader.ReadInt16();
+                            if (uoaVersion == 2)
+                            {
+                                if (reader.ReadInt16() < 1)
+                                {
+                                    return;
+                                }
+                            }
+                            else if (uoaVersion != 1)
                             {
                                 return;
                             }
@@ -623,9 +634,215 @@ namespace Ultima
 
                         break;
                     }
+                case Multis.ImportType.UOX3:
+                    parsed = ReadUox3(fileName);
+                    break;
+                case Multis.ImportType.XML:
+                    parsed = ReadXml(fileName);
+                    break;
+                case Multis.ImportType.UOH:
+                    parsed = ReadUoh(fileName);
+                    break;
+                case Multis.ImportType.WORLDFORGE:
+                    parsed = ReadWorldForge(fileName);
+                    break;
+            }
+
+            if (parsed != null)
+            {
+                // Formats read into a list: take the tiles and their bounds from it.
+                SortedTiles = parsed.ToArray();
+                if (SortedTiles.Length > 0)
+                {
+                    _min = new Point(int.MaxValue, int.MaxValue);
+                    _max = new Point(int.MinValue, int.MinValue);
+                    foreach (MultiTileEntry e in SortedTiles)
+                    {
+                        _min.X = Math.Min(_min.X, e.OffsetX);
+                        _min.Y = Math.Min(_min.Y, e.OffsetY);
+                        _max.X = Math.Max(_max.X, e.OffsetX);
+                        _max.Y = Math.Max(_max.Y, e.OffsetY);
+                        MaxHeight = Math.Max(MaxHeight, e.OffsetZ);
+                    }
+                }
             }
 
             ConvertList();
+        }
+
+        private static MultiTileEntry Entry(int id, int x, int y, int z, int flags = 1, int unk1 = 0)
+        {
+            return new MultiTileEntry
+            {
+                ItemId = (ushort)id,
+                OffsetX = (short)x,
+                OffsetY = (short)y,
+                OffsetZ = (short)Math.Clamp(z, sbyte.MinValue, sbyte.MaxValue),
+                Flags = flags,
+                Unk1 = unk1
+            };
+        }
+
+        /// <summary>
+        /// A number written as decimal or as 0x hex.
+        /// </summary>
+        private static int ParseNumber(string text)
+        {
+            text = text.Trim();
+            return text.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
+                ? int.Parse(text[2..], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture)
+                : int.Parse(text, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// UOX3 house items, as <see cref="ExportToUox3File"/> writes them:
+        /// [HOUSE ITEM n] { ITEM=0x.. X=.. Y=.. Z=.. }.
+        /// </summary>
+        private static List<MultiTileEntry> ReadUox3(string fileName)
+        {
+            var list = new List<MultiTileEntry>();
+            int id = -1, x = 0, y = 0, z = 0;
+            foreach (string raw in File.ReadLines(fileName, Encoding.GetEncoding(1252)))
+            {
+                string line = raw.Trim();
+                if (line.StartsWith('['))
+                {
+                    id = -1;
+                    x = y = z = 0;
+                    continue;
+                }
+
+                if (line == "}" && id >= 0)
+                {
+                    list.Add(Entry(id, x, y, z));
+                    id = -1;
+                    continue;
+                }
+
+                int equals = line.IndexOf('=');
+                if (equals <= 0)
+                {
+                    continue;
+                }
+
+                string key = line[..equals].Trim().ToUpperInvariant();
+                string value = line[(equals + 1)..];
+                switch (key)
+                {
+                    case "ITEM":
+                        id = ParseNumber(value);
+                        break;
+                    case "X":
+                        x = ParseNumber(value);
+                        break;
+                    case "Y":
+                        y = ParseNumber(value);
+                        break;
+                    case "Z":
+                        z = ParseNumber(value);
+                        break;
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// The XML <see cref="ExportToXmlFile"/> writes: &lt;Entry&gt;&lt;Item X Y Z ID Flags Unk1 /&gt;.
+        /// </summary>
+        private static List<MultiTileEntry> ReadXml(string fileName)
+        {
+            var list = new List<MultiTileEntry>();
+            var dom = new XmlDocument();
+            dom.Load(fileName);
+            foreach (XmlElement item in dom.GetElementsByTagName("Item"))
+            {
+                string flags = item.GetAttribute("Flags");
+                string unk1 = item.GetAttribute("Unk1");
+                list.Add(Entry(
+                    ParseNumber(item.GetAttribute("ID")),
+                    ParseNumber(item.GetAttribute("X")),
+                    ParseNumber(item.GetAttribute("Y")),
+                    ParseNumber(item.GetAttribute("Z")),
+                    flags.Length > 0 ? ParseNumber(flags) : 1,
+                    unk1.Length > 0 ? ParseNumber(unk1) : 0));
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// A UO House Editor design: a header line ("UOHE File ver 1.00",width,height,base), then
+        /// one line per item: floor,x,y,altitude,item id (decimal). Floor 0 is the foundation with
+        /// altitudes from 0; floor 1 starts at the base height and every further floor 20 higher.
+        /// </summary>
+        private static List<MultiTileEntry> ReadUoh(string fileName)
+        {
+            var list = new List<MultiTileEntry>();
+            string[] lines = File.ReadAllLines(fileName, Encoding.GetEncoding(1252));
+            if (lines.Length == 0 || !lines[0].StartsWith("\"UOHE File", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidDataException("Not a UOHE design file");
+            }
+
+            string[] header = lines[0].Split(',');
+            int baseHeight = header.Length > 3 ? ParseNumber(header[3]) : 7;
+
+            for (int i = 1; i < lines.Length; ++i)
+            {
+                string[] parts = lines[i].Split(',');
+                if (parts.Length < 5)
+                {
+                    continue;
+                }
+
+                int floor = ParseNumber(parts[0]);
+                int altitude = ParseNumber(parts[3]);
+                int z = floor == 0 ? altitude : baseHeight + ((floor - 1) * 20) + altitude;
+                list.Add(Entry(ParseNumber(parts[4]), ParseNumber(parts[1]), ParseNumber(parts[2]), z));
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// A WorldForge export: &lt;tile id x y z hue /&gt; elements in world coordinates, moved so
+        /// the lowest X, Y and Z are 0. Hues are not part of a multi and are dropped.
+        /// </summary>
+        private static List<MultiTileEntry> ReadWorldForge(string fileName)
+        {
+            var dom = new XmlDocument();
+            dom.Load(fileName);
+            var tiles = new List<(int Id, int X, int Y, int Z)>();
+            foreach (XmlNode node in dom.GetElementsByTagName("*"))
+            {
+                if (node is XmlElement tile && tile.LocalName.Equals("tile", StringComparison.OrdinalIgnoreCase) && tile.HasAttribute("id"))
+                {
+                    tiles.Add((ParseNumber(tile.GetAttribute("id")), ParseNumber(tile.GetAttribute("x")),
+                        ParseNumber(tile.GetAttribute("y")), ParseNumber(tile.GetAttribute("z"))));
+                }
+            }
+
+            var list = new List<MultiTileEntry>(tiles.Count);
+            if (tiles.Count == 0)
+            {
+                return list;
+            }
+
+            int minX = int.MaxValue, minY = int.MaxValue, minZ = int.MaxValue;
+            foreach (var t in tiles)
+            {
+                minX = Math.Min(minX, t.X);
+                minY = Math.Min(minY, t.Y);
+                minZ = Math.Min(minZ, t.Z);
+            }
+
+            foreach (var t in tiles)
+            {
+                list.Add(Entry(t.Id, t.X - minX, t.Y - minY, t.Z - minZ));
+            }
+
+            return list;
         }
 
         public MultiComponentList(List<MultiTileEntry> arr)
@@ -847,6 +1064,141 @@ namespace Ultima
         private MultiComponentList()
         {
             Tiles = Array.Empty<MTile[][]>();
+        }
+
+        // The exports below mirror what the matching imports read. Where an import skips a field
+        // (UO Architect's category, level and hue, the cache header's other numbers), the export
+        // writes a neutral value: only this reader's view of those formats is known here.
+
+        private static void WriteUOAString(BinaryWriter writer, string value)
+        {
+            writer.Write((byte)(value == null ? 0 : 1));
+            if (value != null)
+            {
+                writer.Write(value);
+            }
+        }
+
+        /// <summary>UO Architect binary design (.uoa), version 1: one design with a name and its items.</summary>
+        public void ExportToUOABinaryFile(string fileName, string name)
+        {
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(fs))
+            {
+                writer.Write((short)1); // version
+                WriteUOAString(writer, name);
+                WriteUOAString(writer, null); // category
+                WriteUOAString(writer, null); // subsection
+                writer.Write(Width);
+                writer.Write(Height);
+                writer.Write(Width);  // user width
+                writer.Write(Height); // user height
+                writer.Write(SortedTiles.Length);
+                for (int i = 0; i < SortedTiles.Length; ++i)
+                {
+                    writer.Write((short)SortedTiles[i].ItemId);
+                    writer.Write(SortedTiles[i].OffsetX);
+                    writer.Write(SortedTiles[i].OffsetY);
+                    writer.Write(SortedTiles[i].OffsetZ);
+                    writer.Write((short)0); // level
+                    writer.Write((short)0); // hue
+                }
+            }
+        }
+
+        /// <summary>
+        /// UO Architect design set: <c>name.idx</c> and <c>name.bin</c> next to
+        /// <paramref name="fileName"/>, holding this one design (index version 0, item records of type 0).
+        /// </summary>
+        public void ExportToDesignerFiles(string fileName, string name)
+        {
+            string root = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(fileName)) ?? string.Empty, Path.GetFileNameWithoutExtension(fileName));
+            using (var idxfs = new FileStream(root + ".idx", FileMode.Create, FileAccess.Write))
+            using (var binfs = new FileStream(root + ".bin", FileMode.Create, FileAccess.Write))
+            using (var idx = new BinaryWriter(idxfs))
+            using (var bin = new BinaryWriter(binfs))
+            {
+                idx.Write(1); // designs
+                idx.Write(0); // version
+                WriteUOAString(idx, name);
+                WriteUOAString(idx, null); // category
+                WriteUOAString(idx, null); // subsection
+                idx.Write(Width);
+                idx.Write(Height);
+                idx.Write(Width);  // user width
+                idx.Write(Height); // user height
+                idx.Write(0L); // position of the first record in the bin
+                idx.Write(SortedTiles.Length);
+
+                for (int i = 0; i < SortedTiles.Length; ++i)
+                {
+                    bin.Write(0); // record type
+                    bin.Write((int)SortedTiles[i].ItemId);
+                    bin.Write((int)SortedTiles[i].OffsetX);
+                    bin.Write((int)SortedTiles[i].OffsetY);
+                    bin.Write((int)SortedTiles[i].OffsetZ);
+                    bin.Write(0); // level
+                }
+            }
+        }
+
+        /// <summary>
+        /// Client multi cache text (Multicache.dat) holding this one design: a header line whose third
+        /// number is the item count, then one line per item: id, flags, x, y, z.
+        /// </summary>
+        public void ExportToCacheFile(string fileName)
+        {
+            using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            {
+                tex.WriteLine($"0 0 {SortedTiles.Length} 0 0 0 0");
+                for (int i = 0; i < SortedTiles.Length; ++i)
+                {
+                    tex.WriteLine(
+                        $"{SortedTiles[i].ItemId} {SortedTiles[i].Flags} {SortedTiles[i].OffsetX} {SortedTiles[i].OffsetY} {SortedTiles[i].OffsetZ}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// UO House Editor (UOHE) design: the header line, then floor, x, y, altitude, item id per item.
+        /// Items below <paramref name="baseHeight"/> are on floor 0 (the foundation) with their Z as
+        /// altitude; above it a floor is 20 high. X and Y start at 0.
+        /// </summary>
+        public void ExportToUohFile(string fileName, int baseHeight = 7)
+        {
+            using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+            {
+                tex.WriteLine($"\"UOHE File ver 1.00\",{Width},{Height},{baseHeight}");
+                for (int i = 0; i < SortedTiles.Length; ++i)
+                {
+                    int z = SortedTiles[i].OffsetZ;
+                    int floor = z < baseHeight ? 0 : 1 + ((z - baseHeight) / 20);
+                    int altitude = floor == 0 ? z : z - baseHeight - ((floor - 1) * 20);
+                    tex.WriteLine($"{floor},{SortedTiles[i].OffsetX - _min.X},{SortedTiles[i].OffsetY - _min.Y},{altitude},{SortedTiles[i].ItemId}");
+                }
+            }
+        }
+
+        /// <summary>WorldForge tile list: one <c>tile</c> element per item with id, x, y, z and hue 0, from 0,0.</summary>
+        public void ExportToWorldForgeFile(string fileName)
+        {
+            var settings = new XmlWriterSettings { Indent = true };
+            using (XmlWriter xml = XmlWriter.Create(fileName, settings))
+            {
+                xml.WriteStartElement("tiles");
+                for (int i = 0; i < SortedTiles.Length; ++i)
+                {
+                    xml.WriteStartElement("tile");
+                    xml.WriteAttributeString("id", SortedTiles[i].ItemId.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    xml.WriteAttributeString("x", (SortedTiles[i].OffsetX - _min.X).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    xml.WriteAttributeString("y", (SortedTiles[i].OffsetY - _min.Y).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    xml.WriteAttributeString("z", SortedTiles[i].OffsetZ.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    xml.WriteAttributeString("hue", "0");
+                    xml.WriteEndElement();
+                }
+
+                xml.WriteEndElement();
+            }
         }
 
         public void ExportToTextFile(string fileName)

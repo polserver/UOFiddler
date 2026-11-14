@@ -58,7 +58,9 @@ namespace Ultima
             UOX3,
             MULTICACHE,
             UOADESIGN,
-            XML
+            XML,
+            UOH, // UO House Editor (UOHE) design
+            WORLDFORGE // WorldForge tile export
         }
 
         /// <summary>
