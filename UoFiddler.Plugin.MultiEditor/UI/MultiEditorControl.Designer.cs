@@ -33,7 +33,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _centre = new System.Windows.Forms.Panel();
             _emptyHint = new System.Windows.Forms.Label();
             _canvas = new UoFiddler.Plugin.MultiEditor.Rendering.GlCanvas();
-            _docTabs = new System.Windows.Forms.TabControl();
+            _docTabs = new DocumentTabControl();
             _toolPalette = new System.Windows.Forms.ToolStrip();
             _editToolsLabel = new System.Windows.Forms.ToolStripLabel();
             _drawToolsLabel = new System.Windows.Forms.ToolStripLabel();
@@ -130,12 +130,19 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _docTabs
             //
             _docTabs.Dock = System.Windows.Forms.DockStyle.Top;
+            _docTabs.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             _docTabs.Location = new System.Drawing.Point(0, 0);
             _docTabs.Name = "_docTabs";
+            _docTabs.Padding = new System.Drawing.Point(14, 3);
             _docTabs.ShowToolTips = true;
             _docTabs.Size = new System.Drawing.Size(532, 24);
             _docTabs.TabIndex = 2;
+            _docTabs.DrawItem += DocTabs_DrawItem;
             _docTabs.SelectedIndexChanged += DocTabs_SelectedIndexChanged;
+            _docTabs.Selecting += DocTabs_Selecting;
+            _docTabs.MouseDown += DocTabs_MouseDown;
+            _docTabs.MouseLeave += DocTabs_MouseLeave;
+            _docTabs.MouseMove += DocTabs_MouseMove;
             _docTabs.MouseUp += DocTabs_MouseUp;
             //
             // _toolPalette
@@ -495,7 +502,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.Panel _centre;
         private System.Windows.Forms.Label _emptyHint;
         private UoFiddler.Plugin.MultiEditor.Rendering.GlCanvas _canvas;
-        private System.Windows.Forms.TabControl _docTabs;
+        private DocumentTabControl _docTabs;
         private System.Windows.Forms.ToolStrip _toolPalette;
         private System.Windows.Forms.ToolStripLabel _editToolsLabel;
         private System.Windows.Forms.ToolStripLabel _drawToolsLabel;
