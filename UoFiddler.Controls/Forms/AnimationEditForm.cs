@@ -19,6 +19,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Ultima;
 using UoFiddler.Controls.Classes;
+using UoFiddler.Controls.UserControls;
 
 namespace UoFiddler.Controls.Forms
 {
@@ -341,13 +342,13 @@ namespace UoFiddler.Controls.Forms
                 if (_fileType != 0)
                 {
                     int count = Animations.GetAnimCount(_fileType);
-                    TreeNode[] nodes = new TreeNode[count];
+                    VirtualTreeNode[] nodes = new VirtualTreeNode[count];
                     for (int i = 0; i < count; ++i)
                     {
                         MobType mobType = Animations.GetBodyMobType(i, _fileType);
                         int animLength = Animations.GetAnimLength(i, _fileType);
                         char typeTag = _typeTag[(int)mobType];
-                        TreeNode node = new TreeNode
+                        VirtualTreeNode node = new VirtualTreeNode
                         {
                             Tag = i,
                             Text = $"{typeTag}: {i} ({BodyConverter.GetTrueBody(_fileType, i)})"
@@ -363,7 +364,7 @@ namespace UoFiddler.Controls.Forms
                         // a fraction of a millisecond to create and to destroy, and every body has 13-35 actions.
                         if (animLength > 0)
                         {
-                            node.Nodes.Add(new TreeNode { Tag = _actionsPlaceholder });
+                            node.Nodes.Add(new VirtualTreeNode { Tag = _actionsPlaceholder });
                         }
 
                         if (!valid)
@@ -429,12 +430,12 @@ namespace UoFiddler.Controls.Forms
         // Tag of the single child a body node holds until its action nodes are made.
         private static readonly object _actionsPlaceholder = new object();
 
-        private static bool HasActionNodes(TreeNode body)
+        private static bool HasActionNodes(VirtualTreeNode body)
         {
             return body.Nodes.Count > 0 && body.Nodes[0].Tag != _actionsPlaceholder;
         }
 
-        private void OnBeforeExpandBody(object sender, TreeViewCancelEventArgs e)
+        private void OnBeforeExpandBody(object sender, VirtualTreeNodeEventArgs e)
         {
             if (e.Node.Parent == null)
             {
@@ -445,7 +446,7 @@ namespace UoFiddler.Controls.Forms
         /// <summary>
         /// Replaces a body node's placeholder with its action nodes.
         /// </summary>
-        private void EnsureActionNodes(TreeNode body)
+        private void EnsureActionNodes(VirtualTreeNode body)
         {
             if (body.Nodes.Count == 0 || HasActionNodes(body))
             {
@@ -455,11 +456,11 @@ namespace UoFiddler.Controls.Forms
             int bodyId = (int)body.Tag;
             int animLength = Animations.GetAnimLength(bodyId, _fileType);
             string[] names = ResolveActionNames(Animations.GetBodyMobType(bodyId, _fileType));
-            var actions = new TreeNode[animLength];
+            var actions = new VirtualTreeNode[animLength];
             for (int j = 0; j < animLength; ++j)
             {
                 string name = j < names.Length ? names[j] : $"Action{j}";
-                actions[j] = new TreeNode
+                actions[j] = new VirtualTreeNode
                 {
                     Tag = j,
                     Text = string.Format("{0:D2} {1}", j, name)
@@ -483,7 +484,7 @@ namespace UoFiddler.Controls.Forms
         /// Colours an action node: invalid when it has no frames, grey with a tooltip when mobtypes.txt
         /// says the body lacks the action.
         /// </summary>
-        private void StyleActionNode(TreeNode actionNode, int body, int action)
+        private void StyleActionNode(VirtualTreeNode actionNode, int body, int action)
         {
             actionNode.ToolTipText = string.Empty;
             if (!AnimationEdit.IsActionDefined(_fileType, body, action))
@@ -513,7 +514,7 @@ namespace UoFiddler.Controls.Forms
         /// Recolours one action node of <paramref name="body"/> from the animation data. A body whose actions
         /// were never expanded has nothing to recolour; its nodes get the current state when they are made.
         /// </summary>
-        private void RefreshActionNode(TreeNode body, int action)
+        private void RefreshActionNode(VirtualTreeNode body, int action)
         {
             if (HasActionNodes(body) && action >= 0 && action < body.Nodes.Count)
             {
@@ -521,10 +522,10 @@ namespace UoFiddler.Controls.Forms
             }
         }
 
-        private TreeNode GetNode(int tag)
+        private VirtualTreeNode GetNode(int tag)
         {
             return _showOnlyValid
-                ? AnimationListTreeView.Nodes.Cast<TreeNode>().FirstOrDefault(node => (int)node.Tag == tag)
+                ? AnimationListTreeView.Nodes.Cast<VirtualTreeNode>().FirstOrDefault(node => (int)node.Tag == tag)
                 : AnimationListTreeView.Nodes[tag];
         }
 
@@ -648,7 +649,7 @@ namespace UoFiddler.Controls.Forms
             }
 
             int body = _galleryBodies[idx];
-            TreeNode target = GetNode(body);
+            VirtualTreeNode target = GetNode(body);
             if (target == null)
             {
                 return;
@@ -659,7 +660,7 @@ namespace UoFiddler.Controls.Forms
             AnimationListTreeView.Focus();
         }
 
-        private void AfterSelectTreeView(object sender, TreeViewEventArgs e)
+        private void AfterSelectTreeView(object sender, VirtualTreeNodeEventArgs e)
         {
             if (AnimationListTreeView.SelectedNode == null)
             {
@@ -1492,7 +1493,7 @@ namespace UoFiddler.Controls.Forms
                     return;
                 }
 
-                TreeNode bodyNode = AnimationListTreeView.SelectedNode;
+                VirtualTreeNode bodyNode = AnimationListTreeView.SelectedNode;
                 bodyNode.ForeColor = _invalidColor;
                 int actionCount = Animations.GetAnimLength(_currentBody, _fileType);
                 for (int i = 0; i < actionCount; ++i)
@@ -1531,7 +1532,7 @@ namespace UoFiddler.Controls.Forms
 
                 RefreshActionNode(AnimationListTreeView.SelectedNode.Parent, _currentAction);
                 bool valid = false;
-                foreach (TreeNode node in AnimationListTreeView.SelectedNode.Parent.Nodes)
+                foreach (VirtualTreeNode node in AnimationListTreeView.SelectedNode.Parent.Nodes)
                 {
                     if (node.ForeColor == _invalidColor)
                     {
@@ -1722,7 +1723,7 @@ namespace UoFiddler.Controls.Forms
                                     {
                                         edit.AddFrame(bitmap);
 
-                                        TreeNode node = GetNode(_currentBody);
+                                        VirtualTreeNode node = GetNode(_currentBody);
                                         if (node != null)
                                         {
                                             node.ForeColor = Color.Empty;
@@ -1789,7 +1790,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = 0; index < frameCount; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width / 2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -1997,7 +1998,7 @@ namespace UoFiddler.Controls.Forms
                 }
 
                 bool valid = false;
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     for (int j = 0; j < animLength; ++j)
@@ -2137,7 +2138,7 @@ namespace UoFiddler.Controls.Forms
 
         private bool TryGetSelectedAction(out int body, out int action)
         {
-            TreeNode node = AnimationListTreeView.SelectedNode;
+            VirtualTreeNode node = AnimationListTreeView.SelectedNode;
             if (node?.Parent == null)
             {
                 body = -1;
@@ -2267,8 +2268,8 @@ namespace UoFiddler.Controls.Forms
         /// </summary>
         private void UpdateBodyNode(int body)
         {
-            TreeNode node = _showOnlyValid
-                ? AnimationListTreeView.Nodes.Cast<TreeNode>().FirstOrDefault(n => (int)n.Tag == body)
+            VirtualTreeNode node = _showOnlyValid
+                ? AnimationListTreeView.Nodes.Cast<VirtualTreeNode>().FirstOrDefault(n => (int)n.Tag == body)
                 : body < AnimationListTreeView.Nodes.Count ? AnimationListTreeView.Nodes[body] : null;
             if (node == null)
             {
@@ -2640,7 +2641,7 @@ namespace UoFiddler.Controls.Forms
                 }
             }
 
-            TreeNode node = GetNode(_currentBody);
+            VirtualTreeNode node = GetNode(_currentBody);
             if (node != null)
             {
                 node.ForeColor = Color.Empty;
@@ -3240,7 +3241,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = 0; index < frameCount; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -3701,7 +3702,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 4; index < frameCount / 8 * 5; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -3748,7 +3749,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = 0; index < frameCount / 8; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -3795,7 +3796,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 5; index < frameCount / 8 * 6; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -3842,7 +3843,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 1; index < frameCount / 8 * 2; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -3889,7 +3890,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 8 * 6; index < frameCount / 8 * 7; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -4386,7 +4387,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 0; index < frameCount / 5 * 1; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -4433,7 +4434,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 1; index < frameCount / 5 * 2; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -4480,7 +4481,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 2; index < frameCount / 5 * 3; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -4527,7 +4528,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 3; index < frameCount / 5 * 4; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
@@ -4574,7 +4575,7 @@ namespace UoFiddler.Controls.Forms
             for (int index = frameCount / 5 * 4; index < frameCount / 5 * 5; index++)
             {
                 edit.AddFrame(bitBmp[index], bitBmp[index].Width/2);
-                TreeNode node = GetNode(_currentBody);
+                VirtualTreeNode node = GetNode(_currentBody);
                 if (node != null)
                 {
                     node.ForeColor = Color.Empty;
