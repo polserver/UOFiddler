@@ -255,27 +255,96 @@ namespace Ultima
             return valid && length >= 1;
         }
 
-        public static void LoadFromVD(int fileType, int body, BinaryReader bin)
+        /// <summary>
+        /// Number of actions in a body .vd of <paramref name="body"/>. That is the body's action count when a
+        /// .vd type exists for it (22, 13 or 35). Otherwise it is the body's whole idx block, so a 9-action sea
+        /// monster in a 22-action block goes out as a 22-action monster .vd and nothing is lost.
+        /// </summary>
+        public static int GetVdActionCount(int body, int fileType)
         {
-            AnimIdx[] cache = GetCache(fileType);
-            GetFileIndex(body, fileType, 0, 0, out FileIndex _, out int index);
-            int animLength = Animations.GetAnimLength(body, fileType) * 5;
-            var entries = new Entry3D[animLength];
+            int animLength = Animations.GetAnimLength(body, fileType);
+            return GetVdType(animLength) >= 0 ? animLength : Animations.GetActionCapacity(body, fileType);
+        }
 
-            for (int i = 0; i < animLength; ++i)
+        /// <summary>
+        /// .vd header type for a body with <paramref name="actionCount"/> actions: 0 = 22 (monster),
+        /// 1 = 13 (animal), 2 = 35 (human), or -1 when no type has that many.
+        /// </summary>
+        public static short GetVdType(int actionCount)
+        {
+            switch (actionCount)
+            {
+                case 22: return 0;
+                case 13: return 1;
+                case 35: return 2;
+                default: return -1;
+            }
+        }
+
+        /// <summary>
+        /// Reads the <paramref name="count"/> index entries that follow the .vd header and checks that the
+        /// file really holds that many: every entry with data must point past the index.
+        /// </summary>
+        /// <exception cref="InvalidDataException">The file holds fewer entries than expected.</exception>
+        private static Entry3D[] ReadVdEntries(BinaryReader bin, int count)
+        {
+            long dataStart = bin.BaseStream.Position + (12L * count);
+            long fileLength = bin.BaseStream.Length;
+            if (dataStart > fileLength)
+            {
+                throw new InvalidDataException(
+                    $"The file is too short for {count / 5} actions. It was made for a body with fewer actions. Nothing was imported.");
+            }
+
+            var entries = new Entry3D[count];
+            for (int i = 0; i < count; ++i)
             {
                 entries[i].Lookup = bin.ReadInt32();
                 entries[i].Length = bin.ReadInt32();
                 entries[i].Extra = bin.ReadInt32();
             }
 
-            for (int i = 0; i < entries.Length; ++i, ++index)
+            for (int i = 0; i < count; ++i)
             {
                 Entry3D entry = entries[i];
-                if ((entry.Lookup > 0) && (entry.Lookup < bin.BaseStream.Length) && (entry.Length > 0))
+                if (entry.Lookup > 0 && entry.Length > 0 && (entry.Lookup < dataStart || entry.Lookup >= fileLength))
+                {
+                    throw new InvalidDataException(
+                        $"The file does not hold {count / 5} actions: action {i / 5}, direction {i % 5} points into the index. " +
+                        "It was made for a body with fewer actions. Nothing was imported.");
+                }
+            }
+
+            return entries;
+        }
+
+        /// <summary>
+        /// Reads a body .vd, positioned after its 4-byte header, into <paramref name="body"/>. The file must
+        /// hold <see cref="GetVdActionCount"/> actions. Nothing changes if it can't be read.
+        /// </summary>
+        /// <exception cref="InvalidDataException">The file holds fewer entries than the body needs.</exception>
+        public static void LoadFromVD(int fileType, int body, BinaryReader bin)
+        {
+            AnimIdx[] cache = GetCache(fileType);
+            GetFileIndex(body, fileType, 0, 0, out FileIndex _, out int index);
+            Entry3D[] entries = ReadVdEntries(bin, GetVdActionCount(body, fileType) * 5);
+
+            var loaded = new AnimIdx[entries.Length];
+            for (int i = 0; i < entries.Length; ++i)
+            {
+                Entry3D entry = entries[i];
+                if ((entry.Lookup > 0) && (entry.Length > 0))
                 {
                     bin.BaseStream.Seek(entry.Lookup, SeekOrigin.Begin);
-                    cache[index] = new AnimIdx(bin, entry.Extra);
+                    loaded[i] = new AnimIdx(bin, entry.Extra);
+                }
+            }
+
+            for (int i = 0; i < entries.Length; ++i, ++index)
+            {
+                if (loaded[i] != null)
+                {
+                    cache[index] = loaded[i];
                 }
                 else
                 {
@@ -310,7 +379,7 @@ namespace Ultima
             AnimIdx[] cache = GetCache(fileType);
             GetFileIndex(body, fileType, 0, 0, out FileIndex fileIndex, out int index);
 
-            int animLength = Animations.GetAnimLength(body, fileType);
+            int animLength = GetVdActionCount(body, fileType);
             var anims = new AnimIdx[animLength * 5];
             for (int i = 0; i < anims.Length; ++i)
             {
@@ -324,8 +393,7 @@ namespace Ultima
             using (var bin = new BinaryWriter(fs))
             {
                 bin.Write((short)6);
-                int currType = animLength == 22 ? 0 : animLength == 13 ? 1 : 2;
-                bin.Write((short)currType);
+                bin.Write(GetVdType(animLength));
                 long indexPos = bin.BaseStream.Position;
                 long animPos = bin.BaseStream.Position + (12 * animLength * 5);
                 foreach (AnimIdx anim in anims)
@@ -415,19 +483,13 @@ namespace Ultima
         /// </summary>
         public static void LoadActionFromVD(int fileType, int body, int action, BinaryReader bin)
         {
-            var entries = new Entry3D[5];
-            for (int dir = 0; dir < 5; ++dir)
-            {
-                entries[dir].Lookup = bin.ReadInt32();
-                entries[dir].Length = bin.ReadInt32();
-                entries[dir].Extra = bin.ReadInt32();
-            }
+            Entry3D[] entries = ReadVdEntries(bin, 5);
 
             var loaded = new AnimIdx[5];
             for (int dir = 0; dir < 5; ++dir)
             {
                 Entry3D entry = entries[dir];
-                if ((entry.Lookup > 0) && (entry.Lookup < bin.BaseStream.Length) && (entry.Length > 0))
+                if ((entry.Lookup > 0) && (entry.Length > 0))
                 {
                     bin.BaseStream.Seek(entry.Lookup, SeekOrigin.Begin);
                     loaded[dir] = new AnimIdx(bin, entry.Extra);
