@@ -28,6 +28,12 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
 
         public float Zoom { get; private set; } = 1f;
 
+        /// <summary>
+        /// True while the view is the one <see cref="Fit"/> chose: a new camera, or one not panned or
+        /// zoomed since. The canvas fits such a view again when its size changes.
+        /// </summary>
+        public bool ShowsFit { get; private set; } = true;
+
         public PointF ScreenToWorld(Point screen)
         {
             return new PointF(OriginX + (screen.X / Zoom), OriginY + (screen.Y / Zoom));
@@ -45,6 +51,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
 
         public void Pan(int screenDx, int screenDy)
         {
+            ShowsFit = false;
             OriginX -= screenDx / Zoom;
             OriginY -= screenDy / Zoom;
         }
@@ -52,6 +59,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
         /// <summary>Sets the zoom, keeping the world point under <paramref name="anchor"/> in place.</summary>
         public void ZoomAt(Point anchor, float zoom)
         {
+            ShowsFit = false;
             zoom = Math.Clamp(zoom, MinZoom, MaxZoom);
             PointF world = ScreenToWorld(anchor);
             Zoom = zoom;
@@ -77,12 +85,21 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             ZoomAt(anchor, zoom);
         }
 
+        /// <summary>Puts the middle of a world rectangle in the middle of the view, keeping the zoom.</summary>
+        public void CenterOn(RectangleF world, Size view)
+        {
+            OriginX = world.X + (world.Width / 2f) - (view.Width / 2f / Zoom);
+            OriginY = world.Y + (world.Height / 2f) - (view.Height / 2f / Zoom);
+        }
+
         /// <summary>
         /// Shows a world rectangle centred at the largest zoom step that fits: whole steps up to
         /// <paramref name="maxZoom"/>, quarter steps below 100%.
         /// </summary>
         public void Fit(RectangleF world, Size view, float maxZoom = 2f, int margin = 24)
         {
+            // Asked for even when the view has no size yet: the canvas fits again once it has one.
+            ShowsFit = true;
             if (world.Width <= 0 || world.Height <= 0 || view.Width <= 0 || view.Height <= 0)
             {
                 return;

@@ -278,6 +278,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         public const string ZoomIn = "\uE8A3";
         public const string ZoomOut = "\uE71F";
         public const string Fit = "\uE9A6";
+        public const string Center = "\uE81D";
         public const string RotateLeft = "\uE7AD";
         public const string RotateRight = "\uE7AD";
         public const string Help = "\uE897";
