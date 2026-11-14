@@ -31,7 +31,7 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnimationEditForm));
             MainSplitContainer = new System.Windows.Forms.SplitContainer();
-            AnimationListTreeView = new System.Windows.Forms.TreeView();
+            AnimationListTreeView = new UoFiddler.Controls.UserControls.VirtualTreeView();
             ContextMenuStripTreeView = new System.Windows.Forms.ContextMenuStrip(components);
             removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             extractImagesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -1816,7 +1816,7 @@
         private System.Windows.Forms.ToolStripComboBox SelectFileToolStripComboBox;
         private System.Windows.Forms.ToolStripMenuItem tovdToolStripMenuItem;
         private System.Windows.Forms.TrackBar DirectionTrackBar;
-        private System.Windows.Forms.TreeView AnimationListTreeView;
+        private UoFiddler.Controls.UserControls.VirtualTreeView AnimationListTreeView;
         private System.Windows.Forms.StatusStrip StatusStrip;
         private System.Windows.Forms.ToolStripDropDownButton MiscToolStripButton;
         private System.Windows.Forms.ToolStripMenuItem SaveToolStripMenuItem;
