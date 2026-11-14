@@ -46,7 +46,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             (Multis.ImportType.XML, "xml", "XML"),
             (Multis.ImportType.UOH, "uoh", "UO House Editor design"),
             (Multis.ImportType.WORLDFORGE, "xml", "WorldForge export"),
-            (Multis.ImportType.MULTIFORGE, "txt", "Multiforge text (POL)")
+            (Multis.ImportType.MULTIFORGE, "txt", "Multiforge text (POL)"),
+            (Multis.ImportType.CENTREDCSV, "csv", "CentrED# blueprint"),
+            (Multis.ImportType.TILESENTRY, "xml", "CentrED# TilesEntry")
         };
 
         /// <summary>
@@ -354,6 +356,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                         break;
                     case Multis.ImportType.MULTIFORGE:
                         sdkList.ExportToMultiforgeFile(fileName);
+                        break;
+                    case Multis.ImportType.CENTREDCSV:
+                        sdkList.ExportToCentredCsvFile(fileName);
+                        break;
+                    case Multis.ImportType.TILESENTRY:
+                        sdkList.ExportToTilesEntryFile(fileName, designName);
                         break;
                 }
             }

@@ -61,7 +61,9 @@ namespace Ultima
             XML,
             UOH, // UO House Editor (UOHE) design
             WORLDFORGE, // WorldForge tile export
-            MULTIFORGE // POL multiforge package text: id x y z hue [multi flag]
+            MULTIFORGE, // POL multiforge package text: id x y z hue [multi flag]
+            CENTREDCSV, // CentrED# blueprint: "id,x,y,z,hue,flags" header, then one tile per line
+            TILESENTRY // CentrED# TilesEntry xml: named Entry elements holding Item ID X Y Z Hue
         }
 
         /// <summary>
