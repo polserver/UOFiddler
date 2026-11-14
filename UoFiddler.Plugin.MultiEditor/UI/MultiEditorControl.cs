@@ -48,6 +48,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private Label _message;
         private readonly List<EditorCommand> _brushCommands = new List<EditorCommand>();
+        private readonly List<(EditorCommand Command, string Text, string Tip)> _placementCommands = new List<(EditorCommand, string, string)>();
         private readonly List<ToolStripButton> _floorButtons = new List<ToolStripButton>();
 
         public MultiEditorControl()
@@ -560,6 +561,21 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             AddTool(ToolKind.FloorPattern, "Floor pattern", Keys.None, Glyphs.Floor);
 
             _cyclePlacement = Command("Tools", "Next placement mode", CyclePlacement, Keys.M, hasDoc);
+            foreach ((PlacementMode mode, string text, string tip) in new[]
+                     {
+                         (PlacementMode.Stack, "On top", "On top of the tile under the cursor"),
+                         (PlacementMode.Replace, "Replace", "Replacing the tile under the cursor, at its Z"),
+                         (PlacementMode.FixedZ, "At plane Z", "At the work plane's Z, in the cell under the cursor")
+                     })
+            {
+                EditorCommand command = Command("Tools", $"Place: {text}", () =>
+                {
+                    Session.Placement = mode;
+                    SyncOptions();
+                }, can: hasDoc, isChecked: () => Session?.Placement == mode);
+                _placementCommands.Add((command, text, tip));
+            }
+
             foreach ((int size, Keys key) in new[] { (1, Keys.D1), (3, Keys.D2), (5, Keys.D3) })
             {
                 _brushCommands.Add(Command("Tools", $"Brush {size}x{size}", () => Session.BrushSize = size, Keys.Control | key,
@@ -1143,18 +1159,20 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             InsertButtons(strip, _mainSeparator3, _cut, _copy, _paste, _delete);
             InsertButtons(strip, _mainSeparator4, _workPlane, _grid, _hideWalls);
 
-            // Right side: zoom and help. Right-aligned items run from the right edge in item order.
+            // Zoom, then help, after the other groups: zoom out, the zoom, zoom in, fit and centre.
             int at = strip.Items.IndexOf(_zoomLabel);
-            foreach (EditorCommand command in new[] { _shortcuts, _center, _fit, _zoomIn })
+            strip.Items.Insert(at++, new ToolStripSeparator());
+            strip.Items.Insert(at++, _commands.Button(_zoomOut));
+            at++; // the zoom label
+            foreach (EditorCommand command in new[] { _zoomIn, _fit, _center })
             {
-                ToolStripButton button = _commands.Button(command);
-                button.Alignment = ToolStripItemAlignment.Right;
-                strip.Items.Insert(at++, button);
+                strip.Items.Insert(at++, _commands.Button(command));
             }
 
-            ToolStripButton zoomOut = _commands.Button(_zoomOut);
-            zoomOut.Alignment = ToolStripItemAlignment.Right;
-            strip.Items.Add(zoomOut);
+            strip.Items.Insert(at++, new ToolStripSeparator());
+            strip.Items.Insert(at, _commands.Button(_shortcuts));
+
+            StyleSeparators(strip);
         }
 
         /// <summary>Puts a button for each command into a strip, right after a designer item.</summary>
@@ -1183,13 +1201,48 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _commands.RefreshStates();
         }
 
+        /// <summary>Draws a strip's separators so they show on the dark theme too, with some room on both sides.</summary>
+        private static void StyleSeparators(ToolStrip strip)
+        {
+            foreach (ToolStripSeparator separator in strip.Items.OfType<ToolStripSeparator>())
+            {
+                separator.Margin = new Padding(4, 0, 4, 0);
+                separator.Paint += PaintSeparator;
+            }
+        }
+
+        /// <summary>A separator as a plain line in a colour that shows on the light and the dark theme.</summary>
+        private static void PaintSeparator(object sender, PaintEventArgs e)
+        {
+            var separator = (ToolStripSeparator)sender;
+            int x = separator.Width / 2;
+            using var pen = new Pen(Options.DarkMode ? Color.FromArgb(105, 105, 112) : SystemColors.ControlDark);
+            e.Graphics.DrawLine(pen, x, 4, x, separator.Height - 5);
+        }
+
         /// <summary>Fills the designer's options strip: the brush buttons and the roof option buttons.</summary>
         private void BuildOptionsStrip()
         {
             ToolStrip strip = _optionsStrip;
             _toolLabel.Font = new Font(Font, FontStyle.Bold);
 
-            int at = strip.Items.IndexOf(_brushLabel) + 1;
+            // Where new tiles go: one button per mode, the pressed one in use (M steps through them).
+            int at = strip.Items.IndexOf(_placeLabel) + 1;
+            foreach ((EditorCommand command, string text, string tip) in _placementCommands)
+            {
+                ToolStripButton button = _commands.Button(command);
+                button.Text = text;
+                button.ToolTipText = $"{tip} (M)";
+                button.Margin = new Padding(1, 1, 0, 2);
+                strip.Items.Insert(at++, button);
+            }
+
+            // Separators between the groups: Place, Brush, Z step, Floor, ...
+            strip.Items.Insert(strip.Items.IndexOf(_brushLabel), new ToolStripSeparator());
+            strip.Items.Insert(strip.Items.IndexOf(_zStepLabel), new ToolStripSeparator());
+            StyleSeparators(strip);
+
+            at = strip.Items.IndexOf(_brushLabel) + 1;
             foreach (EditorCommand brush in _brushCommands)
             {
                 // One press each instead of a dropdown; the pressed one is the size in use.
@@ -1213,11 +1266,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             RoofGroup(strip, _gableFillSeparator, _gableFillLabel,
                 ("Caps", () => Session.Roof.GableFill == RoofGableFill.Caps, () => Session.Roof.GableFill = RoofGableFill.Caps),
                 ("Walls", () => Session.Roof.GableFill == RoofGableFill.Walls, () => Session.Roof.GableFill = RoofGableFill.Walls));
-        }
-
-        private void PlacementCombo_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Apply(() => Session.Placement = (PlacementMode)Math.Max(0, _placementCombo.SelectedIndex));
         }
 
         private void ZStepCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -1842,7 +1890,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             {
                 EditorSession session = Session;
                 bool has = session != null;
-                _placementCombo.Enabled = _zStepCombo.Enabled = has;
+                _zStepCombo.Enabled = has;
                 if (!has)
                 {
                     _toolLabel.Text = string.Empty;
@@ -1851,7 +1899,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 }
 
                 _toolLabel.Text = session.Pasting ? "Paste" : _toolCommands[session.Tool].Text;
-                _placementCombo.SelectedIndex = (int)session.Placement;
                 int zIndex = _zStepCombo.IndexOf(session.ZStep.ToString());
                 _zStepCombo.SelectedIndex = Math.Max(0, zIndex);
 
