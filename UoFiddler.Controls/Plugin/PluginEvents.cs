@@ -9,7 +9,10 @@
  *
  ***************************************************************************/
 
+using System;
+using System.Drawing;
 using System.Windows.Forms;
+using Ultima;
 
 namespace UoFiddler.Controls.Plugin
 {
@@ -29,6 +32,22 @@ namespace UoFiddler.Controls.Plugin
         public static void FireModifyItemShowContextMenuEvent(ContextMenuStrip contextmenu)
         {
             ModifyItemsControlContextMenuEvent?.Invoke(contextmenu);
+        }
+
+        /// <summary>
+        /// OnLoad called in MapControl to modify its context menu. <paramref name="clickedAt"/> gives
+        /// the shown map and the map location of the right click that opened the menu.
+        /// </summary>
+        public delegate void ModifyMapControlContextMenuHandler(ContextMenuStrip contextmenu, Func<(Map Map, Point Location)> clickedAt);
+
+        /// <summary>
+        /// OnLoad called in MapControl to modify its context menu
+        /// </summary>
+        public static event ModifyMapControlContextMenuHandler ModifyMapControlContextMenuEvent;
+
+        public static void FireModifyMapControlContextMenuEvent(ContextMenuStrip contextmenu, Func<(Map Map, Point Location)> clickedAt)
+        {
+            ModifyMapControlContextMenuEvent?.Invoke(contextmenu, clickedAt);
         }
     }
 }

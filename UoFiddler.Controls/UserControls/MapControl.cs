@@ -167,6 +167,7 @@ namespace UoFiddler.Controls.UserControls
                 ControlEvents.MapNameChangeEvent += OnMapNameChangeEvent;
                 ControlEvents.MapSizeChangeEvent += OnMapSizeChangeEvent;
                 ControlEvents.FilePathChangeEvent += OnFilePathChangeEvent;
+                Plugin.PluginEvents.FireModifyMapControlContextMenuEvent(contextMenuStrip1, () => (CurrentMap, _currentPoint));
             }
             _loaded = true;
         }
