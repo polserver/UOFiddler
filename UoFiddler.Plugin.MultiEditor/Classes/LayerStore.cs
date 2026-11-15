@@ -59,17 +59,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 var set = new XElement("Layers", new XAttribute("multi", multi), new XAttribute("active", activeIndex));
                 foreach (SavedLayer layer in layers)
                 {
-                    var element = new XElement("Layer",
-                        new XAttribute("name", XmlSafe(layer.Name)),
+                    set.Add(new XElement("Layer",
+                        new XAttribute("name", XmlSafe(layer.Name, "Layer")),
                         new XAttribute("visible", layer.Visible),
-                        new XAttribute("inFile", layer.InFile));
-                    if (layer.Tiles != null && layer.Tiles.Count > 0)
-                    {
-                        element.Value = string.Join(";", layer.Tiles.Select(t =>
-                            string.Create(CultureInfo.InvariantCulture, $"{t.Id:X} {t.X} {t.Y} {t.Z} {(t.Invisible ? 0 : 1)} {t.Extra}")));
-                    }
-
-                    set.Add(element);
+                        new XAttribute("inFile", layer.InFile),
+                        TilesText(layer.Tiles)));
                 }
 
                 sets.Insert(0, set);
@@ -107,18 +101,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 var layers = new List<SavedLayer>();
                 foreach (XElement element in set.Elements("Layer"))
                 {
-                    var tiles = new List<(ushort, int, int, int, bool, int)>();
-                    foreach (string record in element.Value.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                    {
-                        string[] parts = record.Split(' ');
-                        tiles.Add((ushort.Parse(parts[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture),
-                            int.Parse(parts[1], CultureInfo.InvariantCulture), int.Parse(parts[2], CultureInfo.InvariantCulture),
-                            int.Parse(parts[3], CultureInfo.InvariantCulture), parts[4] == "0",
-                            int.Parse(parts[5], CultureInfo.InvariantCulture)));
-                    }
-
                     layers.Add(new SavedLayer((string)element.Attribute("name") ?? "Layer",
-                        (bool?)element.Attribute("visible") ?? true, (bool?)element.Attribute("inFile") ?? true, tiles));
+                        (bool?)element.Attribute("visible") ?? true, (bool?)element.Attribute("inFile") ?? true, ParseTiles(element.Value)));
                 }
 
                 return layers.Count == 0 ? null : (layers, (int?)set.Attribute("active") ?? 0);
@@ -148,8 +132,31 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
         }
 
+        /// <summary>Tiles as text: <c>id x y z flag extra</c> (id in hex, flag 0 for a dynamic tile), joined by semicolons.</summary>
+        public static string TilesText(List<(ushort Id, int X, int Y, int Z, bool Invisible, int Extra)> tiles)
+        {
+            return tiles == null ? string.Empty : string.Join(";", tiles.Select(t =>
+                string.Create(CultureInfo.InvariantCulture, $"{t.Id:X} {t.X} {t.Y} {t.Z} {(t.Invisible ? 0 : 1)} {t.Extra}")));
+        }
+
+        /// <summary>Reads <see cref="TilesText"/> back. Throws FormatException and the like on damaged text.</summary>
+        public static List<(ushort Id, int X, int Y, int Z, bool Invisible, int Extra)> ParseTiles(string text)
+        {
+            var tiles = new List<(ushort, int, int, int, bool, int)>();
+            foreach (string record in text.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                string[] parts = record.Split(' ');
+                tiles.Add((ushort.Parse(parts[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture),
+                    int.Parse(parts[1], CultureInfo.InvariantCulture), int.Parse(parts[2], CultureInfo.InvariantCulture),
+                    int.Parse(parts[3], CultureInfo.InvariantCulture), parts[4] == "0",
+                    int.Parse(parts[5], CultureInfo.InvariantCulture)));
+            }
+
+            return tiles;
+        }
+
         /// <summary>A name without the characters XML cannot hold (control characters, half surrogate pairs).</summary>
-        private static string XmlSafe(string name)
+        public static string XmlSafe(string name, string whenEmpty)
         {
             var text = new StringBuilder(name.Length);
             for (int i = 0; i < name.Length; i++)
@@ -164,7 +171,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
-            return text.Length > 0 ? text.ToString() : "Layer";
+            return text.Length > 0 ? text.ToString() : whenEmpty;
         }
     }
 }

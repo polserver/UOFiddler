@@ -34,6 +34,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             public EditorSession Session;
             public Camera2D Camera = new Camera2D();
             public int? ClientId;
+
+            /// <summary>The design file the document was opened from or last saved to, or null.</summary>
+            public string FilePath;
         }
 
         private readonly ArtMasks _masks = new ArtMasks();
@@ -443,6 +446,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             });
         }
 
+        private EditorCommand _openDesign, _saveDesign, _saveDesignAs;
         private EditorCommand _new, _open, _import, _importFolder, _saveClient, _export, _saveBlueprint, _resize, _close, _closeAll;
         private EditorCommand _undo, _redo, _cut, _copy, _paste, _duplicate, _repeat, _delete;
         private EditorCommand _selectAll, _invert, _selectConnected, _selectSameId, _replaceId;
@@ -478,6 +482,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _open = Command("File", "Open from client...", OpenFromClient, Keys.Control | Keys.O, glyph: Glyphs.Open);
             _import = Command("File", "Import files...", ImportFile, Keys.Control | Keys.I);
             _importFolder = Command("File", "Import from folder...", ImportFolder, Keys.Control | Keys.Shift | Keys.I);
+            _openDesign = Command("File", "Open design file...", OpenDesignFile, Keys.Control | Keys.Shift | Keys.O);
+            _saveDesign = Command("File", "Save design file", () => SaveDesignFile(saveAs: false), Keys.Control | Keys.Shift | Keys.S, hasDoc);
+            _saveDesignAs = Command("File", "Save design file as...", () => SaveDesignFile(saveAs: true), can: hasDoc);
             _saveClient = Command("File", "Save to client...", SaveToClient, Keys.Control | Keys.S, hasDoc, glyph: Glyphs.Save);
             _export = Command("File", "Export file...", ExportFile, Keys.Control | Keys.E, hasDoc);
             _saveBlueprint = Command("File", "Save as blueprint...", SaveBlueprint, can: hasDoc);
@@ -1188,7 +1195,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             ToolStrip strip = _mainStrip;
 
-            Menu(_fileMenu, _new, _open, _import, _importFolder, null, _saveClient, _export, _saveBlueprint, _savePattern, null, _resize, _settingsCommand, null, _close, _closeAll);
+            Menu(_fileMenu, _new, _open, _openDesign, _import, _importFolder, null, _saveDesign, _saveDesignAs, _saveClient, _export, _saveBlueprint, _savePattern, null, _resize, _settingsCommand, null, _close, _closeAll);
             Menu(_editMenu, _undo, _redo, null, _cut, _copy, _paste, _duplicate, _repeat, _delete, null,
                 _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden,
                 null, _newLayer, _moveToLayer, _selectLayer);
@@ -1630,6 +1637,96 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             return answer == DialogResult.Cancel ? null : answer == DialogResult.Yes;
         }
 
+        /// <summary>Opens design files (the editor's own format, with layers and floors), each in its own tab.</summary>
+        private void OpenDesignFile()
+        {
+            using var dialog = new OpenFileDialog
+            {
+                Title = "Open design file",
+                Filter = DesignFile.Filter,
+                InitialDirectory = Options.OutputPath,
+                Multiselect = true
+            };
+            if (dialog.ShowDialog(this) != DialogResult.OK || !ConfirmOpenMany(dialog.FileNames.Length))
+            {
+                return;
+            }
+
+            foreach (string path in dialog.FileNames)
+            {
+                // A file that is open already is shown, not opened a second time.
+                EditorDocument open = _documents.Find(d => string.Equals(d.FilePath, path, StringComparison.OrdinalIgnoreCase));
+                if (open != null)
+                {
+                    _docTabs.SelectedIndex = _documents.IndexOf(open);
+                    continue;
+                }
+
+                try
+                {
+                    DesignData design = DesignFile.Load(path);
+                    string title = string.IsNullOrWhiteSpace(design.Name) ? System.IO.Path.GetFileNameWithoutExtension(path) : design.Name;
+                    EditorDocument document = CreateDocument(title, null);
+                    document.FilePath = path;
+                    document.Session.LoadDesign(design);
+                    ShowDocument(document);
+                }
+                catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or System.IO.InvalidDataException)
+                {
+                    MessageBox.Show(this, $"{System.IO.Path.GetFileName(path)} could not be opened:\r\n{ex.Message}", "Open design file",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Saves the design with its layers and floors to its design file, asking for a name the
+        /// first time or with <paramref name="saveAs"/>. Hidden layers are always saved.
+        /// </summary>
+        private void SaveDesignFile(bool saveAs)
+        {
+            string path = _active.FilePath;
+            if (saveAs || path == null)
+            {
+                using var dialog = new SaveFileDialog
+                {
+                    Title = "Save design file",
+                    Filter = DesignFile.Filter,
+                    DefaultExt = DesignFile.Extension,
+                    AddExtension = true,
+                    OverwritePrompt = true,
+                    InitialDirectory = path != null ? System.IO.Path.GetDirectoryName(path) : Options.OutputPath,
+                    FileName = path != null ? System.IO.Path.GetFileName(path) : SafeFileName(Session.Title)
+                };
+                if (dialog.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                path = dialog.FileName;
+            }
+
+            try
+            {
+                DesignFile.Save(path, Session.ToDesign());
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or ArgumentException)
+            {
+                MessageBox.Show(this, $"The design could not be saved:\r\n{ex.Message}", "Save design file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            _active.FilePath = path;
+            Session.MarkSaved();
+            _statusHint.Text = $"Saved {path}";
+        }
+
+        private static string SafeFileName(string title)
+        {
+            string name = string.Concat((title ?? string.Empty).Split(System.IO.Path.GetInvalidFileNameChars())).Trim();
+            return name.Length > 0 ? name : "design";
+        }
+
         private void ResizePrompt()
         {
             int[] size = Prompt.Numbers(this, "Resize multi",
@@ -1669,7 +1766,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             if (ask && document.Session.Modified && MessageBox.Show(this,
-                    $"\"{document.Session.Title}\" has changes that were not saved to the client or exported.\r\nClose it anyway?",
+                    $"\"{document.Session.Title}\" has changes that were not saved to a design file or the client, or exported.\r\nClose it anyway?",
                     "Multi Editor", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
             {
                 return;

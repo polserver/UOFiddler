@@ -232,6 +232,33 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             OnViewChanged();
         }
 
+        // ---------------------------------------------------------------- design file
+
+        /// <summary>The design as a design file keeps it: size, floors, layers and tiles.</summary>
+        public DesignData ToDesign()
+        {
+            return new DesignData(Title, CompList.Width, CompList.Height, FirstFloorZ,
+                CustomLevels ? _levelDefinitions.ToList() : null, CompList.DesignLayers(),
+                CompList.Layers.ToList().IndexOf(CompList.ActiveLayer));
+        }
+
+        /// <summary>Opens what a design file holds as this session's document.</summary>
+        public void LoadDesign(DesignData design)
+        {
+            NewBlank(design.Width, design.Height, design.FirstFloorZ);
+            CompList.RestoreLayers(design.Layers, design.ActiveLayer, (0, 0));
+            if (design.Levels != null)
+            {
+                SetLevelDefinitions(design.Levels);
+            }
+
+            RebuildLevels();
+            Modified = false;
+            DocumentChanged?.Invoke();
+            LayersChanged?.Invoke();
+            OnViewChanged();
+        }
+
         private bool LayerEdit(bool done)
         {
             if (done)
