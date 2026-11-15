@@ -112,7 +112,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 NewDocument(width, height, "Map extract");
             }
 
-            Session.BeginPaste(tiles);
+            Session.BeginPaste(tiles, "Map extract");
             _canvas.Focus();
         }
 
@@ -255,7 +255,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _browser.TileChosen += id =>
             {
                 Session?.SetDrawTile(id);
-                if (Session != null && !IsTileTool(Session.Tool))
+                if (Session != null && !EditorSession.IsTileTool(Session.Tool))
                 {
                     Session.Tool = ToolKind.Draw;
                 }
@@ -289,7 +289,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     NewDocument(tiles.Max(t => t.Dx) + 1, tiles.Max(t => t.Dy) + 1, DocumentIO.DesignTitle(design));
                 }
 
-                Session.BeginPaste(tiles);
+                Session.BeginPaste(tiles, "Design");
                 _canvas.Focus();
             };
             _browser.HouseStyleChosen += ChooseHouseStyle;
@@ -321,7 +321,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             };
             _browser.BlueprintChosen += tiles =>
             {
-                Session?.BeginPaste(tiles);
+                Session?.BeginPaste(tiles, "Blueprint");
                 _canvas.Focus();
             };
 
@@ -444,13 +444,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         }
 
         private EditorCommand _new, _open, _import, _importFolder, _saveClient, _export, _saveBlueprint, _resize, _close, _closeAll;
-        private EditorCommand _undo, _redo, _cut, _copy, _paste, _delete;
+        private EditorCommand _undo, _redo, _cut, _copy, _paste, _duplicate, _repeat, _delete;
         private EditorCommand _selectAll, _invert, _selectConnected, _selectSameId, _replaceId;
         private EditorCommand _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, _hide, _showHidden;
         private EditorCommand _grid, _hideWalls, _walkable, _doubleSurface, _hideAbove, _levelUp, _levelDown;
         private EditorCommand _fit, _center, _zoomIn, _zoomOut, _zoomReset, _shortcuts;
         private EditorCommand _zUp, _zDown, _planeUp, _planeDown, _cyclePlacement, _escape;
         private EditorCommand _drawWithSelected, _workPlane;
+        private MultiTile _menuTile;
         private ContextMenuStrip _canvasMenu;
         private ToolStripMenuItem _canvasMenuTitle;
         private EditorCommand _preview, _moveReference, _planView, _allFloors, _showBrowser, _showInspector;
@@ -492,6 +493,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _cut = Command("Edit", "Cut", () => Session.Cut(), Keys.Control | Keys.X, hasSelection, glyph: Glyphs.Cut);
             _copy = Command("Edit", "Copy", () => Session.Copy(), Keys.Control | Keys.C, hasSelection, glyph: Glyphs.Copy);
             _paste = Command("Edit", "Paste", () => Session.Paste(), Keys.Control | Keys.V, hasDoc, glyph: Glyphs.Paste);
+            _duplicate = Command("Edit", "Duplicate selection", () => Session.Duplicate(), Keys.Control | Keys.D, hasSelection);
+            _repeat = Command("Edit", "Repeat selection...", RepeatSelectionPrompt, Keys.Control | Keys.Shift | Keys.D, hasSelection);
             _delete = Command("Edit", "Delete selection", () => Session.DeleteSelection(), Keys.Delete, hasSelection, glyph: Glyphs.Delete);
 
             _selectAll = Command("Select", "Select all", () => Session.SelectAll(), Keys.Control | Keys.A, hasDoc);
@@ -583,18 +586,13 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
             _escape = Command("Tools", "Cancel tool, then clear selection", Escape, Keys.Escape, hasDoc);
             _shortcuts = Command("Help", "Keyboard shortcuts", ShowShortcuts, Keys.F1, glyph: Glyphs.Help);
-            _drawWithSelected = Command("Tools", "Draw with this tile", DrawWithSelected, can: () => Session?.SelectedTile != null);
+            _drawWithSelected = Command("Tools", "Draw with this tile", DrawWithSelected, can: () => (_menuTile ?? Session?.SelectedTile) != null);
         }
 
         private void AddTool(ToolKind kind, string text, Keys key, string glyph)
         {
             _toolCommands[kind] = Command("Tools", text, () => SetTool(kind), key, () => Session != null,
                 () => Session != null && !Session.Pasting && Session.Tool == kind, glyph);
-        }
-
-        private static bool IsTileTool(ToolKind kind)
-        {
-            return kind is ToolKind.Draw or ToolKind.RectFill or ToolKind.Line;
         }
 
         private static bool IsHouseTool(ToolKind kind)
@@ -739,8 +737,42 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void DrawWithSelected()
         {
-            Session.SetDrawTile(Session.SelectedTile.Id);
+            Session.SetDrawTile((_menuTile ?? Session.SelectedTile).Id);
             Session.Tool = ToolKind.Draw;
+        }
+
+        /// <summary>
+        /// Asks how often and how far apart to copy the selection, showing the copies on the canvas
+        /// while the numbers change.
+        /// </summary>
+        private void RepeatSelectionPrompt()
+        {
+            EditorSession session = Session;
+            int width = session.Selection.Max(t => t.X) - session.Selection.Min(t => t.X) + 1;
+            using var dialog = new RepeatSelectionDialog(width);
+
+            void Preview()
+            {
+                (int added, int skipped) = session.PreviewRepeat(dialog.Copies, dialog.StepX, dialog.StepY, dialog.StepZ);
+                dialog.SetSummary(added == 0 && skipped == 0 ? "Set a step to place the copies."
+                    : $"Adds {added:N0} tiles" + (skipped > 0 ? $" ({skipped:N0} outside the multi are skipped)" : string.Empty) +
+                      (added > RepeatPreviewTool.MaxGhosts ? ". Too many to preview." : "."));
+            }
+
+            dialog.ValuesChanged += Preview;
+            Preview();
+            try
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    session.RepeatSelection(dialog.Copies, dialog.StepX, dialog.StepY, dialog.StepZ);
+                }
+            }
+            finally
+            {
+                session.EndRepeatPreview();
+                _canvas.Focus();
+            }
         }
 
         private void BuildCanvasMenu()
@@ -757,7 +789,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             _canvasMenu.Items.Add(brushMenu);
             _canvasMenu.Items.Add(new ToolStripSeparator());
-            foreach (EditorCommand command in new[] { _cut, _copy, _paste, _delete })
+            foreach (EditorCommand command in new[] { _cut, _copy, _paste, _duplicate, _repeat, _delete })
             {
                 _canvasMenu.Items.Add(_commands.MenuItem(command));
             }
@@ -832,6 +864,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             {
                 session.SetSelection(new[] { hover }, add: false);
             }
+
+            // "Draw with this tile" means the tile under the cursor, also inside a larger selection.
+            _menuTile = hover;
 
             MultiTile single = session.SelectedTile;
             int count = session.Selection.Count;
@@ -1148,7 +1183,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             ToolStrip strip = _mainStrip;
 
             Menu(_fileMenu, _new, _open, _import, _importFolder, null, _saveClient, _export, _saveBlueprint, _savePattern, null, _resize, _settingsCommand, null, _close, _closeAll);
-            Menu(_editMenu, _undo, _redo, null, _cut, _copy, _paste, _delete, null,
+            Menu(_editMenu, _undo, _redo, null, _cut, _copy, _paste, _duplicate, _repeat, _delete, null,
                 _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden);
             Menu(_selectMenu, _selectAll, _invert, _selectConnected, _selectSameId, null, _replaceId);
             ToolStripDropDownButton view = Menu(_viewMenu, _preview, _planView, null, _workPlane, _grid, _hideWalls, _hideAbove, _walkable, _doubleSurface, null,
@@ -1918,7 +1953,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     return;
                 }
 
-                _toolLabel.Text = session.Pasting ? "Paste" : _toolCommands[session.Tool].Text;
+                _toolLabel.Text = session.Pasting ? session.StampLabel : _toolCommands[session.Tool].Text;
                 int zIndex = _zStepCombo.IndexOf(session.ZStep.ToString());
                 _zStepCombo.SelectedIndex = Math.Max(0, zIndex);
 
@@ -1983,7 +2018,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             _statusHint.Text = session.PreviewMode ? "Preview: editing is off. Right click picks the ground. F5 returns to the editor."
-                : session.Pasting ? "Click to place the tiles. Esc or right click cancels."
+                : session.PreviewingRepeat ? "The copies are shown as they would be placed."
+                : session.Pasting ? "Click to place the tiles, as often as you like. Esc or right click stops."
                 : ToolHint(session.Tool);
 
             (int x, int y, int z) = session.CursorCell;
@@ -2006,13 +2042,13 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             {
                 ToolKind.Select => "Click a tile to select, Ctrl+click adds, drag a box over tiles, drag the selection to move it.",
                 ToolKind.Lasso => "Draw an outline around tiles to select them. Ctrl adds to the selection.",
-                ToolKind.Draw => "Click or drag to place the chosen tile. Placement mode (M) decides the Z.",
+                ToolKind.Draw => "Click to place the chosen tile. Placement mode (M) decides the Z. Alt+click picks a tile.",
                 ToolKind.Remove => "Click a tile to remove it, drag to remove an area.",
                 ToolKind.Altitude => "Click raises the tile by the Z step, Shift+click lowers it.",
-                ToolKind.Pipette => "Click a tile to draw with it.",
+                ToolKind.Pipette => "Click a tile to draw with it; the draw tool comes back.",
                 ToolKind.Transparent => "Click a tile to see through it, click again to restore.",
-                ToolKind.RectFill => "Drag a rectangle to fill with the chosen tile.",
-                ToolKind.Line => "Drag a line of the chosen tile.",
+                ToolKind.RectFill => "Drag a rectangle to fill with the chosen tile. Alt+click picks a tile.",
+                ToolKind.Line => "Drag a line of the chosen tile. Alt+click picks a tile.",
                 ToolKind.Wall => "Drag along the cells to build walls in the chosen style. Corners and posts are picked for you.",
                 ToolKind.Floor => "Drag an area to lay the chosen floor style.",
                 ToolKind.Door => "Click a wall cell to hang the chosen door.",

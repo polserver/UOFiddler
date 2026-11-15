@@ -55,9 +55,13 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         private readonly Dictionary<ToolKind, EditorTool> _tools = new Dictionary<ToolKind, EditorTool>();
         private readonly ArtMasks _masks;
         private readonly PasteTool _pasteTool;
+        private readonly RepeatPreviewTool _repeatTool;
 
         private EditorTool _temporaryTool;
+        private string _stampLabel = "Paste";
+        private bool _pickClick;
         private ToolKind _toolKind = ToolKind.Select;
+        private ToolKind _lastTileTool = ToolKind.Draw;
         private Point _mouseLoc;
         private bool _mouseInside;
         private (int X, int Y, int Z) _cursorCell = (int.MinValue, int.MinValue, int.MinValue);
@@ -92,6 +96,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             _tools[ToolKind.Foundation] = new FoundationTool(this);
             _tools[ToolKind.FloorPattern] = new FloorPatternTool(this);
             _pasteTool = new PasteTool(this);
+            _repeatTool = new RepeatPreviewTool(this);
 
             CompList = new MultiEditorComponentList(0, 0, this);
         }
@@ -336,12 +341,31 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             {
                 CancelTool();
                 _toolKind = value;
+                if (IsTileTool(value))
+                {
+                    _lastTileTool = value;
+                }
+
                 ToolChanged?.Invoke();
                 Invalidated?.Invoke();
             }
         }
 
         public EditorTool ActiveTool => _temporaryTool ?? _tools[_toolKind];
+
+        /// <summary>True for the tools that place the draw tile (draw, rectangle, line).</summary>
+        public static bool IsTileTool(ToolKind kind)
+        {
+            return kind is ToolKind.Draw or ToolKind.RectFill or ToolKind.Line;
+        }
+
+        /// <summary>
+        /// True while Alt is held with a draw tile tool and nothing is being dragged: a click then
+        /// picks the tile under the cursor instead of placing one, and the tool shows no preview.
+        /// </summary>
+        public bool PickingWithAlt =>
+            _temporaryTool == null && IsTileTool(_toolKind) && !_tools[_toolKind].IsDragging &&
+            (Control.ModifierKeys & Keys.Alt) != 0;
 
         /// <summary>The bordered floor laid by the floor pattern tool, or null.</summary>
         public FloorPattern FloorPattern { get; set; }
@@ -355,8 +379,11 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             Invalidated?.Invoke();
         }
 
-        /// <summary>True while a paste is waiting to be placed.</summary>
+        /// <summary>True while tiles are on the cursor to be placed (paste, blueprint, duplicate) or a repeat is previewed.</summary>
         public bool Pasting => _temporaryTool != null;
+
+        /// <summary>What is on the cursor while <see cref="Pasting"/>: "Paste", "Blueprint", "Duplicate"...</summary>
+        public string StampLabel => _stampLabel;
 
         public ushort DrawTileId => _drawTileId;
 
@@ -373,14 +400,26 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         /// <summary>Drops a drag, a pending paste or any other half-done tool action.</summary>
         public void CancelTool()
         {
+            bool wasTemporary = _temporaryTool != null;
             _temporaryTool?.Cancel();
             _temporaryTool = null;
+            _pickClick = false;
+            if (wasTemporary)
+            {
+                // Esc and right click are the only ways out of a stamp: the labels follow.
+                ToolChanged?.Invoke();
+            }
+
             _tools[_toolKind].Cancel();
             Invalidated?.Invoke();
         }
 
-        /// <summary>Starts placing a group of tiles with the mouse.</summary>
-        public void BeginPaste(List<ClipboardTile> tiles)
+        /// <summary>
+        /// Starts placing a group of tiles with the mouse. They stay on the cursor for more
+        /// placements until the tool is cancelled. <paramref name="label"/> names what is placed,
+        /// for the tool label and the undo step.
+        /// </summary>
+        public void BeginPaste(List<ClipboardTile> tiles, string label = "Paste")
         {
             if (tiles == null || tiles.Count == 0 || !HasDocument)
             {
@@ -388,7 +427,8 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             }
 
             CancelTool();
-            _pasteTool.Begin(tiles);
+            _stampLabel = label;
+            _pasteTool.Begin(tiles, label);
             _temporaryTool = _pasteTool;
             ToolChanged?.Invoke();
             Invalidated?.Invoke();
@@ -399,6 +439,16 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             _drawTileId = id;
             DrawTileChanged?.Invoke();
             Invalidated?.Invoke();
+        }
+
+        /// <summary>Makes a tile picked on the canvas the draw tile; the pick tool hands over to the draw tool used last.</summary>
+        public void PickDrawTile(ushort id)
+        {
+            SetDrawTile(id);
+            if (_temporaryTool == null && _toolKind == ToolKind.Pipette)
+            {
+                Tool = _lastTileTool;
+            }
         }
 
         // ---------------------------------------------------------------- selection and hover
@@ -608,7 +658,14 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             {
                 UpdateHover();
                 UpdateCursorCell();
-                ActiveTool.OnMouseDown(e);
+
+                // Alt+click with a draw tool picks a tile: the tool does not see the click.
+                _pickClick = PickingWithAlt;
+                if (!_pickClick)
+                {
+                    ActiveTool.OnMouseDown(e);
+                }
+
                 Invalidated?.Invoke();
             }
         }
@@ -631,7 +688,18 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             }
             else if (e.Button == MouseButtons.Left)
             {
-                ActiveTool.OnMouseUp(e);
+                if (_pickClick)
+                {
+                    _pickClick = false;
+                    if (HoverTile != null)
+                    {
+                        PickDrawTile(HoverTile.Id);
+                    }
+                }
+                else
+                {
+                    ActiveTool.OnMouseUp(e);
+                }
             }
 
             Invalidated?.Invoke();
@@ -710,13 +778,6 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         }
 
         void IEditorContext.RecordRecentTile(ushort id) => TileUsed?.Invoke(id);
-
-        void IEditorContext.EndTemporaryTool()
-        {
-            _temporaryTool = null;
-            ToolChanged?.Invoke();
-            Invalidated?.Invoke();
-        }
 
         // ---------------------------------------------------------------- coordinates
 

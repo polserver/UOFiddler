@@ -50,7 +50,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ("Pan", "Right or middle drag, Space + drag"),
                 ("Zoom at the cursor", "Wheel"),
                 ("Step through the floors", "Shift + wheel"),
-                ("Context menu, or cancel a drag or paste", "Right click"),
+                ("Place a paste, blueprint or duplicate, as often as you like", "Click"),
+                ("Context menu, or stop a drag, paste or blueprint", "Right click"),
                 ("Select the tile under the cursor (any tool)", "Middle click"),
                 ("Move the selection one cell", "Arrow keys"),
                 ("Pan one cell", "Ctrl + arrow keys"));
@@ -59,6 +60,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ("Move the selection (Select)", "Drag a selected tile"),
                 ("Add a tile to the selection or take it out (Select)", "Ctrl + click"),
                 ("Add to the selection (Select, Lasso)", "Ctrl + drag"),
+                ("Pick the tile under the cursor (Draw, Rectangle, Line)", "Alt + click"),
                 ("Keep the line straight (Line)", "Shift + drag"),
                 ("One straight wall instead of a room (Walls)", "Shift + drag"),
                 ("Erase walls (Walls)", "Ctrl + drag"),

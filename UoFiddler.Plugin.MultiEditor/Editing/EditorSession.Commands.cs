@@ -104,6 +104,101 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
 
         public bool CanPaste => _clipboard != null || ClipboardHasTiles();
 
+        /// <summary>Puts a copy of the selection on the cursor to place with the mouse. The clipboard is left alone.</summary>
+        public void Duplicate()
+        {
+            BeginPaste(SelectionAsClipboard(), "Duplicate");
+        }
+
+        // ---------------------------------------------------------------- repeat
+
+        /// <summary>
+        /// Copies of tiles along a direction: copy i (1 to <paramref name="copies"/>) of every tile
+        /// is moved by i times the step. Copies outside the multi or the Z range are left out and
+        /// counted in <paramref name="skipped"/>.
+        /// </summary>
+        public static List<(ushort id, int x, int y, int z, bool invisible, int extra)> RepeatTiles(
+            IEnumerable<MultiTile> source, int copies, int dx, int dy, int dz, int width, int height, out int skipped)
+        {
+            var result = new List<(ushort, int, int, int, bool, int)>();
+            skipped = 0;
+            if (dx == 0 && dy == 0 && dz == 0)
+            {
+                return result;
+            }
+
+            List<MultiTile> tiles = source.OrderBy(t => t.X).ThenBy(t => t.Y).ThenBy(t => t.Z).ToList();
+            for (int i = 1; i <= copies; i++)
+            {
+                foreach (MultiTile tile in tiles)
+                {
+                    int x = tile.X + (i * dx);
+                    int y = tile.Y + (i * dy);
+                    int z = tile.Z + (i * dz);
+                    if (x < 0 || y < 0 || x >= width || y >= height || z < sbyte.MinValue || z > sbyte.MaxValue)
+                    {
+                        skipped++;
+                        continue;
+                    }
+
+                    result.Add((tile.Id, x, y, z, tile.Invisible, tile.Extra));
+                }
+            }
+
+            return result;
+        }
+
+        private List<(ushort id, int x, int y, int z, bool invisible, int extra)> RepeatOfSelection(
+            int copies, int dx, int dy, int dz, out int skipped)
+        {
+            return RepeatTiles(_selection, copies, dx, dy, dz, CompList.Width, CompList.Height, out skipped);
+        }
+
+        /// <summary>
+        /// Shows the copies a repeat of the selection would add, as ghosts, until
+        /// <see cref="EndRepeatPreview"/>. Returns how many tiles it adds and how many fall outside.
+        /// </summary>
+        public (int Added, int Skipped) PreviewRepeat(int copies, int dx, int dy, int dz)
+        {
+            if (_temporaryTool != _repeatTool)
+            {
+                CancelTool();
+                _stampLabel = "Repeat";
+                _temporaryTool = _repeatTool;
+                ToolChanged?.Invoke();
+            }
+
+            var tiles = RepeatOfSelection(copies, dx, dy, dz, out int skipped);
+            _repeatTool.Show(tiles);
+            Invalidated?.Invoke();
+            return (tiles.Count, skipped);
+        }
+
+        public void EndRepeatPreview()
+        {
+            if (_temporaryTool == _repeatTool)
+            {
+                CancelTool();
+            }
+        }
+
+        /// <summary>True while the repeat dialog's copies are shown on the canvas.</summary>
+        public bool PreviewingRepeat => _temporaryTool == _repeatTool;
+
+        /// <summary>Adds copies of the selection along a direction in one undo step. The selection stays as it is.</summary>
+        public void RepeatSelection(int copies, int dx, int dy, int dz)
+        {
+            EndRepeatPreview();
+            var tiles = RepeatOfSelection(copies, dx, dy, dz, out _);
+            if (tiles.Count == 0)
+            {
+                return;
+            }
+
+            CompList.TileAddBatch(tiles, "Repeat Selection");
+            AfterEdit(dz > 0 ? tiles.Max(t => t.z) : null);
+        }
+
         /// <summary>The selection as tiles relative to its lowest X, Y and Z (also used to save a blueprint).</summary>
         public List<ClipboardTile> SelectionAsClipboard()
         {

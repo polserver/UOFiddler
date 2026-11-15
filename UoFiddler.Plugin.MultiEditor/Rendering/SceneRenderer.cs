@@ -123,7 +123,10 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             }
 
             // Tool overlay: sprites first (ghost tiles), then the lines on top of them.
-            session.ActiveTool.PaintOverlay(this);
+            if (!session.PickingWithAlt)
+            {
+                session.ActiveTool.PaintOverlay(this);
+            }
             LastSpriteCount += _sprites.Count;
             _sprites.Flush(_atlas, camera, viewport);
             _lines.Flush(camera, viewport);

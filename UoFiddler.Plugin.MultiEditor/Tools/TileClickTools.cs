@@ -40,7 +40,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     }
 
     /// <summary>
-    /// Makes the hovered tile the draw tile.
+    /// Makes the hovered tile the draw tile and returns to the draw tool used last.
     /// </summary>
     internal sealed class PipetteTool : EditorTool
     {
@@ -52,7 +52,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         {
             if (Context.HoverTile != null)
             {
-                Context.SetDrawTile(Context.HoverTile.Id);
+                Context.PickDrawTile(Context.HoverTile.Id);
             }
         }
     }
