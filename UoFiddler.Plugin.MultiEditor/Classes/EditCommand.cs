@@ -16,14 +16,15 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
     /// <summary>
     /// The saved fields of a tile, used to put a changed tile back.
     /// </summary>
-    internal readonly record struct TileState(ushort Id, int X, int Y, int Z, bool Invisible)
+    internal readonly record struct TileState(ushort Id, int X, int Y, int Z, bool Invisible, TileLayer Layer)
     {
-        public static TileState Of(MultiTile tile) => new(tile.Id, tile.X, tile.Y, tile.Z, tile.Invisible);
+        public static TileState Of(MultiTile tile) => new(tile.Id, tile.X, tile.Y, tile.Z, tile.Invisible, tile.Layer);
 
         public void ApplyTo(MultiTile tile)
         {
             tile.Id = Id;
             tile.Invisible = Invisible;
+            tile.Layer = Layer;
             tile.X = X;
             tile.Y = Y;
             tile.Z = Z;
@@ -67,8 +68,21 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public int NewHeight { get; set; }
 
+        /// <summary>
+        /// The layer list (order and names) before and after the edit; null when the edit did not
+        /// touch it.
+        /// </summary>
+        public List<(TileLayer Layer, string Name)> LayersBefore { get; set; }
+
+        public List<(TileLayer Layer, string Name)> LayersAfter { get; set; }
+
+        /// <summary>The active layer before and after an edit of the layer list.</summary>
+        public TileLayer ActiveLayerBefore { get; set; }
+
+        public TileLayer ActiveLayerAfter { get; set; }
+
         public bool IsEmpty => Added.Count == 0 && Removed.Count == 0 && Before.Count == 0 &&
-                               OldWidth == NewWidth && OldHeight == NewHeight;
+                               OldWidth == NewWidth && OldHeight == NewHeight && LayersBefore == null;
 
         public void CaptureAfter()
         {

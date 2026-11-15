@@ -85,6 +85,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             selectionColumnWhere = new System.Windows.Forms.ColumnHeader();
             selectionColumnName = new System.Windows.Forms.ColumnHeader();
             _hint = new System.Windows.Forms.Label();
+            _layers = new UoFiddler.Plugin.MultiEditor.UI.LayersPanel();
             floorsBox.SuspendLayout();
             floorsPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)_firstFloor).BeginInit();
@@ -681,9 +682,18 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _hint.Text = "Nothing selected";
             _hint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // _layers
+            //
+            _layers.Dock = System.Windows.Forms.DockStyle.Top;
+            _layers.Location = new System.Drawing.Point(0, 316);
+            _layers.Name = "_layers";
+            _layers.Size = new System.Drawing.Size(150, 170);
+            _layers.TabIndex = 2;
+            //
             // InspectorPanel
-            // 
+            //
             Controls.Add(selectionBox);
+            Controls.Add(_layers);
             Controls.Add(floorsBox);
             Name = "InspectorPanel";
             floorsBox.ResumeLayout(false);
@@ -764,5 +774,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.ColumnHeader selectionColumnWhere;
         private System.Windows.Forms.ColumnHeader selectionColumnName;
         private System.Windows.Forms.Label _hint;
+        private UoFiddler.Plugin.MultiEditor.UI.LayersPanel _layers;
     }
 }

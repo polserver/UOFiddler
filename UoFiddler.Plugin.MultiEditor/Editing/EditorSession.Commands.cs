@@ -110,6 +110,138 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             BeginPaste(SelectionAsClipboard(), "Duplicate");
         }
 
+        // ---------------------------------------------------------------- layers
+
+        public IReadOnlyList<TileLayer> Layers => CompList.Layers;
+
+        /// <summary>The layer new tiles go on. Choosing a hidden layer shows it.</summary>
+        public TileLayer ActiveLayer
+        {
+            get => CompList.ActiveLayer;
+            set
+            {
+                if (value == null || !CompList.Layers.Contains(value) || value == CompList.ActiveLayer)
+                {
+                    return;
+                }
+
+                CompList.ActiveLayer = value;
+                if (!value.Visible)
+                {
+                    SetLayerVisible(value, true);
+                }
+                else
+                {
+                    LayersChanged?.Invoke();
+                }
+            }
+        }
+
+        /// <summary>Shows or hides a layer. Hidden tiles leave the selection. View only: not an undo step.</summary>
+        public void SetLayerVisible(TileLayer layer, bool visible)
+        {
+            if (layer == null || layer.Visible == visible)
+            {
+                return;
+            }
+
+            layer.Visible = visible;
+            LayersChanged?.Invoke();
+            OnViewChanged();
+        }
+
+        /// <summary>Shows only this layer, or every layer when it is already the only one shown.</summary>
+        public void SoloLayer(TileLayer layer)
+        {
+            if (!CompList.Layers.Contains(layer))
+            {
+                return;
+            }
+
+            bool alone = layer.Visible && CompList.Layers.All(l => l == layer || !l.Visible);
+            foreach (TileLayer other in CompList.Layers)
+            {
+                other.Visible = alone || other == layer;
+            }
+
+            LayersChanged?.Invoke();
+            OnViewChanged();
+        }
+
+        /// <summary>Adds an empty layer above the active one and makes it active.</summary>
+        public TileLayer AddLayer(string name = null)
+        {
+            TileLayer layer = CompList.LayerAdd(CompList.FreeLayerName(string.IsNullOrWhiteSpace(name) ? "Layer" : name.Trim()));
+            AfterEdit();
+            return layer;
+        }
+
+        /// <summary>Deletes a layer with its tiles. False for the last layer, which stays.</summary>
+        public bool RemoveLayer(TileLayer layer)
+        {
+            return LayerEdit(CompList.LayerRemove(layer));
+        }
+
+        public bool DuplicateLayer(TileLayer layer)
+        {
+            return LayerEdit(CompList.LayerDuplicate(layer) != null);
+        }
+
+        /// <summary>Moves a layer's tiles to the layer below it and removes the layer.</summary>
+        public bool MergeLayerDown(TileLayer layer)
+        {
+            return LayerEdit(CompList.LayerMergeDown(layer));
+        }
+
+        /// <summary>Moves a layer up (+1) or down (-1) in the list.</summary>
+        public bool MoveLayer(TileLayer layer, int delta)
+        {
+            return LayerEdit(CompList.LayerMove(layer, delta));
+        }
+
+        public bool RenameLayer(TileLayer layer, string name)
+        {
+            return LayerEdit(CompList.LayerRename(layer, name?.Trim()));
+        }
+
+        /// <summary>Puts the selected tiles on a layer.</summary>
+        public void MoveSelectionToLayer(TileLayer layer)
+        {
+            if (_selection.Count == 0 || layer == null)
+            {
+                return;
+            }
+
+            CompList.TilesSetLayer(_selection.ToList(), layer);
+            AfterEdit();
+            OnViewChanged();
+        }
+
+        /// <summary>Selects every editable tile of a layer.</summary>
+        public void SelectLayer(TileLayer layer, bool add = false)
+        {
+            SelectWhere(t => t.Layer == layer, add);
+        }
+
+        /// <summary>Puts a freshly loaded design back on its saved layers (see the layers file).</summary>
+        public void RestoreLayers(IReadOnlyList<SavedLayer> saved, int activeIndex, (int X, int Y) origin)
+        {
+            CompList.RestoreLayers(saved, activeIndex, origin);
+            RebuildLevels();
+            LayersChanged?.Invoke();
+            OnViewChanged();
+        }
+
+        private bool LayerEdit(bool done)
+        {
+            if (done)
+            {
+                AfterEdit();
+            }
+
+            return done;
+        }
+
         // ---------------------------------------------------------------- repeat
 
         /// <summary>
@@ -376,7 +508,15 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             }
 
             _rotationTable ??= RotationTable.LoadDefault();
-            var add = GroupTransform.Apply(group, HouseStyles, _rotationTable, kind);
+
+            // Turned layer by layer, so every new tile is on the layer of the tiles it came from,
+            // all about the corner of the whole group.
+            var add = new List<(ushort Id, int X, int Y, int Z, bool Invisible, int Extra, TileLayer Layer)>();
+            foreach (IGrouping<TileLayer, MultiTile> layer in group.GroupBy(t => t.Layer))
+            {
+                add.AddRange(GroupTransform.Apply(layer.ToList(), HouseStyles, _rotationTable, kind, group)
+                    .Select(t => (t.Id, t.X, t.Y, t.Z, t.Invisible, t.Extra, layer.Key)));
+            }
             int width = CompList.Width;
             int height = CompList.Height;
 
@@ -390,7 +530,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
                 // New wall posts may reach a cell past the old edge: keep everything inside.
                 int shiftX = Math.Max(0, -add.Min(t => t.X));
                 int shiftY = Math.Max(0, -add.Min(t => t.Y));
-                add = add.Select(t => (t.Id, t.X + shiftX, t.Y + shiftY, t.Z, t.Invisible, t.Extra)).ToList();
+                add = add.Select(t => (t.Id, t.X + shiftX, t.Y + shiftY, t.Z, t.Invisible, t.Extra, t.Layer)).ToList();
                 width = Math.Max(width, add.Max(t => t.X) + 1);
                 height = Math.Max(height, add.Max(t => t.Y) + 1);
             }

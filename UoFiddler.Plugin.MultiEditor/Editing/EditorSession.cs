@@ -116,6 +116,9 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
 
         public event Action ToolChanged;
 
+        /// <summary>The layer list, a layer's name or visibility, the active layer or the tile counts changed.</summary>
+        public event Action LayersChanged;
+
         public event Action DrawTileChanged;
 
         /// <summary>A view option changed (floor, level, height limit, filters).</summary>
@@ -192,6 +195,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             RebuildLevels();
 
             DocumentChanged?.Invoke();
+            LayersChanged?.Invoke();
             SelectionChanged?.Invoke();
             ViewChanged?.Invoke();
             Invalidated?.Invoke();
@@ -753,7 +757,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             }
 
             // Tiles removed by the edit (or by undo) are no longer selectable.
-            if (_selection.RemoveWhere(t => !CompList.Contains(t)) > 0)
+            if (_selection.RemoveWhere(t => !CompList.Contains(t) || !CompList.IsShown(t)) > 0)
             {
                 SelectionChanged?.Invoke();
             }
@@ -774,6 +778,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             _cursorCell = (int.MinValue, int.MinValue, int.MinValue);
             UpdateCursorCell();
             DocumentChanged?.Invoke();
+            LayersChanged?.Invoke();
             Invalidated?.Invoke();
         }
 

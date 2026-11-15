@@ -96,6 +96,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public int Extra { get; set; }
 
+        /// <summary>The layer the tile is on; set when the tile joins a design.</summary>
+        public TileLayer Layer { get; set; }
+
         public bool Walkable { get; private set; }
 
         public bool DoubleSurface { get; private set; }
