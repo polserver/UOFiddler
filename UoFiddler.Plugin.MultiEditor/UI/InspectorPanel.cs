@@ -340,6 +340,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _session.ViewChanged += Session_ViewChanged;
             }
 
+            _layers.Bind(_session);
             RebuildLevels();
             RefreshSelection();
             RefreshView();

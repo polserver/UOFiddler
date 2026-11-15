@@ -130,14 +130,18 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>
         /// Export to given multi id
         /// </summary>
-        public void AddToSdkComponentList(int id)
+        public void AddToSdkComponentList(int id, bool includeHidden = true)
         {
-            Multis.Add(id, ConvertToSdk());
+            Multis.Add(id, ConvertToSdk(includeHidden));
             Options.ChangedUltimaClass["Multis"] = true;
             ControlEvents.FireMultiChangeEvent(this, id);
         }
 
-        public MultiComponentList ConvertToSdk()
+        /// <summary>
+        /// The design as the client keeps it. Tiles on hidden layers can be left out, and a tile
+        /// that sits on two layers with the same id, cell and Z is written once.
+        /// </summary>
+        public MultiComponentList ConvertToSdk(bool includeHidden = true)
         {
             var tiles = new MTileList[Width][];
             for (int x = 0; x < Width; ++x)
@@ -149,22 +153,31 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
+            int count = 0;
+            var written = new HashSet<(ushort, int, int, int)>();
             foreach (MultiTile tile in RealTiles)
             {
+                if ((!includeHidden && !tile.Layer.Visible) || !written.Add((tile.Id, tile.X, tile.Y, tile.Z)))
+                {
+                    continue;
+                }
+
                 tiles[tile.X][tile.Y].Add(tile.Id, (sbyte)tile.Z, tile.Invisible ? (sbyte)0 : (sbyte)1, tile.Extra);
+                ++count;
             }
 
-            return new MultiComponentList(tiles, _tileCount, Width, Height);
+            return new MultiComponentList(tiles, count, Width, Height);
         }
 
         public bool InBounds(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
 
         /// <summary>
-        /// False for tiles hidden one by one and, while walls are hidden, for tiles flagged as walls.
+        /// False for tiles hidden one by one, tiles on a hidden layer and, while walls are hidden,
+        /// for tiles flagged as walls.
         /// </summary>
         public bool IsShown(MultiTile tile)
         {
-            return !tile.Hidden && !(_parent.HideWalls && (TileData.ItemTable[tile.Id].Flags & TileFlag.Wall) != 0);
+            return !tile.Hidden && tile.Layer.Visible && !(_parent.HideWalls && (TileData.ItemTable[tile.Id].Flags & TileFlag.Wall) != 0);
         }
 
         public int HiddenCount
@@ -538,7 +551,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// step (rotate and mirror). Returns the tiles added.
         /// </summary>
         public List<MultiTile> ReplaceTiles(IEnumerable<MultiTile> remove,
-            IEnumerable<(ushort Id, int X, int Y, int Z, bool Invisible, int Extra)> add, string action, int width, int height)
+            IEnumerable<(ushort Id, int X, int Y, int Z, bool Invisible, int Extra, TileLayer Layer)> add, string action, int width, int height)
         {
             BeginEdit(action);
             foreach (MultiTile tile in new List<MultiTile>(remove))
@@ -560,9 +573,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
 
             var added = new List<MultiTile>();
-            foreach (var (id, x, y, z, invisible, extra) in add)
+            foreach (var (id, x, y, z, invisible, extra, layer) in add)
             {
-                if (RecordNew(id, x, y, z, invisible, extra) is { } tile)
+                if (RecordNew(id, x, y, z, invisible, extra, layer: layer) is { } tile)
                 {
                     added.Add(tile);
                 }
@@ -691,6 +704,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
+            if ((undo ? command.LayersBefore : command.LayersAfter) is { } layers)
+            {
+                RestoreLayerList(layers);
+                _activeLayer = undo ? command.ActiveLayerBefore : command.ActiveLayerAfter;
+            }
+
             RecalculateMinMax();
         }
 
@@ -707,6 +726,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             command.NewWidth = Width;
             command.NewHeight = Height;
             command.CaptureAfter();
+            CaptureLayersAfter(command);
             if (command.IsEmpty)
             {
                 return;
@@ -723,8 +743,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// Adds a new tile unless it is out of bounds or the same id already sits at the same Z in
         /// that cell. With <paramref name="replace"/>, other tiles of the same kind at that Z go
         /// first: a flat tile replaces flat tiles, a tile with height replaces tiles with height.
+        /// The tile goes on <paramref name="layer"/>, or on the active layer, which is shown if it
+        /// was hidden so what is built can be seen. Layers do not see each other's tiles: the same
+        /// tile may sit on two of them.
         /// </summary>
-        private MultiTile RecordNew(ushort id, int x, int y, int z, bool invisible, int extra, bool replace = false)
+        private MultiTile RecordNew(ushort id, int x, int y, int z, bool invisible, int extra, bool replace = false, TileLayer layer = null)
         {
             if (!InBounds(x, y))
             {
@@ -737,22 +760,28 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 bool flat = TileData.ItemTable[id].Height == 0;
                 foreach (MultiTile other in GetTilesAt(x, y))
                 {
-                    if (other.Z == z && other.Id != id && (other.Height == 0) == flat)
+                    if (other.Z == z && other.Id != id && (other.Height == 0) == flat && IsShown(other))
                     {
                         RecordRemove(other);
                     }
                 }
             }
 
+            if (layer == null)
+            {
+                layer = ActiveLayer;
+                layer.Visible = true;
+            }
+
             foreach (MultiTile other in Cell(x, y))
             {
-                if (other.Id == id && other.Z == z)
+                if (other.Id == id && other.Z == z && other.Layer == layer)
                 {
                     return null;
                 }
             }
 
-            var tile = new MultiTile(id, x, y, z, invisible) { Extra = extra, Solver = ++_solverCounter };
+            var tile = new MultiTile(id, x, y, z, invisible) { Extra = extra, Solver = ++_solverCounter, Layer = layer };
             GridInsert(tile);
             _current.Added.Add(tile);
             return tile;
@@ -779,9 +808,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             _current.Removed.Add(tile);
         }
 
-        private void RecordChange(MultiTile tile, ushort id, int x, int y, int z, bool invisible)
+        private void RecordChange(MultiTile tile, ushort id, int x, int y, int z, bool invisible, TileLayer layer = null)
         {
-            var target = new TileState(id, x, y, z, invisible);
+            var target = new TileState(id, x, y, z, invisible, layer ?? tile.Layer);
             if (TileState.Of(tile) == target || !InBounds(x, y))
             {
                 return;
@@ -841,6 +870,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             {
                 if (InBounds(tile.X, tile.Y))
                 {
+                    tile.Layer ??= _layers[0];
                     Cell(tile.X, tile.Y).Add(tile);
                     ++_tileCount;
                 }

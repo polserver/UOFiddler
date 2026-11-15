@@ -269,7 +269,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         /// <summary>Asks for a file name and format and writes the design. True when written.</summary>
         /// <param name="firstFloorZ">Z of the design's first floor, written as the base height of a UO House Editor design.</param>
-        public static bool ExportToFile(IWin32Window owner, MultiEditorComponentList list, string suggestedName, int firstFloorZ = 7)
+        /// <param name="includeHidden">False leaves the tiles on hidden layers out of the file.</param>
+        public static bool ExportToFile(IWin32Window owner, MultiEditorComponentList list, string suggestedName, int firstFloorZ = 7, bool includeHidden = true)
         {
             if (list == null)
             {
@@ -318,7 +319,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             try
             {
-                MultiComponentList sdkList = list.ConvertToSdk();
+                MultiComponentList sdkList = list.ConvertToSdk(includeHidden);
                 switch (type)
                 {
                     case Multis.ImportType.TXT:
@@ -378,7 +379,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// <summary>
         /// Asks for the multi id and stores the design into the client table. Returns the id, or null when cancelled.
         /// </summary>
-        public static int? SaveToClient(IWin32Window owner, MultiEditorComponentList list, int? suggestedId)
+        /// <param name="includeHidden">False leaves the tiles on hidden layers out of the client's multi.</param>
+        public static int? SaveToClient(IWin32Window owner, MultiEditorComponentList list, int? suggestedId, bool includeHidden = true)
         {
             if (list == null)
             {
@@ -392,7 +394,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return null;
             }
 
-            list.AddToSdkComponentList(dialog.SelectedId); // marks Multis changed and fires MultiChangeEvent
+            list.AddToSdkComponentList(dialog.SelectedId, includeHidden); // marks Multis changed and fires MultiChangeEvent
             if (dialog.WriteFormat is { } format)
             {
                 WriteMultiFiles(owner, format);

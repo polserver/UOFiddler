@@ -66,11 +66,15 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         /// <summary>
         /// The tiles to add for the transformed group, placed so the group's box keeps its top-left
-        /// cell. Every tile of <paramref name="group"/> is replaced.
+        /// cell. Every tile of <paramref name="group"/> is replaced. With <paramref name="frame"/>
+        /// the box is that of the larger group this one is a part of, so parts turned one by one
+        /// (the layers of a design) stay where they were to each other.
         /// </summary>
         public static List<(ushort Id, int X, int Y, int Z, bool Invisible, int Extra)> Apply(
-            IReadOnlyCollection<MultiTile> group, HouseStyles styles, RotationTable table, GroupTransformKind kind)
+            IReadOnlyCollection<MultiTile> group, HouseStyles styles, RotationTable table, GroupTransformKind kind,
+            IReadOnlyCollection<MultiTile> frame = null)
         {
+            frame ??= group;
             var m = Matrix(kind);
             bool mirror = (m.A * m.D) - (m.B * m.C) < 0;
             bool swaps = SwapsAxes(kind);
@@ -115,8 +119,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
 
             // Keep the group's top-left: shift by the change of the cell box's corner.
-            int minX = group.Min(t => t.X), minY = group.Min(t => t.Y);
-            var mapped = group.Select(t => MapCell(t.X, t.Y)).ToList();
+            int minX = frame.Min(t => t.X), minY = frame.Min(t => t.Y);
+            var mapped = frame.Select(t => MapCell(t.X, t.Y)).ToList();
             int shiftX = minX - mapped.Min(c => c.X);
             int shiftY = minY - mapped.Min(c => c.Y);
 

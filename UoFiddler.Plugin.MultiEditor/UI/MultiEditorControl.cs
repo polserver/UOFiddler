@@ -464,6 +464,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private PerformancePanel _performancePanel;
         private bool _performanceShown;
         private EditorCommand _savePattern;
+        private EditorCommand _newLayer, _moveToLayer, _selectLayer;
         private bool _openingHousePage;
         private readonly List<EditorCommand> _terrainCommands = new List<EditorCommand>();
         private ContextMenuStrip _previewMenu;
@@ -513,6 +514,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _zDown = Command("Arrange", "Lower selection (Z -1)", () => Session.ShiftSelectionZ(-1), Keys.OemOpenBrackets, hasSelection, alt: Keys.Shift | Keys.Down);
             _hide = Command("Arrange", "Hide selection", () => Session.HideSelection(), Keys.H, hasSelection);
             _showHidden = Command("Arrange", "Show hidden tiles", () => Session.ShowHiddenTiles(), Keys.Shift | Keys.H, hasDoc);
+
+            _newLayer = Command("Layers", "New layer", () => Session.AddLayer(), Keys.Control | Keys.Shift | Keys.N, hasDoc);
+            _moveToLayer = Command("Layers", "Move selection to the active layer", () => Session.MoveSelectionToLayer(Session.ActiveLayer),
+                Keys.Control | Keys.Shift | Keys.M, hasSelection);
+            _selectLayer = Command("Layers", "Select tiles on the active layer", () => Session.SelectLayer(Session.ActiveLayer), can: hasDoc);
 
             _workPlane = Command("View", "Work plane", () => Session.ShowWorkPlane = !Session.ShowWorkPlane,
                 Keys.F, hasDoc, () => Session?.ShowWorkPlane == true);
@@ -795,7 +801,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             _canvasMenu.Items.Add(new ToolStripSeparator());
-            foreach (EditorCommand command in new[] { _zUp, _zDown, _rotateLeft, _rotateRight, _hide, _showHidden })
+            foreach (EditorCommand command in new[] { _zUp, _zDown, _rotateLeft, _rotateRight, _hide, _showHidden, _moveToLayer })
             {
                 _canvasMenu.Items.Add(_commands.MenuItem(command));
             }
@@ -1184,7 +1190,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             Menu(_fileMenu, _new, _open, _import, _importFolder, null, _saveClient, _export, _saveBlueprint, _savePattern, null, _resize, _settingsCommand, null, _close, _closeAll);
             Menu(_editMenu, _undo, _redo, null, _cut, _copy, _paste, _duplicate, _repeat, _delete, null,
-                _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden);
+                _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden,
+                null, _newLayer, _moveToLayer, _selectLayer);
             Menu(_selectMenu, _selectAll, _invert, _selectConnected, _selectSameId, null, _replaceId);
             ToolStripDropDownButton view = Menu(_viewMenu, _preview, _planView, null, _workPlane, _grid, _hideWalls, _hideAbove, _walkable, _doubleSurface, null,
                 _allFloors, _levelUp, _levelDown, _planeUp, _planeDown, null, _showBrowser, _showInspector, null, _fit, _center, _zoomIn, _zoomOut, _zoomReset, null, _moveReference, null, _performanceInfo);
@@ -1501,6 +1508,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             EditorDocument document = CreateDocument(opened.Title, opened.ClientId);
             document.Session.Load(opened.Components);
+
+            // A multi from the client gets back the layers it was saved with, when it is still that multi.
+            (int X, int Y) origin = (opened.Components.Center.X, opened.Components.Center.Y);
+            if (opened.ClientId is { } clientId &&
+                LayerStore.Load(clientId, document.Session.CompList.Fingerprint(origin)) is { } saved)
+            {
+                document.Session.RestoreLayers(saved.Layers, saved.Active, origin);
+            }
             ShowDocument(document);
         }
 
@@ -1548,10 +1563,26 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void SaveToClient()
         {
-            int? id = DocumentIO.SaveToClient(this, Session.CompList, _active.ClientId);
+            if (AskIncludeHiddenLayers("Leaves them out of the client's multi. They stay in the editor's layers and come back when you open it here.") is not { } includeHidden)
+            {
+                return;
+            }
+
+            MultiEditorComponentList list = Session.CompList;
+            int? id = DocumentIO.SaveToClient(this, list, _active.ClientId, includeHidden);
             if (id == null)
             {
                 return;
+            }
+
+            try
+            {
+                LayerStore.Save(id.Value, list.SaveLayers(includeHidden), list.Layers.ToList().IndexOf(list.ActiveLayer), list.Fingerprint(list.SaveOrigin, includeHidden));
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or ArgumentException or System.Xml.XmlException)
+            {
+                MessageBox.Show(this, $"The multi was saved, but its layers could not be written:\r\n{ex.Message}", "Multi Editor",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             _active.ClientId = id;
@@ -1561,10 +1592,42 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void ExportFile()
         {
-            if (DocumentIO.ExportToFile(this, Session.CompList, Session.Title, Session.FirstFloorZ))
+            if (AskIncludeHiddenLayers("Leaves them out of the file. Exported files do not keep layers.") is not { } includeHidden)
+            {
+                return;
+            }
+
+            if (DocumentIO.ExportToFile(this, Session.CompList, Session.Title, Session.FirstFloorZ, includeHidden))
             {
                 Session.MarkSaved();
             }
+        }
+
+        /// <summary>
+        /// Before a save: asks whether tiles on hidden layers go into it. True without asking when
+        /// no hidden layer has tiles; null when the save is cancelled.
+        /// </summary>
+        private bool? AskIncludeHiddenLayers(string whenLeftOut)
+        {
+            MultiEditorComponentList list = Session.CompList;
+            int hidden = list.HiddenLayerTileCount;
+            if (hidden == 0)
+            {
+                return true;
+            }
+
+            string names = string.Join(", ", list.Layers.Where(l => !l.Visible && list.LayerTileCount(l) > 0).Select(l => l.Name));
+            DialogResult answer = MessageBox.Show(this,
+                $"{hidden:N0} tile(s) are on hidden layers ({names}).\r\n\r\nInclude them in the save?\r\n\r\nYes: saved with the rest.\r\nNo: {whenLeftOut}",
+                "Hidden layers", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (answer == DialogResult.No && hidden == list.TileCount)
+            {
+                MessageBox.Show(this, "Every tile is on a hidden layer, so nothing would be saved. Show a layer first, or include the hidden layers.",
+                    "Hidden layers", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return null;
+            }
+
+            return answer == DialogResult.Cancel ? null : answer == DialogResult.Yes;
         }
 
         private void ResizePrompt()

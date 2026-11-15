@@ -195,7 +195,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
                     foreach (MultiTile tile in list.GetTilesAt(x, y))
                     {
-                        if (Context.HouseStyles.TryGetRole(tile.Id, out HouseStyle owner, out _) && owner.Kind == HousePartKind.Roof)
+                        if (list.IsShown(tile) && Context.HouseStyles.TryGetRole(tile.Id, out HouseStyle owner, out _) && owner.Kind == HousePartKind.Roof)
                         {
                             remove.Add(tile);
                         }
@@ -212,7 +212,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 {
                     foreach (MultiTile tile in list.GetTilesAt(x, y))
                     {
-                        if (IsCap(tile.Id))
+                        if (IsCap(tile.Id) && list.IsShown(tile))
                         {
                             remove.Add(tile);
                         }
