@@ -353,6 +353,13 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             return result;
         }
 
+        /// <summary>The layers with all their tiles by cell, as a design file keeps them.</summary>
+        public List<SavedLayer> DesignLayers()
+        {
+            return _layers.Select(layer => new SavedLayer(layer.Name, layer.Visible, false,
+                RealTiles.Where(t => t.Layer == layer).Select(t => (t.Id, t.X, t.Y, t.Z, t.Invisible, t.Extra)).ToList())).ToList();
+        }
+
         /// <summary>
         /// Puts a freshly loaded design back on its saved layers. Not an undo step.
         /// <paramref name="origin"/> is the cell of the loaded multi the saved offsets count from
