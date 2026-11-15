@@ -83,7 +83,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         void ToggleSelected(MultiTile tile);
 
-        void SetDrawTile(ushort id);
+        /// <summary>Makes a tile picked on the canvas the draw tile; the pick tool then hands over to the draw tool used last.</summary>
+        void PickDrawTile(ushort id);
 
         /// <summary>
         /// Call after an edit: refreshes the height slider, minimap and hover. With
@@ -92,9 +93,6 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         void AfterEdit(int? raiseTo = null);
 
         void RecordRecentTile(ushort id);
-
-        /// <summary>Leaves a temporary tool (paste) for the tool chosen before it.</summary>
-        void EndTemporaryTool();
     }
 
     /// <summary>

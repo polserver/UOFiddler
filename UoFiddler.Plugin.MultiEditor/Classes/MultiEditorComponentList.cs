@@ -573,11 +573,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         }
 
         /// <summary>
-        /// Adds a batch of tiles in a single undo step (used by copy/paste).
+        /// Adds a batch of tiles in a single undo step (paste, blueprint, duplicate, repeat).
         /// </summary>
-        public void TileAddBatch(List<(ushort id, int x, int y, int z, bool invisible, int extra)> tiles)
+        public void TileAddBatch(List<(ushort id, int x, int y, int z, bool invisible, int extra)> tiles, string action = "Paste")
         {
-            BeginEdit("Paste");
+            BeginEdit(action);
             foreach (var (id, x, y, z, invisible, extra) in tiles)
             {
                 RecordNew(id, x, y, z, invisible, extra);

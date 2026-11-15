@@ -98,12 +98,13 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     }
 
     /// <summary>
-    /// Temporary tool after Ctrl+V: shows the clipboard under the cursor and places it on click.
-    /// Esc or a right click leaves it.
+    /// Temporary tool for a paste, a blueprint or a duplicate: shows the tiles under the cursor and
+    /// places them on every click, each click its own undo step. Esc or a right click leaves it.
     /// </summary>
     internal sealed class PasteTool : EditorTool
     {
         private IReadOnlyList<ClipboardTile> _tiles = new List<ClipboardTile>();
+        private string _action = "Paste";
 
         public PasteTool(IEditorContext context) : base(context)
         {
@@ -111,17 +112,19 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         public override bool TracksCursorCell => true;
 
-        public void Begin(IReadOnlyList<ClipboardTile> tiles)
+        /// <param name="tiles">The tiles to place.</param>
+        /// <param name="action">Name of the undo step each placement makes.</param>
+        public void Begin(IReadOnlyList<ClipboardTile> tiles, string action)
         {
             _tiles = tiles;
+            _action = action;
         }
 
         public override void OnMouseUp(MouseEventArgs e)
         {
             Context.CellAt(Context.MouseLoc, out int x, out int y, out int z);
-            Context.CompList.TileAddBatch(_tiles.Select(t => (t.Id, x + t.Dx, y + t.Dy, z + t.Dz, t.Invisible, t.Extra)).ToList());
+            Context.CompList.TileAddBatch(_tiles.Select(t => (t.Id, x + t.Dx, y + t.Dy, z + t.Dz, t.Invisible, t.Extra)).ToList(), _action);
             Context.AfterEdit();
-            Context.EndTemporaryTool();
         }
 
         public override void PaintOverlay(IToolOverlay overlay)
