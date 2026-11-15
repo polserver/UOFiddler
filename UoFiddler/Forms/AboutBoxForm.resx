@@ -118,7 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.28.1
+    <value>Version 4.28.2
+- Animations: the animation edit body list opens anim.mul in a fraction of a second and the editor closes at once; body and action rows show tooltips
+- Animations: center editing can apply relative offsets and cover all directions or all actions at once
+- Animations: the frame size shows next to the zoom while a frame rectangle is drawn
+- Animations: export to .vd at a chosen scale, and in another body type's action layout with a source action picked per slot; sea monster bodies export as 22-action files
+- Animations: .vd imports refuse files with fewer entries than the body needs
+- Animations: an overlaid body of another type plays its closest action, so a mount under a rider walks, runs and stands
+- Animations: frames pack to one PNG per frame with a frames XML, at a chosen size; unpack and bulk unpack read it too
+- Multi Editor: pasted tiles and blueprints stay on the cursor and place on every click until Esc or right click
+- Multi Editor: Duplicate selection (Ctrl+D) puts a copy on the cursor; Repeat selection (Ctrl+Shift+D) adds copies a chosen step apart, previewed on the canvas
+- Multi Editor: Alt+click picks the tile under the cursor while drawing, the Pick tile tool returns to the draw tool, and Draw with this tile uses the tile under the cursor
+- Multi Editor: layers group the tiles of a design; they can be hidden, renamed, duplicated, merged, reordered and deleted, with undo, and new tiles go on the active layer
+- Multi Editor: a multi saved to the client gets its layers back when it is opened again; Save to client and Export ask whether to include hidden layers
+- Multi Editor: design files (*.uomd) keep a design as drawn, with its size, layers and floors (File > Open/Save design file)
+
+Version 4.28.1
 - Multi Editor: prefabs are now blueprints, kept in MultiEditorBlueprints; an existing MultiEditorPrefabs folder is moved there on first use
 - Multi Editor: save picked multis and UO Architect designs as blueprints in bulk from Open from client, Import files, Import from folder and the Designs page
 - Multi Editor: blueprints keep their name in the file and show their footprint; the Blueprints page has a group drop-down and favorite groups
