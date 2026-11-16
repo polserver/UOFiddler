@@ -37,6 +37,8 @@ namespace UoFiddler.Controls.UserControls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             _refMarker = this;
 
+            ApplyDarkModeIfNeeded();
+
             if (!File.Exists(_multiXmlFileName))
             {
                 return;
@@ -221,6 +223,11 @@ namespace UoFiddler.Controls.UserControls
                     tp.UseVisualStyleBackColor = false;
                     tp.BackColor = tabBg;
                 }
+
+                // WinForms dark mode draws a nested TabControl's headers light when its handle is
+                // created along with the form; created after load (like the uop one) it is dark.
+                // OnLoad shows it again.
+                tabControl3.Visible = false;
             }
 
             ApplyPreviewBackgroundColor();
@@ -240,7 +247,10 @@ namespace UoFiddler.Controls.UserControls
                 return;
             }
 
-            ApplyDarkModeIfNeeded();
+            if (!tabControl3.Visible)
+            {
+                BeginInvoke(() => tabControl3.Visible = true);
+            }
 
             using (new WaitCursorScope(this))
             {
