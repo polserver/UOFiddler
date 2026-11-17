@@ -2467,7 +2467,30 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             return focused is TextBoxBase || focused is NumericUpDown || focused is ComboBox ||
-                   focused.Parent is NumericUpDown || focused is ToolStrip;
+                   focused.Parent is NumericUpDown || focused is ToolStrip || NativeEditHasFocus();
         }
+
+        /// <summary>
+        /// True while a plain Windows edit box has the keyboard: the box a list or tree shows to
+        /// rename an item (a layer's name) is one, and it is no WinForms control, so the
+        /// focused control is still the list.
+        /// </summary>
+        private static bool NativeEditHasFocus()
+        {
+            IntPtr focus = GetFocus();
+            if (focus == IntPtr.Zero)
+            {
+                return false;
+            }
+
+            var name = new System.Text.StringBuilder(32);
+            return GetClassName(focus, name, name.Capacity) > 0 && name.ToString().Equals("Edit", StringComparison.OrdinalIgnoreCase);
+        }
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr GetFocus();
+
+        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+        private static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder className, int maxCount);
     }
 }
