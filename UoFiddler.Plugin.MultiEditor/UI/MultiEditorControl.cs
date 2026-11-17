@@ -503,7 +503,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _paste = Command("Edit", "Paste", () => Session.Paste(), Keys.Control | Keys.V, hasDoc, glyph: Glyphs.Paste);
             _duplicate = Command("Edit", "Duplicate selection", () => Session.Duplicate(), Keys.Control | Keys.D, hasSelection);
             _repeat = Command("Edit", "Repeat selection...", RepeatSelectionPrompt, Keys.Control | Keys.Shift | Keys.D, hasSelection);
-            _delete = Command("Edit", "Delete selection", () => Session.DeleteSelection(), Keys.Delete, hasSelection, glyph: Glyphs.Delete);
+            _delete = Command("Edit", "Delete selection", DeleteSelectionOrWing, Keys.Delete,
+                () => Session != null && (Session.ShapingRoof ? Session.Roof.HasSelectedWing : Session.Selection.Count > 0), glyph: Glyphs.Delete);
 
             _selectAll = Command("Select", "Select all", () => Session.SelectAll(), Keys.Control | Keys.A, hasDoc);
             _invert = Command("Select", "Invert selection", () => Session.InvertSelection(), Keys.Control | Keys.Shift | Keys.A, hasDoc);
@@ -598,6 +599,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     hasDoc, () => Session?.BrushSize == size));
             }
             _escape = Command("Tools", "Cancel tool, then clear selection", Escape, Keys.Escape, hasDoc);
+            _placeRoof = Command("Tools", "Place the roof being shaped", () => Session.Roof.Commit(), Keys.Enter,
+                () => Session != null && Session.ShapingRoof);
             _shortcuts = Command("Help", "Keyboard shortcuts", ShowShortcuts, Keys.F1, glyph: Glyphs.Help);
             _drawWithSelected = Command("Tools", "Draw with this tile", DrawWithSelected, can: () => (_menuTile ?? Session?.SelectedTile) != null);
         }
@@ -673,8 +676,27 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             SyncOptions();
         }
 
+        private void DeleteSelectionOrWing()
+        {
+            if (Session.ShapingRoof)
+            {
+                Session.Roof.DeleteWing();
+            }
+            else
+            {
+                Session.DeleteSelection();
+            }
+        }
+
         private void Escape()
         {
+            // With a roof being shaped: the first Esc stops a drag, the next one drops the roof.
+            if (Session.ShapingRoof && !Session.ActiveTool.IsDragging)
+            {
+                Session.Roof.Discard();
+                return;
+            }
+
             // First Esc stops what the tool is doing, the next one clears the selection.
             if (Session.Pasting || Session.ActiveTool.IsDragging || Session.Selection.Count == 0)
             {
@@ -1318,6 +1340,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             // Roof options, shown only with the Roof tool.
+            RoofGroup(strip, _shapeSeparator, _shapeLabel,
+                ("Gable", () => Session.Roof.Shape == RoofShape.Gable, () => Session.Roof.Shape = RoofShape.Gable));
             RoofGroup(strip, _ridgeSeparator, _ridgeLabel,
                 ("Auto", () => Session.Roof.Ridge == RoofRidge.Auto, () => Session.Roof.Ridge = RoofRidge.Auto),
                 ("X", () => Session.Roof.Ridge == RoofRidge.AlongX, () => Session.Roof.Ridge = RoofRidge.AlongX),
@@ -1329,6 +1353,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             RoofGroup(strip, _gableFillSeparator, _gableFillLabel,
                 ("Caps", () => Session.Roof.GableFill == RoofGableFill.Caps, () => Session.Roof.GableFill = RoofGableFill.Caps),
                 ("Walls", () => Session.Roof.GableFill == RoofGableFill.Walls, () => Session.Roof.GableFill = RoofGableFill.Walls));
+
+            // Shown while a roof is being shaped.
+            _placeRoofButton = RoofAction(strip, "Place roof", "Places the roof on the Roof layer (Enter).", () => Session.Roof.Commit());
+            _dropRoofButton = RoofAction(strip, "Drop", "Drops the roof being shaped (Esc).", () => Session.Roof.Discard());
         }
 
         private void ZStepCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -1336,6 +1364,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Apply(() => Session.ZStep = int.Parse(_zStepCombo.Text));
         }
 
+        private EditorCommand _placeRoof;
+        private ToolStripButton _placeRoofButton;
+        private ToolStripButton _dropRoofButton;
         private readonly List<ToolStripItem> _roofItems = new List<ToolStripItem>();
         private readonly List<(ToolStripButton Button, Func<bool> IsOn)> _roofButtons = new List<(ToolStripButton, Func<bool>)>();
 
@@ -1376,6 +1407,29 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
         }
 
+        private ToolStripButton RoofAction(ToolStrip strip, string text, string tip, Action run)
+        {
+            var button = new ToolStripButton(text)
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Text,
+                ToolTipText = tip,
+                AutoToolTip = false,
+                Margin = new Padding(6, 1, 0, 2),
+                Visible = false
+            };
+            button.Click += (_, _) =>
+            {
+                if (Session != null && Session.ShapingRoof)
+                {
+                    run();
+                    _commands.RefreshStates();
+                    _canvas.Focus();
+                }
+            };
+            strip.Items.Add(button);
+            return button;
+        }
+
         private void SyncRoofOptions()
         {
             bool show = Session != null && !Session.Pasting && Session.Tool == ToolKind.Roof;
@@ -1383,6 +1437,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             {
                 item.Visible = show;
             }
+
+            _placeRoofButton.Visible = _dropRoofButton.Visible = show && Session.ShapingRoof;
 
             foreach ((ToolStripButton button, Func<bool> isOn) in _roofButtons)
             {
@@ -1537,6 +1593,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             if (_active != null)
             {
                 session.FloorPattern = _active.Session.FloorPattern;
+                session.Roof.Shape = _active.Session.Roof.Shape;
                 session.Roof.Ridge = _active.Session.Roof.Ridge;
                 session.Roof.Gables = _active.Session.Roof.Gables;
                 session.Roof.GableFill = _active.Session.Roof.GableFill;
@@ -2180,6 +2237,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _statusHint.Text = session.PreviewMode ? "Preview: editing is off. Right click picks the ground. F5 returns to the editor."
                 : session.PreviewingRepeat ? "The copies are shown as they would be placed."
                 : session.Pasting ? "Click to place the tiles, as often as you like. Esc or right click stops."
+                : session.ShapingRoof ? "Shaping the roof: drag a wing to move it, an edge of the selected wing to resize it, anywhere else to add a wing. " +
+                                        "Shift+click turns a ridge, Delete removes a wing. Enter places the roof on the Roof layer, Esc drops it."
                 : ToolHint(session.Tool);
 
             (int x, int y, int z) = session.CursorCell;
@@ -2213,7 +2272,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ToolKind.Floor => "Drag an area to lay the chosen floor style.",
                 ToolKind.Door => "Click a wall cell to hang the chosen door.",
                 ToolKind.Stair => "Drag in the direction the stairs climb.",
-                ToolKind.Roof => "Click a walled room to roof it, or drag over the wall cells to size the roof by hand. Options: Ridge, Gables, Fill.",
+                ToolKind.Roof => "Click a walled room to start its roof, or drag out a roof of any size. It stays open for shaping until Enter places it.",
                 ToolKind.Foundation => "Drag an area to lay a foundation under it.",
                 ToolKind.FloorPattern => "Drag an area to lay the bordered floor: corners, sides and fill repeat to fit.",
                 _ => string.Empty

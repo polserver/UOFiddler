@@ -998,6 +998,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         /// <summary>
         /// The first floor is the lowest Z, up to <see cref="MaxFirstFloorZ"/>, that holds a real
         /// share of the flat walkable tiles. One stray flat tile low down does not make a floor.
+        /// A design without a floor has it where most of its walls stand.
         /// </summary>
         private int DetectFirstFloorZ()
         {
@@ -1010,21 +1011,39 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
                 }
             }
 
-            if (flat.Count == 0)
+            if (flat.Count > 0)
             {
-                return 0;
-            }
-
-            int needed = Math.Max(4, flat.Values.Max() / 4);
-            foreach ((int z, int count) in flat)
-            {
-                if (z >= 0 && z <= MaxFirstFloorZ && count >= needed)
+                int needed = Math.Max(4, flat.Values.Max() / 4);
+                foreach ((int z, int count) in flat)
                 {
-                    return z;
+                    if (z >= 0 && z <= MaxFirstFloorZ && count >= needed)
+                    {
+                        return z;
+                    }
                 }
             }
 
-            return 0;
+            // No floor laid (a building lifted off the map stands on terrain): where its walls stand.
+            var walls = new Dictionary<int, int>();
+            foreach (MultiTile tile in CompList.RealTiles)
+            {
+                if (tile.Z >= 0 && tile.Z <= MaxFirstFloorZ && tile.Height >= 10 &&
+                    (TileData.ItemTable[tile.Id].Flags & TileFlag.Wall) != 0)
+                {
+                    walls[tile.Z] = walls.GetValueOrDefault(tile.Z) + 1;
+                }
+            }
+
+            int best = 0, most = 3;
+            foreach ((int z, int count) in walls)
+            {
+                if (count > most)
+                {
+                    (best, most) = (z, count);
+                }
+            }
+
+            return best;
         }
 
         /// <summary>A short label for a level's button: the number of "Floor 2", else the start of the name.</summary>

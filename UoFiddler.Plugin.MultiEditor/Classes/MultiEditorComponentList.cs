@@ -528,14 +528,35 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         }
 
         /// <summary>
-        /// Removes some tiles and adds others in one undo step (wall and house part tools).
+        /// Removes some tiles and adds others in one undo step (wall and house part tools). With
+        /// <paramref name="grow"/> the multi is made bigger, in the same step, to hold tiles added
+        /// past its +X/+Y end; otherwise those are dropped.
         /// </summary>
-        public void ReplaceTiles(IEnumerable<MultiTile> remove, IEnumerable<(ushort Id, int X, int Y, int Z)> add, string action)
+        public void ReplaceTiles(IEnumerable<MultiTile> remove, IEnumerable<(ushort Id, int X, int Y, int Z)> add, string action, bool grow = false)
         {
+            add = new List<(ushort Id, int X, int Y, int Z)>(add);
             BeginEdit(action);
             foreach (MultiTile tile in new List<MultiTile>(remove))
             {
                 RecordRemove(tile);
+            }
+
+            if (grow)
+            {
+                int width = Width, height = Height;
+                foreach (var (_, x, y, _) in add)
+                {
+                    if (x >= 0 && y >= 0)
+                    {
+                        width = Math.Max(width, x + 1);
+                        height = Math.Max(height, y + 1);
+                    }
+                }
+
+                if (width != Width || height != Height)
+                {
+                    RebuildGrid(width, height, new List<MultiTile>(RealTiles));
+                }
             }
 
             foreach (var (id, x, y, z) in add)
