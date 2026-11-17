@@ -239,7 +239,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         {
             return new DesignData(Title, CompList.Width, CompList.Height, FirstFloorZ,
                 CustomLevels ? _levelDefinitions.ToList() : null, CompList.DesignLayers(),
-                CompList.Layers.ToList().IndexOf(CompList.ActiveLayer));
+                CompList.Layers.ToList().IndexOf(CompList.ActiveLayer), PlacedHouses.ToList());
         }
 
         /// <summary>Opens what a design file holds as this session's document.</summary>
@@ -247,6 +247,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         {
             NewBlank(design.Width, design.Height, design.FirstFloorZ);
             CompList.RestoreLayers(design.Layers, design.ActiveLayer, (0, 0));
+            SetPlacedHouses(design.Houses);
             if (design.Levels != null)
             {
                 SetLevelDefinitions(design.Levels);

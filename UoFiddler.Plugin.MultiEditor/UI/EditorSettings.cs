@@ -56,6 +56,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         public Color SelectionBox { get; set; } = Color.DodgerBlue;
 
+        /// <summary>
+        /// True puts a placed house on one layer named after it ("House 1"); false gives its
+        /// foundation, walls, floors, stairs and roof a layer each.
+        /// </summary>
+        public bool HouseOnOneLayer { get; set; } = true;
+
+        /// <summary>How solid the tiles a tool is about to place are drawn (roof and house drafts, walls, stamps), in percent.</summary>
+        public int PreviewOpacity { get; set; } = 80;
+
         // How a new document starts.
         public bool StartWithWorkPlane { get; set; } = true;
 
@@ -138,6 +147,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 settings.Background = Color.Empty;
             }
 
+            settings.PreviewOpacity = Math.Clamp(settings.PreviewOpacity, 20, 100);
             settings.TileBrowserWidth = Math.Clamp(settings.TileBrowserWidth, 200, 900);
             settings.InspectorWidth = Math.Clamp(settings.InspectorWidth, 200, 600);
             Current = settings;

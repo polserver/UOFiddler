@@ -324,7 +324,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _shapeLabel.Name = "_shapeLabel";
             _shapeLabel.Size = new System.Drawing.Size(39, 22);
             _shapeLabel.Text = "Shape";
-            _shapeLabel.ToolTipText = "Gable: two slopes and a ridge.";
+            _shapeLabel.ToolTipText = "Gable: two slopes and a ridge. Hip: four slopes, no gable ends.";
             //
             // _ridgeSeparator
             //

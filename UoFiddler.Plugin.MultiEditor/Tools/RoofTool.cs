@@ -291,7 +291,23 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             foreach ((int x, int y) in footprint)
             {
-                if (!fixedPieces.TryGetValue((x, y), out string column))
+                int lift = 0;
+                if (fixedPieces.TryGetValue((x, y), out string column))
+                {
+                    // A hip's corner piece names how far below the slopes it sits.
+                    int mark = column.IndexOf(RoofPlanner.LiftMark);
+                    if (mark > 0)
+                    {
+                        lift = int.Parse(column.AsSpan(mark + 1));
+                        column = column.Substring(0, mark);
+                        if (style.Get(column) == 0)
+                        {
+                            // A style without corner pieces: the slope facing the same way.
+                            (column, lift) = (column[0] switch { 'N' => "North", 'E' => "East", 'S' => "South", _ => "West" }, 0);
+                        }
+                    }
+                }
+                else
                 {
                     column = RoofPlanner.Piece(heights, x, y, out string fallback) ?? (wings[0].RidgeAlongY ? "West" : "North");
                     if (style.Get(column) == 0 && fallback != null)
@@ -303,7 +319,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 ushort id = style.Get(column);
                 if (id != 0)
                 {
-                    add.Add((id, x, y, heights[(x, y)], null));
+                    add.Add((id, x, y, heights[(x, y)] + lift, null));
                 }
             }
 

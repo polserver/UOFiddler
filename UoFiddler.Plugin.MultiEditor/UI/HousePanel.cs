@@ -56,6 +56,17 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// <summary>Asks for a style to be picked on the House page for a storey's walls or floor, or for the roof.</summary>
         public event Action<HousePartKind, int> PickStyle;
 
+        /// <summary>Asks for the draft to be saved to, or opened from, a house draft file.</summary>
+        public event Action SaveDraft;
+
+        public event Action OpenDraft;
+
+        /// <summary>Asks for the house as built to be saved to the blueprints.</summary>
+        public event Action SaveBlueprint;
+
+        /// <summary>Asks for a placed house to be opened as a draft again.</summary>
+        public event Action<System.Xml.Linq.XElement> EditHouse;
+
         /// <summary>Raised after a button of the panel was used, so the canvas can take the keyboard back.</summary>
         public event Action Used;
 
@@ -96,7 +107,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 {
                     RoofWing wing = house.Wings[i];
                     string roof = wing.NoRoof ? "no roof" : wing.Shape.ToString().ToLowerInvariant();
-                    _wingList.Items.Add($"Wing {i + 1}: {wing.X1 - wing.X0 + 1} x {wing.Y1 - wing.Y0 + 1}, {wing.Storeys} storey{(wing.Storeys == 1 ? string.Empty : "s")}, {roof}");
+                    _wingList.Items.Add($"Wing {i + 1}: {wing.X1 - wing.X0 + 1} x {wing.Y1 - wing.Y0 + 1}, {wing.Storeys} storey{(wing.Storeys == 1 ? string.Empty : "s")}, {(wing.Rooms > 1 ? $"{wing.Rooms} rooms, " : string.Empty)}{roof}");
                 }
 
                 _wingList.SelectedIndex = house.SelectedIndex;
@@ -106,7 +117,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 // The drop-down lists the roof shapes in their order, then None.
                 _roofShape.SelectedIndex = house.NoRoof ? _roofShape.Items.Count - 1 : (int)house.Shape;
                 _ridge.SelectedIndex = (int)house.Ridge;
-                _ridge.Enabled = !house.NoRoof;
+                _ridge.Enabled = !house.NoRoof && house.Shape == RoofShape.Gable;
                 _removeWing.Enabled = house.HasSelectedWing;
                 _wingHint.Text = house.HasSelectedWing ? "Selected wing:" : "New wings:";
 
@@ -128,6 +139,24 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
                 _roofStyle.Text = house.Draft.RoofStyle?.Name ?? "(roof)";
                 _foundation.Checked = house.Draft.Foundation;
+                _rooms.Value = Math.Clamp(house.Rooms, 1, HouseDraft.MaxRooms);
+                _showWalls.Checked = house.ShowWalls;
+                _showFloors.Checked = house.ShowFloors;
+                _showRoof.Checked = house.ShowRoof;
+                _saveDraft.Enabled = _blueprint.Enabled = house.HasPending;
+
+                // The houses already placed in this design, which can be opened as drafts again.
+                object chosen = _placed.SelectedItem;
+                _placed.Items.Clear();
+                foreach (System.Xml.Linq.XElement placed in _session.PlacedHouses)
+                {
+                    _placed.Items.Add(new PlacedHouse(placed));
+                }
+
+                _placed.SelectedIndex = _placed.Items.Count == 0 ? -1
+                    : Math.Max(0, _placed.Items.Cast<PlacedHouse>().ToList().FindIndex(p => chosen is PlacedHouse c && c.House == p.House));
+                _placed.Enabled = _placed.Items.Count > 0;
+                _edit.Enabled = _placed.Items.Count > 0 && !house.HasPending;
                 _baseZ.Enabled = house.HasPending;
                 _baseZ.Value = Math.Clamp(house.BaseZ, (int)_baseZ.Minimum, (int)_baseZ.Maximum);
 
@@ -150,6 +179,63 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             finally
             {
                 _updating = false;
+            }
+        }
+
+        /// <summary>A placed house in the list, shown by its name and size.</summary>
+        private sealed class PlacedHouse
+        {
+            public PlacedHouse(System.Xml.Linq.XElement house)
+            {
+                House = house;
+            }
+
+            public System.Xml.Linq.XElement House { get; }
+
+            public override string ToString()
+            {
+                int wings = House.Elements("Wing").Count();
+                return $"{(string)House.Attribute("name") ?? "House"} ({wings} wing{(wings == 1 ? string.Empty : "s")})";
+            }
+        }
+
+        private void Rooms_ValueChanged(object sender, EventArgs e)
+        {
+            if (!_updating && _session != null)
+            {
+                _session.House.SetRooms((int)_rooms.Value);
+            }
+        }
+
+        private void Show_CheckedChanged(object sender, EventArgs e)
+        {
+            Run(house => (house.ShowWalls, house.ShowFloors, house.ShowRoof) = (_showWalls.Checked, _showFloors.Checked, _showRoof.Checked));
+        }
+
+        private void SaveDraft_Click(object sender, EventArgs e)
+        {
+            SaveDraft?.Invoke();
+            Used?.Invoke();
+        }
+
+        private void OpenDraft_Click(object sender, EventArgs e)
+        {
+            OpenDraft?.Invoke();
+            Used?.Invoke();
+        }
+
+        private void Blueprint_Click(object sender, EventArgs e)
+        {
+            SaveBlueprint?.Invoke();
+            Used?.Invoke();
+        }
+
+        private void Edit_Click(object sender, EventArgs e)
+        {
+            if (_placed.SelectedItem is PlacedHouse placed)
+            {
+                EditHouse?.Invoke(placed.House);
+                Used?.Invoke();
             }
         }
 

@@ -18,7 +18,16 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
     internal enum RoofShape
     {
         /// <summary>Two slopes meeting in a ridge.</summary>
-        Gable
+        Gable,
+
+        /// <summary>Four slopes: the ends slope too, instead of standing as gables.</summary>
+        Hip,
+
+        /// <summary>
+        /// No slopes: a floor on top of the walls, as the towers have. Only a house wing can have
+        /// it; the house draft lays it, not this planner.
+        /// </summary>
+        Flat
     }
 
     /// <summary>
@@ -34,12 +43,26 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
     /// south NDent;</item>
     /// <item>where a wing's ridge runs into another ridge of the same height the cell is the T
     /// piece named for the side the wing comes from, and the X piece where two ridges cross.</item>
+    /// <item>roof.txt has no pieces made for hips. The Dent pieces serve: each is a tile of two
+    /// faces, and on a hip line the one with the same two faces closes the corner when it sits 3
+    /// lower than the slopes beside it (the south-east one at their height). Found by drawing
+    /// every piece at every corner; it closes cleanly in thatch, stone, slate and shingles and
+    /// leaves small seams in Tile Roof.</item>
     /// </list>
     /// </summary>
     internal static class RoofPlanner
     {
         /// <summary>Z a slope gains per cell: the roof pieces are 3 high.</summary>
         public const int Rise = 3;
+
+        /// <summary>Marks a fixed piece that sits lower than its cell's height: "EDent@-3".</summary>
+        public const char LiftMark = '@';
+
+        // The corner pieces of a hip, by the corner of the wing they lie towards.
+        private const string _hipNorthWest = "NDent@-3";
+        private const string _hipNorthEast = "EDent@-3";
+        private const string _hipSouthEast = "SDent";
+        private const string _hipSouthWest = "WDent@-3";
 
         /// <summary>Narrowest part of a house that gets a wing of its own.</summary>
         private const int _minWing = 3;
@@ -56,9 +79,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         /// <summary>
         /// Adds a wing to a roof: every cell of the box gets the wing's height there unless the
-        /// roof is already higher. A gable climbs from its two long sides to the ridge. A cell it
-        /// raises loses any fixed piece another wing gave it in <paramref name="fixedPieces"/>.
-        /// Cells with a negative coordinate are left out.
+        /// roof is already higher. A gable climbs from its two long sides to the ridge. A hip
+        /// climbs from all four sides; the cells on its hip lines get their corner piece in
+        /// <paramref name="fixedPieces"/>. Cells with a negative coordinate are left out.
         /// </summary>
         public static void AddWing(Dictionary<(int X, int Y), int> heights, Dictionary<(int X, int Y), string> fixedPieces,
             (int X0, int Y0, int X1, int Y1) box, bool ridgeAlongY, RoofShape shape, int eaveZ)
@@ -71,6 +94,23 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 {
                     int a = ridgeAlongY ? x : y;
                     int steps = Math.Min(a - across0, across1 - a);
+                    string corner = null;
+                    if (shape == RoofShape.Hip)
+                    {
+                        int west = x - box.X0, east = box.X1 - x, north = y - box.Y0, south = box.Y1 - y;
+                        steps = Math.Min(Math.Min(west, east), Math.Min(north, south));
+
+                        // On a hip line two sides are equally near; on the ridge the opposite ones are.
+                        if (west != east && north != south)
+                        {
+                            corner = west == steps && north == steps ? _hipNorthWest
+                                : east == steps && north == steps ? _hipNorthEast
+                                : east == steps && south == steps ? _hipSouthEast
+                                : west == steps && south == steps ? _hipSouthWest
+                                : null;
+                        }
+                    }
+
                     int z = eaveZ + (Rise * steps);
                     if (heights.TryGetValue((x, y), out int known) && known >= z)
                     {
@@ -78,7 +118,14 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     }
 
                     heights[(x, y)] = z;
-                    fixedPieces.Remove((x, y));
+                    if (corner != null)
+                    {
+                        fixedPieces[(x, y)] = corner;
+                    }
+                    else
+                    {
+                        fixedPieces.Remove((x, y));
+                    }
                 }
             }
         }

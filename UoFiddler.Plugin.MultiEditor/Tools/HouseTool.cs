@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using UoFiddler.Plugin.MultiEditor.Classes;
 
 namespace UoFiddler.Plugin.MultiEditor.Tools
@@ -30,6 +31,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         private readonly RoofTool _roof;
         private HouseDraft _draft = new HouseDraft();
         private int _storeys = 1;
+        private int _rooms = 1;
         private RoofShape _shape = RoofShape.Gable;
         private bool _noRoof;
         private RoofRidge _ridge = RoofRidge.Auto;
@@ -53,8 +55,11 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// <summary>Storeys of the tallest wing; 1 before there is one.</summary>
         public int TopStorey => Math.Max(1, HouseDraft.Top(Wings));
 
-        /// <summary>Storeys of new wings.</summary>
+        /// <summary>Storeys of the selected wing, else of the wings drawn next.</summary>
         public int Storeys => SelectedWing?.Storeys ?? _storeys;
+
+        /// <summary>Rooms of the selected wing, else of the wings drawn next.</summary>
+        public int Rooms => SelectedWing?.Rooms ?? _rooms;
 
         public RoofShape Shape => SelectedWing?.Shape ?? _shape;
 
@@ -80,6 +85,47 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         protected override bool PreviewsFirstClick => false;
 
         protected override bool GhostsFollowView => true;
+
+        // What the preview shows. A view choice: it is no step of the history and what is placed
+        // is always the whole house.
+        private bool _showWalls = true;
+        private bool _showFloors = true;
+        private bool _showRoof = true;
+
+        /// <summary>Walls, doors, windows, stairs and the foundation in the preview.</summary>
+        public bool ShowWalls
+        {
+            get => _showWalls;
+            set => SetShown(ref _showWalls, value);
+        }
+
+        /// <summary>Floors in the preview: off to look at the walls of a storey without the floor above.</summary>
+        public bool ShowFloors
+        {
+            get => _showFloors;
+            set => SetShown(ref _showFloors, value);
+        }
+
+        /// <summary>The roof and its gable ends in the preview.</summary>
+        public bool ShowRoof
+        {
+            get => _showRoof;
+            set => SetShown(ref _showRoof, value);
+        }
+
+        private void SetShown(ref bool field, bool value)
+        {
+            if (field != value)
+            {
+                field = value;
+                RaiseChanged();
+            }
+        }
+
+        protected override bool ShowsInPreview(string layer)
+        {
+            return layer == HouseDraft.FloorsLayer ? _showFloors : layer == RoofTool.LayerName ? _showRoof : _showWalls;
+        }
 
         /// <summary>
         /// Storeys without a material take the one below; the ground floor and the roof take the
@@ -133,15 +179,57 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             var wing = new RoofWing
             {
-                X0 = x0, Y0 = y0, X1 = x1, Y1 = y1, EaveZ = z, Storeys = _storeys,
+                X0 = x0, Y0 = y0, X1 = x1, Y1 = y1, EaveZ = z, Storeys = _storeys, Rooms = _rooms,
                 Shape = _shape, NoRoof = _noRoof, RidgeAuto = _ridge == RoofRidge.Auto
             };
+            Snap(wing, moved: false);
             wing.RidgeAlongY = wing.RidgeAuto ? RoofPlanner.RidgeAlongY(RoofBox(wing)) : _ridge == RoofRidge.AlongY;
             wings.Add(wing);
             return wings;
         }
 
         private static (int X0, int Y0, int X1, int Y1) RoofBox(RoofWing wing) => (wing.X0 + 1, wing.Y0 + 1, wing.X1 + 1, wing.Y1 + 1);
+
+        /// <summary>
+        /// A wing drawn or moved to stand right beside another would leave two walls back to back
+        /// and its roof a cell short of the other's wall. It is pulled in by that cell, so the two
+        /// share the wall between them: one house inside, and the lower roof runs up to the
+        /// higher wall.
+        /// </summary>
+        protected override void Snap(RoofWing wing, bool moved)
+        {
+            foreach (RoofWing other in Wings)
+            {
+                if (ReferenceEquals(other, wing))
+                {
+                    continue;
+                }
+
+                bool besideX = wing.Y0 <= other.Y1 && wing.Y1 >= other.Y0;
+                bool besideY = wing.X0 <= other.X1 && wing.X1 >= other.X0;
+                if (besideX && wing.X0 == other.X1 + 1)
+                {
+                    wing.X0 -= 1;
+                    wing.X1 -= moved ? 1 : 0;
+                }
+                else if (besideX && wing.X1 == other.X0 - 1)
+                {
+                    wing.X1 += 1;
+                    wing.X0 += moved ? 1 : 0;
+                }
+
+                if (besideY && wing.Y0 == other.Y1 + 1)
+                {
+                    wing.Y0 -= 1;
+                    wing.Y1 -= moved ? 1 : 0;
+                }
+                else if (besideY && wing.Y1 == other.Y0 - 1)
+                {
+                    wing.Y1 += 1;
+                    wing.Y0 += moved ? 1 : 0;
+                }
+            }
+        }
 
         protected override void WingResized(RoofWing wing)
         {
@@ -238,6 +326,118 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     wing.EaveZ = z;
                 }
             });
+        }
+
+        /// <summary>Divides the selected wing, and the wings drawn next, into this many rooms on every storey (1: undivided).</summary>
+        public void SetRooms(int rooms)
+        {
+            rooms = Math.Clamp(rooms, 1, HouseDraft.MaxRooms);
+            _rooms = rooms;
+            if (SelectedWing is { } wing && wing.Rooms != rooms)
+            {
+                Edit(() => wing.Rooms = rooms);
+            }
+            else
+            {
+                RaiseChanged();
+            }
+        }
+
+        // ---------------------------------------------------------------- layers
+
+        private static readonly string[] _parts =
+        {
+            HouseDraft.FoundationLayer, HouseDraft.WallsLayer, HouseDraft.FloorsLayer, HouseDraft.StairsLayer, RoofTool.LayerName
+        };
+
+        // The name the house being placed gets: of the house it was reopened from, else a free one.
+        private string _placeName;
+        private string _reopenedName;
+
+        /// <summary>Gives a name no placed house and no layer of the multi has yet.</summary>
+        public Func<string> FreeName { get; set; }
+
+        /// <summary>True when a placed house's parts each go on a layer of their own instead of one layer named after the house.</summary>
+        public static bool LayerPerPart => !UI.EditorSettings.Current.HouseOnOneLayer;
+
+        private string PlaceName => _placeName ??= _reopenedName ?? FreeName?.Invoke() ?? "House";
+
+        /// <summary>The house's parts go on the layer named after the house; a tile that names another layer (a re-pieced older roof) keeps it.</summary>
+        protected override string LayerFor(string layer)
+        {
+            return !LayerPerPart && (layer == null || Array.IndexOf(_parts, layer) >= 0) ? PlaceName : layer;
+        }
+
+        // ---------------------------------------------------------------- drafts kept outside the tool
+
+        /// <summary>The house last placed, as it is kept with the multi.</summary>
+        public XElement LastPlaced { get; private set; }
+
+        /// <summary>Raised when a house was placed, with what is kept of it.</summary>
+        public event Action<XElement> Placed;
+
+        /// <summary>The draft as XML: what a house draft file holds.</summary>
+        public XElement ToXml(string name)
+        {
+            return HouseDraftFile.ToXml(Wings, _draft, name);
+        }
+
+        /// <summary>
+        /// Makes a saved house the draft, in place of the one being worked on (a step of the
+        /// history). A house reaching past the multi's first row or column is moved inside.
+        /// </summary>
+        public void OpenXml(XElement house, bool keepName = false)
+        {
+            EnsureMaterials();
+            _reopenedName = keepName ? (string)house.Attribute("name") : null;
+            var (wings, draft, _) = HouseDraftFile.FromXml(house, Context.HouseStyles, _draft);
+            if (wings.Count == 0)
+            {
+                throw new System.IO.InvalidDataException("The house draft has no wings.");
+            }
+
+            int dx = Math.Max(0, -wings.Min(w => w.X0)), dy = Math.Max(0, -wings.Min(w => w.Y0));
+            if (dx != 0 || dy != 0)
+            {
+                foreach (RoofWing wing in wings)
+                {
+                    (wing.X0, wing.X1, wing.Y0, wing.Y1) = (wing.X0 + dx, wing.X1 + dx, wing.Y0 + dy, wing.Y1 + dy);
+                }
+
+                draft.Shift(dx, dy);
+            }
+
+            LoadWings(wings);
+            _draft = draft;
+            ++_version;
+            RaiseChanged();
+        }
+
+        /// <summary>The tiles a saved house builds, each with its layer: what placing it put into the multi.</summary>
+        public List<(ushort Id, int X, int Y, int Z, string Layer)> TilesOf(XElement house)
+        {
+            EnsureMaterials();
+            var (wings, draft, _) = HouseDraftFile.FromXml(house, Context.HouseStyles, _draft);
+            HouseDraft own = _draft;
+            _draft = draft;
+            ++_version;
+            try
+            {
+                return new List<(ushort Id, int X, int Y, int Z, string Layer)>(Plan(wings).Add);
+            }
+            finally
+            {
+                _draft = own;
+                ++_version;
+            }
+        }
+
+        protected override void OnPlaced()
+        {
+            LastPlaced = ToXml(PlaceName);
+            _placeName = null;
+            _reopenedName = null;
+            Placed?.Invoke(LastPlaced);
         }
 
         public void SetFoundation(bool on)
@@ -436,7 +636,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             EnsureMaterials();
             string key = string.Join(";", wings.Select(w =>
-                             $"{w.X0},{w.Y0},{w.X1},{w.Y1},{w.EaveZ},{w.Storeys},{w.Shape},{w.NoRoof},{w.RidgeAlongY}")) +
+                             $"{w.X0},{w.Y0},{w.X1},{w.Y1},{w.EaveZ},{w.Storeys},{w.Rooms},{w.Shape},{w.NoRoof},{w.RidgeAlongY}")) +
                          $"|{_version}|{_roof.Gables}|{_roof.GableFill}|{Context.CompList.UndoList.Count}|{Context.CompList.RedoList.Count}";
             if (key == _builtFor)
             {
@@ -471,7 +671,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             var roofWings = new List<RoofWing>();
             foreach (RoofWing wing in wings)
             {
-                if (wing.NoRoof)
+                if (wing.NoRoof || wing.Shape == RoofShape.Flat)
                 {
                     continue;
                 }
@@ -484,12 +684,14 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             if (roofWings.Count > 0 && _draft.RoofStyle != null)
             {
-                // A lower wing's roof stops at the walls of a taller one.
+                // A lower wing's roof stops at the walls of a taller one. A roof piece is seen half a
+                // cell before its own cell, and the walls stand on the far edges of theirs: the
+                // first row and column inside a north or west wall still reach it from outside.
                 bool Hidden(int x, int y, int z)
                 {
                     foreach (RoofWing wing in wings)
                     {
-                        if (x >= wing.X0 && x <= wing.X1 && y >= wing.Y0 && y <= wing.Y1 &&
+                        if (x >= wing.X0 + 2 && x <= wing.X1 && y >= wing.Y0 + 2 && y <= wing.Y1 &&
                             z < baseZ + (wing.Storeys * HouseDraft.StoreyHeight))
                         {
                             return true;
@@ -499,11 +701,16 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     return false;
                 }
 
-                var (roofRemove, roofAdd) = _roof.PlanRoof(roofWings, _draft.RoofStyle, built.Walls, Hidden);
-                remove.AddRange(roofRemove);
-                foreach (var (id, x, y, z, layer) in roofAdd)
+                // Wings of the same height share one roof; a lower wing has a roof of its own, which
+                // lies under the eaves of a taller one where the two meet.
+                foreach (IGrouping<int, RoofWing> level in roofWings.GroupBy(r => r.EaveZ))
                 {
-                    add.Add((id, x, y, z, layer ?? RoofTool.LayerName));
+                    var (roofRemove, roofAdd) = _roof.PlanRoof(level.ToList(), _draft.RoofStyle, built.Walls, Hidden);
+                    remove.AddRange(roofRemove.Where(t => !remove.Contains(t)));
+                    foreach (var (id, x, y, z, layer) in roofAdd)
+                    {
+                        add.Add((id, x, y, z, layer ?? RoofTool.LayerName));
+                    }
                 }
             }
 

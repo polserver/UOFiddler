@@ -37,9 +37,13 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             ColorRow(swatchOutline, alphaOutline, () => _settings.Outline);
             ColorRow(swatchSelection, null, () => _settings.SelectionBox);
 
+            alphaPreview.Value = Math.Clamp(_settings.PreviewOpacity, 20, 100);
+            _refresh.Add(() => alphaPreview.Value = Math.Clamp(_settings.PreviewOpacity, 20, 100));
+
             CheckRow(checkWorkPlane, () => _settings.StartWithWorkPlane);
             CheckRow(checkGrid, () => _settings.StartWithGrid);
             CheckRow(checkHideFloorsAbove, () => _settings.HideFloorsAbove);
+            CheckRow(checkHouseOneLayer, () => _settings.HouseOnOneLayer);
         }
 
         /// <summary>The edited copy; apply it when the dialog returns OK.</summary>
@@ -115,6 +119,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             ChangeOpacity(alphaWorkPlane, () => _settings.WorkPlane, c => _settings.WorkPlane = c);
         }
 
+        private void AlphaPreview_ValueChanged(object sender, EventArgs e)
+        {
+            _settings.PreviewOpacity = (int)alphaPreview.Value;
+        }
+
         private void AlphaGrid_ValueChanged(object sender, EventArgs e)
         {
             ChangeOpacity(alphaGrid, () => _settings.Grid, c => _settings.Grid = c);
@@ -133,6 +142,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private void CheckGrid_CheckedChanged(object sender, EventArgs e)
         {
             _settings.StartWithGrid = checkGrid.Checked;
+        }
+
+        private void CheckHouseOneLayer_CheckedChanged(object sender, EventArgs e)
+        {
+            _settings.HouseOnOneLayer = checkHouseOneLayer.Checked;
         }
 
         private void CheckHideFloorsAbove_CheckedChanged(object sender, EventArgs e)

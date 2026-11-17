@@ -46,7 +46,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// Keeps the layers of a multi saved to the client. A design with only the one plain layer
         /// every design starts with has nothing to keep, and an older set for the same tiles goes.
         /// </summary>
-        public static void Save(int clientId, List<SavedLayer> layers, int activeIndex, long fingerprint)
+        /// <param name="houses">The houses placed with the House tool, as house drafts with cells counted from the save origin.</param>
+        public static void Save(int clientId, List<SavedLayer> layers, int activeIndex, long fingerprint, IReadOnlyList<XElement> houses = null)
         {
             string path = FilePath(clientId);
             string multi = fingerprint.ToString(CultureInfo.InvariantCulture);
@@ -64,6 +65,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                         new XAttribute("visible", layer.Visible),
                         new XAttribute("inFile", layer.InFile),
                         TilesText(layer.Tiles)));
+                }
+
+                foreach (XElement house in houses ?? Array.Empty<XElement>())
+                {
+                    set.Add(new XElement(house));
                 }
 
                 sets.Insert(0, set);
@@ -87,7 +93,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// Reads the layers kept for a client multi with these tiles. Null when there are none or
         /// the file cannot be read.
         /// </summary>
-        public static (List<SavedLayer> Layers, int Active)? Load(int clientId, long fingerprint)
+        public static (List<SavedLayer> Layers, int Active, List<XElement> Houses)? Load(int clientId, long fingerprint)
         {
             try
             {
@@ -105,7 +111,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                         (bool?)element.Attribute("visible") ?? true, (bool?)element.Attribute("inFile") ?? true, ParseTiles(element.Value)));
                 }
 
-                return layers.Count == 0 ? null : (layers, (int?)set.Attribute("active") ?? 0);
+                return layers.Count == 0 ? null : (layers, (int?)set.Attribute("active") ?? 0, set.Elements("House").Select(h => new XElement(h)).ToList());
             }
             catch (Exception ex) when (ex is FormatException or IndexOutOfRangeException or OverflowException)
             {

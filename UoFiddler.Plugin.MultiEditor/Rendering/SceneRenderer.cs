@@ -29,7 +29,8 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
         private static readonly SpriteTint _belowLevel = new SpriteTint(0.55f, 0.55f, 0.55f, 1f, 0f, 0f, 0f);
         private static readonly SpriteTint _transparent = SpriteTint.Alpha(0.3f);
         private static readonly SpriteTint _standable = new SpriteTint(0.6f, 1f, 0.6f, 1f, 0f, 0.3f, 0f);
-        private static readonly SpriteTint _toolGhost = new SpriteTint(1f, 1f, 1f, 0.6f, 0f, 0.08f, 0.16f);
+        // Tiles a tool is about to place: see-through by the setting, with a little blue so they differ from placed ones.
+        private SpriteTint _toolGhost = new SpriteTint(1f, 1f, 1f, 0.8f, 0f, 0.08f, 0.16f);
         private static readonly SpriteTint _removeMark = new SpriteTint(1f, 0.3f, 0.3f, 0.85f, 0.45f, 0f, 0f);
 
         private static readonly SpriteTint _reference = new SpriteTint(0.7f, 0.8f, 1f, 0.4f, 0f, 0.05f, 0.15f);
@@ -81,6 +82,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             _marqueeLine = settings.SelectionBox;
             _marqueeFill = Color.FromArgb(40, settings.SelectionBox);
             _workPlane = SpriteTint.Solid(settings.WorkPlane);
+            _toolGhost = new SpriteTint(1f, 1f, 1f, settings.PreviewOpacity / 100f, 0f, 0.08f, 0.16f);
 
             if (!session.HasDocument)
             {
