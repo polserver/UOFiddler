@@ -111,6 +111,55 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             return layer;
         }
 
+        /// <summary>
+        /// Removes some tiles and adds others in one undo step, the new ones on the layer each
+        /// names or, when it names none, on the layer called <paramref name="layerName"/>. That
+        /// layer is made on top of the others when the multi has none of that name; the active
+        /// layer stays as it is. The multi grows to hold tiles added past its +X/+Y end.
+        /// </summary>
+        public void ReplaceTilesOnLayer(IEnumerable<MultiTile> remove, IEnumerable<(ushort Id, int X, int Y, int Z, TileLayer Layer)> add,
+            string action, string layerName)
+        {
+            var added = new List<(ushort Id, int X, int Y, int Z, TileLayer Layer)>(add);
+            BeginEdit(action);
+            foreach (MultiTile tile in new List<MultiTile>(remove))
+            {
+                RecordRemove(tile);
+            }
+
+            int width = Width, height = Height;
+            foreach (var (_, x, y, _, _) in added)
+            {
+                if (x >= 0 && y >= 0)
+                {
+                    width = Math.Max(width, x + 1);
+                    height = Math.Max(height, y + 1);
+                }
+            }
+
+            if (width != Width || height != Height)
+            {
+                RebuildGrid(width, height, new List<MultiTile>(RealTiles));
+            }
+
+            TileLayer named = _layers.FirstOrDefault(l => l.Name == layerName);
+            if (named == null && added.Any(a => a.Layer == null))
+            {
+                RecordLayers();
+                TileLayer active = ActiveLayer;
+                named = new TileLayer(layerName);
+                _layers.Add(named);
+                ActiveLayer = active;
+            }
+
+            foreach (var (id, x, y, z, layer) in added)
+            {
+                RecordNew(id, x, y, z, false, 0, layer: layer != null && _layers.Contains(layer) ? layer : named);
+            }
+
+            EndEdit();
+        }
+
         /// <summary>Removes a layer with its tiles. The last layer stays.</summary>
         public bool LayerRemove(TileLayer layer)
         {

@@ -92,7 +92,14 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             _tools[ToolKind.Floor] = new FloorStyleTool(this);
             _tools[ToolKind.Door] = new DoorTool(this);
             _tools[ToolKind.Stair] = new StairTool(this);
-            _tools[ToolKind.Roof] = new RoofTool(this);
+            var roof = new RoofTool(this);
+            roof.Changed += () =>
+            {
+                ToolChanged?.Invoke();
+                Invalidated?.Invoke();
+            };
+            roof.Committed += () => LayersChanged?.Invoke();
+            _tools[ToolKind.Roof] = roof;
             _tools[ToolKind.Foundation] = new FoundationTool(this);
             _tools[ToolKind.FloorPattern] = new FloorPatternTool(this);
             _pasteTool = new PasteTool(this);
@@ -181,6 +188,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         private void SetDocument(MultiEditorComponentList list)
         {
             CancelTool();
+            Roof.Discard();
             CompList = list;
             _selection.Clear();
             HoverTile = null;
@@ -343,6 +351,12 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             get => _toolKind;
             set
             {
+                // A roof still being shaped is placed when another tool is taken up.
+                if (_toolKind == ToolKind.Roof && value != ToolKind.Roof)
+                {
+                    Roof.Commit();
+                }
+
                 CancelTool();
                 _toolKind = value;
                 if (IsTileTool(value))
@@ -374,8 +388,11 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         /// <summary>The bordered floor laid by the floor pattern tool, or null.</summary>
         public FloorPattern FloorPattern { get; set; }
 
-        /// <summary>The roof tool, for its shape options (ridge, gables, gable fill).</summary>
+        /// <summary>The roof tool, for its shape options (ridge, gables, gable fill) and the roof being shaped.</summary>
         public RoofTool Roof => (RoofTool)_tools[ToolKind.Roof];
+
+        /// <summary>True while the roof tool is in use and holds a roof that is not placed yet.</summary>
+        public bool ShapingRoof => _temporaryTool == null && _toolKind == ToolKind.Roof && Roof.HasPending;
 
         /// <summary>Call after a tool option changed, so the preview under the cursor follows.</summary>
         public void ToolOptionsChanged()

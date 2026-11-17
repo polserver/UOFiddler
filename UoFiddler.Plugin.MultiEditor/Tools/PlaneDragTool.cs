@@ -9,8 +9,10 @@
  *
  ***************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using UoFiddler.Plugin.MultiEditor.Classes;
 
@@ -45,6 +47,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// <summary>The edit's name in the undo list.</summary>
         protected abstract string ActionName { get; }
 
+        /// <summary>True when tiles planned past the +X/+Y end of the multi make it bigger instead of being dropped.</summary>
+        protected virtual bool GrowsMulti => false;
+
         public override void OnMouseDown(MouseEventArgs e)
         {
             if (Style == null)
@@ -78,8 +83,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             var (remove, add) = Plan(_startX, _startY, _endX, _endY, _z, final: true);
             if (remove.Count > 0 || add.Count > 0)
             {
-                Context.CompList.ReplaceTiles(remove, add, ActionName);
-                Context.AfterEdit(_z);
+                Context.CompList.ReplaceTiles(remove, add, ActionName, GrowsMulti);
+                Context.AfterEdit(add.Count > 0 ? Math.Max(_z, add.Max(a => a.Z)) : _z);
             }
         }
 

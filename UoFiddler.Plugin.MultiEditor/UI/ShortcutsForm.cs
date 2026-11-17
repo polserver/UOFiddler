@@ -64,9 +64,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ("Keep the line straight (Line)", "Shift + drag"),
                 ("One straight wall instead of a room (Walls)", "Shift + drag"),
                 ("Erase walls (Walls)", "Ctrl + drag"),
-                ("Fit the roof to the walls (Roof)", "Click without dragging"),
-                ("Turn the ridge the other way (Roof)", "Shift"),
-                ("Gables at one end or both (Roof)", "Ctrl"));
+                ("Start a roof fitted to the walls, part by part on an L or T shaped house (Roof)", "Click without dragging"),
+                ("Start a roof fitted to the walls (Roof)", "Drag over the walls, the floor or the roof area"),
+                ("Select a wing of the roof being shaped, or move it (Roof)", "Click / drag the wing"),
+                ("Resize the selected wing (Roof)", "Drag one of its edges"),
+                ("Add a wing: valleys, and a T where the ridges meet (Roof)", "Drag beside the roof"),
+                ("Turn a wing's ridge (Roof)", "Shift + click the wing"),
+                ("Remove the selected wing (Roof)", "Delete"),
+                ("Place the roof on the Roof layer (Roof)", "Enter, or pick another tool"),
+                ("Drop the roof being shaped (Roof)", "Esc"));
 
             Section("Tile browser",
                 ("Go from the search box to the results", "Down"),

@@ -54,6 +54,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _floorLabel = new System.Windows.Forms.ToolStripLabel();
             _optionsSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             _drawTileLabel = new System.Windows.Forms.ToolStripLabel();
+            _shapeSeparator = new System.Windows.Forms.ToolStripSeparator();
+            _shapeLabel = new System.Windows.Forms.ToolStripLabel();
             _ridgeSeparator = new System.Windows.Forms.ToolStripSeparator();
             _ridgeLabel = new System.Windows.Forms.ToolStripLabel();
             _gablesSeparator = new System.Windows.Forms.ToolStripSeparator();
@@ -242,7 +244,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _optionsStrip
             //
             _optionsStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            _optionsStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { _toolLabel, _optionsSeparator1, _placeLabel, _brushLabel, _zStepLabel, _zStepCombo, _optionsSeparator2, _floorLabel, _optionsSeparator3, _drawTileLabel, _ridgeSeparator, _ridgeLabel, _gablesSeparator, _gablesLabel, _gableFillSeparator, _gableFillLabel });
+            _optionsStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { _toolLabel, _optionsSeparator1, _placeLabel, _brushLabel, _zStepLabel, _zStepCombo, _optionsSeparator2, _floorLabel, _optionsSeparator3, _drawTileLabel, _shapeSeparator, _shapeLabel, _ridgeSeparator, _ridgeLabel, _gablesSeparator, _gablesLabel, _gableFillSeparator, _gableFillLabel });
             _optionsStrip.Location = new System.Drawing.Point(0, 25);
             _optionsStrip.Name = "_optionsStrip";
             _optionsStrip.Size = new System.Drawing.Size(1280, 25);
@@ -312,6 +314,18 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _drawTileLabel.Text = "Tile: none";
             _drawTileLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             //
+            // _shapeSeparator
+            //
+            _shapeSeparator.Name = "_shapeSeparator";
+            _shapeSeparator.Size = new System.Drawing.Size(6, 25);
+            //
+            // _shapeLabel
+            //
+            _shapeLabel.Name = "_shapeLabel";
+            _shapeLabel.Size = new System.Drawing.Size(39, 22);
+            _shapeLabel.Text = "Shape";
+            _shapeLabel.ToolTipText = "Gable: two slopes and a ridge.";
+            //
             // _ridgeSeparator
             //
             _ridgeSeparator.Name = "_ridgeSeparator";
@@ -322,7 +336,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _ridgeLabel.Name = "_ridgeLabel";
             _ridgeLabel.Size = new System.Drawing.Size(36, 22);
             _ridgeLabel.Text = "Ridge";
-            _ridgeLabel.ToolTipText = "Which way the ridge runs. Shift turns it for one stroke.";
+            _ridgeLabel.ToolTipText = "Which way the ridge runs. Shift turns a gable's ridge for one stroke.";
             //
             // _gablesSeparator
             //
@@ -525,6 +539,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.ToolStripLabel _floorLabel;
         private System.Windows.Forms.ToolStripSeparator _optionsSeparator3;
         private System.Windows.Forms.ToolStripLabel _drawTileLabel;
+        private System.Windows.Forms.ToolStripSeparator _shapeSeparator;
+        private System.Windows.Forms.ToolStripLabel _shapeLabel;
         private System.Windows.Forms.ToolStripSeparator _ridgeSeparator;
         private System.Windows.Forms.ToolStripLabel _ridgeLabel;
         private System.Windows.Forms.ToolStripSeparator _gablesSeparator;
