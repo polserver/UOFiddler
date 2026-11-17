@@ -216,18 +216,26 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         protected override (List<MultiTile> Remove, List<(ushort Id, int X, int Y, int Z)> Add) Plan(
             int startX, int startY, int endX, int endY, int z, bool final)
         {
-            var add = new List<(ushort, int, int, int)>();
-            int dx = endX - startX;
-            int dy = endY - startY;
-            string column = Math.Abs(dx) > Math.Abs(dy)
+            return (new List<MultiTile>(), Tiles(Style, Column(endX - startX, endY - startY), startX, startY, z));
+        }
+
+        /// <summary>The stair column for the way a drag points: the stairs climb that way, north for a click.</summary>
+        public static string Column(int dx, int dy)
+        {
+            return Math.Abs(dx) > Math.Abs(dy)
                 ? (dx > 0 ? "MultiEast" : "MultiWest")
                 : (dy > 0 ? "MultiSouth" : "MultiNorth");
+        }
 
-            ushort multiId = Style.Get(column);
+        /// <summary>The tiles of a style's stairs with their lowest step in a cell, climbing one level from <paramref name="z"/>.</summary>
+        public static List<(ushort Id, int X, int Y, int Z)> Tiles(HouseStyle style, string column, int startX, int startY, int z)
+        {
+            var add = new List<(ushort, int, int, int)>();
+            ushort multiId = style.Get(column);
             MultiComponentList stairs = multiId != 0 ? Multis.GetComponents(multiId) : MultiComponentList.Empty;
             if (stairs == MultiComponentList.Empty || stairs.Width == 0)
             {
-                return (new List<MultiTile>(), add);
+                return add;
             }
 
             // The lowest step goes under the cursor.
@@ -260,7 +268,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 }
             }
 
-            return (new List<MultiTile>(), add);
+            return add;
         }
     }
 }

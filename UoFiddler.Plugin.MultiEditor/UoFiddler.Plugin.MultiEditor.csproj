@@ -83,6 +83,12 @@
 		<Compile Update="UI\FloorsDialog.Designer.cs">
 			<DependentUpon>FloorsDialog.cs</DependentUpon>
 		</Compile>
+		<Compile Update="UI\HousePanel.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UI\HousePanel.Designer.cs">
+			<DependentUpon>HousePanel.cs</DependentUpon>
+		</Compile>
 		<Compile Update="UI\InspectorPanel.cs">
 			<SubType>UserControl</SubType>
 		</Compile>

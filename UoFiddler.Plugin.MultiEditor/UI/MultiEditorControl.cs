@@ -59,6 +59,16 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             InitializeComponent();
             SplitterGrip.Attach(_sideSplit);
 
+            // The house draft's panel sits above the floors and selection; shown with the House tool or an open draft.
+            _housePanel = new HousePanel { Dock = DockStyle.Top, Visible = false };
+            _housePanel.PickStyle += PickHouseMaterial;
+            _housePanel.Used += () =>
+            {
+                _commands.RefreshStates();
+                _canvas.Focus();
+            };
+            _sideSplit.Panel2.Controls.Add(_housePanel);
+
             // Room after each tab's text for its close button, at any DPI.
             _docTabs.Padding = new Point((CloseGlyphSize + LogicalToDeviceUnits(16)) / 2, _docTabs.Padding.Y);
         }
@@ -495,16 +505,16 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _closeAll = Command("File", "Close all designs", CloseAllDocuments, Keys.Control | Keys.Shift | Keys.W, hasDoc);
 
             _undo = Command("Edit", "Undo", () => Session.Undo(), Keys.Control | Keys.Z,
-                () => Session != null && Session.CompList.UndoList.Count > 0, glyph: Glyphs.Undo);
+                () => Session != null && Session.CanUndo, glyph: Glyphs.Undo);
             _redo = Command("Edit", "Redo", () => Session.Redo(), Keys.Control | Keys.Y,
-                () => Session != null && Session.CompList.RedoList.Count > 0, glyph: Glyphs.Redo, alt: Keys.Control | Keys.Shift | Keys.Z);
+                () => Session != null && Session.CanRedo, glyph: Glyphs.Redo, alt: Keys.Control | Keys.Shift | Keys.Z);
             _cut = Command("Edit", "Cut", () => Session.Cut(), Keys.Control | Keys.X, hasSelection, glyph: Glyphs.Cut);
             _copy = Command("Edit", "Copy", () => Session.Copy(), Keys.Control | Keys.C, hasSelection, glyph: Glyphs.Copy);
             _paste = Command("Edit", "Paste", () => Session.Paste(), Keys.Control | Keys.V, hasDoc, glyph: Glyphs.Paste);
             _duplicate = Command("Edit", "Duplicate selection", () => Session.Duplicate(), Keys.Control | Keys.D, hasSelection);
             _repeat = Command("Edit", "Repeat selection...", RepeatSelectionPrompt, Keys.Control | Keys.Shift | Keys.D, hasSelection);
             _delete = Command("Edit", "Delete selection", DeleteSelectionOrWing, Keys.Delete,
-                () => Session != null && (Session.ShapingRoof ? Session.Roof.HasSelectedWing : Session.Selection.Count > 0), glyph: Glyphs.Delete);
+                () => Session != null && (Session.ShapingRoof ? Session.WingTool.HasSelectedWing : Session.Selection.Count > 0), glyph: Glyphs.Delete);
 
             _selectAll = Command("Select", "Select all", () => Session.SelectAll(), Keys.Control | Keys.A, hasDoc);
             _invert = Command("Select", "Invert selection", () => Session.InvertSelection(), Keys.Control | Keys.Shift | Keys.A, hasDoc);
@@ -575,6 +585,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             AddTool(ToolKind.Stair, "Stairs", Keys.D4, Glyphs.Stair);
             AddTool(ToolKind.Roof, "Roofs", Keys.D5, Glyphs.Roof);
             AddTool(ToolKind.Foundation, "Foundation", Keys.D6, Glyphs.Foundation);
+            AddTool(ToolKind.House, "House", Keys.D7, Glyphs.Foundation);
             AddTool(ToolKind.FloorPattern, "Floor pattern", Keys.None, Glyphs.Floor);
 
             _cyclePlacement = Command("Tools", "Next placement mode", CyclePlacement, Keys.M, hasDoc);
@@ -599,8 +610,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     hasDoc, () => Session?.BrushSize == size));
             }
             _escape = Command("Tools", "Cancel tool, then clear selection", Escape, Keys.Escape, hasDoc);
-            _placeRoof = Command("Tools", "Place the roof being shaped", () => Session.Roof.Commit(), Keys.Enter,
-                () => Session != null && Session.ShapingRoof);
+            _placeRoof = Command("Tools", "Place the roof or house being shaped", () => Session.DraftInFocus?.Commit(), Keys.Enter,
+                () => Session?.DraftInFocus != null);
             _shortcuts = Command("Help", "Keyboard shortcuts", ShowShortcuts, Keys.F1, glyph: Glyphs.Help);
             _drawWithSelected = Command("Tools", "Draw with this tile", DrawWithSelected, can: () => (_menuTile ?? Session?.SelectedTile) != null);
         }
@@ -624,6 +635,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             Session.Tool = kind;
+
+            // The house draft is worked on in its panel, which sits in the floors and selection sidebar.
+            if (kind == ToolKind.House && !_inspectorShown)
+            {
+                ToggleSidebar(browser: false);
+            }
 
             // A house tool builds with a style from the House page: bring that page up on the
             // matching kind. The page answers by choosing the style, which comes back here.
@@ -658,6 +675,16 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
+            // A pick asked for by the house panel is a material of the draft, not a tool's style.
+            if (_housePick is { } pick && pick.Kind == style.Kind)
+            {
+                _housePick = null;
+                Session.House.SetMaterial(style, style.Kind == HousePartKind.Roof ? null : pick.Storey);
+                SetTool(ToolKind.House, fromHousePage: true);
+                return;
+            }
+
+            _housePick = null;
             Session.HouseStyle = style;
             ToolKind kind = style.Kind switch
             {
@@ -670,6 +697,35 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             SetTool(kind, fromHousePage: true);
         }
 
+        /// <summary>The house panel asks for a style: the House page comes up on that kind and the next pick there goes to the draft.</summary>
+        private void PickHouseMaterial(HousePartKind kind, int storey)
+        {
+            if (Session == null)
+            {
+                return;
+            }
+
+            if (!_browserShown)
+            {
+                ToggleSidebar(browser: true);
+            }
+
+            _housePick = (kind, storey);
+            _openingHousePage = true;
+            try
+            {
+                _browser.ShowHousePage(kind, foundation: false);
+            }
+            finally
+            {
+                _openingHousePage = false;
+            }
+
+            _statusHint.Text = kind == HousePartKind.Roof
+                ? "Pick the roof style of the house on the House page."
+                : $"Pick the {(kind == HousePartKind.Wall ? "wall" : "floor")} style of storey {storey + 1} on the House page.";
+        }
+
         private void CyclePlacement()
         {
             Session.Placement = (PlacementMode)(((int)Session.Placement + 1) % 3);
@@ -680,7 +736,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             if (Session.ShapingRoof)
             {
-                Session.Roof.DeleteWing();
+                Session.WingTool.DeleteWing();
             }
             else
             {
@@ -691,9 +747,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private void Escape()
         {
             // With a roof being shaped: the first Esc stops a drag, the next one drops the roof.
-            if (Session.ShapingRoof && !Session.ActiveTool.IsDragging)
+            if (Session.DraftInFocus is { } draft && !Session.ActiveTool.IsDragging)
             {
-                Session.Roof.Discard();
+                draft.Discard();
                 return;
             }
 
@@ -1355,8 +1411,22 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ("Walls", () => Session.Roof.GableFill == RoofGableFill.Walls, () => Session.Roof.GableFill = RoofGableFill.Walls));
 
             // Shown while a roof is being shaped.
-            _placeRoofButton = RoofAction(strip, "Place roof", "Places the roof on the Roof layer (Enter).", () => Session.Roof.Commit());
-            _dropRoofButton = RoofAction(strip, "Drop", "Drops the roof being shaped (Esc).", () => Session.Roof.Discard());
+            _placeRoofButton = RoofAction(strip, "Place", "Places what is being shaped: the roof on the Roof layer, the house on its layers (Enter).", () => Session.DraftInFocus?.Commit());
+            _dropRoofButton = RoofAction(strip, "Drop", "Drops what is being shaped (Esc). Undo brings it back.", () => Session.DraftInFocus?.Discard());
+        }
+
+        /// <summary>What the tool in use does to the open house draft.</summary>
+        private static string DraftHint(EditorSession session)
+        {
+            string storey = $"House draft, storey {session.DraftStorey + 1} (the floor buttons choose it): ";
+            return session.Tool switch
+            {
+                ToolKind.Wall => storey + "drag to add walls, Ctrl+drag to take walls away, click a wall for a window.",
+                ToolKind.Door => storey + "click a wall to hang the chosen door, again to turn it, Ctrl+click to take it out.",
+                ToolKind.Floor => storey + "drag an area to lay it in the chosen floor style.",
+                ToolKind.Stair => storey + "press on the bottom step and drag the way the stairs climb; Ctrl+click a bottom step removes them.",
+                _ => "A house draft is open. This tool works on the multi; House, Walls, Doors, Floors and Stairs work on the draft."
+            };
         }
 
         private void ZStepCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -1364,6 +1434,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Apply(() => Session.ZStep = int.Parse(_zStepCombo.Text));
         }
 
+        private readonly HousePanel _housePanel;
+        private (HousePartKind Kind, int Storey)? _housePick;
         private EditorCommand _placeRoof;
         private ToolStripButton _placeRoofButton;
         private ToolStripButton _dropRoofButton;
@@ -1419,7 +1491,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             };
             button.Click += (_, _) =>
             {
-                if (Session != null && Session.ShapingRoof)
+                if (Session?.DraftInFocus != null)
                 {
                     run();
                     _commands.RefreshStates();
@@ -1438,7 +1510,13 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 item.Visible = show;
             }
 
-            _placeRoofButton.Visible = _dropRoofButton.Visible = show && Session.ShapingRoof;
+            _placeRoofButton.Visible = _dropRoofButton.Visible = Session != null && !Session.Pasting && Session.DraftInFocus != null;
+
+            bool house = Session != null && (Session.Tool == ToolKind.House || Session.House.HasPending);
+            if (_housePanel.Visible != house)
+            {
+                _housePanel.Visible = house;
+            }
 
             foreach ((ToolStripButton button, Func<bool> isOn) in _roofButtons)
             {
@@ -1479,7 +1557,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             Section(_editToolsLabel, ToolKind.Select, ToolKind.Lasso, ToolKind.Altitude, ToolKind.Pipette, ToolKind.Transparent, ToolKind.Remove);
             Section(_drawToolsLabel, ToolKind.Draw, ToolKind.RectFill, ToolKind.Line);
-            Section(_houseToolsLabel, ToolKind.Wall, ToolKind.Floor, ToolKind.Door, ToolKind.Stair, ToolKind.Roof, ToolKind.Foundation);
+            Section(_houseToolsLabel, ToolKind.Wall, ToolKind.Floor, ToolKind.Door, ToolKind.Stair, ToolKind.Roof, ToolKind.Foundation, ToolKind.House);
         }
 
         // ---------------------------------------------------------------- documents
@@ -1627,6 +1705,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void SaveToClient()
         {
+            if (!SettleOpenDraft())
+            {
+                return;
+            }
+
             if (AskIncludeHiddenLayers("Leaves them out of the client's multi. They stay in the editor's layers and come back when you open it here.") is not { } includeHidden)
             {
                 return;
@@ -1656,6 +1739,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void ExportFile()
         {
+            if (!SettleOpenDraft())
+            {
+                return;
+            }
+
             if (AskIncludeHiddenLayers("Leaves them out of the file. Exported files do not keep layers.") is not { } includeHidden)
             {
                 return;
@@ -1671,6 +1759,37 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// Before a save: asks whether tiles on hidden layers go into it. True without asking when
         /// no hidden layer has tiles; null when the save is cancelled.
         /// </summary>
+        /// <summary>
+        /// Before a save: a roof or house still being shaped is not in the multi. Asks whether to
+        /// place it first. False when the save was cancelled.
+        /// </summary>
+        private bool SettleOpenDraft()
+        {
+            WingDraftTool draft = Session.House.HasPending ? Session.House : Session.Roof.HasPending ? Session.Roof : null;
+            if (draft == null)
+            {
+                return true;
+            }
+
+            string what = draft is HouseTool ? "house" : "roof";
+            DialogResult answer = MessageBox.Show(this,
+                $"The {what} being shaped is not placed yet, so it is not part of the multi.\r\n\r\nPlace it before saving?\r\n\r\n" +
+                "Yes places it. No saves without it and keeps it open.",
+                "Multi Editor", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (answer == DialogResult.Cancel)
+            {
+                return false;
+            }
+
+            if (answer == DialogResult.Yes)
+            {
+                draft.Commit();
+                _commands.RefreshStates();
+            }
+
+            return true;
+        }
+
         private bool? AskIncludeHiddenLayers(string whenLeftOut)
         {
             MultiEditorComponentList list = Session.CompList;
@@ -1742,6 +1861,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// </summary>
         private void SaveDesignFile(bool saveAs)
         {
+            if (!SettleOpenDraft())
+            {
+                return;
+            }
+
             string path = _active.FilePath;
             if (saveAs || path == null)
             {
@@ -2032,6 +2156,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             {
                 _canvas.Show(null, null);
                 _inspector.Bind(null);
+                _housePanel.Bind(null);
             }
             else
             {
@@ -2048,6 +2173,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _canvas.Show(session, document.Camera);
 
                 _inspector.Bind(session);
+                _housePanel.Bind(session);
                 if (session.DrawTileId != 0)
                 {
                     _browser.SetCurrentTile(session.DrawTileId);
@@ -2237,8 +2363,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _statusHint.Text = session.PreviewMode ? "Preview: editing is off. Right click picks the ground. F5 returns to the editor."
                 : session.PreviewingRepeat ? "The copies are shown as they would be placed."
                 : session.Pasting ? "Click to place the tiles, as often as you like. Esc or right click stops."
-                : session.ShapingRoof ? "Shaping the roof: drag a wing to move it, an edge of the selected wing to resize it, anywhere else to add a wing. " +
-                                        "Shift+click turns a ridge, Delete removes a wing. Enter places the roof on the Roof layer, Esc drops it."
+                : session.ShapingRoof ? "Shaping: drag a wing to move it, a marked edge of the selected wing to resize it, anywhere else to add a wing. " +
+                                        "Shift+click turns a ridge, Delete removes a wing, Ctrl+Z steps back. Enter places it, Esc drops it."
+                : session.House.HasPending ? DraftHint(session)
                 : ToolHint(session.Tool);
 
             (int x, int y, int z) = session.CursorCell;
@@ -2274,6 +2401,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ToolKind.Stair => "Drag in the direction the stairs climb.",
                 ToolKind.Roof => "Click a walled room to start its roof, or drag out a roof of any size. It stays open for shaping until Enter places it.",
                 ToolKind.Foundation => "Drag an area to lay a foundation under it.",
+                ToolKind.House => "Drag out the wall cells of a wing to start a house. Storeys, roof and materials are in the House panel; nothing is placed until Enter.",
                 ToolKind.FloorPattern => "Drag an area to lay the bordered floor: corners, sides and fill repeat to fit.",
                 _ => string.Empty
             };

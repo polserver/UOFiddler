@@ -41,7 +41,10 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         Foundation,
 
         /// <summary>Lays a bordered floor pattern; chosen from the House page, not the palette.</summary>
-        FloorPattern
+        FloorPattern,
+
+        /// <summary>Designs a whole house as a draft and places it.</summary>
+        House
     }
 
     /// <summary>
@@ -53,6 +56,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
     {
         private readonly HashSet<MultiTile> _selection = new HashSet<MultiTile>();
         private readonly Dictionary<ToolKind, EditorTool> _tools = new Dictionary<ToolKind, EditorTool>();
+        private readonly Dictionary<ToolKind, EditorTool> _draftTools = new Dictionary<ToolKind, EditorTool>();
         private readonly ArtMasks _masks;
         private readonly PasteTool _pasteTool;
         private readonly RepeatPreviewTool _repeatTool;
@@ -93,13 +97,24 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             _tools[ToolKind.Door] = new DoorTool(this);
             _tools[ToolKind.Stair] = new StairTool(this);
             var roof = new RoofTool(this);
-            roof.Changed += () =>
+            var house = new HouseTool(this, roof);
+            foreach (WingDraftTool draft in new WingDraftTool[] { roof, house })
             {
-                ToolChanged?.Invoke();
-                Invalidated?.Invoke();
-            };
-            roof.Committed += () => LayersChanged?.Invoke();
+                draft.Changed += () =>
+                {
+                    DraftChanged?.Invoke();
+                    ToolChanged?.Invoke();
+                    Invalidated?.Invoke();
+                };
+                draft.Committed += () => LayersChanged?.Invoke();
+            }
+
             _tools[ToolKind.Roof] = roof;
+            _tools[ToolKind.House] = house;
+            _draftTools[ToolKind.Wall] = new DraftWallTool(this, house);
+            _draftTools[ToolKind.Door] = new DraftDoorTool(this, house);
+            _draftTools[ToolKind.Floor] = new DraftFloorTool(this, house);
+            _draftTools[ToolKind.Stair] = new DraftStairTool(this, house);
             _tools[ToolKind.Foundation] = new FoundationTool(this);
             _tools[ToolKind.FloorPattern] = new FloorPatternTool(this);
             _pasteTool = new PasteTool(this);
@@ -163,32 +178,87 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             DocumentChanged?.Invoke();
         }
 
+        /// <summary>True when Undo has something to take back: a step of an open draft, or of the multi.</summary>
+        public bool CanUndo => HasDocument && (UndoDraftTool != null || CompList.UndoList.Count > 0);
+
+        public bool CanRedo => HasDocument && (RedoDraftTool != null || (OpenDraft == null && CompList.RedoList.Count > 0) ||
+                                               (OpenDraft is { ReopenedFrom: not null } reopened && CompList.RedoList.Count > 0 &&
+                                                ReferenceEquals(CompList.RedoList[0], reopened.ReopenedFrom)));
+
+        // The draft whose history undo and redo walk first: the wing tool in use, else the house.
+        private WingDraftTool UndoDraftTool => WingTool is { CanUndoDraft: true } tool ? tool : House.CanUndoDraft ? House : null;
+
+        private WingDraftTool RedoDraftTool => WingTool is { CanRedoDraft: true } tool ? tool : House.CanRedoDraft ? House : null;
+
+        /// <summary>
+        /// Takes back the last step: of the draft being shaped while there is one, else of the
+        /// multi. Undoing the step that placed a roof or house brings its draft back as it was.
+        /// </summary>
         public bool Undo()
         {
+            if (UndoDraftTool is { } draft)
+            {
+                return draft.UndoDraft();
+            }
+
+            EditCommand step = CompList.UndoList.Count > 0 ? CompList.UndoList[0] : null;
             if (!CompList.UndoStep())
             {
                 return false;
             }
 
+            foreach (WingDraftTool tool in new WingDraftTool[] { House, Roof })
+            {
+                // A roof draft shows only with the roof tool, so it comes back only there; a
+                // house draft shows under every tool.
+                if (tool.PlacedBy != null && ReferenceEquals(tool.PlacedBy, step) && !tool.HasPending &&
+                    (tool is HouseTool || _toolKind == ToolKind.Roof))
+                {
+                    tool.Reopen();
+                }
+            }
+
             AfterEdit();
+            LayersChanged?.Invoke();
             return true;
         }
 
+        /// <summary>
+        /// Redoes a step of the draft being shaped, else of the multi. While a draft is open the
+        /// multi's steps wait, except the one that placed that very draft.
+        /// </summary>
         public bool Redo()
         {
+            if (RedoDraftTool is { } draft)
+            {
+                return draft.RedoDraft();
+            }
+
+            if (OpenDraft is { } open)
+            {
+                if (open.ReopenedFrom == null || CompList.RedoList.Count == 0 || !ReferenceEquals(CompList.RedoList[0], open.ReopenedFrom))
+                {
+                    return false;
+                }
+
+                open.CloseReopened();
+            }
+
             if (!CompList.RedoStep())
             {
                 return false;
             }
 
             AfterEdit();
+            LayersChanged?.Invoke();
             return true;
         }
 
         private void SetDocument(MultiEditorComponentList list)
         {
             CancelTool();
-            Roof.Discard();
+            Roof.Reset();
+            House.Reset();
             CompList = list;
             _selection.Clear();
             HoverTile = null;
@@ -352,6 +422,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             set
             {
                 // A roof still being shaped is placed when another tool is taken up.
+                // A house draft stays open instead: the wall, door, floor and stair tools work on it.
                 if (_toolKind == ToolKind.Roof && value != ToolKind.Roof)
                 {
                     Roof.Commit();
@@ -369,7 +440,12 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             }
         }
 
-        public EditorTool ActiveTool => _temporaryTool ?? _tools[_toolKind];
+        /// <summary>
+        /// The tool in use. While a house draft is open the wall, door, floor and stair tools are
+        /// the ones that change the draft.
+        /// </summary>
+        public EditorTool ActiveTool => _temporaryTool ??
+            (House.HasPending && _draftTools.TryGetValue(_toolKind, out EditorTool draftTool) ? draftTool : _tools[_toolKind]);
 
         /// <summary>True for the tools that place the draw tile (draw, rectangle, line).</summary>
         public static bool IsTileTool(ToolKind kind)
@@ -391,8 +467,43 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         /// <summary>The roof tool, for its shape options (ridge, gables, gable fill) and the roof being shaped.</summary>
         public RoofTool Roof => (RoofTool)_tools[ToolKind.Roof];
 
-        /// <summary>True while the roof tool is in use and holds a roof that is not placed yet.</summary>
-        public bool ShapingRoof => _temporaryTool == null && _toolKind == ToolKind.Roof && Roof.HasPending;
+        /// <summary>The house tool, for its draft and options.</summary>
+        public HouseTool House => (HouseTool)_tools[ToolKind.House];
+
+        /// <summary>Raised when a roof or house draft starts, changes or ends.</summary>
+        public event Action DraftChanged;
+
+        /// <summary>The roof or house tool when it is the tool in use, else null.</summary>
+        public WingDraftTool WingTool => _temporaryTool == null ? _tools[_toolKind] as WingDraftTool : null;
+
+        /// <summary>
+        /// The draft that Enter places, Esc drops and undo steps through: the one of the wing
+        /// tool in use, else an open house draft (which stays open under the other tools).
+        /// </summary>
+        public WingDraftTool OpenDraft => WingTool is { HasPending: true } tool ? tool : House.HasPending ? House : null;
+
+        /// <summary>
+        /// The open draft when the tool in use works on it (a wing tool, or a tool that edits the
+        /// house draft): the one Enter places and Esc drops.
+        /// </summary>
+        public WingDraftTool DraftInFocus => _temporaryTool != null ? null
+            : WingTool is { HasPending: true } tool ? tool
+            : House.HasPending && ActiveTool is DraftEditTool ? House : null;
+
+        /// <summary>True while a wing tool is in use and holds a draft that is not placed yet.</summary>
+        public bool ShapingRoof => WingTool is { HasPending: true };
+
+        /// <summary>The storey of an open house draft that the chosen floor means.</summary>
+        public int DraftStorey => House.StoreyFor(WorkZ);
+
+        /// <summary>Draws an open house draft while a tool that does not work on it is in use.</summary>
+        public void PaintIdleDraft(IToolOverlay overlay)
+        {
+            if (House.HasPending && _temporaryTool == null && ActiveTool is not (HouseTool or DraftEditTool))
+            {
+                House.PaintDraft(overlay, active: false);
+            }
+        }
 
         /// <summary>Call after a tool option changed, so the preview under the cursor follows.</summary>
         public void ToolOptionsChanged()

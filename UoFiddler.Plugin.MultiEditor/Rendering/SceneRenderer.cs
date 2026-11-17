@@ -126,6 +126,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             if (!session.PickingWithAlt)
             {
                 session.ActiveTool.PaintOverlay(this);
+                session.PaintIdleDraft(this);
             }
             LastSpriteCount += _sprites.Count;
             _sprites.Flush(_atlas, camera, viewport);
@@ -566,7 +567,8 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
                 return;
             }
 
-            if (!_session.CompList.InBounds(x, y) || !_atlas.TryGet(id, out AtlasSprite sprite))
+            // A ghost may lie past the multi's end: tools that grow the multi show what they add.
+            if (x < 0 || y < 0 || !_atlas.TryGet(id, out AtlasSprite sprite))
             {
                 return;
             }
@@ -601,6 +603,51 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             if (closed && points.Count > 2)
             {
                 _lines.Add(points[^1].X, points[^1].Y, points[0].X, points[0].Y, _marqueeLine);
+            }
+        }
+
+        private static Color ToneColor(OverlayTone tone) => tone switch
+        {
+            OverlayTone.Selected => Color.FromArgb(255, 255, 214, 64),
+            OverlayTone.Hover => Color.FromArgb(255, 255, 255, 255),
+            OverlayTone.Remove => Color.FromArgb(255, 255, 80, 80),
+            _ => Color.FromArgb(200, 120, 190, 255)
+        };
+
+        void IToolOverlay.Outline(System.Collections.Generic.IReadOnlyList<Point> points, OverlayTone tone)
+        {
+            // Lines are a pixel wide: a strong outline is the same line drawn side by side.
+            Color color = ToneColor(tone);
+            int width = tone == OverlayTone.Selected ? 3 : tone == OverlayTone.Plain ? 1 : 2;
+            for (int pass = 0; pass < width; ++pass)
+            {
+                int shift = pass == 0 ? 0 : pass == 1 ? 1 : -1;
+                for (int i = 0; i < points.Count; i++)
+                {
+                    Point a = points[i], b = points[(i + 1) % points.Count];
+                    _lines.Add(a.X, a.Y + shift, b.X, b.Y + shift, color);
+                    if (shift != 0)
+                    {
+                        _lines.Add(a.X + shift, a.Y, b.X + shift, b.Y, color);
+                    }
+                }
+            }
+        }
+
+        void IToolOverlay.CellMark(int x, int y, int z, OverlayTone tone)
+        {
+            Color color = Color.FromArgb(tone == OverlayTone.Plain ? 40 : tone == OverlayTone.Selected ? 70 : 110, ToneColor(tone));
+            if (_session.PlanMode)
+            {
+                Point o = PlanView.CellOrigin(x, y);
+                Fill(o.X, o.Y, PlanView.Cell, PlanView.Cell, color);
+                return;
+            }
+
+            if (_atlas.TryGet(ArtAtlas.FloorKey, out AtlasSprite diamond))
+            {
+                PointF corner = EditorSession.CellCorner(x, y, z);
+                _sprites.Add(diamond, corner.X - 22, corner.Y, SpriteTint.Solid(color));
             }
         }
 
