@@ -29,8 +29,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
     /// <param name="Levels">The floors when they were set by hand, else null.</param>
     /// <param name="Layers">The layers, bottom first, each with all its tiles by cell.</param>
     /// <param name="ActiveLayer">Index of the active layer.</param>
+    /// <param name="Houses">The houses placed with the House tool, each as a house draft, so they can be opened as drafts again; or null.</param>
     internal sealed record DesignData(string Name, int Width, int Height, int FirstFloorZ,
-        List<LevelDefinition> Levels, List<SavedLayer> Layers, int ActiveLayer);
+        List<LevelDefinition> Levels, List<SavedLayer> Layers, int ActiveLayer, List<XElement> Houses = null);
 
     /// <summary>
     /// The editor's own design file (*.uomd): XML with the size, the floors and one element per
@@ -79,6 +80,14 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
 
             root.Add(layers);
+
+            // Read by this editor from the first format version on: an editor that does not know
+            // the element skips it, so it needs no new version.
+            if (design.Houses is { Count: > 0 })
+            {
+                root.Add(new XElement("Houses", design.Houses.Select(h => new XElement(h))));
+            }
+
             new XDocument(root).Save(path);
         }
 
@@ -131,7 +140,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
                 return new DesignData((string)root.Attribute("name") ?? string.Empty, width, height,
                     (int?)root.Attribute("firstFloorZ") ?? 0, levels is { Count: > 0 } ? levels : null,
-                    layers, (int?)layersElement?.Attribute("active") ?? 0);
+                    layers, (int?)layersElement?.Attribute("active") ?? 0,
+                    root.Element("Houses")?.Elements("House").Select(h => new XElement(h)).ToList());
             }
             catch (Exception ex) when (ex is XmlException or FormatException or OverflowException or IndexOutOfRangeException or ArgumentNullException)
             {

@@ -59,15 +59,29 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             InitializeComponent();
             SplitterGrip.Attach(_sideSplit);
 
-            // The house draft's panel sits above the floors and selection; shown with the House tool or an open draft.
-            _housePanel = new HousePanel { Dock = DockStyle.Top, Visible = false };
+            // The right sidebar has two pages: the design (floors, layers, selection) and the
+            // house draft, which is too tall to share a page. The House page scrolls when the
+            // window is short, and comes to the front with the House tool or an open draft.
+            _housePanel = new HousePanel { Dock = DockStyle.Top };
             _housePanel.PickStyle += PickHouseMaterial;
+            _housePanel.SaveDraft += SaveHouseDraft;
+            _housePanel.OpenDraft += OpenHouseDraft;
+            _housePanel.SaveBlueprint += SaveHouseBlueprint;
+            _housePanel.EditHouse += EditPlacedHouse;
             _housePanel.Used += () =>
             {
                 _commands.RefreshStates();
                 _canvas.Focus();
             };
-            _sideSplit.Panel2.Controls.Add(_housePanel);
+            _designPage = new TabPage("Design");
+            _housePage = new TabPage("House draft") { AutoScroll = true };
+            _sideSplit.Panel2.Controls.Remove(_inspector);
+            _designPage.Controls.Add(_inspector);
+            _housePage.Controls.Add(_housePanel);
+            _sideTabs = new UoFiddler.Controls.UserControls.ThemedTabControl { Dock = DockStyle.Fill };
+            _sideTabs.TabPages.Add(_designPage);
+            _sideTabs.TabPages.Add(_housePage);
+            _sideSplit.Panel2.Controls.Add(_sideTabs);
 
             // Room after each tab's text for its close button, at any DPI.
             _docTabs.Padding = new Point((CloseGlyphSize + LogicalToDeviceUnits(16)) / 2, _docTabs.Padding.Y);
@@ -675,6 +689,13 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
+            // The House page names its current style when it is brought up for a pick of the
+            // house panel: that is not the pick, which is the next style clicked there.
+            if (_housePick != null && _openingHousePage)
+            {
+                return;
+            }
+
             // A pick asked for by the house panel is a material of the draft, not a tool's style.
             if (_housePick is { } pick && pick.Kind == style.Kind)
             {
@@ -685,6 +706,18 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             _housePick = null;
+
+            // With the House tool in use, a wall, floor or roof style clicked on the House page is
+            // a material of the house too: of the storey the chosen floor means, or of every
+            // storey with all floors shown. Doors and stairs have tools of their own.
+            if (Session.Tool == ToolKind.House && style.Kind is HousePartKind.Wall or HousePartKind.Floor or HousePartKind.Roof)
+            {
+                int? storey = style.Kind == HousePartKind.Roof || Session.WorkZ == null ? null : Session.DraftStorey;
+                Session.House.SetMaterial(style, storey);
+                _canvas.Focus();
+                return;
+            }
+
             Session.HouseStyle = style;
             ToolKind kind = style.Kind switch
             {
@@ -724,6 +757,113 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _statusHint.Text = kind == HousePartKind.Roof
                 ? "Pick the roof style of the house on the House page."
                 : $"Pick the {(kind == HousePartKind.Wall ? "wall" : "floor")} style of storey {storey + 1} on the House page.";
+        }
+
+        private static string HouseDraftFolder
+        {
+            get
+            {
+                string folder = System.IO.Path.Combine(Options.AppDataPath, "MultiEditorHouses");
+                System.IO.Directory.CreateDirectory(folder);
+                return folder;
+            }
+        }
+
+        /// <summary>Writes the house being designed to a house draft file, to open again in any design.</summary>
+        private void SaveHouseDraft()
+        {
+            if (Session == null || !Session.House.HasPending)
+            {
+                return;
+            }
+
+            using var dialog = new SaveFileDialog
+            {
+                Title = "Save house draft", Filter = HouseDraftFile.Filter, DefaultExt = HouseDraftFile.Extension,
+                InitialDirectory = HouseDraftFolder, FileName = "House"
+            };
+            if (dialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                new System.Xml.Linq.XDocument(Session.House.ToXml(System.IO.Path.GetFileNameWithoutExtension(dialog.FileName))).Save(dialog.FileName);
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
+            {
+                MessageBox.Show(this, "The house draft could not be saved:\r\n" + ex.Message, "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        /// <summary>Opens a house draft file as the draft of the House tool; the draft being designed can be had back with undo.</summary>
+        private void OpenHouseDraft()
+        {
+            if (Session == null)
+            {
+                return;
+            }
+
+            using var dialog = new OpenFileDialog { Title = "Open house draft", Filter = HouseDraftFile.Filter, InitialDirectory = HouseDraftFolder };
+            if (dialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                Session.House.OpenXml(System.Xml.Linq.XDocument.Load(dialog.FileName).Root);
+                SetTool(ToolKind.House);
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or System.Xml.XmlException or System.IO.InvalidDataException)
+            {
+                MessageBox.Show(this, "The house draft could not be opened:\r\n" + ex.Message, "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        /// <summary>Saves the house being designed, as built, to the blueprints: tiles to stamp, not a draft.</summary>
+        private void SaveHouseBlueprint()
+        {
+            if (Session == null || !Session.House.HasPending)
+            {
+                return;
+            }
+
+            var built = Session.House.TilesOf(Session.House.ToXml("House"));
+            if (built.Count == 0)
+            {
+                return;
+            }
+
+            int ox = built.Min(t => t.X), oy = built.Min(t => t.Y), oz = built.Min(t => t.Z);
+            List<ClipboardTile> tiles = built.Select(t => new ClipboardTile(t.Id, t.X - ox, t.Y - oy, t.Z - oz, false, 0)).ToList();
+            var source = new BlueprintSource("House", tiles.Count, () => tiles);
+            if (BlueprintSaveDialog.Run(this, new[] { source }, out string showGroup) != null)
+            {
+                BlueprintsSaved(showGroup);
+            }
+        }
+
+        /// <summary>Opens a placed house as a draft again.</summary>
+        private void EditPlacedHouse(System.Xml.Linq.XElement house)
+        {
+            if (Session == null || house == null)
+            {
+                return;
+            }
+
+            string problem = Session.ReopenHouse(house);
+            if (problem != null)
+            {
+                MessageBox.Show(this, problem, "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                SetTool(ToolKind.House);
+            }
+
+            _commands.RefreshStates();
         }
 
         private void CyclePlacement()
@@ -1395,24 +1535,38 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 strip.Items.Insert(at++, button);
             }
 
-            // Roof options, shown only with the Roof tool.
-            RoofGroup(strip, _shapeSeparator, _shapeLabel,
-                ("Gable", () => Session.Roof.Shape == RoofShape.Gable, () => Session.Roof.Shape = RoofShape.Gable));
-            RoofGroup(strip, _ridgeSeparator, _ridgeLabel,
+            // Roof and draft options get a row of their own under the tool options, shown only
+            // while they apply: beside the other options they ended up far to the right.
+            _roofStrip = new ToolStrip { GripStyle = ToolStripGripStyle.Hidden, Dock = DockStyle.Top, Visible = false, Renderer = strip.Renderer, RenderMode = strip.RenderMode };
+            foreach (ToolStripItem item in new ToolStripItem[]
+                     {
+                         _shapeSeparator, _shapeLabel, _ridgeSeparator, _ridgeLabel, _gablesSeparator, _gablesLabel, _gableFillSeparator, _gableFillLabel
+                     })
+            {
+                _roofStrip.Items.Add(item);
+            }
+
+            Controls.Add(_roofStrip);
+            Controls.SetChildIndex(_roofStrip, Controls.GetChildIndex(_optionsStrip));
+            RoofGroup(_roofStrip, _shapeSeparator, _shapeLabel,
+                ("Gable", () => Session.Roof.Shape == RoofShape.Gable, () => Session.Roof.Shape = RoofShape.Gable),
+                ("Hip", () => Session.Roof.Shape == RoofShape.Hip, () => Session.Roof.Shape = RoofShape.Hip));
+            RoofGroup(_roofStrip, _ridgeSeparator, _ridgeLabel,
                 ("Auto", () => Session.Roof.Ridge == RoofRidge.Auto, () => Session.Roof.Ridge = RoofRidge.Auto),
                 ("X", () => Session.Roof.Ridge == RoofRidge.AlongX, () => Session.Roof.Ridge = RoofRidge.AlongX),
                 ("Y", () => Session.Roof.Ridge == RoofRidge.AlongY, () => Session.Roof.Ridge = RoofRidge.AlongY));
-            RoofGroup(strip, _gablesSeparator, _gablesLabel,
+            RoofGroup(_roofStrip, _gablesSeparator, _gablesLabel,
                 ("Front", () => Session.Roof.Gables == RoofGables.Front, () => Session.Roof.Gables = RoofGables.Front),
                 ("Both", () => Session.Roof.Gables == RoofGables.Both, () => Session.Roof.Gables = RoofGables.Both),
                 ("None", () => Session.Roof.Gables == RoofGables.None, () => Session.Roof.Gables = RoofGables.None));
-            RoofGroup(strip, _gableFillSeparator, _gableFillLabel,
+            RoofGroup(_roofStrip, _gableFillSeparator, _gableFillLabel,
                 ("Caps", () => Session.Roof.GableFill == RoofGableFill.Caps, () => Session.Roof.GableFill = RoofGableFill.Caps),
                 ("Walls", () => Session.Roof.GableFill == RoofGableFill.Walls, () => Session.Roof.GableFill = RoofGableFill.Walls));
 
             // Shown while a roof is being shaped.
-            _placeRoofButton = RoofAction(strip, "Place", "Places what is being shaped: the roof on the Roof layer, the house on its layers (Enter).", () => Session.DraftInFocus?.Commit());
-            _dropRoofButton = RoofAction(strip, "Drop", "Drops what is being shaped (Esc). Undo brings it back.", () => Session.DraftInFocus?.Discard());
+            _placeRoofButton = RoofAction(_roofStrip, "Place", "Places what is being shaped: the roof on the Roof layer, the house on its layers (Enter).", () => Session.DraftInFocus?.Commit());
+            _dropRoofButton = RoofAction(_roofStrip, "Drop", "Drops what is being shaped (Esc). Undo brings it back.", () => Session.DraftInFocus?.Discard());
+            StyleSeparators(_roofStrip);
         }
 
         /// <summary>What the tool in use does to the open house draft.</summary>
@@ -1435,7 +1589,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         }
 
         private readonly HousePanel _housePanel;
+        private readonly TabControl _sideTabs;
+        private readonly TabPage _designPage;
+        private readonly TabPage _housePage;
+        private bool _houseWasShown;
         private (HousePartKind Kind, int Storey)? _housePick;
+        private ToolStrip _roofStrip;
         private EditorCommand _placeRoof;
         private ToolStripButton _placeRoofButton;
         private ToolStripButton _dropRoofButton;
@@ -1510,12 +1669,24 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 item.Visible = show;
             }
 
-            _placeRoofButton.Visible = _dropRoofButton.Visible = Session != null && !Session.Pasting && Session.DraftInFocus != null;
+            bool draft = Session != null && !Session.Pasting && Session.DraftInFocus != null;
+            _placeRoofButton.Visible = _dropRoofButton.Visible = draft;
 
-            bool house = Session != null && (Session.Tool == ToolKind.House || Session.House.HasPending);
-            if (_housePanel.Visible != house)
+            // The first group needs no line before it on a row of its own.
+            _shapeSeparator.Visible = false;
+            if (_roofStrip.Visible != (show || draft))
             {
-                _housePanel.Visible = house;
+                _roofStrip.Visible = show || draft;
+            }
+
+            // The House page comes to the front when the House tool is taken up or a draft is
+            // opened, and gives way again when both are over; in between the pages are yours.
+            bool house = Session != null && (Session.Tool == ToolKind.House || Session.House.HasPending);
+            _housePanel.RefreshDraft();
+            if (house != _houseWasShown)
+            {
+                _houseWasShown = house;
+                _sideTabs.SelectedTab = house ? _housePage : _designPage;
             }
 
             foreach ((ToolStripButton button, Func<bool> isOn) in _roofButtons)
@@ -1656,6 +1827,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 LayerStore.Load(clientId, document.Session.CompList.Fingerprint(origin)) is { } saved)
             {
                 document.Session.RestoreLayers(saved.Layers, saved.Active, origin);
+                document.Session.SetPlacedHouses(saved.Houses, origin.X, origin.Y);
             }
             ShowDocument(document);
         }
@@ -1724,7 +1896,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             try
             {
-                LayerStore.Save(id.Value, list.SaveLayers(includeHidden), list.Layers.ToList().IndexOf(list.ActiveLayer), list.Fingerprint(list.SaveOrigin, includeHidden));
+                LayerStore.Save(id.Value, list.SaveLayers(includeHidden), list.Layers.ToList().IndexOf(list.ActiveLayer), list.Fingerprint(list.SaveOrigin, includeHidden),
+                    Session.PlacedHousesShifted(-list.SaveOrigin.X, -list.SaveOrigin.Y));
             }
             catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or ArgumentException or System.Xml.XmlException)
             {

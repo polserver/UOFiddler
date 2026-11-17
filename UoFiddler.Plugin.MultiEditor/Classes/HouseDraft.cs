@@ -46,6 +46,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public bool Foundation { get; set; }
 
+        /// <summary>Most rooms a wing can be divided into.</summary>
+        public const int MaxRooms = 6;
+
         // Wall edges added and taken away by hand, per storey: cells with a wall on their +Y edge
         // (south) and on their +X edge (east).
         public HashSet<(int X, int Y)>[] AddedSouth { get; } = Sets();
@@ -184,6 +187,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             south = new HashSet<(int X, int Y)>();
             east = new HashSet<(int X, int Y)>();
             Outline(region, south, east);
+            Partitions(wings, storey, south, east);
             foreach ((int x, int y) in AddedSouth[storey])
             {
                 if (region.Contains((x, y)) || region.Contains((x, y + 1)))
@@ -202,6 +206,103 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
             south.ExceptWith(ErasedSouth[storey]);
             east.ExceptWith(ErasedEast[storey]);
+        }
+
+        /// <summary>
+        /// The walls that divide each wing of a storey into its rooms (<see cref="RoofWing.Rooms"/>):
+        /// across the wing's longer side, evenly spaced, with the middle cell of each left open as
+        /// a doorway. A wing too short for that many rooms gets as many as fit two cells each.
+        /// </summary>
+        private static void Partitions(IReadOnlyList<RoofWing> wings, int storey, HashSet<(int X, int Y)> south, HashSet<(int X, int Y)> east)
+        {
+            foreach (RoofWing wing in wings)
+            {
+                int width = wing.X1 - wing.X0, depth = wing.Y1 - wing.Y0;
+                bool alongX = width >= depth;
+                int length = alongX ? width : depth;
+                int rooms = Math.Min(Math.Clamp(wing.Rooms, 1, MaxRooms), length / 2);
+                if (wing.Storeys <= storey || rooms < 2)
+                {
+                    continue;
+                }
+
+                for (int i = 1; i < rooms; ++i)
+                {
+                    int at = (int)Math.Round(i * length / (double)rooms);
+                    if (alongX)
+                    {
+                        int doorway = wing.Y0 + 1 + ((depth - 1) / 2);
+                        for (int y = wing.Y0 + 1; y <= wing.Y1; ++y)
+                        {
+                            if (y != doorway)
+                            {
+                                east.Add((wing.X0 + at, y));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int doorway = wing.X0 + 1 + ((width - 1) / 2);
+                        for (int x = wing.X0 + 1; x <= wing.X1; ++x)
+                        {
+                            if (x != doorway)
+                            {
+                                south.Add((x, wing.Y0 + at));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>Moves everything changed by hand along with the house.</summary>
+        public void Shift(int dx, int dy)
+        {
+            static void Move(HashSet<(int X, int Y)> set, int dx, int dy)
+            {
+                var moved = new List<(int X, int Y)>(set.Count);
+                foreach ((int x, int y) in set)
+                {
+                    moved.Add((x + dx, y + dy));
+                }
+
+                set.Clear();
+                set.UnionWith(moved);
+            }
+
+            for (int k = 0; k < MaxStoreys; ++k)
+            {
+                Move(AddedSouth[k], dx, dy);
+                Move(AddedEast[k], dx, dy);
+                Move(ErasedSouth[k], dx, dy);
+                Move(ErasedEast[k], dx, dy);
+            }
+
+            var doors = new List<KeyValuePair<(int Storey, int X, int Y), (HouseStyle Style, string Piece)>>(Doors);
+            Doors.Clear();
+            foreach (var door in doors)
+            {
+                Doors[(door.Key.Storey, door.Key.X + dx, door.Key.Y + dy)] = door.Value;
+            }
+
+            var windows = new List<(int Storey, int X, int Y)>(Windows);
+            Windows.Clear();
+            foreach ((int storey, int x, int y) in windows)
+            {
+                Windows.Add((storey, x + dx, y + dy));
+            }
+
+            for (int i = 0; i < FloorAreas.Count; ++i)
+            {
+                var a = FloorAreas[i];
+                FloorAreas[i] = (a.Storey, a.X0 + dx, a.Y0 + dy, a.X1 + dx, a.Y1 + dy, a.Style);
+            }
+
+            for (int i = 0; i < Stairs.Count; ++i)
+            {
+                var s = Stairs[i];
+                Stairs[i] = (s.Storey, s.X + dx, s.Y + dy, s.Column, s.Style);
+            }
         }
 
         /// <summary>The tiles of a built draft, each with its layer, and the walls among them.</summary>
@@ -319,6 +420,32 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     {
                         // The same cell always gets the same piece, so the preview does not flicker.
                         built.Tiles.Add((pieces[(int)((uint)HashCode.Combine(x, y, storey) % (uint)pieces.Length)], x, y, z, FloorsLayer));
+                    }
+                }
+            }
+
+            // Flat roofs: the floor of the wing's top storey once more, on top of its walls. Where a
+            // taller wing stands, its own floor is there already.
+            foreach (RoofWing wing in wings)
+            {
+                int storeys = Math.Clamp(wing.Storeys, 1, MaxStoreys);
+                HouseStyle style = FloorStyles[storeys - 1];
+                if (wing.NoRoof || wing.Shape != RoofShape.Flat || style == null)
+                {
+                    continue;
+                }
+
+                HashSet<(int X, int Y)> above = Region(wings, storeys);
+                ushort[] pieces = Pieces(style);
+                for (int x = wing.X0 + 1; pieces.Length > 0 && x <= wing.X1; ++x)
+                {
+                    for (int y = wing.Y0 + 1; y <= wing.Y1; ++y)
+                    {
+                        if (!above.Contains((x, y)))
+                        {
+                            built.Tiles.Add((pieces[(int)((uint)HashCode.Combine(x, y, storeys) % (uint)pieces.Length)], x, y,
+                                BaseZ + (storeys * StoreyHeight), RoofTool.LayerName));
+                        }
                     }
                 }
             }

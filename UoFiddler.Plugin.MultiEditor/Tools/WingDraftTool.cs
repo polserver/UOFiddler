@@ -41,6 +41,12 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// <summary>A house wing left without a roof.</summary>
         public bool NoRoof { get; set; }
 
+        /// <summary>
+        /// Rooms a house wing is divided into on each of its storeys: partitions across its longer
+        /// side, each with a doorway left in the middle. 1 leaves the wing undivided.
+        /// </summary>
+        public int Rooms { get; set; } = 1;
+
         public RoofShape Shape { get; set; }
 
         public bool RidgeAlongY { get; set; }
@@ -56,6 +62,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         {
             (X0, Y0, X1, Y1, EaveZ) = (other.X0, other.Y0, other.X1, other.Y1, other.EaveZ);
             (Shape, RidgeAlongY, RidgeAuto, Storeys, NoRoof) = (other.Shape, other.RidgeAlongY, other.RidgeAuto, other.Storeys, other.NoRoof);
+            Rooms = other.Rooms;
         }
     }
 
@@ -189,10 +196,38 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// <summary>True when the draft is drawn only up to the highest Z the view shows (the chosen floor, the height slider).</summary>
         protected virtual bool GhostsFollowView => false;
 
+        /// <summary>The layer of the multi that tiles planned for a layer are placed on: the same one, unless the tool gathers them.</summary>
+        protected virtual string LayerFor(string layer) => layer;
+
+        /// <summary>True when the tiles a draft puts on a layer are drawn in its preview. What is placed does not depend on it.</summary>
+        protected virtual bool ShowsInPreview(string layer) => true;
+
         /// <summary>What the draft holds beside its wings, for the undo history.</summary>
         protected virtual object CaptureExtra() => null;
 
         protected virtual void RestoreExtra(object extra)
+        {
+        }
+
+        /// <summary>Called when the draft was written to the multi, before it is cleared.</summary>
+        protected virtual void OnPlaced()
+        {
+        }
+
+        /// <summary>Makes these wings the draft, as one step of its history.</summary>
+        protected void LoadWings(List<RoofWing> wings)
+        {
+            CancelDrag();
+            Remember();
+            _wings = wings;
+            _selected = wings.Count > 0 ? 0 : -1;
+        }
+
+        /// <summary>
+        /// Called while a wing is moved or resized, to pull it into line with the other wings.
+        /// A moved wing is shifted whole; a resized one has the side in question moved.
+        /// </summary>
+        protected virtual void Snap(RoofWing wing, bool moved)
         {
         }
 
@@ -476,7 +511,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 {
                     int steps = Context.CompList.UndoList.Count;
                     object top = steps > 0 ? Context.CompList.UndoList[0] : null;
-                    Context.CompList.ReplaceTilesOnLayers(remove, add, ActionName, DefaultLayer);
+                    Context.CompList.ReplaceTilesOnLayers(remove, add.Select(a => (a.Id, a.X, a.Y, a.Z, LayerFor(a.Layer))), ActionName, DefaultLayer);
                     Context.AfterEdit(add.Count > 0 ? add.Max(a => a.Z) : null);
                     object placedBy = Context.CompList.UndoList.Count > 0 ? Context.CompList.UndoList[0] : null;
                     if (placedBy != null && !ReferenceEquals(placedBy, top))
@@ -484,6 +519,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                         _placed = Capture();
                         _placedHistory = new List<State>(_undo);
                         PlacedBy = placedBy;
+                        OnPlaced();
                     }
 
                     Committed?.Invoke();
@@ -586,6 +622,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 dx = Math.Max(dx, -_before.X0);
                 dy = Math.Max(dy, -_before.Y0);
                 (wing.X0, wing.X1, wing.Y0, wing.Y1) = (_before.X0 + dx, _before.X1 + dx, _before.Y0 + dy, _before.Y1 + dy);
+                Snap(wing, moved: true);
                 return;
             }
 
@@ -593,6 +630,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             wing.X1 = _east ? Math.Max(_before.X1 + dx, _before.X0) : _before.X1;
             wing.Y0 = _north ? Math.Clamp(_before.Y0 + dy, 0, _before.Y1) : _before.Y0;
             wing.Y1 = _south ? Math.Max(_before.Y1 + dy, _before.Y0) : _before.Y1;
+            Snap(wing, moved: false);
             WingResized(wing);
         }
 
@@ -640,9 +678,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             // A house is looked into like the multi: storeys above the chosen floor are left out.
             int highest = GhostsFollowView ? Context.MaxHeight : int.MaxValue;
-            foreach (var (id, x, y, z, _) in add)
+            foreach (var (id, x, y, z, layer) in add)
             {
-                if (z <= highest)
+                if (z <= highest && ShowsInPreview(layer))
                 {
                     overlay.Ghost(id, x, y, z);
                 }

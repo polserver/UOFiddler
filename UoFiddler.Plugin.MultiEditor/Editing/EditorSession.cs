@@ -109,6 +109,9 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
                 draft.Committed += () => LayersChanged?.Invoke();
             }
 
+            house.FreeName = FreeHouseName;
+            house.Placed += placed => _placedHouses.Add(placed);
+
             _tools[ToolKind.Roof] = roof;
             _tools[ToolKind.House] = house;
             _draftTools[ToolKind.Wall] = new DraftWallTool(this, house);
@@ -215,6 +218,10 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
                     (tool is HouseTool || _toolKind == ToolKind.Roof))
                 {
                     tool.Reopen();
+                    if (tool is HouseTool reopened && reopened.LastPlaced != null)
+                    {
+                        _placedHouses.Remove(reopened.LastPlaced);
+                    }
                 }
             }
 
@@ -242,6 +249,10 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
                 }
 
                 open.CloseReopened();
+                if (open is HouseTool closed && closed.LastPlaced != null && !_placedHouses.Contains(closed.LastPlaced))
+                {
+                    _placedHouses.Add(closed.LastPlaced);
+                }
             }
 
             if (!CompList.RedoStep())
@@ -259,6 +270,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             CancelTool();
             Roof.Reset();
             House.Reset();
+            _placedHouses.Clear();
             CompList = list;
             _selection.Clear();
             HoverTile = null;
@@ -466,6 +478,103 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
 
         /// <summary>The roof tool, for its shape options (ridge, gables, gable fill) and the roof being shaped.</summary>
         public RoofTool Roof => (RoofTool)_tools[ToolKind.Roof];
+
+        // ---------------------------------------------------------------- placed houses
+
+        private readonly List<System.Xml.Linq.XElement> _placedHouses = new List<System.Xml.Linq.XElement>();
+
+        /// <summary>
+        /// The houses placed with the House tool, each as the draft it was placed from. They are
+        /// kept with the design (design file, layers file), so a placed house can be opened as a
+        /// draft again.
+        /// </summary>
+        public IReadOnlyList<System.Xml.Linq.XElement> PlacedHouses => _placedHouses;
+
+        private string FreeHouseName()
+        {
+            for (int n = _placedHouses.Count + 1; ; ++n)
+            {
+                string name = $"House {n}";
+                if (_placedHouses.All(h => (string)h.Attribute("name") != name) && CompList.Layers.All(l => l.Name != name))
+                {
+                    return name;
+                }
+            }
+        }
+
+        /// <summary>Sets the placed houses of a design just opened, moved by an offset (the layers file counts cells from the save origin).</summary>
+        public void SetPlacedHouses(IEnumerable<System.Xml.Linq.XElement> houses, int dx = 0, int dy = 0)
+        {
+            _placedHouses.Clear();
+            foreach (System.Xml.Linq.XElement house in houses ?? Enumerable.Empty<System.Xml.Linq.XElement>())
+            {
+                try
+                {
+                    _placedHouses.Add(dx == 0 && dy == 0 ? new System.Xml.Linq.XElement(house) : HouseDraftFile.Shifted(house, dx, dy, HouseStyles));
+                }
+                catch (System.IO.InvalidDataException)
+                {
+                    // A house that cannot be read is only lost as a draft: its tiles are in the multi.
+                }
+            }
+
+            DraftChanged?.Invoke();
+        }
+
+        /// <summary>The placed houses moved by an offset, for a file that counts cells from another origin.</summary>
+        public List<System.Xml.Linq.XElement> PlacedHousesShifted(int dx, int dy)
+        {
+            return _placedHouses.Select(h => HouseDraftFile.Shifted(h, dx, dy, HouseStyles)).ToList();
+        }
+
+        /// <summary>
+        /// Opens a placed house as a draft again: the tiles it was placed with that are still in
+        /// the multi are taken out (one undo step) and the House tool gets its draft back. Tiles
+        /// changed by hand since stay where they are. Returns what is wrong, or null.
+        /// </summary>
+        public string ReopenHouse(System.Xml.Linq.XElement house)
+        {
+            if (House.HasPending)
+            {
+                return "Place or drop the house being designed first.";
+            }
+
+            List<(ushort Id, int X, int Y, int Z, string Layer)> built;
+            try
+            {
+                built = House.TilesOf(house);
+            }
+            catch (System.IO.InvalidDataException ex)
+            {
+                return ex.Message;
+            }
+
+            // The house is on the layer named after it, or on a layer per part.
+            string name = (string)house.Attribute("name");
+            var remove = new List<MultiTile>();
+            foreach ((ushort id, int x, int y, int z, string layer) in built)
+            {
+                MultiTile tile = CompList.GetTilesAt(x, y).FirstOrDefault(t =>
+                    t.Id == id && t.Z == z && (t.Layer.Name == name || t.Layer.Name == layer) && !remove.Contains(t));
+                if (tile != null)
+                {
+                    remove.Add(tile);
+                }
+            }
+
+            _placedHouses.Remove(house);
+            if (remove.Count * 2 < built.Count)
+            {
+                DraftChanged?.Invoke();
+                return "This house is no longer in the multi: most of its tiles were changed or removed.";
+            }
+
+            CompList.ReplaceTilesOnLayers(remove, new List<(ushort, int, int, int, string)>(), "Edit house", HouseDraft.WallsLayer);
+            House.OpenXml(house, keepName: true);
+            AfterEdit();
+            LayersChanged?.Invoke();
+            return null;
+        }
 
         /// <summary>The house tool, for its draft and options.</summary>
         public HouseTool House => (HouseTool)_tools[ToolKind.House];

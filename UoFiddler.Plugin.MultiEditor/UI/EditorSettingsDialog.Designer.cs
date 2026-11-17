@@ -34,6 +34,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             labelWorkPlane = new System.Windows.Forms.Label();
             labelWorkPlaneOpacity = new System.Windows.Forms.Label();
             alphaWorkPlane = new System.Windows.Forms.NumericUpDown();
+            labelPreview = new System.Windows.Forms.Label();
+            labelPreviewOpacity = new System.Windows.Forms.Label();
+            alphaPreview = new System.Windows.Forms.NumericUpDown();
             swatchWorkPlane = new System.Windows.Forms.Button();
             labelGrid = new System.Windows.Forms.Label();
             labelGridOpacity = new System.Windows.Forms.Label();
@@ -49,10 +52,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             checkWorkPlane = new System.Windows.Forms.CheckBox();
             checkGrid = new System.Windows.Forms.CheckBox();
             checkHideFloorsAbove = new System.Windows.Forms.CheckBox();
+            checkHouseOneLayer = new System.Windows.Forms.CheckBox();
             buttonDefaults = new System.Windows.Forms.Button();
             buttonOk = new System.Windows.Forms.Button();
             buttonCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)alphaWorkPlane).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)alphaPreview).BeginInit();
             ((System.ComponentModel.ISupportInitialize)alphaGrid).BeginInit();
             ((System.ComponentModel.ISupportInitialize)alphaOutline).BeginInit();
             SuspendLayout();
@@ -223,11 +228,41 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             swatchSelection.TabIndex = 20;
             swatchSelection.UseVisualStyleBackColor = true;
             swatchSelection.Click += SwatchSelection_Click;
+            //
+            // labelPreview
+            //
+            labelPreview.AutoSize = true;
+            labelPreview.Location = new System.Drawing.Point(24, 190);
+            labelPreview.Name = "labelPreview";
+            labelPreview.Size = new System.Drawing.Size(190, 15);
+            labelPreview.TabIndex = 30;
+            labelPreview.Text = "Preview of what a tool will place";
+            //
+            // labelPreviewOpacity
+            //
+            labelPreviewOpacity.AutoSize = true;
+            labelPreviewOpacity.Location = new System.Drawing.Point(272, 190);
+            labelPreviewOpacity.Name = "labelPreviewOpacity";
+            labelPreviewOpacity.Size = new System.Drawing.Size(62, 15);
+            labelPreviewOpacity.TabIndex = 31;
+            labelPreviewOpacity.Text = "Opacity %";
+            //
+            // alphaPreview
+            //
+            alphaPreview.Increment = new decimal(new int[] { 5, 0, 0, 0 });
+            alphaPreview.Location = new System.Drawing.Point(340, 187);
+            alphaPreview.Maximum = new decimal(new int[] { 100, 0, 0, 0 });
+            alphaPreview.Minimum = new decimal(new int[] { 20, 0, 0, 0 });
+            alphaPreview.Name = "alphaPreview";
+            alphaPreview.Size = new System.Drawing.Size(56, 23);
+            alphaPreview.TabIndex = 32;
+            alphaPreview.Value = new decimal(new int[] { 80, 0, 0, 0 });
+            alphaPreview.ValueChanged += AlphaPreview_ValueChanged;
             // 
             // headingStart
             // 
             headingStart.AutoSize = true;
-            headingStart.Location = new System.Drawing.Point(12, 194);
+            headingStart.Location = new System.Drawing.Point(12, 224);
             headingStart.Name = "headingStart";
             headingStart.Size = new System.Drawing.Size(202, 15);
             headingStart.TabIndex = 21;
@@ -236,7 +271,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // checkWorkPlane
             // 
             checkWorkPlane.AutoSize = true;
-            checkWorkPlane.Location = new System.Drawing.Point(24, 218);
+            checkWorkPlane.Location = new System.Drawing.Point(24, 248);
             checkWorkPlane.Name = "checkWorkPlane";
             checkWorkPlane.Size = new System.Drawing.Size(129, 19);
             checkWorkPlane.TabIndex = 23;
@@ -247,7 +282,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // checkGrid
             // 
             checkGrid.AutoSize = true;
-            checkGrid.Location = new System.Drawing.Point(24, 242);
+            checkGrid.Location = new System.Drawing.Point(24, 272);
             checkGrid.Name = "checkGrid";
             checkGrid.Size = new System.Drawing.Size(86, 19);
             checkGrid.TabIndex = 24;
@@ -258,17 +293,28 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // checkHideFloorsAbove
             // 
             checkHideFloorsAbove.AutoSize = true;
-            checkHideFloorsAbove.Location = new System.Drawing.Point(24, 266);
+            checkHideFloorsAbove.Location = new System.Drawing.Point(24, 296);
             checkHideFloorsAbove.Name = "checkHideFloorsAbove";
             checkHideFloorsAbove.Size = new System.Drawing.Size(365, 19);
             checkHideFloorsAbove.TabIndex = 25;
             checkHideFloorsAbove.Text = "Floors above the active one hidden (off: drawn faintly)";
             checkHideFloorsAbove.UseVisualStyleBackColor = true;
             checkHideFloorsAbove.CheckedChanged += CheckHideFloorsAbove_CheckedChanged;
+            //
+            // checkHouseOneLayer
+            //
+            checkHouseOneLayer.AutoSize = true;
+            checkHouseOneLayer.Location = new System.Drawing.Point(24, 326);
+            checkHouseOneLayer.Name = "checkHouseOneLayer";
+            checkHouseOneLayer.Size = new System.Drawing.Size(365, 19);
+            checkHouseOneLayer.TabIndex = 33;
+            checkHouseOneLayer.Text = "A placed house goes on one layer (off: one per part)";
+            checkHouseOneLayer.UseVisualStyleBackColor = true;
+            checkHouseOneLayer.CheckedChanged += CheckHouseOneLayer_CheckedChanged;
             // 
             // buttonDefaults
             // 
-            buttonDefaults.Location = new System.Drawing.Point(12, 302);
+            buttonDefaults.Location = new System.Drawing.Point(12, 362);
             buttonDefaults.Name = "buttonDefaults";
             buttonDefaults.Size = new System.Drawing.Size(80, 23);
             buttonDefaults.TabIndex = 26;
@@ -279,7 +325,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // buttonOk
             // 
             buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            buttonOk.Location = new System.Drawing.Point(236, 302);
+            buttonOk.Location = new System.Drawing.Point(236, 362);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new System.Drawing.Size(76, 23);
             buttonOk.TabIndex = 27;
@@ -289,7 +335,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // buttonCancel
             // 
             buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonCancel.Location = new System.Drawing.Point(320, 302);
+            buttonCancel.Location = new System.Drawing.Point(320, 362);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(76, 23);
             buttonCancel.TabIndex = 28;
@@ -302,7 +348,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonCancel;
-            ClientSize = new System.Drawing.Size(410, 340);
+            ClientSize = new System.Drawing.Size(410, 400);
             Controls.Add(headingColours);
             Controls.Add(labelBackground);
             Controls.Add(swatchBackground);
@@ -320,10 +366,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Controls.Add(swatchOutline);
             Controls.Add(labelSelection);
             Controls.Add(swatchSelection);
+            Controls.Add(labelPreview);
+            Controls.Add(labelPreviewOpacity);
+            Controls.Add(alphaPreview);
             Controls.Add(headingStart);
             Controls.Add(checkWorkPlane);
             Controls.Add(checkGrid);
             Controls.Add(checkHideFloorsAbove);
+            Controls.Add(checkHouseOneLayer);
             Controls.Add(buttonDefaults);
             Controls.Add(buttonOk);
             Controls.Add(buttonCancel);
@@ -335,6 +385,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Multi Editor settings";
             ((System.ComponentModel.ISupportInitialize)alphaWorkPlane).EndInit();
+            ((System.ComponentModel.ISupportInitialize)alphaPreview).EndInit();
             ((System.ComponentModel.ISupportInitialize)alphaGrid).EndInit();
             ((System.ComponentModel.ISupportInitialize)alphaOutline).EndInit();
             ResumeLayout(false);
@@ -349,6 +400,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.Label labelWorkPlane;
         private System.Windows.Forms.Label labelWorkPlaneOpacity;
         private System.Windows.Forms.NumericUpDown alphaWorkPlane;
+        private System.Windows.Forms.Label labelPreview;
+        private System.Windows.Forms.Label labelPreviewOpacity;
+        private System.Windows.Forms.NumericUpDown alphaPreview;
         private System.Windows.Forms.Button swatchWorkPlane;
         private System.Windows.Forms.Label labelGrid;
         private System.Windows.Forms.Label labelGridOpacity;
@@ -364,6 +418,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.CheckBox checkWorkPlane;
         private System.Windows.Forms.CheckBox checkGrid;
         private System.Windows.Forms.CheckBox checkHideFloorsAbove;
+        private System.Windows.Forms.CheckBox checkHouseOneLayer;
         private System.Windows.Forms.Button buttonDefaults;
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonCancel;
