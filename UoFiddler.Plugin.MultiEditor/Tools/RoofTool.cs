@@ -48,57 +48,20 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         Walls
     }
 
-    /// <summary>One rectangle of a roof being shaped: where it lies, how high its eaves are and how it slopes.</summary>
-    internal sealed class RoofWing
-    {
-        public int X0 { get; set; }
-
-        public int Y0 { get; set; }
-
-        public int X1 { get; set; }
-
-        public int Y1 { get; set; }
-
-        public int EaveZ { get; set; }
-
-        public RoofShape Shape { get; set; }
-
-        public bool RidgeAlongY { get; set; }
-
-        /// <summary>True while the ridge follows the box's proportions as it is resized.</summary>
-        public bool RidgeAuto { get; set; }
-
-        public (int X0, int Y0, int X1, int Y1) Box => (X0, Y0, X1, Y1);
-
-        public RoofWing Clone() => (RoofWing)MemberwiseClone();
-
-        public void CopyFrom(RoofWing other)
-        {
-            (X0, Y0, X1, Y1, EaveZ) = (other.X0, other.Y0, other.X1, other.Y1, other.EaveZ);
-            (Shape, RidgeAlongY, RidgeAuto) = (other.Shape, other.RidgeAlongY, other.RidgeAuto);
-        }
-    }
-
     /// <summary>
-    /// Roofs, shaped before they are placed. The first click on (or inside) a walled room fits a
-    /// roof to its walls, part by part on an L or T shaped house; a drag over the walls, the floor
-    /// inside them or the area the roof will cover fits it too, and any other drag is a roof of
-    /// that size on the work plane. The roof then stays pending, shown as it will be built:
-    /// <list type="bullet">
-    /// <item>click a wing to select it, drag it to move it, drag an edge of the selected wing to
-    /// resize it;</item>
-    /// <item>drag anywhere else to add a wing, which joins the others with valleys and T pieces;</item>
-    /// <item>Shift+click turns a wing's ridge, the Shape and Ridge options
-    /// change the selected wing, Delete removes it;</item>
-    /// <item>Enter, or switching to another tool, places the roof on the layer named
-    /// <see cref="LayerName"/> in one undo step; Esc drops it.</item>
-    /// </list>
+    /// Roofs, shaped before they are placed (see <see cref="WingDraftTool"/> for the shaping).
+    /// The first click on (or inside) a walled room fits a roof to its walls, part by part on an
+    /// L or T shaped house; a drag over the walls, the floor inside them or the area the roof
+    /// will cover fits it too, and any other drag is a roof of that size on the work plane.
+    /// Further wings join the others with valleys and T pieces. The Shape and Ridge options
+    /// change the selected wing; Shift+click turns a wing's ridge. Enter, or
+    /// switching to another tool, places the roof on the layer named <see cref="LayerName"/>.
     /// A fitted roof sits on the wall tops whatever floor is chosen, overhangs the south and east
     /// walls by a cell and grows the multi when that cell lies outside it. Slopes rise 3 per cell
     /// like the official house roofs. A roof already there is replaced when it lies wholly under
     /// the new one and joined otherwise.
     /// </summary>
-    internal sealed class RoofTool : EditorTool
+    internal sealed class RoofTool : WingDraftTool
     {
         /// <summary>The layer a placed roof goes on; made on first use.</summary>
         public const string LayerName = "Roof";
@@ -107,43 +70,19 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         private const int _storey = 20;
         private const string _capStyles = "Miscellaneous Roof Pieces";
 
-        private enum DragKind
-        {
-            None,
-            New,
-            Move,
-            Resize
-        }
-
-        private readonly List<RoofWing> _wings = new List<RoofWing>();
-        private int _selected = -1;
         private HouseStyle _lastStyle;
+        private HouseStyle _planStyle;
         private RoofShape _shape = RoofShape.Gable;
         private RoofRidge _ridge = RoofRidge.Auto;
+        private RoofGables _gables = RoofGables.Front;
+        private RoofGableFill _gableFill = RoofGableFill.Caps;
 
-        private DragKind _drag;
-        private int _startX;
-        private int _startY;
-        private int _endX;
-        private int _endY;
-        private int _z;
-        private RoofWing _before;
-        private int _grabX;
-        private int _grabY;
-        private bool _west;
-        private bool _east;
-        private bool _north;
-        private bool _south;
+        // Walls a house draft is about to build, which the multi does not hold yet.
+        private Dictionary<(int X, int Y), List<(ushort Id, int Z)>> _draftWalls;
 
         public RoofTool(IEditorContext context) : base(context)
         {
         }
-
-        /// <summary>Raised when the pending roof starts, changes or ends.</summary>
-        public event Action Changed;
-
-        /// <summary>Raised after a roof was placed.</summary>
-        public event Action Committed;
 
         /// <summary>The shape of new wings; also sets the selected wing's.</summary>
         public RoofShape Shape
@@ -151,11 +90,13 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             get => _shape;
             set
             {
-                _shape = value;
-                if (SelectedWing is { } wing)
+                if (SelectedWing is { } wing && wing.Shape != value)
                 {
+                    Remember();
                     wing.Shape = value;
                 }
+
+                _shape = value;
             }
         }
 
@@ -165,31 +106,34 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             get => _ridge;
             set
             {
-                _ridge = value;
                 if (SelectedWing is { } wing)
                 {
+                    Remember();
                     wing.RidgeAuto = value == RoofRidge.Auto;
                     wing.RidgeAlongY = value == RoofRidge.Auto ? RoofPlanner.RidgeAlongY(wing.Box) : value == RoofRidge.AlongY;
                 }
+
+                _ridge = value;
             }
         }
 
-        public RoofGables Gables { get; set; } = RoofGables.Front;
+        public RoofGables Gables
+        {
+            get => _gables;
+            set => _gables = value;
+        }
 
-        public RoofGableFill GableFill { get; set; } = RoofGableFill.Caps;
+        public RoofGableFill GableFill
+        {
+            get => _gableFill;
+            set => _gableFill = value;
+        }
 
-        /// <summary>True while a roof is being shaped and not yet placed.</summary>
-        public bool HasPending => _wings.Count > 0;
+        protected override bool Ready => Style != null;
 
-        public bool HasSelectedWing => SelectedWing != null;
+        protected override string ActionName => "Roof";
 
-        public IReadOnlyList<RoofWing> Wings => _wings;
-
-        public override bool IsDragging => _drag != DragKind.None;
-
-        public override bool TracksCursorCell => true;
-
-        private RoofWing SelectedWing => _selected >= 0 && _selected < _wings.Count ? _wings[_selected] : null;
+        protected override string DefaultLayer => LayerName;
 
         /// <summary>The roof style chosen in the House tab; a pending roof keeps the last one.</summary>
         private HouseStyle Style
@@ -206,186 +150,10 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
         }
 
-        // ---------------------------------------------------------------- shaping
-
-        public override void OnMouseDown(MouseEventArgs e)
-        {
-            if (Style == null)
-            {
-                return;
-            }
-
-            if (HasPending)
-            {
-                int hit = HitWing(out int cx, out int cy);
-                if (hit >= 0)
-                {
-                    RoofWing wing = _wings[hit];
-                    bool wasSelected = hit == _selected;
-                    _selected = hit;
-                    if (ShiftHeld)
-                    {
-                        Turn(wing);
-                        Changed?.Invoke();
-                        return;
-                    }
-
-                    _before = wing.Clone();
-                    (_grabX, _grabY) = (cx, cy);
-
-                    // The selected wing is resized by its outermost cells; a side too short to
-                    // have a middle moves the wing instead.
-                    bool wide = wing.X1 - wing.X0 >= 2, deep = wing.Y1 - wing.Y0 >= 2;
-                    _west = wasSelected && wide && cx == wing.X0;
-                    _east = wasSelected && wide && cx == wing.X1;
-                    _north = wasSelected && deep && cy == wing.Y0;
-                    _south = wasSelected && deep && cy == wing.Y1;
-                    _drag = _west || _east || _north || _south ? DragKind.Resize : DragKind.Move;
-                    Changed?.Invoke();
-                    return;
-                }
-
-                // A new wing, level with the wing worked on last.
-                _z = (SelectedWing ?? _wings[^1]).EaveZ;
-                Context.PlaneCell(Context.MouseLoc, _z, out _startX, out _startY);
-            }
-            else
-            {
-                BaseCell(out _startX, out _startY, out _z);
-            }
-
-            (_endX, _endY) = (_startX, _startY);
-            _drag = DragKind.New;
-        }
-
-        public override void OnMouseMove(MouseEventArgs e)
-        {
-            switch (_drag)
-            {
-                case DragKind.New:
-                    Context.PlaneCell(Context.MouseLoc, _z, out _endX, out _endY);
-                    break;
-                case DragKind.Move:
-                case DragKind.Resize:
-                    DragWing();
-                    break;
-            }
-        }
-
-        public override void OnMouseUp(MouseEventArgs e)
-        {
-            DragKind drag = _drag;
-            if (drag is DragKind.Move or DragKind.Resize)
-            {
-                DragWing();
-            }
-
-            _drag = DragKind.None;
-            if (drag == DragKind.New)
-            {
-                Context.PlaneCell(Context.MouseLoc, _z, out _endX, out _endY);
-                List<RoofWing> wings = WingsFor(_startX, _startY, _endX, _endY, _z, out bool fitted);
-                if (HasPending && !fitted && _startX == _endX && _startY == _endY)
-                {
-                    // A click beside the roof lets go of the selected wing.
-                    _selected = -1;
-                }
-                else
-                {
-                    _wings.AddRange(wings);
-                    _selected = _wings.Count - wings.Count;
-                }
-
-                Changed?.Invoke();
-            }
-            else if (drag != DragKind.None)
-            {
-                _before = null;
-                Changed?.Invoke();
-            }
-        }
-
-        /// <summary>Stops a drag: a wing being moved or resized goes back to where it was.</summary>
-        public override void Cancel()
-        {
-            if (_drag is DragKind.Move or DragKind.Resize && _before != null && SelectedWing is { } wing)
-            {
-                wing.CopyFrom(_before);
-            }
-
-            _before = null;
-            _drag = DragKind.None;
-        }
-
-        /// <summary>Drops the pending roof.</summary>
-        public void Discard()
-        {
-            bool had = HasPending;
-            _wings.Clear();
-            _selected = -1;
-            _before = null;
-            _drag = DragKind.None;
-            if (had)
-            {
-                Changed?.Invoke();
-            }
-        }
-
-        /// <summary>Removes the selected wing from the pending roof.</summary>
-        public void DeleteWing()
-        {
-            if (SelectedWing == null || IsDragging)
-            {
-                return;
-            }
-
-            _wings.RemoveAt(_selected);
-            _selected = _wings.Count - 1;
-            Changed?.Invoke();
-        }
-
-        /// <summary>
-        /// Places the pending roof: its tiles go on the <see cref="LayerName"/> layer, pieces of
-        /// an older roof that had to change stay on their own layer, all in one undo step.
-        /// </summary>
-        public void Commit()
-        {
-            Cancel();
-            if (!HasPending)
-            {
-                return;
-            }
-
-            if (Style != null)
-            {
-                var (remove, add) = Plan(_wings);
-                if (remove.Count > 0 || add.Count > 0)
-                {
-                    Context.CompList.ReplaceTilesOnLayer(remove, add, "Roof", LayerName);
-                    Context.AfterEdit(add.Count > 0 ? add.Max(a => a.Z) : null);
-                    Committed?.Invoke();
-                }
-            }
-
-            Discard();
-        }
-
-        /// <summary>Lays a roof in one go, as a press at one cell and a release at another would shape it. For scripts and tests.</summary>
-        public void Place(int startX, int startY, int endX, int endY, int z)
-        {
-            if (Style == null)
-            {
-                return;
-            }
-
-            _wings.AddRange(WingsFor(startX, startY, endX, endY, z, out _));
-            Commit();
-        }
-
         /// <summary>
         /// The eaves go on the work plane, or on top of what the mouse points at (a wall top).
         /// </summary>
-        private void BaseCell(out int x, out int y, out int z)
+        protected override void StartCell(out int x, out int y, out int z)
         {
             Context.CellAt(Context.MouseLoc, out x, out y, out z);
             if (Context.WorkZ is { } baseZ)
@@ -395,52 +163,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
         }
 
-        /// <summary>The pending wing under the mouse, the selected one first, and the cell pointed at on its eaves.</summary>
-        private int HitWing(out int cx, out int cy)
+        protected override void WingResized(RoofWing wing)
         {
-            (cx, cy) = (0, 0);
-            for (int pass = 0; pass < 2; ++pass)
-            {
-                for (int i = _wings.Count - 1; i >= 0; --i)
-                {
-                    if ((pass == 0) != (i == _selected))
-                    {
-                        continue;
-                    }
-
-                    RoofWing wing = _wings[i];
-                    Context.PlaneCell(Context.MouseLoc, wing.EaveZ, out cx, out cy);
-                    if (cx >= wing.X0 && cx <= wing.X1 && cy >= wing.Y0 && cy <= wing.Y1)
-                    {
-                        return i;
-                    }
-                }
-            }
-
-            return -1;
-        }
-
-        private void DragWing()
-        {
-            if (_before == null || SelectedWing is not { } wing)
-            {
-                return;
-            }
-
-            Context.PlaneCell(Context.MouseLoc, _before.EaveZ, out int cx, out int cy);
-            int dx = cx - _grabX, dy = cy - _grabY;
-            if (_drag == DragKind.Move)
-            {
-                dx = Math.Max(dx, -_before.X0);
-                dy = Math.Max(dy, -_before.Y0);
-                (wing.X0, wing.X1, wing.Y0, wing.Y1) = (_before.X0 + dx, _before.X1 + dx, _before.Y0 + dy, _before.Y1 + dy);
-                return;
-            }
-
-            wing.X0 = _west ? Math.Clamp(_before.X0 + dx, 0, _before.X1) : _before.X0;
-            wing.X1 = _east ? Math.Max(_before.X1 + dx, _before.X0) : _before.X1;
-            wing.Y0 = _north ? Math.Clamp(_before.Y0 + dy, 0, _before.Y1) : _before.Y0;
-            wing.Y1 = _south ? Math.Max(_before.Y1 + dy, _before.Y0) : _before.Y1;
             if (wing.RidgeAuto)
             {
                 wing.RidgeAlongY = RoofPlanner.RidgeAlongY(wing.Box);
@@ -448,7 +172,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         }
 
         /// <summary>Turns a wing's ridge the other way.</summary>
-        private static void Turn(RoofWing wing)
+        protected override void Turn(RoofWing wing)
         {
             wing.RidgeAlongY = !wing.RidgeAlongY;
             wing.RidgeAuto = false;
@@ -462,7 +186,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// within a cell of such a roof on every side means that roof. Any other stroke is the
         /// roof itself, at <paramref name="z"/>. Shift turns a gable's ridge.
         /// </summary>
-        private List<RoofWing> WingsFor(int startX, int startY, int endX, int endY, int z, out bool fitted)
+        protected override List<RoofWing> WingsFor(int startX, int startY, int endX, int endY, int z, out bool fitted)
         {
             int x0 = Math.Min(startX, endX), x1 = Math.Max(startX, endX);
             int y0 = Math.Min(startY, endY), y1 = Math.Max(startY, endY);
@@ -503,83 +227,43 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             return wings;
         }
 
-        // ---------------------------------------------------------------- overlay
-
-        public override void PaintOverlay(IToolOverlay overlay)
+        protected override (List<MultiTile> Remove, List<(ushort Id, int X, int Y, int Z, string Layer)> Add) Plan(IReadOnlyList<RoofWing> wings)
         {
-            if (Style == null)
-            {
-                return;
-            }
-
-            // What is shown is what Enter would build: the pending wings, with the one being
-            // dragged out; before there is a roof, the one a click here would start.
-            var wings = new List<RoofWing>(_wings);
-            if (_drag == DragKind.New)
-            {
-                wings.AddRange(WingsFor(_startX, _startY, _endX, _endY, _z, out _));
-            }
-            else if (!HasPending)
-            {
-                BaseCell(out int x, out int y, out int z);
-                wings.AddRange(WingsFor(x, y, x, y, z, out _));
-            }
-
-            var (remove, add) = Plan(wings);
-            foreach (MultiTile tile in remove)
-            {
-                overlay.Highlight(tile, TileHighlight.Remove);
-            }
-
-            foreach (var (id, x, y, z, _) in add)
-            {
-                overlay.Ghost(id, x, y, z);
-            }
-
-            for (int i = 0; i < _wings.Count; ++i)
-            {
-                RoofWing wing = _wings[i];
-                Point top = Corner(wing.X0, wing.Y0, wing.EaveZ), right = Corner(wing.X1 + 1, wing.Y0, wing.EaveZ);
-                Point bottom = Corner(wing.X1 + 1, wing.Y1 + 1, wing.EaveZ), left = Corner(wing.X0, wing.Y1 + 1, wing.EaveZ);
-                overlay.Polyline(new[] { top, right, bottom, left }, closed: true);
-                if (i != _selected)
-                {
-                    continue;
-                }
-
-                // Grips in the middle of the selected wing's sides.
-                foreach ((Point a, Point b) in new[] { (top, right), (right, bottom), (bottom, left), (left, top) })
-                {
-                    var mid = new Point((a.X + b.X) / 2, (a.Y + b.Y) / 2);
-                    overlay.Polyline(new[]
-                    {
-                        new Point(mid.X - 5, mid.Y - 5), new Point(mid.X + 5, mid.Y - 5),
-                        new Point(mid.X + 5, mid.Y + 5), new Point(mid.X - 5, mid.Y + 5)
-                    }, closed: true);
-                }
-            }
+            return PlanRoof(wings, Style, null, null);
         }
-
-        /// <summary>Canvas position of the top corner of a cell's diamond at height z.</summary>
-        private static Point Corner(int x, int y, int z)
-        {
-            return new Point(((x - y) * 22) + MultiEditorComponentList.GapXMod, ((x + y) * 22) - (z * 4) - 22);
-        }
-
         // ---------------------------------------------------------------- planning
 
         /// <summary>
-        /// The tiles a roof of these wings takes away and adds. An added tile with no layer goes
-        /// on the roof layer; a re-pieced tile of an older roof names the layer it stays on.
+        /// The tiles a roof of these wings takes away and adds, in a roof style. An added tile
+        /// with no layer goes on the roof layer; a re-pieced tile of an older roof names the layer
+        /// it stays on. <paramref name="draftWalls"/> are walls about to be built with the roof (a
+        /// house draft), which count as standing for the gable ends. <paramref name="hidden"/>
+        /// tells roof cells that must not be built (inside a taller part of the house).
         /// </summary>
-        private (List<MultiTile> Remove, List<(ushort Id, int X, int Y, int Z, TileLayer Layer)> Add) Plan(IReadOnlyList<RoofWing> wings)
+        public (List<MultiTile> Remove, List<(ushort Id, int X, int Y, int Z, string Layer)> Add) PlanRoof(IReadOnlyList<RoofWing> wings,
+            HouseStyle style, IReadOnlyList<(ushort Id, int X, int Y, int Z)> draftWalls, Func<int, int, int, bool> hidden)
         {
             var remove = new List<MultiTile>();
-            var add = new List<(ushort Id, int X, int Y, int Z, TileLayer Layer)>();
-            HouseStyle style = Style;
+            var add = new List<(ushort Id, int X, int Y, int Z, string Layer)>();
             if (wings.Count == 0 || style == null)
             {
                 return (remove, add);
+            }
+
+            _planStyle = style;
+            _draftWalls = null;
+            if (draftWalls != null)
+            {
+                _draftWalls = new Dictionary<(int X, int Y), List<(ushort Id, int Z)>>();
+                foreach ((ushort id, int x, int y, int z) in draftWalls)
+                {
+                    if (!_draftWalls.TryGetValue((x, y), out List<(ushort Id, int Z)> there))
+                    {
+                        _draftWalls[(x, y)] = there = new List<(ushort Id, int Z)>();
+                    }
+
+                    there.Add((id, z));
+                }
             }
 
             MultiEditorComponentList list = Context.CompList;
@@ -588,6 +272,18 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             foreach (RoofWing wing in wings)
             {
                 RoofPlanner.AddWing(heights, fixedPieces, wing.Box, wing.RidgeAlongY, wing.Shape, wing.EaveZ);
+            }
+
+            if (hidden != null)
+            {
+                foreach (((int X, int Y) cell, int height) in new List<KeyValuePair<(int X, int Y), int>>(heights).Select(h => (h.Key, h.Value)))
+                {
+                    if (hidden(cell.X, cell.Y, height))
+                    {
+                        heights.Remove(cell);
+                        fixedPieces.Remove(cell);
+                    }
+                }
             }
 
             var footprint = new HashSet<(int X, int Y)>(heights.Keys);
@@ -648,7 +344,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// no gable and gets none: only cells with no roof beyond them are filled.
         /// </summary>
         private void AddGables(RoofWing wing, Dictionary<(int X, int Y), int> heights, HashSet<(ushort, int, int, int)> placed,
-            List<(ushort Id, int X, int Y, int Z, TileLayer Layer)> add)
+            List<(ushort Id, int X, int Y, int Z, string Layer)> add)
         {
             MultiEditorComponentList list = Context.CompList;
             bool ridgeAlongY = wing.RidgeAlongY;
@@ -783,7 +479,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// taken out of <paramref name="footprint"/>.
         /// </summary>
         private void JoinExisting(HashSet<(int X, int Y)> footprint, Dictionary<(int X, int Y), int> heights,
-            Dictionary<(int X, int Y), string> fixedPieces, List<MultiTile> remove, List<(ushort Id, int X, int Y, int Z, TileLayer Layer)> add)
+            Dictionary<(int X, int Y), string> fixedPieces, List<MultiTile> remove, List<(ushort Id, int X, int Y, int Z, string Layer)> add)
         {
             MultiEditorComponentList list = Context.CompList;
             var existing = new Dictionary<(int X, int Y), List<MultiTile>>();
@@ -872,7 +568,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     continue;
                 }
 
-                HouseStyle style = Style;
+                HouseStyle style = _planStyle;
                 string now = null;
                 if (Context.HouseStyles.TryGetRoleByArt(tile.Id, out HouseStyle owner, out string slot, out _) && owner.Kind == HousePartKind.Roof)
                 {
@@ -888,7 +584,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 if (id != 0 && id != tile.Id)
                 {
                     remove.Add(tile);
-                    add.Add((id, x, y, tile.Z, tile.Layer));
+                    add.Add((id, x, y, tile.Z, tile.Layer.Name));
                 }
             }
         }
@@ -1026,6 +722,17 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 }
             }
 
+            if (_draftWalls != null && _draftWalls.TryGetValue((x, y), out List<(ushort Id, int Z)> planned))
+            {
+                foreach ((ushort id, int wallZ) in planned)
+                {
+                    if (wallZ < z && wallZ > z - _storey - 5 && TileData.ItemTable[id].Height >= _storey / 2)
+                    {
+                        return true;
+                    }
+                }
+            }
+
             return false;
         }
 
@@ -1060,12 +767,26 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             int from = alongX ? wallX0 : wallY0, to = alongX ? wallX1 : wallY1;
             for (int a = from; a <= to && wall == 0; ++a)
             {
-                foreach (MultiTile tile in list.GetTilesAt(alongX ? a : row, alongX ? row : a))
+                (int X, int Y) cell = (alongX ? a : row, alongX ? row : a);
+                foreach (MultiTile tile in list.GetTilesAt(cell.X, cell.Y))
                 {
                     if (tile.Z < z && Context.HouseStyles.TryGetRole(tile.Id, out HouseStyle owner, out _) && owner.Kind == HousePartKind.Wall)
                     {
                         wall = tile.Id;
                         break;
+                    }
+                }
+
+                // The top storey of a house being drafted: the walls the gable stands on.
+                if (wall == 0 && _draftWalls != null && _draftWalls.TryGetValue(cell, out List<(ushort Id, int Z)> planned))
+                {
+                    foreach ((ushort id, int wallZ) in planned.OrderByDescending(p => p.Z))
+                    {
+                        if (wallZ < z && Context.HouseStyles.TryGetRole(id, out HouseStyle owner, out _) && owner.Kind == HousePartKind.Wall)
+                        {
+                            wall = id;
+                            break;
+                        }
                     }
                 }
             }

@@ -105,6 +105,24 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     }
 
     /// <summary>
+    /// How strongly a tool marks something it draws.
+    /// </summary>
+    internal enum OverlayTone
+    {
+        /// <summary>There, but not what is being worked on.</summary>
+        Plain,
+
+        /// <summary>Under the mouse: what a press would take hold of.</summary>
+        Hover,
+
+        /// <summary>The thing being worked on.</summary>
+        Selected,
+
+        /// <summary>Something a release would take away.</summary>
+        Remove
+    }
+
+    /// <summary>
     /// What a tool draws over the multi. The canvas decides how it looks.
     /// </summary>
     internal interface IToolOverlay
@@ -120,6 +138,12 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         /// <summary>A line through canvas points, joined back to the start when closed.</summary>
         void Polyline(IReadOnlyList<Point> points, bool closed);
+
+        /// <summary>A closed outline through canvas points, drawn as strongly as its tone asks.</summary>
+        void Outline(IReadOnlyList<Point> points, OverlayTone tone);
+
+        /// <summary>A cell tinted on the plane at height z.</summary>
+        void CellMark(int x, int y, int z, OverlayTone tone);
     }
 
     /// <summary>

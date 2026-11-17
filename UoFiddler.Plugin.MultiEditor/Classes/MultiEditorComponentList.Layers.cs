@@ -112,15 +112,15 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         }
 
         /// <summary>
-        /// Removes some tiles and adds others in one undo step, the new ones on the layer each
-        /// names or, when it names none, on the layer called <paramref name="layerName"/>. That
-        /// layer is made on top of the others when the multi has none of that name; the active
-        /// layer stays as it is. The multi grows to hold tiles added past its +X/+Y end.
+        /// Removes some tiles and adds others in one undo step, each new one on the layer it
+        /// names, or on <paramref name="defaultLayer"/> when it names none. Layers the multi does
+        /// not have yet are made on top of the others, in the order they are first named; the
+        /// active layer stays as it is. The multi grows to hold tiles added past its +X/+Y end.
         /// </summary>
-        public void ReplaceTilesOnLayer(IEnumerable<MultiTile> remove, IEnumerable<(ushort Id, int X, int Y, int Z, TileLayer Layer)> add,
-            string action, string layerName)
+        public void ReplaceTilesOnLayers(IEnumerable<MultiTile> remove, IEnumerable<(ushort Id, int X, int Y, int Z, string Layer)> add,
+            string action, string defaultLayer)
         {
-            var added = new List<(ushort Id, int X, int Y, int Z, TileLayer Layer)>(add);
+            var added = new List<(ushort Id, int X, int Y, int Z, string Layer)>(add);
             BeginEdit(action);
             foreach (MultiTile tile in new List<MultiTile>(remove))
             {
@@ -142,19 +142,26 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 RebuildGrid(width, height, new List<MultiTile>(RealTiles));
             }
 
-            TileLayer named = _layers.FirstOrDefault(l => l.Name == layerName);
-            if (named == null && added.Any(a => a.Layer == null))
+            var byName = new Dictionary<string, TileLayer>();
+            foreach (var (id, x, y, z, name) in added)
             {
-                RecordLayers();
-                TileLayer active = ActiveLayer;
-                named = new TileLayer(layerName);
-                _layers.Add(named);
-                ActiveLayer = active;
-            }
+                string wanted = name ?? defaultLayer;
+                if (!byName.TryGetValue(wanted, out TileLayer layer))
+                {
+                    layer = _layers.FirstOrDefault(l => l.Name == wanted);
+                    if (layer == null)
+                    {
+                        RecordLayers();
+                        TileLayer active = ActiveLayer;
+                        layer = new TileLayer(wanted);
+                        _layers.Add(layer);
+                        ActiveLayer = active;
+                    }
 
-            foreach (var (id, x, y, z, layer) in added)
-            {
-                RecordNew(id, x, y, z, false, 0, layer: layer != null && _layers.Contains(layer) ? layer : named);
+                    byName[wanted] = layer;
+                }
+
+                RecordNew(id, x, y, z, false, 0, layer: layer);
             }
 
             EndEdit();

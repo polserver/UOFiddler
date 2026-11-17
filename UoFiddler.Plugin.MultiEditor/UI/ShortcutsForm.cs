@@ -72,7 +72,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ("Turn a wing's ridge (Roof)", "Shift + click the wing"),
                 ("Remove the selected wing (Roof)", "Delete"),
                 ("Place the roof on the Roof layer (Roof)", "Enter, or pick another tool"),
-                ("Drop the roof being shaped (Roof)", "Esc"));
+                ("Drop the roof being shaped (Roof)", "Esc"),
+                ("Add a wing to the house draft (House)", "Drag out its wall cells"),
+                ("Select, move, resize, turn or remove a wing (House)", "As with the roof's wings"),
+                ("Step back and forth through the draft (Roof, House)", "Ctrl+Z / Ctrl+Y"),
+                ("Partitions and openings in the house draft (Walls)", "Drag / Ctrl + drag"),
+                ("Window in a wall of the house draft (Walls)", "Click the wall"),
+                ("Door in the house draft (Doors)", "Click a wall; Ctrl + click removes"),
+                ("Place the house on its layers (House and its draft tools)", "Enter"),
+                ("Drop the house draft; undo brings it back (House)", "Esc"));
 
             Section("Tile browser",
                 ("Go from the search box to the results", "Down"),
