@@ -50,8 +50,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _floorButtons[k].Click += (_, _) => PickStyle?.Invoke(HousePartKind.Floor, storey);
             }
 
-            _roofStyle.Click += (_, _) => PickStyle?.Invoke(HousePartKind.Roof, 0);
+            _roofStyle.Click += (_, _) =>
+            {
+                bool flat = _session != null && !_session.House.NoRoof && _session.House.Shape == RoofShape.Flat;
+                PickStyle?.Invoke(flat ? HousePartKind.Floor : HousePartKind.Roof, flat ? FlatRoof : 0);
+            };
         }
+
+        /// <summary>The storey a pick names when it is for the flat roof's floor style.</summary>
+        public const int FlatRoof = -1;
 
         /// <summary>Asks for a style to be picked on the House page for a storey's walls or floor, or for the roof.</summary>
         public event Action<HousePartKind, int> PickStyle;
@@ -137,7 +144,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     _storeyLabels[k].ForeColor = current ? Color.Black : ForeColor;
                 }
 
-                _roofStyle.Text = house.Draft.RoofStyle?.Name ?? "(roof)";
+                // A flat roof is laid in a floor style of its own; the button picks that one then.
+                bool flat = !house.NoRoof && house.Shape == RoofShape.Flat;
+                _roofStyle.Text = flat ? house.Draft.FlatRoofStyle?.Name ?? "(top floor's style)" : house.Draft.RoofStyle?.Name ?? "(roof)";
                 _foundation.Checked = house.Draft.Foundation;
                 _rooms.Value = Math.Clamp(house.Rooms, 1, HouseDraft.MaxRooms);
                 _showWalls.Checked = house.ShowWalls;

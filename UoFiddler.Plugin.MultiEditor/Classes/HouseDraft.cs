@@ -44,6 +44,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public HouseStyle RoofStyle { get; set; }
 
+        /// <summary>The floor style a flat roof is laid in; without one, the floor style of the wing's top storey.</summary>
+        public HouseStyle FlatRoofStyle { get; set; }
+
         public bool Foundation { get; set; }
 
         /// <summary>Most rooms a wing can be divided into.</summary>
@@ -109,7 +112,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>A draft with the same materials and nothing changed by hand: the next house.</summary>
         public HouseDraft Fresh()
         {
-            var copy = new HouseDraft { RoofStyle = RoofStyle, Foundation = Foundation };
+            var copy = new HouseDraft { RoofStyle = RoofStyle, FlatRoofStyle = FlatRoofStyle, Foundation = Foundation };
             Array.Copy(WallStyles, copy.WallStyles, MaxStoreys);
             Array.Copy(FloorStyles, copy.FloorStyles, MaxStoreys);
             return copy;
@@ -371,7 +374,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                         continue;
                     }
 
-                    string column = WallPlanner.PieceFor(south, east, x, y);
+                    string column = WallPlanner.PieceFor(wallStyle, south, east, x, y);
                     if (column == null || wallStyle == null)
                     {
                         continue;
@@ -429,7 +432,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             foreach (RoofWing wing in wings)
             {
                 int storeys = Math.Clamp(wing.Storeys, 1, MaxStoreys);
-                HouseStyle style = FloorStyles[storeys - 1];
+                HouseStyle style = FlatRoofStyle ?? FloorStyles[storeys - 1];
                 if (wing.NoRoof || wing.Shape != RoofShape.Flat || style == null)
                 {
                     continue;

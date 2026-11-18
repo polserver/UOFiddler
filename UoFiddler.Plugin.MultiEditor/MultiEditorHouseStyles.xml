@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  House styles of the multi editor: names, groups, order and corrected pieces for the styles read
+  from the client's walls.txt, floors.txt, roof.txt, doors.txt, stairs.txt, misc.txt and teleprts.txt.
+
+  A file of this name in the profile's plugins folder (%APPDATA%/UoFiddler/plugins) is laid over
+  this one, entry by entry: keep your changes there and this file can be replaced by a newer one.
+
+  Style     one style. The order of the Style elements is the order of the lists.
+    kind      Wall, Floor, Roof, Door, Stair, Misc or Teleporter.
+    anchor    a tile id of the style: the entry is about the first style of the kind that lists it
+              in the client's tables. An entry whose tiles the client has no art for is ignored.
+    name, group, family
+              how the style is listed. family is the material, shared by styles of every kind.
+    hidden    true keeps the style out of the lists.
+    layout    for walls. Run (start, middle, end), Paired (South1+South3 and East3+East1 are the
+              halves of an ornament laid pair after pair, South2 and East2 the plain wall) or
+              Cycle (CycleSouth1..n and CycleEast1..n are panels laid one after another).
+    borrows   false: a wall style that takes no corner or post from the other rows of its category.
+    replaces  tile ids of further table rows this style takes the place of.
+    new       true: a style the tables do not have, made from the Piece elements.
+    Piece     role (the column: South1-3, East1-3, Corner, Post, WindowS, WindowE, F1.., ...) and id.
+              With pieces the style has these and not the table's. Empty wall columns are filled
+              from the ones given.
+-->
+<HouseStyles version="1">
+  <Style kind="Wall" anchor="0x000A" name="Dark Wood Standard Walls" group="Dark Wood" family="Dark Wood"/>
+  <Style kind="Wall" anchor="0x0012" name="Dark Wood Half Walls" group="Dark Wood" family="Dark Wood"/>
+  <Style kind="Wall" anchor="0x0016" name="Dark Wood Quarter Walls" group="Dark Wood" family="Dark Wood"/>
+  <Style kind="Wall" anchor="0x00AB" name="Light Wood Standard Walls" group="Light Wood" family="Light Wood"/>
+  <Style kind="Wall" anchor="0x00B2" name="Light Wood Alternative Walls" group="Light Wood" family="Light Wood"/>
+  <Style kind="Wall" anchor="0x03B4" name="Light Wood Half Walls" group="Light Wood" family="Light Wood"/>
+  <Style kind="Wall" anchor="0x00BF" name="Light Wood Quarter Walls" group="Light Wood" family="Light Wood"/>
+  <Style kind="Wall" anchor="0x001E" name="Fieldstone Standard Walls" group="Fieldstone" family="Fieldstone"/>
+  <Style kind="Wall" anchor="0x29AC" name="Fieldstone Stained Glass Walls" group="Fieldstone" family="Fieldstone"/>
+  <Style kind="Wall" anchor="0x0025" name="Fieldstone Half Walls" group="Fieldstone" family="Fieldstone"/>
+  <Style kind="Wall" anchor="0x01D0" name="Weathered Stone Standard Walls" group="Weathered Stone" family="Weathered Stone"/>
+  <Style kind="Wall" anchor="0x29A4" name="Weathered Stone Stained Glass" group="Weathered Stone" family="Weathered Stone"/>
+  <Style kind="Wall" anchor="0x01E9" name="Weathered Stone Roof Edging" group="Weathered Stone" family="Weathered Stone"/>
+  <Style kind="Wall" anchor="0x00C8" name="Granite Standard Walls" group="Weathered Stone" family="Weathered Stone"/>
+  <Style kind="Wall" anchor="0x00DE" name="Granite Roof Edging" group="Weathered Stone" family="Weathered Stone"/>
+  <Style kind="Wall" anchor="0x0037" name="Grey Brick Standard Walls" group="Grey Brick" family="Grey Brick"/>
+  <Style kind="Wall" anchor="0x29B6" name="Grey Brick Stained Glass" group="Grey Brick" family="Grey Brick"/>
+  <Style kind="Wall" anchor="0x003E" name="Grey Brick Half Walls" group="Grey Brick" family="Grey Brick"/>
+  <Style kind="Wall" anchor="0x0042" name="Grey Brick Quarter Walls" group="Grey Brick" family="Grey Brick"/>
+  <Style kind="Wall" anchor="0x0058" name="Light Brick Standard Walls" group="Light Brick" family="Light Brick"/>
+  <Style kind="Wall" anchor="0x29A0" name="Light Brick Stained Glass Walls" group="Light Brick" family="Light Brick"/>
+  <Style kind="Wall" anchor="0x005F" name="Light Brick Half Walls" group="Light Brick" family="Light Brick"/>
+  <Style kind="Wall" anchor="0x0063" name="Light Brick Quarter Walls" group="Light Brick" family="Light Brick"/>
+  <Style kind="Wall" anchor="0x0069" name="Light Brick Roof Edging" group="Light Brick" family="Light Brick"/>
+  <Style kind="Wall" anchor="0x01BC" name="Hide Standard Walls" group="Hide" family="Hide"/>
+  <Style kind="Wall" anchor="0x01BE" name="Hide Alternative Walls" group="Hide" family="Hide"/>
+  <Style kind="Wall" anchor="0x01AB" name="Woven Standard Walls" group="Hide" family="Hide"/>
+  <Style kind="Wall" anchor="0x215B" name="Woven Short Walls" group="Hide" family="Hide"/>
+  <Style kind="Wall" anchor="0x0095" name="Log Standard Walls" group="Log" family="Log"/>
+  <Style kind="Wall" anchor="0x009F" name="Log Half Walls" group="Log" family="Log"/>
+  <Style kind="Wall" anchor="0x0228" name="Palisades Standard Walls" group="Palisades" family="Palisades"/>
+  <Style kind="Wall" anchor="0x0430" name="Palisades Alternative Walls" group="Palisades" family="Palisades"/>
+  <Style kind="Wall" anchor="0x0423" name="Palisades Roof Edging" group="Palisades" family="Palisades"/>
+  <Style kind="Wall" anchor="0x00F9" name="Tan Marble Fancy Walls" group="Tan Marble" family="Tan Marble"/>
+  <Style kind="Wall" anchor="0x00FF" name="Tan Marble Medium Walls" group="Tan Marble" family="Tan Marble"/>
+  <Style kind="Wall" anchor="0x0105" name="Tan Marble Plain Walls" group="Tan Marble" family="Tan Marble"/>
+  <Style kind="Wall" anchor="0x010B" name="Tan Marble Half Walls" group="Tan Marble" family="Tan Marble"/>
+  <Style kind="Wall" anchor="0x010F" name="Tan Marble Fancy Roof Edging" group="Tan Marble" family="Tan Marble"/>
+  <Style kind="Wall" anchor="0x0443" name="Tan Marble Medium Roof Edging" group="Tan Marble" family="Tan Marble"/>
+  <Style kind="Wall" anchor="0x0118" name="Tan Marble Plain Roof Edging" group="Tan Marble" family="Tan Marble"/>
+  <Style kind="Wall" anchor="0x029E" name="White Marble Fancy Walls" group="White Marble" family="White Marble"/>
+  <Style kind="Wall" anchor="0x0298" name="White Marble Medium Walls" group="White Marble" family="White Marble"/>
+  <Style kind="Wall" anchor="0x0292" name="White Marble Plain Walls" group="White Marble" family="White Marble"/>
+  <Style kind="Wall" anchor="0x02A2" name="White Marble Half Walls" group="White Marble" family="White Marble"/>
+  <Style kind="Wall" anchor="0x02BA" name="White Marble Fancy Roof Edging" group="White Marble" family="White Marble"/>
+  <Style kind="Wall" anchor="0x0451" name="White Marble Medium Roof Edging" group="White Marble" family="White Marble"/>
+  <Style kind="Wall" anchor="0x02B6" name="White Marble Plain Roof Edging" group="White Marble" family="White Marble"/>
+  <Style kind="Wall" anchor="0x0159" name="Sandstone Brick Fancy Walls" group="Sandstone" family="Sandstone"/>
+  <Style kind="Wall" anchor="0x0160" name="Sandstone Brick Plain Walls" group="Sandstone" family="Sandstone"/>
+  <Style kind="Wall" anchor="0x0165" name="Sandstone Brick Fancy Half Walls" group="Sandstone" family="Sandstone"/>
+  <Style kind="Wall" anchor="0x016A" name="Sandstone Brick Plain Half Walls" group="Sandstone" family="Sandstone"/>
+  <Style kind="Wall" anchor="0x0205" name="Sandstone and Plaster Standard Walls" group="Sandstone" family="Sandstone"/>
+  <Style kind="Wall" anchor="0x0256" name="Flat Stone Medium Walls" group="Flat Stone" family="Flat Stone"/>
+  <Style kind="Wall" anchor="0x0250" name="Flat Stone Plain Walls" group="Flat Stone" family="Flat Stone"/>
+  <Style kind="Wall" anchor="0x0253" name="Flat Stone Open Walls" group="Flat Stone" family="Flat Stone"/>
+  <Style kind="Wall" anchor="0x024D" name="Flat Stone Fancy Walls" group="Flat Stone" family="Flat Stone"/>
+  <Style kind="Wall" anchor="0x03C8" name="Sandstone and Mortar Dark Walls" group="Sandstone and Mortar" family="Sandstone and Mortar"/>
+  <Style kind="Wall" anchor="0x03CC" name="Sandstone and Mortar Light Walls" group="Sandstone and Mortar" family="Sandstone and Mortar"/>
+  <Style kind="Wall" anchor="0x03D7" name="Sandstone and Mortar Walls" group="Sandstone and Mortar" family="Sandstone and Mortar"/>
+  <Style kind="Wall" anchor="0x03E0" name="Sandstone and Mortar Walls 2" group="Sandstone and Mortar" family="Sandstone and Mortar"/>
+  <Style kind="Wall" anchor="0x03C0" name="Sandstone and Mortar Half Walls" group="Sandstone and Mortar" family="Sandstone and Mortar"/>
+  <Style kind="Wall" anchor="0x03D0" name="Sandstone and Mortar Half Walls 2" group="Sandstone and Mortar" family="Sandstone and Mortar"/>
+  <Style kind="Wall" anchor="0x0138" name="Wood and Plaster Plain Walls" group="Wood and Plaster" family="Wood and Plaster"/>
+  <Style kind="Wall" anchor="0x0132" name="Wood and Plaster Wood Trim Walls" group="Wood and Plaster" family="Wood and Plaster"/>
+  <Style kind="Wall" anchor="0x012E" name="Wood and Plaster Diagonal Beams 1" group="Wood and Plaster" family="Wood and Plaster"/>
+  <Style kind="Wall" anchor="0x0130" name="Wood and Plaster Diagonal Beams 2" group="Wood and Plaster" family="Wood and Plaster"/>
+  <Style kind="Wall" anchor="0x0150" name="Wood and Plaster Fancy Walls" group="Wood and Plaster" family="Wood and Plaster"/>
+  <Style kind="Wall" anchor="0x0152" name="Wood and Plaster Medium Walls" group="Wood and Plaster" family="Wood and Plaster"/>
+  <Style kind="Wall" anchor="0x038E" name="Damaged Plaster Plain Walls" group="Damaged Plaster" family="Damaged Plaster"/>
+  <Style kind="Wall" anchor="0x0390" name="Damaged Plaster Damaged Walls" group="Damaged Plaster" family="Damaged Plaster"/>
+  <Style kind="Wall" anchor="0x038A" name="Damaged Plaster Wood Trim Walls" group="Damaged Plaster" family="Damaged Plaster"/>
+  <Style kind="Wall" anchor="0x0386" name="Damaged Plaster Diagonal Beams 1" group="Damaged Plaster" family="Damaged Plaster"/>
+  <Style kind="Wall" anchor="0x0388" name="Damaged Plaster Diagonal Beams 2" group="Damaged Plaster" family="Damaged Plaster"/>
+  <Style kind="Wall" anchor="0x2487" name="Lacquered Panel Standard Walls" group="Lacquered Panel" family="Lacquered Panel"/>
+  <Style kind="Wall" anchor="0x2484" name="Lacquered Panel Half Walls" group="Lacquered Panel" family="Lacquered Panel"/>
+  <Style kind="Wall" anchor="0x2481" name="Lacquered Panel Quarter Walls" group="Lacquered Panel" family="Lacquered Panel"/>
+  <Style kind="Wall" anchor="0x299A" name="Wood Panel Standard Walls" group="Wood Panel" family="Wood Panel"/>
+  <Style kind="Wall" anchor="0x2999" name="Wood Panel Half Walls" group="Wood Panel" family="Wood Panel"/>
+  <Style kind="Wall" anchor="0x2998" name="Wood Panel Quarter Walls" group="Wood Panel" family="Wood Panel"/>
+  <Style kind="Wall" anchor="0x271F" name="Paper Standard Walls" group="Paper" family="Paper"/>
+  <Style kind="Wall" anchor="0x271E" name="Paper Half Walls" group="Paper" family="Paper"/>
+  <Style kind="Wall" anchor="0x271D" name="Paper Quarter Walls" group="Paper" family="Paper"/>
+  <Style kind="Wall" anchor="0x2762" name="Lattice Standard Walls" group="Lattice" family="Lattice"/>
+  <Style kind="Wall" anchor="0x2761" name="Lattice Half Walls" group="Lattice" family="Lattice"/>
+  <Style kind="Wall" anchor="0x2760" name="Lattice Quarter Walls" group="Lattice" family="Lattice"/>
+  <Style kind="Wall" anchor="0x2940" name="Clay Standard Walls" group="Clay" family="Clay"/>
+  <Style kind="Wall" anchor="0x293F" name="Clay Half Walls" group="Clay" family="Clay"/>
+  <Style kind="Wall" anchor="0x293E" name="Clay Quarter Walls" group="Clay" family="Clay"/>
+  <Style kind="Wall" anchor="0x294F" name="Weathered Clay Standard Walls" group="Weathered Clay" family="Weathered Clay"/>
+  <Style kind="Wall" anchor="0x294E" name="Weathered Clay Half Walls" group="Weathered Clay" family="Weathered Clay"/>
+  <Style kind="Wall" anchor="0x294D" name="Weathered Clay Quarter Walls" group="Weathered Clay" family="Weathered Clay"/>
+  <Style kind="Wall" anchor="0x2955" name="Limestone Standard Walls" group="Limestone" family="Limestone"/>
+  <Style kind="Wall" anchor="0x2954" name="Limestone Half Walls" group="Limestone" family="Limestone"/>
+  <Style kind="Wall" anchor="0x2953" name="Limestone Quarter Walls" group="Limestone" family="Limestone"/>
+  <Style kind="Wall" anchor="0x29F9" name="Dark Plaster Standard Walls" group="Dark Plaster" family="Dark Plaster"/>
+  <Style kind="Wall" anchor="0x29F3" name="Dark Plaster Walls" group="Dark Plaster" family="Dark Plaster"/>
+  <Style kind="Wall" anchor="0x29EF" name="Dark Plaster Diagonal Beams 1" group="Dark Plaster" family="Dark Plaster"/>
+  <Style kind="Wall" anchor="0x29F1" name="Dark Plaster Diagonal Beams 2" group="Dark Plaster" family="Dark Plaster"/>
+  <Style kind="Wall" anchor="0x29E6" name="Dark Plaster Quarter Walls" group="Dark Plaster" family="Dark Plaster"/>
+  <Style kind="Wall" anchor="0x2497" name="Cherrywood Standard Walls" group="Cherrywood" family="Cherrywood"/>
+  <Style kind="Wall" anchor="0x2493" name="Cherrywood Half Walls" group="Cherrywood" family="Cherrywood"/>
+  <Style kind="Wall" anchor="0x248F" name="Cherrywood Quarter Walls" group="Cherrywood" family="Cherrywood"/>
+  <Style kind="Wall" anchor="0x249D" name="Plaster Standard Walls - Light" group="Plaster" family="Plaster"/>
+  <Style kind="Wall" anchor="0x24A8" name="Plaster Standard Walls - Dark" group="Plaster" family="Plaster"/>
+  <Style kind="Wall" anchor="0x249B" name="Plaster Half Walls - Light" group="Plaster" family="Plaster"/>
+  <Style kind="Wall" anchor="0x24AA" name="Plaster Half Walls - Dark" group="Plaster" family="Plaster"/>
+  <Style kind="Wall" anchor="0x24A6" name="Plaster Quarter Walls" group="Plaster" family="Plaster"/>
+  <Style kind="Wall" anchor="0x2B7C" name="Light Plaster Elf Walls" group="Light Plaster Elf" family="Light Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2B7D" name="Light Plaster Elf Window Walls" group="Light Plaster Elf" family="Light Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2B7A" name="Light Plaster Elf Half Walls" group="Light Plaster Elf" family="Light Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2DD0" name="Light Plaster Elf Quarter Walls" group="Light Plaster Elf" family="Light Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2BBE" name="Dark Plaster Elf Walls" group="Dark Plaster Elf" family="Dark Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2BC0" name="Dark Plaster Elf Window Walls" group="Dark Plaster Elf" family="Dark Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2BBC" name="Dark Plaster Elf Half Walls" group="Dark Plaster Elf" family="Dark Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2BBA" name="Dark Plaster Elf Quarter Walls" group="Dark Plaster Elf" family="Dark Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2CF4" name="Plaster Elf Walls" group="Plaster Elf" family="Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2CF6" name="Plaster Elf Window Walls" group="Plaster Elf" family="Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2CF2" name="Plaster Elf Half Walls" group="Plaster Elf" family="Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2CF0" name="Plaster Elf Quarter Walls" group="Plaster Elf" family="Plaster Elf"/>
+  <Style kind="Wall" anchor="0x2D41" name="Carved Wood Walls" group="Carved Wood" family="Carved Wood"/>
+  <Style kind="Wall" anchor="0x2D43" name="Carved Wood Window Walls" group="Carved Wood" family="Carved Wood"/>
+  <Style kind="Wall" anchor="0x2D3F" name="Carved Wood Half Walls" group="Carved Wood" family="Carved Wood"/>
+  <Style kind="Wall" anchor="0x2D3D" name="Carved Wood Quarter Walls" group="Carved Wood" family="Carved Wood"/>
+  <Style kind="Wall" anchor="0x35E3" name="Crystal Walls" group="Crystal" family="Crystal"/>
+  <Style kind="Wall" anchor="0x35E0" name="Crystal Half Walls" group="Crystal" family="Crystal"/>
+  <Style kind="Wall" anchor="0x35DE" name="Crystal Quarter Walls" group="Crystal" family="Crystal"/>
+  <Style kind="Wall" anchor="0x363B" name="Shadow Walls" group="Shadow" family="Shadow">
+    <Piece role="South1" id="0x363B"/>
+    <Piece role="Corner" id="0x3616"/>
+    <Piece role="East3" id="0x363A"/>
+    <Piece role="Post" id="0x3619"/>
+    <Piece role="WindowS" id="0x363D"/>
+    <Piece role="AltWindowS" id="0x363D"/>
+    <Piece role="WindowE" id="0x363C"/>
+    <Piece role="AltWindowE" id="0x363C"/>
+  </Style>
+  <Style kind="Wall" anchor="0x3639" name="Shadow Half Walls" group="Shadow" family="Shadow"/>
+  <Style kind="Wall" anchor="0x3637" name="Shadow Quarter Walls" group="Shadow" family="Shadow"/>
+  <Style kind="Wall" anchor="0x3613" name="Shadow Banner Walls" group="Shadow" family="Shadow" layout="Paired">
+    <Piece role="Corner" id="0x3613"/>
+    <Piece role="South1" id="0x3649"/>
+    <Piece role="South2" id="0x363B"/>
+    <Piece role="South3" id="0x3647"/>
+    <Piece role="East3" id="0x3648"/>
+    <Piece role="East2" id="0x363A"/>
+    <Piece role="East1" id="0x364A"/>
+    <Piece role="Post" id="0x3619"/>
+  </Style>
+  <Style kind="Wall" anchor="0x434D" name="Gargish Set 1 Walls" group="Gargish Set 1" family="Gargish Set 1">
+    <Piece role="South2" id="0x434B"/>
+    <Piece role="East2" id="0x434A"/>
+    <Piece role="Post" id="0x4326"/>
+    <Piece role="Corner" id="0x43CA"/>
+    <Piece role="WindowS" id="0x4355"/>
+    <Piece role="WindowE" id="0x4358"/>
+    <Piece role="AltWindowS" id="0x4357"/>
+    <Piece role="AltWindowE" id="0x4356"/>
+    <Piece role="SecondAltWindowS" id="0x4359"/>
+    <Piece role="SecondAltWindowE" id="0x4354"/>
+    <Piece role="DecoSouth1" id="0x434D"/>
+    <Piece role="DecoEast1" id="0x434C"/>
+    <Piece role="More1" id="0x4348"/>
+    <Piece role="More2" id="0x4349"/>
+    <Piece role="More3" id="0x4327"/>
+    <Piece role="More4" id="0x43CB"/>
+    <Piece role="More5" id="0x43CE"/>
+    <Piece role="More6" id="0x43CC"/>
+    <Piece role="More7" id="0x43CD"/>
+  </Style>
+  <Style kind="Wall" anchor="0x43CA" name="Gargish Set 1 Corner Pieces" group="Gargish Set 1" family="Gargish Set 1" hidden="true"/>
+  <Style kind="Wall" anchor="0x434E" name="Gargish Set 2 Half Walls" group="Gargish Set 2" family="Gargish Set 2"/>
+  <Style kind="Wall" anchor="0x431E" name="Gargish Set 2 Half Walls 2" group="Gargish Set 2" family="Gargish Set 2"/>
+  <Style kind="Wall" anchor="0x4358" name="Gargish Windows" group="Gargish Windows" family="Gargish Windows" hidden="true"/>
+  <Style kind="Wall" anchor="0x4196" name="Gargish Green Marble Walls" group="Gargish Green Marble" family="Gargish Green Marble"/>
+  <Style kind="Wall" anchor="0x419D" name="Gargish Green Marble Quarter Walls" group="Gargish Green Marble" family="Gargish Green Marble">
+    <Piece role="Post" id="0x419F"/>
+    <Piece role="Corner" id="0x41A6"/>
+    <Piece role="South1" id="0x41A7"/>
+    <Piece role="East1" id="0x41A8"/>
+    <Piece role="South2" id="0x4198"/>
+    <Piece role="East2" id="0x4199"/>
+    <Piece role="South3" id="0x419A"/>
+    <Piece role="East3" id="0x4199"/>
+    <Piece role="More1" id="0x419D"/>
+    <Piece role="More2" id="0x419B"/>
+    <Piece role="More3" id="0x419E"/>
+  </Style>
+  <Style kind="Wall" anchor="0x419B" name="Gargish Green Marble Quarter Walls 2" group="Gargish Green Marble" family="Gargish Green Marble" hidden="true"/>
+  <Style kind="Wall" anchor="0x4150" name="Gargish Two-Tone Stone Walls" group="Gargish Two-Tone Stone" family="Gargish Two-Tone Stone"/>
+  <Style kind="Wall" anchor="0x415B" name="Gargish Two-Tone Stone Half Walls" group="Gargish Two-Tone Stone" family="Gargish Two-Tone Stone"/>
+  <Style kind="Wall" anchor="0x4166" name="Gargish Two-Tone Stone Quarter Walls" group="Gargish Two-Tone Stone" family="Gargish Two-Tone Stone"/>
+  <Style kind="Wall" anchor="0x4118" name="Gargish Gold Stone Walls" group="Gargish Gold Stone" family="Gargish Gold Stone"/>
+  <Style kind="Wall" anchor="0x4124" name="Gargish Gold Stone Walls 2" group="Gargish Gold Stone" family="Gargish Gold Stone"/>
+  <Style kind="Wall" anchor="0x5133" name="Gargish Red Marble Walls" group="Gargish Red Marble" family="Gargish Red Marble">
+    <Piece role="East1" id="0x5133"/>
+    <Piece role="South1" id="0x513B"/>
+    <Piece role="Post" id="0x5140"/>
+    <Piece role="Corner" id="0x512D"/>
+    <Piece role="South2" id="0x513B"/>
+    <Piece role="East2" id="0x513C"/>
+    <Piece role="More1" id="0x512E"/>
+    <Piece role="More2" id="0x512F"/>
+    <Piece role="WindowS" id="0x513F"/>
+    <Piece role="WindowE" id="0x5141"/>
+    <Piece role="AltWindowS" id="0x5112"/>
+    <Piece role="AltWindowE" id="0x50FF"/>
+    <Piece role="South3" id="0x5132"/>
+    <Piece role="East3" id="0x513C"/>
+  </Style>
+  <Style kind="Wall" anchor="0x50FE" name="Gargish Red Marble Walls 2" group="Gargish Red Marble" family="Gargish Red Marble"/>
+  <Style kind="Wall" anchor="0x5105" name="Gargish Red Marble Carved Walls" group="Gargish Red Marble" family="Gargish Red Marble" replaces="0x50FD 0x5118 0x5120" layout="Cycle" borrows="false">
+    <Piece role="Corner" id="0x5103"/>
+    <Piece role="Post" id="0x5116"/>
+    <Piece role="CycleSouth1" id="0x5110"/>
+    <Piece role="CycleSouth2" id="0x5118"/>
+    <Piece role="CycleSouth3" id="0x5119"/>
+    <Piece role="CycleSouth4" id="0x511A"/>
+    <Piece role="CycleSouth5" id="0x511B"/>
+    <Piece role="CycleSouth6" id="0x511C"/>
+    <Piece role="CycleSouth7" id="0x511D"/>
+    <Piece role="CycleSouth8" id="0x511E"/>
+    <Piece role="CycleSouth9" id="0x511F"/>
+    <Piece role="CycleSouth10" id="0x5120"/>
+    <Piece role="CycleSouth11" id="0x5121"/>
+    <Piece role="CycleEast1" id="0x50FD"/>
+    <Piece role="CycleEast2" id="0x5105"/>
+    <Piece role="CycleEast3" id="0x5106"/>
+    <Piece role="CycleEast4" id="0x5107"/>
+    <Piece role="CycleEast5" id="0x5108"/>
+    <Piece role="CycleEast6" id="0x5109"/>
+    <Piece role="CycleEast7" id="0x510A"/>
+    <Piece role="CycleEast8" id="0x510B"/>
+    <Piece role="CycleEast9" id="0x510C"/>
+    <Piece role="CycleEast10" id="0x510D"/>
+    <Piece role="CycleEast11" id="0x510E"/>
+  </Style>
+  <Style kind="Wall" anchor="0x510F" name="Gargish Marble Walls" group="Gargish Marble" family="Gargish Marble"/>
+  <Style kind="Wall" anchor="0x5131" name="Gargish Marble Half Walls" group="Gargish Marble" family="Gargish Marble"/>
+  <Style kind="Wall" anchor="0x5134" name="Gargish Marble Bars" group="Gargish Marble" family="Gargish Marble"/>
+  <Style kind="Wall" anchor="0x46DB" name="Gargish Ruined Walls" group="Gargish Ruined" family="Gargish Ruined"/>
+  <Style kind="Wall" anchor="0x4784" name="Gargish Ruined Walls 2" group="Gargish Ruined" family="Gargish Ruined"/>
+  <Style kind="Wall" anchor="0x4785" name="Gargish Ruined Half Walls" group="Gargish Ruined" family="Gargish Ruined"/>
+  <Style kind="Wall" anchor="0x471D" name="Gargish Ruined Quarter Walls" group="Gargish Ruined" family="Gargish Ruined"/>
+  <Style kind="Wall" anchor="0x46D4" name="Gargish Ruined Walls 3" group="Gargish Ruined" family="Gargish Ruined"/>
+  <Style kind="Wall" anchor="0x46C2" name="Gargish Ruined Walls 4" group="Gargish Ruined" family="Gargish Ruined"/>
+  <Style kind="Wall" anchor="0x4179" name="Gargish Blue Marble Dark Walls" group="Gargish Blue Marble" family="Gargish Blue Marble">
+    <Piece role="South1" id="0x4179"/>
+    <Piece role="East1" id="0x4178"/>
+    <Piece role="Corner" id="0x4177"/>
+    <Piece role="Post" id="0x4174"/>
+    <Piece role="South2" id="0x417B"/>
+    <Piece role="East2" id="0x417A"/>
+    <Piece role="WindowS" id="0x4175"/>
+    <Piece role="WindowE" id="0x4176"/>
+  </Style>
+  <Style kind="Wall" anchor="0x417C" name="Gargish Blue Marble Light Walls" group="Gargish Blue Marble" family="Gargish Blue Marble">
+    <Piece role="East1" id="0x417D"/>
+    <Piece role="Corner" id="0x417E"/>
+    <Piece role="Post" id="0x417C"/>
+    <Piece role="East2" id="0x417F"/>
+    <Piece role="South1" id="0x4180"/>
+    <Piece role="South2" id="0x4181"/>
+    <Piece role="South3" id="0x4182"/>
+    <Piece role="East3" id="0x4183"/>
+    <Piece role="More1" id="0x4184"/>
+    <Piece role="More2" id="0x4185"/>
+    <Piece role="More3" id="0x416C"/>
+    <Piece role="More4" id="0x416D"/>
+  </Style>
+  <Style kind="Wall" anchor="0x416F" name="Gargish Blue Marble Braces" group="Gargish Blue Marble" family="Gargish Blue Marble" borrows="false">
+    <Piece role="East1" id="0x416F"/>
+    <Piece role="South1" id="0x416E"/>
+  </Style>
+  <Style kind="Wall" anchor="0x4320" name="Gargish Set 3 Walls" group="Gargish Set 3" family="Gargish Set 3"/>
+  <Style kind="Wall" anchor="0x4B2E" name="Gothic Walls 1" group="Gothic" family="Gothic"/>
+  <Style kind="Wall" anchor="0x4B37" name="Gothic Walls 2" group="Gothic" family="Gothic"/>
+  <Style kind="Wall" anchor="0x4B3B" name="Gothic Walls 3" group="Gothic" family="Gothic"/>
+  <Style kind="Wall" anchor="0x4B3A" name="Gothic Pillars" group="Gothic" family="Gothic" hidden="true"/>
+  <Style kind="Wall" anchor="0x4B10" name="Gothic Rose Window Walls" group="Gothic" family="Gothic" replaces="0x4B16">
+    <Piece role="South1" id="0x4B10"/>
+    <Piece role="South2" id="0x4B11"/>
+    <Piece role="South3" id="0x4B12"/>
+    <Piece role="East1" id="0x4B16"/>
+    <Piece role="East2" id="0x4B17"/>
+    <Piece role="East3" id="0x4B18"/>
+    <Piece role="More1" id="0x4B13"/>
+    <Piece role="More2" id="0x4B14"/>
+    <Piece role="More3" id="0x4B15"/>
+    <Piece role="More4" id="0x4B19"/>
+    <Piece role="More5" id="0x4B1A"/>
+    <Piece role="More6" id="0x4B1B"/>
+  </Style>
+  <Style kind="Wall" anchor="0x77E6" name="Board and Batten Walls" group="Board and Batten" family="Board and Batten"/>
+  <Style kind="Wall" anchor="0x77E7" name="Board and Batten Half Walls" group="Board and Batten" family="Board and Batten"/>
+  <Style kind="Wall" anchor="0x77E8" name="Board and Batten Quarter Walls" group="Board and Batten" family="Board and Batten"/>
+  <Style kind="Wall" anchor="0x9AB1" name="Jungle Walls" group="Jungle" family="Jungle"/>
+  <Style kind="Wall" anchor="0x9ABB" name="Jungle Half Walls" group="Jungle" family="Jungle"/>
+  <Style kind="Wall" anchor="0x9ABF" name="Jungle Quarter Walls" group="Jungle" family="Jungle"/>
+  <Style kind="Wall" anchor="0x9AC7" name="Jungle Quarter Walls 2" group="Jungle" family="Jungle"/>
+  <Style kind="Wall" anchor="0x9B16" name="Shadowguard Walls" group="Shadowguard" family="Shadowguard"/>
+  <Style kind="Wall" anchor="0x9B19" name="Shadowguard Walls 2" group="Shadowguard" family="Shadowguard"/>
+  <Style kind="Wall" anchor="0x9B7F" name="Shadowguard Walls 3" group="Shadowguard" family="Shadowguard"/>
+  <Style kind="Wall" anchor="0x9B24" name="Shadowguard Half Walls" group="Shadowguard" family="Shadowguard"/>
+  <Style kind="Wall" anchor="0x9B20" name="Shadowguard Half Walls 2" group="Shadowguard" family="Shadowguard"/>
+  <Style kind="Wall" anchor="0x9BD1" name="Shadowguard Quarter Walls" group="Shadowguard" family="Shadowguard"/>
+  <Style kind="Wall" anchor="0x9B2C" name="Shadowguard Quarter Walls 2" group="Shadowguard" family="Shadowguard"/>
+  <Style kind="Wall" anchor="0xB3D7" name="Celtic Walls" group="Celtic" family="Celtic">
+    <Piece role="South1" id="0xB3D7"/>
+    <Piece role="DecoSouth2" id="0xB3D9"/>
+    <Piece role="Corner" id="0xB3D6"/>
+    <Piece role="East1" id="0xB3D8"/>
+    <Piece role="DecoEast2" id="0xB3DA"/>
+    <Piece role="Post" id="0xB3DF"/>
+    <Piece role="WindowS" id="0xB3DB"/>
+    <Piece role="AltWindowS" id="0xB3DD"/>
+    <Piece role="WindowE" id="0xB3DC"/>
+    <Piece role="AltWindowE" id="0xB3DE"/>
+  </Style>
+  <Style kind="Wall" anchor="0xB3E1" name="Celtic Walls 2" group="Celtic" family="Celtic">
+    <Piece role="South1" id="0xB3E1"/>
+    <Piece role="DecoSouth2" id="0xB3E3"/>
+    <Piece role="DecoSouth3" id="0xB3E9"/>
+    <Piece role="Corner" id="0xB3E0"/>
+    <Piece role="East1" id="0xB3E2"/>
+    <Piece role="DecoEast2" id="0xB3E4"/>
+    <Piece role="DecoEast3" id="0xB3EA"/>
+    <Piece role="WindowS" id="0xB3E5"/>
+    <Piece role="AltWindowS" id="0xB3E7"/>
+    <Piece role="WindowE" id="0xB3E6"/>
+    <Piece role="AltWindowE" id="0xB3E8"/>
+  </Style>
+  <Style kind="Wall" anchor="0xB3EC" name="Celtic Walls 3" group="Celtic" family="Celtic"/>
+  <Style kind="Wall" anchor="0xB3F4" name="Celtic Half Walls" group="Celtic" family="Celtic"/>
+  <Style kind="Floor" anchor="0x0519" name="Stone pavers Dark 1" group="Grey Pavers and Flagstones"/>
+  <Style kind="Floor" anchor="0x051D" name="Stone pavers" group="Grey Pavers and Flagstones"/>
+  <Style kind="Floor" anchor="0x0521" name="Stone pavers Dark 2" group="Grey Pavers and Flagstones"/>
+  <Style kind="Floor" anchor="0x049D" name="Sandstone paver 1" group="Grey Pavers and Flagstones"/>
+  <Style kind="Floor" anchor="0x049E" name="Sandstone paver 2" group="Grey Pavers and Flagstones"/>
+  <Style kind="Floor" anchor="0x0525" name="Sandstone floor 1" group="Sandstone Bricks"/>
+  <Style kind="Floor" anchor="0x052F" name="Sandstone floor 2" group="Sandstone Bricks"/>
+  <Style kind="Floor" anchor="0x0500" name="Flagstones 1" group="More Sandstone"/>
+  <Style kind="Floor" anchor="0x057F" name="Slate roof" group="More Sandstone"/>
+  <Style kind="Floor" anchor="0x04FC" name="Flagstones 2" group="More Sandstone"/>
+  <Style kind="Floor" anchor="0x04E2" name="Red Brick" group="Red Brick"/>
+  <Style kind="Floor" anchor="0x04F0" name="Blue Tile" group="Blue Tile"/>
+  <Style kind="Floor" anchor="0x04FB" name="Red Tile" group="Red Tile"/>
+  <Style kind="Floor" anchor="0x050D" name="Marble floor 1" group="Misc Tile"/>
+  <Style kind="Floor" anchor="0x0511" name="Marble floor 2" group="Misc Tile"/>
+  <Style kind="Floor" anchor="0x049B" name="Floor tile" group="Misc Tile"/>
+  <Style kind="Floor" anchor="0x049C" name="Grey slate tile" group="Misc Tile"/>
+  <Style kind="Floor" anchor="0x050F" name="Marble floor 3" group="Misc Tile"/>
+  <Style kind="Floor" anchor="0x0495" name="Marble floor 4" group="Misc Tile"/>
+  <Style kind="Floor" anchor="0x0573" name="Stone roof 1" group="Roof Tiles 2"/>
+  <Style kind="Floor" anchor="0x057B" name="Stone roof 2" group="Roof Tiles 2"/>
+  <Style kind="Floor" anchor="0x063B" name="Marble roof" group="Roof Tiles 2"/>
+  <Style kind="Floor" anchor="0x055D" name="Stone roof 3" group="Roof Tiles 2"/>
+  <Style kind="Floor" anchor="0x04B4" name="Dark Wood 1" group="Dark Wood 1"/>
+  <Style kind="Floor" anchor="0x04C0" name="Dark Wood 2" group="Dark Wood 2"/>
+  <Style kind="Floor" anchor="0x04D1" name="Light Wood 1" group="Light Wood 1"/>
+  <Style kind="Floor" anchor="0x04DF" name="Light Wood 2" group="Light Wood 2"/>
+  <Style kind="Floor" anchor="0x0508" name="Wooden logs 1" group="Palm Logs"/>
+  <Style kind="Floor" anchor="0x050B" name="Wooden logs 2" group="Palm Logs"/>
+  <Style kind="Floor" anchor="0x0410" name="Dirt to Cave 1" group="Dirt to Cave"/>
+  <Style kind="Floor" anchor="0x040B" name="Dirt to Cave 2" group="Dirt to Cave"/>
+  <Style kind="Floor" anchor="0x0413" name="Dirt to Cave 3" group="Dirt to Cave"/>
+  <Style kind="Floor" anchor="0x177D" name="Grass" group="Grass and Snow"/>
+  <Style kind="Floor" anchor="0x17BD" name="Snow" group="Grass and Snow"/>
+  <Style kind="Floor" anchor="0x31F4" name="Dirt" group="Dirt and Cobblestones"/>
+  <Style kind="Floor" anchor="0x0515" name="Cobblestones" group="Dirt and Cobblestones"/>
+  <Style kind="Floor" anchor="0x3499" name="Water / Lava" group="Water / Lava"/>
+  <Style kind="Floor" anchor="0x12F2" name="Lava" group="Water / Lava"/>
+  <Style kind="Floor" anchor="0x1320" name="Lava 1" group="Lava Transition"/>
+  <Style kind="Floor" anchor="0x1326" name="Lava 2" group="Lava Transition"/>
+  <Style kind="Floor" anchor="0x1329" name="Lava 3" group="Lava Transition"/>
+  <Style kind="Floor" anchor="0x326A" name="Swamp 1" group="Swamp 1"/>
+  <Style kind="Floor" anchor="0x3209" name="Swamp 2" group="Swamp 1"/>
+  <Style kind="Floor" anchor="0x3258" name="Swamp 1" group="Swamp 2"/>
+  <Style kind="Floor" anchor="0x3259" name="Swamp 2" group="Swamp 2"/>
+  <Style kind="Floor" anchor="0x29C0" name="Goza mat 1" group="Tatami Floor 1"/>
+  <Style kind="Floor" anchor="0x29C2" name="Goza mat 2" group="Tatami Floor 1"/>
+  <Style kind="Floor" anchor="0x29C6" name="Goza mat 3" group="Tatami Floor 1"/>
+  <Style kind="Floor" anchor="0x29CA" name="Tatami mat 1" group="Tatami Floor 1"/>
+  <Style kind="Floor" anchor="0x29D1" name="Tatami mat 2" group="Tatami Floor 1"/>
+  <Style kind="Floor" anchor="0x29D6" name="Goza mat 4" group="Tatami Floor 1"/>
+  <Style kind="Floor" anchor="0x2A3C" name="Goza mat 1" group="Tatami Floor 2"/>
+  <Style kind="Floor" anchor="0x2A3E" name="Goza mat 2" group="Tatami Floor 2"/>
+  <Style kind="Floor" anchor="0x2A42" name="Goza mat 3" group="Tatami Floor 2"/>
+  <Style kind="Floor" anchor="0x2A41" name="Goza mat 4" group="Tatami Floor 2"/>
+  <Style kind="Floor" anchor="0x2435" name="Wood floor 1" group="Tatami Floor 3"/>
+  <Style kind="Floor" anchor="0x2436" name="Wood floor 2" group="Tatami Floor 3"/>
+  <Style kind="Floor" anchor="0x2431" name="Tatami Floor 4" group="Tatami Floor 4"/>
+  <Style kind="Floor" anchor="0x2453" name="Pond 1" group="Pond"/>
+  <Style kind="Floor" anchor="0x2454" name="Pond 2" group="Pond"/>
+  <Style kind="Floor" anchor="0x2457" name="Pond 3" group="Pond"/>
+  <Style kind="Floor" anchor="0x245C" name="Pond 4" group="Pond"/>
+  <Style kind="Floor" anchor="0x245E" name="Sand" group="Gravel"/>
+  <Style kind="Floor" anchor="0x2464" name="Rock and sand 1" group="Gravel"/>
+  <Style kind="Floor" anchor="0x2466" name="Rock and sand 2" group="Gravel"/>
+  <Style kind="Floor" anchor="0x243B" name="Wood Floor 1" group="Wood Floor 1"/>
+  <Style kind="Floor" anchor="0x2447" name="Wood Floor 2" group="Wood Floor 2"/>
+  <Style kind="Floor" anchor="0x2960" name="Wood Floor 3" group="Wood Floor 3"/>
+  <Style kind="Floor" anchor="0x296D" name="Wood Floor 4" group="Wood Floor 4"/>
+  <Style kind="Floor" anchor="0x2722" name="Wood Floor 5" group="Wood Floor 5"/>
+  <Style kind="Floor" anchor="0x272E" name="Wood Floor 6" group="Wood Floor 6"/>
+  <Style kind="Floor" anchor="0x273A" name="Wood Floor 7" group="Wood Floor 7"/>
+  <Style kind="Floor" anchor="0x2746" name="Wood Floor 8" group="Wood Floor 8"/>
+  <Style kind="Floor" anchor="0x2978" name="Wood Floor 9" group="Wood Floor 9"/>
+  <Style kind="Floor" anchor="0x2984" name="Wood Floor 10" group="Wood Floor 10"/>
+  <Style kind="Floor" anchor="0x2BB5" name="Diagonal Floor" group="Diagonal Floor"/>
+  <Style kind="Floor" anchor="0x2BCF" name="Parka Floor" group="Parka Floor"/>
+  <Style kind="Floor" anchor="0x2D38" name="Wooden floor 1" group="Wormwood Floor"/>
+  <Style kind="Floor" anchor="0x2D3A" name="Wooden floor 2" group="Wormwood Floor"/>
+  <Style kind="Floor" anchor="0x2DCB" name="Deca Floor" group="Deca Floor"/>
+  <Style kind="Floor" anchor="0x35B2" name="Crystal Floor 1" group="Crystal Floor"/>
+  <Style kind="Floor" anchor="0x35B7" name="Crystal Floor 2" group="Crystal Floor"/>
+  <Style kind="Floor" anchor="0x35BD" name="Crystal Floor 3" group="Crystal Floor"/>
+  <Style kind="Floor" anchor="0x361A" name="Shadow Floor" group="Shadow Floor"/>
+  <Style kind="Floor" anchor="0x432C" name="Floor B1 East" group="Gargish Floor 1"/>
+  <Style kind="Floor" anchor="0x4336" name="Floor D1 East" group="Gargish Floor 1"/>
+  <Style kind="Floor" anchor="0x432E" name="Floor C1 East" group="Gargish Floor 2"/>
+  <Style kind="Floor" anchor="0x4332" name="Floor C5 South" group="Gargish Floor 2"/>
+  <Style kind="Floor" anchor="0x4DEA" name="Floor EAST98" group="Gargish Striped"/>
+  <Style kind="Floor" anchor="0x4DEB" name="FloorTrim EAST 1" group="Gargish Striped"/>
+  <Style kind="Floor" anchor="0x4DEF" name="FloorTrim EAST 2" group="Gargish Striped"/>
+  <Style kind="Floor" anchor="0x4DF0" name="FloorTrim EAST 3" group="Gargish Striped"/>
+  <Style kind="Floor" anchor="0x4F79" name="Floor EAST" group="Gargish Blue Stripe"/>
+  <Style kind="Floor" anchor="0x4F74" name="FloorTrim EAST 1" group="Gargish Blue Stripe"/>
+  <Style kind="Floor" anchor="0x4F71" name="FloorTrim EAST 2" group="Gargish Blue Stripe"/>
+  <Style kind="Floor" anchor="0x4F72" name="FloorTrim EAST 3" group="Gargish Blue Stripe"/>
+  <Style kind="Floor" anchor="0x50E2" name="Marble Floor Az0 Sou" group="Gargish Red"/>
+  <Style kind="Floor" anchor="0x50DE" name="Marble Floor A1 Sout" group="Gargish Red"/>
+  <Style kind="Floor" anchor="0x50E7" name="Marble Floor AzA Sou" group="Gargish Red"/>
+  <Style kind="Floor" anchor="0x50F3" name="Marble Floor GreenE" group="Gargish Dark"/>
+  <Style kind="Floor" anchor="0x50EF" name="Marble Floor GreenA" group="Gargish Dark"/>
+  <Style kind="Floor" anchor="0x50F0" name="Marble Floor GreenB" group="Gargish Dark"/>
+  <Style kind="Floor" anchor="0x41AF" name="MarbleFloor East" group="Gargish Green"/>
+  <Style kind="Floor" anchor="0x41B5" name="MarbleTrim East 1" group="Gargish Green"/>
+  <Style kind="Floor" anchor="0x41B6" name="MarbleTrim East 2" group="Gargish Green"/>
+  <Style kind="Floor" anchor="0x41F4" name="Gargish Stone" group="Gargish Stone"/>
+  <Style kind="Floor" anchor="0x41E0" name="Wallset1 FloorC East 1" group="Gargish Motif"/>
+  <Style kind="Floor" anchor="0x41DC" name="Wallset1 FloorC East 2" group="Gargish Motif"/>
+  <Style kind="Floor" anchor="0x41DD" name="Wallset1 FloorC East 3" group="Gargish Motif"/>
+  <Style kind="Floor" anchor="0x418A" name="Gargish Sun" group="Gargish Sun"/>
+  <Style kind="Floor" anchor="0x408B" name="Paver" group="Gargish Green Stone"/>
+  <Style kind="Floor" anchor="0x408F" name="Decorative paver" group="Gargish Green Stone"/>
+  <Style kind="Floor" anchor="0x4082" name="Decorative paver 1" group="Gargish Green Stone 2"/>
+  <Style kind="Floor" anchor="0x407E" name="Decorative paver 2" group="Gargish Green Stone 2"/>
+  <Style kind="Floor" anchor="0x46CC" name="Gargish Ruins" group="Gargish Ruins"/>
+  <Style kind="Floor" anchor="0x9ACD" name="Jungle" group="Jungle"/>
+  <Style kind="Floor" anchor="0x9B32" name="Shadowguard" group="Shadowguard"/>
+  <Style kind="Floor" anchor="0x9BD9" name="Shadowguard" group="Shadowguard"/>
+  <Style kind="Roof" anchor="0x2C32" name="Tile Roof" group="Tile Roof"/>
+  <Style kind="Roof" anchor="0x2C41" name="Wooden Shingles" group="Wooden Shingles"/>
+  <Style kind="Roof" anchor="0x2C50" name="Log Roof" group="Log Roof"/>
+  <Style kind="Roof" anchor="0x2C56" name="Thatch Roof" group="Thatch Roof"/>
+  <Style kind="Roof" anchor="0x2C6E" name="Palm Fronds" group="Palm Fronds"/>
+  <Style kind="Roof" anchor="0x2C7D" name="Stone Roof" group="Stone Roof"/>
+  <Style kind="Roof" anchor="0x26EC" name="Straw Roof" group="Straw Roof"/>
+  <Style kind="Roof" anchor="0x270A" name="Bark Roof" group="Bark Roof"/>
+  <Style kind="Roof" anchor="0x23C7" name="Ceramic Tiles" group="Ceramic Tiles">
+    <Piece role="North" id="0x23C7"/>
+    <Piece role="EaveNorth" id="0x23C8"/>
+    <Piece role="East" id="0x23C3"/>
+    <Piece role="EaveEast" id="0x23C4"/>
+    <Piece role="South" id="0x23C1"/>
+    <Piece role="EaveSouth" id="0x23C2"/>
+    <Piece role="West" id="0x23C5"/>
+    <Piece role="EaveWest" id="0x23C6"/>
+    <Piece role="HipSW" id="0x23CB"/>
+    <Piece role="HipEaveSW" id="0x23CC"/>
+    <Piece role="HipNE" id="0x23CD"/>
+    <Piece role="HipEaveNE" id="0x23CE"/>
+    <Piece role="HipNW" id="0x23CF"/>
+    <Piece role="HipEaveNW" id="0x23D0"/>
+    <Piece role="HipSE" id="0x23C9"/>
+    <Piece role="HipEaveSE" id="0x23CA"/>
+    <Piece role="NSEnd" id="0x23BF"/>
+    <Piece role="NSCrosspiece" id="0x23BE"/>
+    <Piece role="MoreNS" id="0x23C0"/>
+    <Piece role="MoreEW" id="0x23D3"/>
+    <Piece role="EWCrosspiece" id="0x23D1"/>
+    <Piece role="EWEnd" id="0x23D2"/>
+  </Style>
+  <Style kind="Roof" anchor="0x23E0" name="Red Ceramic Tiles" group="Red Ceramic Tiles">
+    <Piece role="North" id="0x23E0"/>
+    <Piece role="EaveNorth" id="0x23E1"/>
+    <Piece role="East" id="0x23DC"/>
+    <Piece role="EaveEast" id="0x23DD"/>
+    <Piece role="South" id="0x23DA"/>
+    <Piece role="EaveSouth" id="0x23DB"/>
+    <Piece role="West" id="0x23DE"/>
+    <Piece role="EaveWest" id="0x23DF"/>
+    <Piece role="HipSW" id="0x23E4"/>
+    <Piece role="HipEaveSW" id="0x23E5"/>
+    <Piece role="HipNE" id="0x23E6"/>
+    <Piece role="HipEaveNE" id="0x23E7"/>
+    <Piece role="HipNW" id="0x23E8"/>
+    <Piece role="HipEaveNW" id="0x23E9"/>
+    <Piece role="HipSE" id="0x23E2"/>
+    <Piece role="HipEaveSE" id="0x23E3"/>
+    <Piece role="NSEnd" id="0x23D6"/>
+    <Piece role="NSCrosspiece" id="0x23D4"/>
+    <Piece role="MoreNS" id="0x23D8"/>
+    <Piece role="MoreEW" id="0x23D9"/>
+    <Piece role="EWCrosspiece" id="0x23D5"/>
+    <Piece role="EWEnd" id="0x23D7"/>
+  </Style>
+  <Style kind="Roof" anchor="0x23F6" name="Green Ceramic Tiles" group="Green Ceramic Tiles">
+    <Piece role="North" id="0x23F6"/>
+    <Piece role="EaveNorth" id="0x23F7"/>
+    <Piece role="East" id="0x23F2"/>
+    <Piece role="EaveEast" id="0x23F3"/>
+    <Piece role="South" id="0x23F0"/>
+    <Piece role="EaveSouth" id="0x23F1"/>
+    <Piece role="West" id="0x23F4"/>
+    <Piece role="EaveWest" id="0x23F5"/>
+    <Piece role="HipSW" id="0x23FA"/>
+    <Piece role="HipEaveSW" id="0x23FB"/>
+    <Piece role="HipNE" id="0x23FC"/>
+    <Piece role="HipEaveNE" id="0x23FD"/>
+    <Piece role="HipNW" id="0x23FE"/>
+    <Piece role="HipEaveNW" id="0x23FF"/>
+    <Piece role="HipSE" id="0x23F8"/>
+    <Piece role="HipEaveSE" id="0x23F9"/>
+    <Piece role="NSEnd" id="0x23EC"/>
+    <Piece role="NSCrosspiece" id="0x23EA"/>
+    <Piece role="MoreNS" id="0x23EE"/>
+    <Piece role="MoreEW" id="0x23EF"/>
+    <Piece role="EWCrosspiece" id="0x23EB"/>
+    <Piece role="EWEnd" id="0x23ED"/>
+  </Style>
+  <Style kind="Roof" anchor="0x292C" name="Orange Ceramic Tiles" group="Orange Ceramic Tiles">
+    <Piece role="North" id="0x292C"/>
+    <Piece role="EaveNorth" id="0x292D"/>
+    <Piece role="East" id="0x2928"/>
+    <Piece role="EaveEast" id="0x2929"/>
+    <Piece role="South" id="0x2926"/>
+    <Piece role="EaveSouth" id="0x2927"/>
+    <Piece role="West" id="0x292A"/>
+    <Piece role="EaveWest" id="0x292B"/>
+    <Piece role="HipSW" id="0x2930"/>
+    <Piece role="HipEaveSW" id="0x2931"/>
+    <Piece role="HipNE" id="0x2932"/>
+    <Piece role="HipEaveNE" id="0x2933"/>
+    <Piece role="HipNW" id="0x2934"/>
+    <Piece role="HipEaveNW" id="0x2935"/>
+    <Piece role="HipSE" id="0x292E"/>
+    <Piece role="HipEaveSE" id="0x292F"/>
+    <Piece role="NSEnd" id="0x2922"/>
+    <Piece role="NSCrosspiece" id="0x2920"/>
+    <Piece role="MoreNS" id="0x2924"/>
+    <Piece role="MoreEW" id="0x2925"/>
+    <Piece role="EWCrosspiece" id="0x2921"/>
+    <Piece role="EWEnd" id="0x2923"/>
+  </Style>
+  <Style kind="Roof" anchor="0x28FC" name="Gold Ceramic Tiles" group="Gold Ceramic Tiles">
+    <Piece role="North" id="0x28FC"/>
+    <Piece role="EaveNorth" id="0x28FD"/>
+    <Piece role="East" id="0x28F8"/>
+    <Piece role="EaveEast" id="0x28F9"/>
+    <Piece role="South" id="0x28F6"/>
+    <Piece role="EaveSouth" id="0x28F7"/>
+    <Piece role="West" id="0x28FA"/>
+    <Piece role="EaveWest" id="0x28FB"/>
+    <Piece role="HipSW" id="0x2900"/>
+    <Piece role="HipEaveSW" id="0x2901"/>
+    <Piece role="HipNE" id="0x2902"/>
+    <Piece role="HipEaveNE" id="0x2903"/>
+    <Piece role="HipNW" id="0x2904"/>
+    <Piece role="HipEaveNW" id="0x2905"/>
+    <Piece role="HipSE" id="0x28FE"/>
+    <Piece role="HipEaveSE" id="0x28FF"/>
+    <Piece role="NSEnd" id="0x28F2"/>
+    <Piece role="NSCrosspiece" id="0x28F0"/>
+    <Piece role="MoreNS" id="0x28F4"/>
+    <Piece role="MoreEW" id="0x28F5"/>
+    <Piece role="EWCrosspiece" id="0x28F1"/>
+    <Piece role="EWEnd" id="0x28F3"/>
+  </Style>
+  <Style kind="Roof" anchor="0x2912" name="White Ceramic Tiles" group="White Ceramic Tiles">
+    <Piece role="North" id="0x2912"/>
+    <Piece role="EaveNorth" id="0x2913"/>
+    <Piece role="East" id="0x290E"/>
+    <Piece role="EaveEast" id="0x290F"/>
+    <Piece role="South" id="0x290C"/>
+    <Piece role="EaveSouth" id="0x290D"/>
+    <Piece role="West" id="0x2910"/>
+    <Piece role="EaveWest" id="0x2911"/>
+    <Piece role="HipSW" id="0x2916"/>
+    <Piece role="HipEaveSW" id="0x2917"/>
+    <Piece role="HipNE" id="0x2918"/>
+    <Piece role="HipEaveNE" id="0x2919"/>
+    <Piece role="HipNW" id="0x291A"/>
+    <Piece role="HipEaveNW" id="0x291B"/>
+    <Piece role="HipSE" id="0x2914"/>
+    <Piece role="HipEaveSE" id="0x2915"/>
+    <Piece role="NSEnd" id="0x2908"/>
+    <Piece role="NSCrosspiece" id="0x2906"/>
+    <Piece role="MoreNS" id="0x290A"/>
+    <Piece role="MoreEW" id="0x290B"/>
+    <Piece role="EWCrosspiece" id="0x2907"/>
+    <Piece role="EWEnd" id="0x2909"/>
+  </Style>
+  <Style kind="Roof" anchor="0x28C4" name="Slate Roof" group="Slate Roof"/>
+  <Style kind="Roof" anchor="0x28DA" name="Wooden Slats" group="Wooden Slats"/>
+  <Style kind="Roof" anchor="0x2B93" name="Elf Scaled Roof" group="Elf Scaled Roof"/>
+  <Style kind="Roof" anchor="0x2BA6" name="Elvan Natural Roof" group="Elvan Natural Roof"/>
+  <Style kind="Roof" anchor="0x35C2" name="Crystal Roof Tiles" group="Crystal Roof Tiles">
+    <Piece role="EaveNorth" id="0x35C2"/>
+    <Piece role="EaveSouth" id="0x35BF"/>
+    <Piece role="EaveWest" id="0x35C0"/>
+    <Piece role="EaveEast" id="0x35C1"/>
+    <Piece role="NSCrosspiece" id="0x35C3"/>
+    <Piece role="East" id="0x35C4"/>
+    <Piece role="West" id="0x35C5"/>
+    <Piece role="South" id="0x35D0"/>
+    <Piece role="North" id="0x35D1"/>
+    <Piece role="WDent" id="0x35C6"/>
+    <Piece role="EDent" id="0x35C7"/>
+    <Piece role="NDent" id="0x35C8"/>
+    <Piece role="SDent" id="0x35C9"/>
+    <Piece role="XPiece" id="0x35CA"/>
+    <Piece role="NTPiece" id="0x35CB"/>
+    <Piece role="STPiece" id="0x35CC"/>
+    <Piece role="WTPiece" id="0x35CD"/>
+    <Piece role="ETPiece" id="0x35CE"/>
+    <Piece role="EWCrosspiece" id="0x35CF"/>
+  </Style>
+  <Style kind="Roof" anchor="0x3623" name="Shadow Roof Tiles" group="Shadow Roof Tiles">
+    <Piece role="EaveEast" id="0x3623"/>
+    <Piece role="EaveSouth" id="0x3624"/>
+    <Piece role="EaveWest" id="0x3625"/>
+    <Piece role="EaveNorth" id="0x3626"/>
+    <Piece role="NSCrosspiece" id="0x3627"/>
+    <Piece role="East" id="0x3628"/>
+    <Piece role="West" id="0x3629"/>
+    <Piece role="South" id="0x3633"/>
+    <Piece role="North" id="0x3634"/>
+    <Piece role="WDent" id="0x362A"/>
+    <Piece role="EDent" id="0x362B"/>
+    <Piece role="NDent" id="0x362C"/>
+    <Piece role="SDent" id="0x362D"/>
+    <Piece role="XPiece" id="0x362E"/>
+    <Piece role="NTPiece" id="0x362F"/>
+    <Piece role="STPiece" id="0x3630"/>
+    <Piece role="ETPiece" id="0x3631"/>
+    <Piece role="EWCrosspiece" id="0x3632"/>
+    <Piece role="WTPiece" id="0x3635"/>
+  </Style>
+  <Style kind="Roof" anchor="0x9B0E" name="Jungle Roof" group="Jungle Roof"/>
+  <Style kind="Roof" anchor="0x9B73" name="Shadowguard Roof" group="Shadowguard Roof"/>
+  <Style kind="Door" anchor="0x0679" name="Metal Door" group="Metal Door"/>
+  <Style kind="Door" anchor="0x1FF1" name="Metal Gate" group="Metal Gate"/>
+  <Style kind="Door" anchor="0x0699" name="Rattan Door" group="Rattan Door"/>
+  <Style kind="Door" anchor="0x06A9" name="Dark Wood Door" group="Dark Wood Door"/>
+  <Style kind="Door" anchor="0x06B9" name="Wood Door" group="Wood Door"/>
+  <Style kind="Door" anchor="0x06D9" name="Light Wood Door" group="Light Wood Door"/>
+  <Style kind="Door" anchor="0x06E9" name="Wood and Metal Door" group="Wood and Metal Door"/>
+  <Style kind="Door" anchor="0x0828" name="Tall Wrought Iron Gate" group="Tall Wrought Iron Gate"/>
+  <Style kind="Door" anchor="0x083D" name="Light Wood Gate" group="Light Wood Gate"/>
+  <Style kind="Door" anchor="0x0850" name="Short Wrought Iron Gate" group="Short Wrought Iron Gate"/>
+  <Style kind="Door" anchor="0x086A" name="Dark Wood Gate" group="Dark Wood Gate"/>
+  <Style kind="Door" anchor="0x0328" name="Weathered Stone Secret Door" group="Weathered Stone Secret Door"/>
+  <Style kind="Door" anchor="0x0338" name="Dark Wood Secret Door" group="Dark Wood Secret Door"/>
+  <Style kind="Door" anchor="0x0348" name="Light Wood Secret Door" group="Light Wood Secret Door"/>
+  <Style kind="Door" anchor="0x0358" name="Grey Stone Secret Door" group="Grey Stone Secret Door"/>
+  <Style kind="Door" anchor="0x2423" name="Japanese Doors" group="Japanese Doors"/>
+  <Style kind="Door" anchor="0x2A0F" name="Sliding Doors 1" group="Sliding Doors 1"/>
+  <Style kind="Door" anchor="0x2A07" name="Sliding Doors 2" group="Sliding Doors 2"/>
+  <Style kind="Door" anchor="0x2A17" name="Sliding Doors 3" group="Sliding Doors 3"/>
+  <Style kind="Door" anchor="0x31AE" name="Elvan Wood Door" group="Elvan Wood Door"/>
+  <Style kind="Door" anchor="0x2D65" name="Elvan White Wooden Door 1" group="Elvan White Wooden Door 1"/>
+  <Style kind="Door" anchor="0x2D69" name="Elvan Ornate Door" group="Elvan Ornate Door"/>
+  <Style kind="Door" anchor="0x2D6D" name="Elvan Kia Wood Door 2" group="Elvan Kia Wood Door 2"/>
+  <Style kind="Door" anchor="0x2FE4" name="Elvan Moon Door" group="Elvan Moon Door"/>
+  <Style kind="Door" anchor="0x367F" name="Crystal Door" group="Crystal Door"/>
+  <Style kind="Door" anchor="0x368F" name="Shadow Door" group="Shadow Door"/>
+  <Style kind="Door" anchor="0x409B" name="Gargish Carved Green Door" group="Gargish Carved Green Door"/>
+  <Style kind="Door" anchor="0x410C" name="Gargish Brown Door" group="Gargish Brown Door"/>
+  <Style kind="Door" anchor="0x41C2" name="Sun Door" group="Sun Door"/>
+  <Style kind="Door" anchor="0x41CF" name="Gargish Grey Door" group="Gargish Grey Door"/>
+  <Style kind="Door" anchor="0x436E" name="Gargish Set Door" group="Gargish Set Door"/>
+  <Style kind="Door" anchor="0x46DD" name="Ruined Door" group="Ruined Door"/>
+  <Style kind="Door" anchor="0x4D22" name="Gargish Blue Door" group="Gargish Blue Door"/>
+  <Style kind="Door" anchor="0x50C8" name="Gargish Red Doors" group="Gargish Red Doors"/>
+  <Style kind="Door" anchor="0x5142" name="Gargish Prison Door" group="Gargish Prison Door"/>
+  <Style kind="Door" anchor="0x9ADB" name="Jungle Doors" group="Jungle Doors"/>
+  <Style kind="Door" anchor="0x9B40" name="Shadowguard Doors" group="Shadowguard Doors"/>
+  <Style kind="Misc" anchor="0x002C" name="Fieldstone Archways" group="Fieldstone Archways"/>
+  <Style kind="Misc" anchor="0x01D6" name="Weathered Stone Square Archways" group="Weathered Stone Square Archways"/>
+  <Style kind="Misc" anchor="0x01DC" name="Weathered Stone Rounded Archways" group="Weathered Stone Square Archways"/>
+  <Style kind="Misc" anchor="0x01E0" name="Weathered Stone Miscellaneous 1" group="Weathered Stone Square Archways"/>
+  <Style kind="Misc" anchor="0x01DA" name="Weathered Stone Miscellaneous 2" group="Weathered Stone Square Archways"/>
+  <Style kind="Misc" anchor="0x3F06" name="Weathered Stone Rounded Walls 1" group="Weathered Stone Rounded Walls 1"/>
+  <Style kind="Misc" anchor="0x2543" name="Weathered Stone Rounded Walls 2" group="Weathered Stone Rounded Walls 1"/>
+  <Style kind="Misc" anchor="0x254C" name="Weathered Stone Rounded Walls 3" group="Weathered Stone Rounded Walls 1"/>
+  <Style kind="Misc" anchor="0x254A" name="Weathered Stone Rounded Walls 4" group="Weathered Stone Rounded Walls 1"/>
+  <Style kind="Misc" anchor="0x00D1" name="Granite Square Archways" group="Granite Square Archways"/>
+  <Style kind="Misc" anchor="0x00DA" name="Granite Rounded Archways" group="Granite Square Archways"/>
+  <Style kind="Misc" anchor="0x00E1" name="Granite Miscellaneous 1" group="Granite Square Archways"/>
+  <Style kind="Misc" anchor="0x00D3" name="Granite Miscellaneous 2" group="Granite Square Archways"/>
+  <Style kind="Misc" anchor="0x0047" name="Grey Brick Archways" group="Grey Brick Archways"/>
+  <Style kind="Misc" anchor="0x0053" name="Grey Brick Archway Edging" group="Grey Brick Archways"/>
+  <Style kind="Misc" anchor="0x006F" name="Light Brick Archways" group="Light Brick Archways"/>
+  <Style kind="Misc" anchor="0x0076" name="Light Brick Battlements" group="Light Brick Archways"/>
+  <Style kind="Misc" anchor="0x0277" name="Light Brick Ruins" group="Light Brick Archways"/>
+  <Style kind="Misc" anchor="0x043A" name="Tan Marble Fancy Archways" group="Tan Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x043F" name="Tan Marble Medium Archways" group="Tan Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x0114" name="Tan Marble Plain Archways" group="Tan Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x011C" name="Tan Marble Columns" group="Tan Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x0121" name="Tan Marble Arcades" group="Tan Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x0448" name="White Marble Fancy Archways" group="White Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x044D" name="White Marble Medium Archways" group="White Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x02B2" name="White Marble Plain Archways" group="White Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x02A8" name="White Marble Columns" group="White Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x02BD" name="White Marble Arcades" group="White Marble Fancy Archways"/>
+  <Style kind="Misc" anchor="0x0170" name="Sandstone Archways" group="Sandstone Archways"/>
+  <Style kind="Misc" anchor="0x018B" name="Sandstone Fancy Arcades" group="Sandstone Archways"/>
+  <Style kind="Misc" anchor="0x0193" name="Sandstone Plain Arcades" group="Sandstone Archways"/>
+  <Style kind="Misc" anchor="0x0175" name="Sandstone Battlements 1" group="Sandstone Archways"/>
+  <Style kind="Misc" anchor="0x01A4" name="Sandstone Battlements 2" group="Sandstone Archways"/>
+  <Style kind="Misc" anchor="0x017E" name="Sandstone Battlements 3" group="Sandstone Archways"/>
+  <Style kind="Misc" anchor="0x0195" name="Sandstone Columns" group="Sandstone Archways"/>
+  <Style kind="Misc" anchor="0x03B7" name="Sandstone and Mortar Ruins 1" group="Sandstone Archways"/>
+  <Style kind="Misc" anchor="0x03BF" name="Sandstone and Mortar Ruins 2" group="Sandstone Archways"/>
+  <Style kind="Misc" anchor="0x29DE" name="Plaster Archways" group="Plaster Archways"/>
+  <Style kind="Misc" anchor="0x021A" name="Bamboo Rounded Walls 1" group="Bamboo Rounded Walls 1"/>
+  <Style kind="Misc" anchor="0x0215" name="Bamboo Rounded Walls 2" group="Bamboo Rounded Walls 1"/>
+  <Style kind="Misc" anchor="0x0018" name="Miscellaneous Roof Pieces 1" group="Miscellaneous Roof Pieces 1"/>
+  <Style kind="Misc" anchor="0x01C8" name="Miscellaneous Roof Pieces 2" group="Miscellaneous Roof Pieces 1"/>
+  <Style kind="Misc" anchor="0x00E6" name="Miscellaneous Roof Pieces 3" group="Miscellaneous Roof Pieces 1"/>
+  <Style kind="Misc" anchor="0x01B3" name="Miscellaneous Roof Pieces 4" group="Miscellaneous Roof Pieces 1"/>
+  <Style kind="Misc" anchor="0x01EC" name="Miscellaneous Roof Pieces 5" group="Miscellaneous Roof Pieces 1"/>
+  <Style kind="Misc" anchor="0x29E2" name="Miscellaneous Roof Pieces 6" group="Miscellaneous Roof Pieces 1"/>
+  <Style kind="Misc" anchor="0x02C7" name="Castle Battlements 1" group="Castle Battlements 1"/>
+  <Style kind="Misc" anchor="0x02CE" name="Castle Battlements 2" group="Castle Battlements 1"/>
+  <Style kind="Misc" anchor="0x02D6" name="Castle Battlements 3" group="Castle Battlements 1"/>
+  <Style kind="Misc" anchor="0x0823" name="Fences 1" group="Fences 1"/>
+  <Style kind="Misc" anchor="0x085D" name="Fences 2" group="Fences 1"/>
+  <Style kind="Misc" anchor="0x08B2" name="Fences 3" group="Fences 1"/>
+  <Style kind="Misc" anchor="0x08B6" name="Fences 4" group="Fences 1"/>
+  <Style kind="Misc" anchor="0x08BC" name="Fences 5" group="Fences 1"/>
+  <Style kind="Misc" anchor="0x08ED" name="Fences 6" group="Fences 1"/>
+  <Style kind="Misc" anchor="0x08F1" name="Fences 7" group="Fences 1"/>
+  <Style kind="Misc" anchor="0x08F6" name="Fences 8" group="Fences 1"/>
+  <Style kind="Misc" anchor="0x08F9" name="Fences 9" group="Fences 1"/>
+  <Style kind="Misc" anchor="0x34EE" name="Waterfalls 1" group="Waterfalls 1"/>
+  <Style kind="Misc" anchor="0x350E" name="Waterfalls 2" group="Waterfalls 1"/>
+  <Style kind="Misc" anchor="0x1919" name="Bar 1" group="Bar 1"/>
+  <Style kind="Misc" anchor="0x191D" name="Bar 2" group="Bar 1"/>
+  <Style kind="Misc" anchor="0x181D" name="Teleporters 1" group="Teleporters 1"/>
+  <Style kind="Misc" anchor="0x1823" name="Teleporters 2" group="Teleporters 1"/>
+  <Style kind="Misc" anchor="0x2DCA" name="elven whitewood arch" group="elven whitewood arch"/>
+  <Style kind="Misc" anchor="0x2BB4" name="heartwood arch" group="heartwood arch"/>
+  <Style kind="Misc" anchor="0x2BCE" name="kiawood arch" group="kiawood arch"/>
+  <Style kind="Misc" anchor="0x2D37" name="tanglewood arch" group="tanglewood arch"/>
+  <Style kind="Misc" anchor="0x35EA" name="Miscellaneous Crystal Pieces" group="Miscellaneous Crystal Pieces"/>
+  <Style kind="Misc" anchor="0x360E" name="Miscellaneous Shadow Pieces" group="Miscellaneous Shadow Pieces"/>
+  <Style kind="Misc" anchor="0x430E" name="Gargish Battlement 1" group="Gargish Battlement 1"/>
+  <Style kind="Misc" anchor="0x4310" name="Gargish Battlement 2" group="Gargish Battlement 1"/>
+  <Style kind="Misc" anchor="0x4308" name="Gargish Battlement 3" group="Gargish Battlement 1"/>
+  <Style kind="Misc" anchor="0x4350" name="Gargish Battlement 4" group="Gargish Battlement 1"/>
+  <Style kind="Misc" anchor="0x4324" name="Gargish Battlement 5" group="Gargish Battlement 5"/>
+  <Style kind="Misc" anchor="0x433C" name="Dark Red Stone Arches" group="Dark Red Stone Arches"/>
+  <Style kind="Misc" anchor="0x43A7" name="Miscellaneous Roof Pieces 1" group="Miscellaneous Roof Pieces 1"/>
+  <Style kind="Misc" anchor="0x43BC" name="Miscellaneous Roof Pieces 2" group="Miscellaneous Roof Pieces 1"/>
+  <Style kind="Misc" anchor="0x43A8" name="Miscellaneous Roof Pieces 3" group="Miscellaneous Roof Pieces 1"/>
+  <Style kind="Misc" anchor="0x437E" name="Gargish Fountain 1" group="Gargish Fountain 1"/>
+  <Style kind="Misc" anchor="0x439E" name="Gargish Fountain 2" group="Gargish Fountain 1"/>
+  <Style kind="Misc" anchor="0x41A0" name="Green Marble Arches" group="Green Marble Arches"/>
+  <Style kind="Misc" anchor="0x4172" name="Blue Marble Arches" group="Blue Marble Arches"/>
+  <Style kind="Misc" anchor="0x414A" name="Two-Tone Stone Archways" group="Two-Tone Stone Archways"/>
+  <Style kind="Misc" anchor="0x416A" name="Two-Tone Stone Archways" group="Two-Tone Stone Archways"/>
+  <Style kind="Misc" anchor="0x4120" name="Gold Stone Battlement" group="Gold Stone Battlement"/>
+  <Style kind="Misc" anchor="0x5123" name="Gargish Marble Arches" group="Gargish Marble Arches"/>
+  <Style kind="Misc" anchor="0x47E1" name="Gargish Ruined Arches" group="Gargish Ruined Arches"/>
+  <Style kind="Misc" anchor="0x48A8" name="Gargish Stone Heads" group="Gargish Stone Heads"/>
+  <Style kind="Misc" anchor="0x77F1" name="Board and Batten Arches" group="Board and Batten Arches"/>
+  <Style kind="Misc" anchor="0x4B30" name="Gothic Arches" group="Gothic Arches"/>
+  <Style kind="Misc" anchor="0x9AC4" name="Jungle Arches" group="Jungle Arches"/>
+  <Style kind="Misc" anchor="0x9B2A" name="Shadowguard Arches" group="Shadowguard Arches"/>
+  <Style kind="Misc" anchor="0x9B29" name="Shadowguard Arches" group="Shadowguard Arches"/>
+  <Style kind="Misc" anchor="0x9B83" name="Shadowguard Arches" group="Shadowguard Arches"/>
+  <Style kind="Misc" anchor="0xB3F0" name="Celtic Archways" group="Celtic Archways"/>
+  <Style kind="Stair" anchor="0x0738" name="Dark Wood" group="Dark Wood"/>
+  <Style kind="Stair" anchor="0x07A3" name="Grey Stone" group="Grey Stone"/>
+  <Style kind="Stair" anchor="0x0788" name="Weathered Stone" group="Weathered Stone"/>
+  <Style kind="Stair" anchor="0x0721" name="Light Wood" group="Light Wood"/>
+  <Style kind="Stair" anchor="0x071E" name="Granite" group="Granite"/>
+  <Style kind="Stair" anchor="0x0709" name="Tan Marble" group="Tan Marble"/>
+  <Style kind="Stair" anchor="0x03EE" name="Sandstone" group="Sandstone"/>
+  <Style kind="Stair" anchor="0x076C" name="Sandstone Brick" group="Sandstone Brick"/>
+  <Style kind="Stair" anchor="0x0750" name="Light Stone" group="Light Stone"/>
+  <Style kind="Stair" anchor="0x07BA" name="Red" group="Red"/>
+  <Style kind="Stair" anchor="0x35D2" name="Crystal" group="Crystal"/>
+  <Style kind="Stair" anchor="0x3609" name="Shadow" group="Shadow"/>
+  <Style kind="Stair" anchor="0x4317" name="Gargish 1" group="Gargish 1"/>
+  <Style kind="Stair" anchor="0x435C" name="Gargish 2" group="Gargish 2"/>
+  <Style kind="Stair" anchor="0x4318" name="Gargish 3" group="Gargish 3"/>
+  <Style kind="Stair" anchor="0x4B07" name="Gothic" group="Gothic"/>
+  <Style kind="Stair" anchor="0x7807" name="Board and Batten" group="Board and Batten"/>
+  <Style kind="Stair" anchor="0x9AEA" name="Jungle" group="Jungle"/>
+  <Style kind="Stair" anchor="0x9B4F" name="Shadowguard" group="Shadowguard"/>
+  <Style kind="Teleporter" anchor="0x181D" name="Alchemical Tiles" group="Alchemical Tiles"/>
+</HouseStyles>

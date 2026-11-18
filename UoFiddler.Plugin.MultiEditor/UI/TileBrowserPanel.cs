@@ -1371,7 +1371,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             TileBrowserQuery query = _query;
             return query == null ||
-                   (query.IsIdQuery ? style.Slots.Values.Any(id => query.MatchesId(id)) : query.MatchesText(style.Group + " " + style.Name));
+                   (query.IsIdQuery ? style.Slots.Values.Any(id => query.MatchesId(id)) : query.MatchesText(style.Group + " " + style.Name + " " + style.Family));
         }
 
         /// <summary>
@@ -1389,7 +1389,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _patternsButton.Checked = false;
             _swapButton.Text = _swapText;
             _swapButton.Enabled = true;
-            List<HouseStyle> styles = _houseStyles?.Styles ?? new List<HouseStyle>();
+            List<HouseStyle> styles = _houseStyles?.Styles.Where(st => !st.Hidden).ToList() ?? new List<HouseStyle>();
             _houseStyleCount = 0;
 
             foreach (var (kind, title, _, _) in _houseKinds)

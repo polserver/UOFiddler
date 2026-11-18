@@ -50,6 +50,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 root.Add(new XAttribute("roof", draft.RoofStyle.Name));
             }
 
+            if (draft.FlatRoofStyle != null)
+            {
+                root.Add(new XAttribute("flatRoof", draft.FlatRoofStyle.Name));
+            }
+
             foreach (RoofWing wing in wings)
             {
                 root.Add(new XElement("Wing",
@@ -149,6 +154,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 // A draft saved before rooms were set per wing names one count for the house.
                 int houseRooms = (int?)root.Attribute("rooms") ?? 1;
                 draft.RoofStyle = Style(HousePartKind.Roof, (string)root.Attribute("roof")) ?? draft.RoofStyle;
+                draft.FlatRoofStyle = Style(HousePartKind.Floor, (string)root.Attribute("flatRoof")) ?? draft.FlatRoofStyle;
 
                 var wings = new List<RoofWing>();
                 foreach (XElement element in root.Elements("Wing"))

@@ -700,7 +700,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             if (_housePick is { } pick && pick.Kind == style.Kind)
             {
                 _housePick = null;
-                Session.House.SetMaterial(style, style.Kind == HousePartKind.Roof ? null : pick.Storey);
+                if (pick.Storey == HousePanel.FlatRoof)
+                {
+                    Session.House.SetFlatRoofStyle(style);
+                }
+                else
+                {
+                    Session.House.SetMaterial(style, style.Kind == HousePartKind.Roof ? null : pick.Storey);
+                }
+
                 SetTool(ToolKind.House, fromHousePage: true);
                 return;
             }
@@ -754,8 +762,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _openingHousePage = false;
             }
 
-            _statusHint.Text = kind == HousePartKind.Roof
-                ? "Pick the roof style of the house on the House page."
+            _statusHint.Text = kind == HousePartKind.Roof ? "Pick the roof style of the house on the House page."
+                : storey == HousePanel.FlatRoof ? "Pick the floor style of the flat roofs on the House page."
                 : $"Pick the {(kind == HousePartKind.Wall ? "wall" : "floor")} style of storey {storey + 1} on the House page.";
         }
 
