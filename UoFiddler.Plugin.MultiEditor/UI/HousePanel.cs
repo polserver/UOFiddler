@@ -79,6 +79,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         public event Action<HouseTheme> DeleteTheme;
 
+        /// <summary>Raised when a draft was started from the panel: the House tool is the one to shape it with.</summary>
+        public event Action HouseToolWanted;
+
         /// <summary>Something to tell the user in the status bar.</summary>
         public event Action<string> Message;
 
@@ -163,6 +166,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _gableFill.SelectedIndex = (int)house.Draft.GableFill;
 
                 _storeys.Value = Math.Clamp(house.Storeys, 1, HouseDraft.MaxStoreys);
+                _walled.Checked = house.Walled;
+                _preset.SelectedIndex = 0;
                 // The drop-down lists the roof shapes in their order, then None.
                 _roofShape.SelectedIndex = house.NoRoof ? _roofShape.Items.Count - 1 : (int)house.Shape;
                 _ridge.SelectedIndex = (int)house.Ridge;
@@ -204,6 +209,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _roomsPerStorey.Checked = house.HasOwnRooms(roomStorey);
                 _roomsPerStorey.Text = roomStorey >= 1 ? $"Storey {roomStorey + 1} only" : "This storey";
                 _autoDoors.Checked = house.Draft.AutoDoors;
+                _parapet.Checked = house.Draft.Parapet;
                 _frontDoor.SelectedIndex = (int)house.Draft.FrontDoor;
                 _windowSpacing.Value = Math.Clamp(house.Draft.WindowSpacing, 0, (int)_windowSpacing.Maximum);
                 _showWalls.Checked = house.ShowWalls;
@@ -402,6 +408,49 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private void RoomsPerStorey_CheckedChanged(object sender, EventArgs e)
         {
             Run(house => house.SetOwnRooms(RoomStorey, _roomsPerStorey.Checked));
+        }
+
+        private void Walled_CheckedChanged(object sender, EventArgs e)
+        {
+            Run(house => house.SetWalled(_walled.Checked));
+        }
+
+        private void Preset_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (_updating || _session == null || _preset.SelectedIndex <= 0)
+            {
+                return;
+            }
+
+            string preset = (string)_preset.SelectedItem;
+            HouseTool house = _session.House;
+            if (house.HasPending && MessageBox.Show(this, $"Replace the draft with a {preset.ToLowerInvariant()}? Undo brings it back.", "House draft",
+                    MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
+            {
+                _preset.SelectedIndex = 0;
+                return;
+            }
+
+            // In the stone theme when the client has it: these are stone buildings.
+            string problem = house.LoadPreset(preset);
+            if (problem == null && house.Themes.FirstOrDefault(theme => theme.Name == "Weathered Stone Keep") is { } stone)
+            {
+                house.ApplyTheme(stone);
+            }
+
+            if (problem == null)
+            {
+                HouseToolWanted?.Invoke();
+            }
+
+            Message?.Invoke(problem ?? $"{preset} drafted. Drag a wing to move it, its edge to resize it, Ctrl+drag to move all of it. Place puts it in the multi.");
+            _preset.SelectedIndex = 0;
+            Used?.Invoke();
+        }
+
+        private void Parapet_CheckedChanged(object sender, EventArgs e)
+        {
+            Run(house => house.SetParapet(_parapet.Checked));
         }
 
         private void AutoDoors_CheckedChanged(object sender, EventArgs e)

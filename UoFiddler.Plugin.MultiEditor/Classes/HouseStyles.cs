@@ -222,6 +222,53 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             return window;
         }
 
+        private readonly Dictionary<HouseStyle, HouseStyle> _parapets = new Dictionary<HouseStyle, HouseStyle>();
+
+        /// <summary>
+        /// The style a wall style's battlements are built in: the roof edging of its material
+        /// (the one named most like it, where a material has several), or else its quarter
+        /// walls. Null when the material has neither.
+        /// </summary>
+        public HouseStyle ParapetFor(HouseStyle walls)
+        {
+            if (walls == null)
+            {
+                return null;
+            }
+
+            if (_parapets.TryGetValue(walls, out HouseStyle known))
+            {
+                return known;
+            }
+
+            string[] words = walls.Name.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+            HouseStyle best = null, low = null;
+            int most = -1;
+            foreach (HouseStyle other in Styles)
+            {
+                ushort piece = other.Get("South2");
+                if (other.Kind != HousePartKind.Wall || other.Group != walls.Group || piece == 0 || other.Get("East2") == 0)
+                {
+                    continue;
+                }
+
+                if (other.Name.Contains("Roof Edging", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    int shared = other.Name.Split(' ', System.StringSplitOptions.RemoveEmptyEntries).Count(word => words.Contains(word));
+                    if (shared > most)
+                    {
+                        (best, most) = (other, shared);
+                    }
+                }
+                else if (low == null && Ultima.TileData.ItemTable[piece].Height < 8)
+                {
+                    low = other;
+                }
+            }
+
+            return _parapets[walls] = best ?? low;
+        }
+
         /// <summary>Reads the themes again after the user's copy of the style file changed.</summary>
         public void ReloadThemes()
         {
@@ -283,6 +330,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
 
             _windows.Clear();
+            _parapets.Clear();
             _listedByArt = null;
             _stairCorners = null;
             Reloaded?.Invoke();
@@ -411,6 +459,14 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             result.FinishWalls();
             result.Order();
             result.SetThemes(config);
+            foreach (HouseStyle style in result.Styles)
+            {
+                if (string.IsNullOrEmpty(style.Family))
+                {
+                    style.Family = style.Group ?? string.Empty;
+                }
+            }
+
 
             result.Errors.AddRange(errors);
             if (config != null)

@@ -75,6 +75,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public RoofGableFill GableFill { get; set; } = RoofGableFill.Caps;
 
+        /// <summary>
+        /// True when flat roofs get battlements, as the client's tower, keep and castle have them:
+        /// two rows of the walls' roof edging around the roof and a third of every second piece.
+        /// </summary>
+        public bool Parapet { get; set; }
+
         /// <summary>True when the doorways between rooms get a door of <see cref="DoorStyle"/>.</summary>
         public bool AutoDoors { get; set; }
 
@@ -189,7 +195,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 RoofStyle = RoofStyle, FlatRoofStyle = FlatRoofStyle, Foundation = Foundation,
                 FoundationStyle = FoundationStyle, DoorStyle = DoorStyle, StairStyle = StairStyle,
                 AutoDoors = AutoDoors, FrontDoor = FrontDoor, WindowSpacing = WindowSpacing,
-                Gables = Gables, GableFill = GableFill
+                Gables = Gables, GableFill = GableFill, Parapet = Parapet
             };
             Array.Copy(WallStyles, copy.WallStyles, MaxStoreys);
             Array.Copy(FloorStyles, copy.FloorStyles, MaxStoreys);
@@ -272,6 +278,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
             /// <summary>Wall cells the draft makes windows itself.</summary>
             public HashSet<(int X, int Y)> Windows { get; } = new HashSet<(int X, int Y)>();
+
+            /// <summary>The wall cell of the front door, when the storey has one.</summary>
+            public (int X, int Y)? FrontDoor { get; set; }
         }
 
         /// <summary>
@@ -313,6 +322,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
                 (int rooms, RoomLayout kind) = wing.RoomsOn(storey);
                 RoomPlan plan = RoomPlanner.Plan(wing.X0 + 1, wing.Y0 + 1, wing.X1, wing.Y1, kind, Math.Clamp(rooms, 1, MaxRooms));
+                RoomPlanner.Avoid(plan, stairs);
                 if (index == 0)
                 {
                     firstPlan = plan;
@@ -320,6 +330,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
                 Partition(wings, index, storey, plan, stairs, layout);
             }
+
+            WallOff(wings, storey, region, stairs, layout);
 
             foreach ((int x, int y) in AddedSouth[storey])
             {
@@ -488,6 +500,119 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         }
 
         /// <summary>
+        /// The walls of the wings that keep them (<see cref="RoofWing.Walled"/>) against the wings
+        /// they meet. Each cell belongs to one wing: a walled one where there is one, else the
+        /// first. A wall stands between cells of different wings when either is walled, and each
+        /// stretch of wall between the same two wings gets one doorway in its middle (a door, with
+        /// <see cref="AutoDoors"/>), as near to it as stairs allow.
+        /// </summary>
+        private void WallOff(IReadOnlyList<RoofWing> wings, int storey, HashSet<(int X, int Y)> region, HashSet<(int X, int Y)> stairs, StoreyLayout layout)
+        {
+            bool any = false;
+            foreach (RoofWing wing in wings)
+            {
+                any |= wing.Walled && wing.Storeys > storey;
+            }
+
+            if (!any)
+            {
+                return;
+            }
+
+            var owners = new Dictionary<(int X, int Y), int>();
+            int Owner((int X, int Y) cell)
+            {
+                if (owners.TryGetValue(cell, out int known))
+                {
+                    return known;
+                }
+
+                int first = -1, walled = -1;
+                for (int i = 0; i < wings.Count && walled < 0; ++i)
+                {
+                    RoofWing wing = wings[i];
+                    if (wing.Storeys > storey && cell.X > wing.X0 && cell.X <= wing.X1 && cell.Y > wing.Y0 && cell.Y <= wing.Y1)
+                    {
+                        first = first < 0 ? i : first;
+                        walled = wing.Walled ? i : walled;
+                    }
+                }
+
+                return owners[cell] = walled >= 0 ? walled : first;
+            }
+
+            // Stretches of wall: along one line, between the same two wings, cell after cell.
+            var stretches = new Dictionary<(bool South, int Line, int A, int B), List<(int X, int Y)>>();
+            foreach ((int x, int y) in region)
+            {
+                foreach ((int nx, int ny, bool south) in new[] { (x + 1, y, false), (x, y + 1, true) })
+                {
+                    if (!region.Contains((nx, ny)) || (south ? layout.South : layout.East).Contains((x, y)))
+                    {
+                        continue;
+                    }
+
+                    int a = Owner((x, y)), b = Owner((nx, ny));
+                    if (a == b || a < 0 || b < 0 || !(wings[a].Walled || wings[b].Walled))
+                    {
+                        continue;
+                    }
+
+                    var key = (south, south ? y : x, a, b);
+                    if (!stretches.TryGetValue(key, out List<(int X, int Y)> cells))
+                    {
+                        stretches[key] = cells = new List<(int X, int Y)>();
+                    }
+
+                    cells.Add((x, y));
+                }
+            }
+
+            foreach (KeyValuePair<(bool South, int Line, int A, int B), List<(int X, int Y)>> stretch in stretches)
+            {
+                bool south = stretch.Key.South;
+                List<(int X, int Y)> cells = stretch.Value.OrderBy(c => south ? c.X : c.Y).ToList();
+                for (int start = 0; start < cells.Count;)
+                {
+                    int end = start;
+                    while (end + 1 < cells.Count && (south ? cells[end + 1].X - cells[end].X : cells[end + 1].Y - cells[end].Y) == 1)
+                    {
+                        ++end;
+                    }
+
+                    int middle = (start + end) / 2, pick = middle, nearest = int.MaxValue;
+                    for (int i = start; i <= end; ++i)
+                    {
+                        (int x, int y) = cells[i];
+                        bool free = !stairs.Contains((x, y)) && !stairs.Contains(south ? (x, y + 1) : (x + 1, y));
+                        if (free && Math.Abs(i - middle) < nearest)
+                        {
+                            (pick, nearest) = (i, Math.Abs(i - middle));
+                        }
+                    }
+
+                    for (int i = start; i <= end; ++i)
+                    {
+                        (int x, int y) = cells[i];
+                        if (i == pick)
+                        {
+                            if (!AutoDoors || Suppressed.Contains((storey, x, y)))
+                            {
+                                continue;
+                            }
+
+                            layout.Doors[(x, y)] = south ? DoorAlongX : DoorAlongY;
+                        }
+
+                        (south ? layout.South : layout.East).Add((x, y));
+                    }
+
+                    start = end + 1;
+                }
+            }
+        }
+
+        /// <summary>
         /// The front door: in the chosen outer wall of the first wing, in the middle of it, or of
         /// the corridor or hall where that reaches the wall. Corners, wall ends and stairs are passed over.
         /// </summary>
@@ -528,6 +653,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             if (best is { } door && !Suppressed.Contains((0, door.X, door.Y)))
             {
                 layout.Doors[door] = south ? DoorAlongX : DoorAlongY;
+                layout.FrontDoor = door;
             }
         }
 
@@ -584,6 +710,79 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
 
                 Close();
+            }
+        }
+
+        /// <summary>
+        /// Moves what was changed by hand inside a wing along with that wing: walls added and
+        /// taken away, doors, windows, floor areas and stairs whose cell lies in the box.
+        /// </summary>
+        public void ShiftWithin((int X0, int Y0, int X1, int Y1) box, int dx, int dy)
+        {
+            if (dx == 0 && dy == 0)
+            {
+                return;
+            }
+
+            bool In(int x, int y) => x >= box.X0 && x <= box.X1 && y >= box.Y0 && y <= box.Y1;
+            void Move(HashSet<(int X, int Y)> set)
+            {
+                var moved = new List<(int X, int Y)>();
+                foreach ((int x, int y) in set)
+                {
+                    moved.Add(In(x, y) ? (x + dx, y + dy) : (x, y));
+                }
+
+                set.Clear();
+                set.UnionWith(moved);
+            }
+
+            void MoveOnStoreys(HashSet<(int Storey, int X, int Y)> set)
+            {
+                var moved = new List<(int Storey, int X, int Y)>();
+                foreach ((int storey, int x, int y) in set)
+                {
+                    moved.Add(In(x, y) ? (storey, x + dx, y + dy) : (storey, x, y));
+                }
+
+                set.Clear();
+                set.UnionWith(moved);
+            }
+
+            for (int k = 0; k < MaxStoreys; ++k)
+            {
+                Move(AddedSouth[k]);
+                Move(AddedEast[k]);
+                Move(ErasedSouth[k]);
+                Move(ErasedEast[k]);
+            }
+
+            MoveOnStoreys(Windows);
+            MoveOnStoreys(Suppressed);
+            var doors = new List<KeyValuePair<(int Storey, int X, int Y), (HouseStyle Style, string Piece)>>(Doors);
+            Doors.Clear();
+            foreach (var door in doors)
+            {
+                (int storey, int x, int y) = door.Key;
+                Doors[In(x, y) ? (storey, x + dx, y + dy) : door.Key] = door.Value;
+            }
+
+            for (int i = 0; i < FloorAreas.Count; ++i)
+            {
+                var a = FloorAreas[i];
+                if (In(a.X0, a.Y0) && In(a.X1, a.Y1))
+                {
+                    FloorAreas[i] = (a.Storey, a.X0 + dx, a.Y0 + dy, a.X1 + dx, a.Y1 + dy, a.Style);
+                }
+            }
+
+            for (int i = 0; i < Stairs.Count; ++i)
+            {
+                var s = Stairs[i];
+                if (In(s.X, s.Y))
+                {
+                    Stairs[i] = (s.Storey, s.X + dx, s.Y + dy, s.Column, s.Style);
+                }
             }
         }
 
@@ -802,7 +1001,134 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
+            if (Parapet)
+            {
+                AddParapets(wings, styles, built);
+            }
+
+            if (Foundation && StairStyle != null && top > 0 && LayOut(wings, 0).FrontDoor is { } front)
+            {
+                AddSteps(front, styles, built);
+            }
+
             return built;
+        }
+
+        /// <summary>
+        /// Steps up to the front door of a house on a foundation, as the client's houses have
+        /// them: one row outside the door, a step under it and a corner piece on each side, 5
+        /// below the floor (the pieces are 5 high).
+        /// </summary>
+        private void AddSteps((int X, int Y) door, HouseStyles styles, Built built)
+        {
+            bool south = FrontDoor == FrontDoorSide.South;
+            ushort step = StairStyle.Get(south ? "North" : "West");
+            if (step == 0)
+            {
+                return;
+            }
+
+            int z = BaseZ - Math.Max(1, (int)Ultima.TileData.ItemTable[step].Height);
+            (int X, int Y) at = south ? (door.X, door.Y + 1) : (door.X + 1, door.Y);
+            built.Tiles.Add((step, at.X, at.Y, z, StairsLayer));
+
+            // The corners: south-east, north-east, north-west, south-west of a stair set.
+            ushort before = StairStyle.Get("Squared1"), after = StairStyle.Get("Squared2");
+            if (after != 0 && styles.TryGetStairCorner(after, out ushort[] corners, out _) && corners.Length == 4)
+            {
+                (before, after) = south ? (corners[3], corners[0]) : (corners[1], corners[0]);
+            }
+            else if (!south)
+            {
+                (before, after) = (0, 0);
+            }
+
+            if (before != 0 && (south ? at.X : at.Y) > 0)
+            {
+                built.Tiles.Add((before, south ? at.X - 1 : at.X, south ? at.Y : at.Y - 1, z, StairsLayer));
+            }
+
+            if (after != 0)
+            {
+                built.Tiles.Add((after, south ? at.X + 1 : at.X, south ? at.Y : at.Y + 1, z, StairsLayer));
+            }
+        }
+
+        /// <summary>
+        /// Battlements around the flat roofs. The flat wings of one height are walled as one
+        /// roof: along its edge, but not where a taller wing stands (its wall is there). Measured
+        /// on the client's tower, keep and castle: the edging stands in the roof's wall cells at
+        /// the roof's Z and once more on top of that, and a third row has every second straight
+        /// piece, leaving the corners out.
+        /// </summary>
+        private void AddParapets(IReadOnlyList<RoofWing> wings, HouseStyles styles, Built built)
+        {
+            // A wing without a roof is a walled yard: its walls carry battlements too.
+            foreach (IGrouping<int, RoofWing> level in wings.Where(w => w.NoRoof || w.Shape == RoofShape.Flat).GroupBy(w => Math.Clamp(w.Storeys, 1, MaxStoreys)))
+            {
+                int storeys = level.Key;
+                HouseStyle style = styles.ParapetFor(WallStyles[storeys - 1]);
+                if (style == null)
+                {
+                    continue;
+                }
+
+                HashSet<(int X, int Y)> above = Region(wings, storeys);
+                var roof = new HashSet<(int X, int Y)>();
+                foreach (RoofWing wing in level)
+                {
+                    for (int x = wing.X0 + 1; x <= wing.X1; ++x)
+                    {
+                        for (int y = wing.Y0 + 1; y <= wing.Y1; ++y)
+                        {
+                            if (!above.Contains((x, y)))
+                            {
+                                roof.Add((x, y));
+                            }
+                        }
+                    }
+                }
+
+                if (roof.Count == 0)
+                {
+                    continue;
+                }
+
+                var south = new HashSet<(int X, int Y)>();
+                var east = new HashSet<(int X, int Y)>();
+                Outline(roof, south, east);
+                south.RemoveWhere(c => above.Contains(c) || above.Contains((c.X, c.Y + 1)));
+                east.RemoveWhere(c => above.Contains(c) || above.Contains((c.X + 1, c.Y)));
+
+                // The wall cells start one before the roof cells; the tower counts its merlons from there.
+                int minX = roof.Min(c => c.X) - 1, minY = roof.Min(c => c.Y) - 1;
+                int z = BaseZ + (storeys * StoreyHeight);
+                int tier = Math.Max(1, (int)Ultima.TileData.ItemTable[style.Get("South2")].Height);
+                foreach ((int x, int y) in WallCells(south, east))
+                {
+                    string column = WallPlanner.PieceFor(south, east, x, y);
+                    ushort id = column != null ? style.Get(column) : (ushort)0;
+                    if (id == 0)
+                    {
+                        continue;
+                    }
+
+                    built.Tiles.Add((id, x, y, z, RoofTool.LayerName));
+                    built.Tiles.Add((id, x, y, z + tier, RoofTool.LayerName));
+
+                    // The merlons: every second straight piece.
+                    bool alongX = column.StartsWith("South", StringComparison.Ordinal), alongY = column.StartsWith("East", StringComparison.Ordinal);
+                    if ((alongX && (x - minX) % 2 == 0) || (alongY && (y - minY) % 2 == 0))
+                    {
+                        built.Tiles.Add((id, x, y, z + (2 * tier), RoofTool.LayerName));
+                    }
+                    else if (column == "Corner" && (x - minX) % 2 == 0 && style.Get("South2") is var merlon and not 0)
+                    {
+                        // A corner cell in step with the wall along X carries that wall's merlon (the tower's inner corner does).
+                        built.Tiles.Add((merlon, x, y, z + (2 * tier), RoofTool.LayerName));
+                    }
+                }
+            }
         }
 
         private readonly Dictionary<HouseStyle, ushort[]> _pieces = new Dictionary<HouseStyle, ushort[]>();
