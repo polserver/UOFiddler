@@ -119,19 +119,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             return command;
         }
 
-        /// <summary>Runs the command bound to a key. True when the key belongs to a command, also a disabled one.</summary>
+        /// <summary>Runs the command bound to a key. False when the key has no command or its command is disabled: the key is then free for whoever else wants it.</summary>
         public bool TryRun(Keys keyData)
         {
-            if (!_byKey.TryGetValue(keyData, out EditorCommand command))
+            if (!_byKey.TryGetValue(keyData, out EditorCommand command) || !command.Enabled)
             {
                 return false;
             }
 
-            if (command.Enabled)
-            {
-                command.Execute();
-            }
-
+            command.Execute();
             return true;
         }
 

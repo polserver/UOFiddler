@@ -37,6 +37,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         public override bool IsDragging => _dragging;
 
+        public override (int Width, int Height)? DragSize => _dragging ? (Math.Abs(_endX - _startX) + 1, Math.Abs(_endY - _startY) + 1) : null;
+
         public override bool TracksCursorCell => true;
 
         /// <summary>The House tab style this tool works with, when it is the chosen one.</summary>

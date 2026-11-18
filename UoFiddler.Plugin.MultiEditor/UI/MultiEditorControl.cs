@@ -64,6 +64,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // window is short, and comes to the front with the House tool or an open draft.
             _housePanel = new HousePanel { Dock = DockStyle.Top };
             _housePanel.PickStyle += PickHouseMaterial;
+            _housePanel.SaveTheme += SaveHouseTheme;
+            _housePanel.DeleteTheme += DeleteHouseTheme;
+            _housePanel.Message += Tell;
             _housePanel.SaveDraft += SaveHouseDraft;
             _housePanel.OpenDraft += OpenHouseDraft;
             _housePanel.SaveBlueprint += SaveHouseBlueprint;
@@ -198,6 +201,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             {
                 _hostForm.ResizeBegin -= HostForm_ResizeBegin;
                 _hostForm.ResizeEnd -= HostForm_ResizeEnd;
+                _hostForm.FormClosing -= HostForm_FormClosing;
             }
 
             _hostForm = form;
@@ -205,6 +209,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             {
                 form.ResizeBegin += HostForm_ResizeBegin;
                 form.ResizeEnd += HostForm_ResizeEnd;
+                form.FormClosing += HostForm_FormClosing;
             }
         }
 
@@ -270,7 +275,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
             catch (Exception ex)
             {
-                ShowMessage($"OpenGL could not be started:\r\n{ex.Message}");
+                ShowMessage($"The client's house tables could not be read:\r\n{ex.Message}");
                 return;
             }
 
@@ -279,6 +284,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             BuildCanvasMenu();
 
             _browser.SetHouseStyles(_houseStyles);
+            _browser.EditStylesRequested += EditHouseStyles;
             _browser.TileChosen += id =>
             {
                 Session?.SetDrawTile(id);
@@ -650,6 +656,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             Session.Tool = kind;
 
+            // A tool chosen in place of the style a pick was waiting for: the pick is off.
+            if (!fromHousePage && !_openingHousePage)
+            {
+                CancelHousePick();
+            }
+
             // The house draft is worked on in its panel, which sits in the floors and selection sidebar.
             if (kind == ToolKind.House && !_inspectorShown)
             {
@@ -700,9 +712,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             if (_housePick is { } pick && pick.Kind == style.Kind)
             {
                 _housePick = null;
+                _housePanel.MarkPick(null, 0);
                 if (pick.Storey == HousePanel.FlatRoof)
                 {
                     Session.House.SetFlatRoofStyle(style);
+                }
+                else if (pick.Storey == HousePanel.FoundationPick)
+                {
+                    Session.House.SetFoundationStyle(style);
                 }
                 else
                 {
@@ -713,7 +730,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
-            _housePick = null;
+            CancelHousePick();
 
             // With the House tool in use, a wall, floor or roof style clicked on the House page is
             // a material of the house too: of the storey the chosen floor means, or of every
@@ -752,6 +769,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             _housePick = (kind, storey);
+            _housePanel.MarkPick(kind, storey);
             _openingHousePage = true;
             try
             {
@@ -762,9 +780,120 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _openingHousePage = false;
             }
 
-            _statusHint.Text = kind == HousePartKind.Roof ? "Pick the roof style of the house on the House page."
+            _pickHint = kind == HousePartKind.Roof ? "Pick the roof style of the house on the House page."
+                : kind == HousePartKind.Door ? "Pick the door style of the house on the House page."
+                : kind == HousePartKind.Stair ? "Pick the stair style of the house on the House page."
+                : storey == HousePanel.FoundationPick ? "Pick the wall style of the foundation on the House page (a quarter wall suits it)."
                 : storey == HousePanel.FlatRoof ? "Pick the floor style of the flat roofs on the House page."
                 : $"Pick the {(kind == HousePartKind.Wall ? "wall" : "floor")} style of storey {storey + 1} on the House page.";
+            _pickHint += " Esc cancels.";
+            UpdateStatus();
+        }
+
+        /// <summary>Drops a style pick the house panel asked for and has not got yet.</summary>
+        private void CancelHousePick()
+        {
+            if (_housePick != null)
+            {
+                _housePick = null;
+                _housePanel.MarkPick(null, 0);
+                UpdateStatus();
+            }
+        }
+
+        // What the status bar says for a while in place of the tool's hint.
+        private string _told;
+        private long _messageUntil;
+        private string _pickHint;
+
+        /// <summary>Says something in the status bar. It stays a few seconds, or until the next command, whatever the mouse does.</summary>
+        private void Tell(string text)
+        {
+            _told = text;
+            _messageUntil = Environment.TickCount64 + 5000;
+            _statusHint.Text = text;
+        }
+
+        /// <summary>
+        /// Opens the style editor. When it saved, the styles are new objects: the House page shows
+        /// them, and every open design's draft and chosen style take their successors.
+        /// </summary>
+        private void EditHouseStyles(HouseStyle start)
+        {
+            if (_houseStyles == null)
+            {
+                return;
+            }
+
+            bool saved;
+            using (var dialog = new HouseStyleEditorDialog(_houseStyles, start, () => _browser.CurrentTile))
+            {
+                dialog.ShowDialog(this);
+                saved = dialog.Saved;
+            }
+
+            if (!saved)
+            {
+                return;
+            }
+
+            _browser.SetHouseStyles(_houseStyles);
+            foreach (EditorDocument document in _documents)
+            {
+                document.Session.HouseStyle = _houseStyles.Successor(document.Session.HouseStyle);
+                document.Session.House.StylesReloaded();
+            }
+
+            _housePanel.RefreshDraft();
+            _canvas.Invalidate();
+            Tell("House styles saved.");
+        }
+
+        /// <summary>Saves the styles of the house draft as a theme in the user's copy of the style file.</summary>
+        private void SaveHouseTheme()
+        {
+            if (Session == null || _houseStyles == null)
+            {
+                return;
+            }
+
+            using var prompt = new TextPromptForm("Save theme", "Theme name", Session.House.CurrentTheme()?.Name ?? "My theme");
+            if (prompt.ShowDialog(this) != DialogResult.OK || string.IsNullOrWhiteSpace(prompt.Value))
+            {
+                return;
+            }
+
+            try
+            {
+                HouseStyleConfig.SaveUserTheme(Session.House.ThemeOfDraft(prompt.Value.Trim()));
+                _houseStyles.ReloadThemes();
+                _housePanel.RefreshDraft();
+                Tell($"Theme \"{prompt.Value.Trim()}\" saved.");
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
+            {
+                MessageBox.Show(this, "The theme could not be saved: " + ex.Message, "Save theme", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void DeleteHouseTheme(HouseTheme theme)
+        {
+            if (_houseStyles == null ||
+                MessageBox.Show(this, $"Delete the theme \"{theme.Name}\"?", "Delete theme", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                HouseStyleConfig.DeleteUserTheme(theme.Name);
+                _houseStyles.ReloadThemes();
+                _housePanel.RefreshDraft();
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
+            {
+                MessageBox.Show(this, "The theme could not be deleted: " + ex.Message, "Delete theme", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            }
         }
 
         private static string HouseDraftFolder
@@ -894,6 +1023,13 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void Escape()
         {
+            // A style pick the house panel is waiting for goes first.
+            if (_housePick != null)
+            {
+                CancelHousePick();
+                return;
+            }
+
             // With a roof being shaped: the first Esc stops a drag, the next one drops the roof.
             if (Session.DraftInFocus is { } draft && !Session.ActiveTool.IsDragging)
             {
@@ -945,7 +1081,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             bool selectionOnly = Session.Selection.Count > 1;
             int count = Session.ReplaceTileId(fromId, toId, selectionOnly);
-            _statusHint.Text = $"Replaced {count} tile(s)" + (selectionOnly ? " in the selection" : string.Empty);
+            Tell($"Replaced {count} tile(s)" + (selectionOnly ? " in the selection" : string.Empty));
         }
 
         /// <summary>Saves the selection as a blueprint, or the whole design when nothing is selected.</summary>
@@ -1422,7 +1558,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             ToolStrip strip = _mainStrip;
 
             Menu(_fileMenu, _new, _open, _openDesign, _import, _importFolder, null, _saveDesign, _saveDesignAs, _saveClient, _export, _saveBlueprint, _savePattern, null, _resize, _settingsCommand, null, _close, _closeAll);
-            Menu(_editMenu, _undo, _redo, null, _cut, _copy, _paste, _duplicate, _repeat, _delete, null,
+            _undoHistory = new ToolStripMenuItem("Undo back to");
+            _editMenu.DropDownOpening += (_, _) => FillUndoHistory();
+            Menu(_editMenu, _undo, _redo);
+            _editMenu.DropDownItems.Add(_undoHistory);
+            Menu(_editMenu, null, _cut, _copy, _paste, _duplicate, _repeat, _delete, null,
                 _rotateLeft, _rotateRight, _mirrorX, _mirrorY, _swapStyle, null, _zUp, _zDown, _hide, _showHidden,
                 null, _newLayer, _moveToLayer, _selectLayer);
             Menu(_selectMenu, _selectAll, _invert, _selectConnected, _selectSameId, null, _replaceId);
@@ -1483,6 +1623,31 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             return menu;
+        }
+
+        private ToolStripMenuItem _undoHistory;
+
+        /// <summary>Lists the last steps of the history by name; choosing one takes it and every later step back.</summary>
+        private void FillUndoHistory()
+        {
+            _undoHistory.DropDownItems.Clear();
+            IReadOnlyList<string> steps = Session?.UndoSteps(25) ?? Array.Empty<string>();
+            _undoHistory.Enabled = steps.Count > 0;
+            for (int i = 0; i < steps.Count; ++i)
+            {
+                int count = i + 1;
+                var item = new ToolStripMenuItem($"{count}. {steps[i]}");
+                item.Click += (_, _) =>
+                {
+                    for (int n = 0; n < count && Session != null && Session.Undo(); ++n)
+                    {
+                    }
+
+                    _commands.RefreshStates();
+                    Tell(count == 1 ? "1 step undone." : $"{count} steps undone.");
+                };
+                _undoHistory.DropDownItems.Add(item);
+            }
         }
 
         private void Menu_DropDownOpening(object sender, EventArgs e)
@@ -2080,7 +2245,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             _active.FilePath = path;
             Session.MarkSaved();
-            _statusHint.Text = $"Saved {path}";
+            Tell($"Saved {path}");
         }
 
         private static string SafeFileName(string title)
@@ -2102,10 +2267,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// <summary>Closes every tab, asking once when any of them has unsaved changes.</summary>
         private void CloseAllDocuments()
         {
-            int modified = _documents.Count(d => d.Session.Modified);
-            if (modified > 0 && MessageBox.Show(this,
-                    (modified == 1 ? "1 design has" : $"{modified} designs have") +
-                    " changes that were not saved to the client or exported.\r\nClose all designs anyway?",
+            if (UnsavedWarning() is { } warning && MessageBox.Show(this, warning + "\r\nClose all designs anyway?",
                     "Multi Editor", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
             {
                 return;
@@ -2120,11 +2282,72 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             CloseDocument(_active, ask: false);
         }
 
+        /// <summary>What would be lost by closing every design now, or null when nothing would.</summary>
+        private string UnsavedWarning()
+        {
+            int modified = _documents.Count(d => d.Session.Modified);
+            int drafts = _documents.Count(d => d.Session.OpenDraft != null);
+            if (modified + drafts == 0)
+            {
+                return null;
+            }
+
+            var parts = new List<string>();
+            if (modified > 0)
+            {
+                parts.Add((modified == 1 ? "1 design has" : $"{modified} designs have") + " changes that were not saved to a design file or the client, or exported.");
+            }
+
+            if (drafts > 0)
+            {
+                parts.Add((drafts == 1 ? "1 design has" : $"{drafts} designs have") + " a house or roof draft that was not placed.");
+            }
+
+            return string.Join("\r\n", parts);
+        }
+
+        /// <summary>The application is closing: ask once when designs have unsaved changes or drafts.</summary>
+        private void HostForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.Cancel || !_built || UnsavedWarning() is not { } warning)
+            {
+                return;
+            }
+
+            if (MessageBox.Show(this, "Multi Editor: " + warning + "\r\nClose anyway?", "Multi Editor", MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Warning) != DialogResult.OK)
+            {
+                e.Cancel = true;
+            }
+        }
+
         private void CloseDocument(EditorDocument document, bool ask = true)
         {
             if (document == null)
             {
                 return;
+            }
+
+            // A draft that is not placed is not in the multi: place it, drop it, or stay.
+            if (ask && document.Session.OpenDraft is { } draft)
+            {
+                DialogResult answer = MessageBox.Show(this,
+                    $"\"{document.Session.Title}\" has a {(draft is HouseTool ? "house" : "roof")} draft that is not placed.\r\n" +
+                    "Yes places it in the design, No drops it.",
+                    "Multi Editor", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (answer == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                if (answer == DialogResult.Yes)
+                {
+                    draft.Commit();
+                }
+                else
+                {
+                    draft.Discard();
+                }
             }
 
             if (ask && document.Session.Modified && MessageBox.Show(this,
@@ -2541,7 +2764,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
-            _statusHint.Text = session.PreviewMode ? "Preview: editing is off. Right click picks the ground. F5 returns to the editor."
+            _statusHint.Text = _housePick != null ? _pickHint
+                : _told != null && Environment.TickCount64 < _messageUntil ? _told
+                : session.PreviewMode ? "Preview: editing is off. Right click picks the ground. F5 returns to the editor."
                 : session.PreviewingRepeat ? "The copies are shown as they would be placed."
                 : session.Pasting ? "Click to place the tiles, as often as you like. Esc or right click stops."
                 : session.ShapingRoof ? "Shaping: drag a wing to move it, a marked edge of the selected wing to resize it, anywhere else to add a wing. " +
@@ -2550,7 +2775,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 : ToolHint(session.Tool);
 
             (int x, int y, int z) = session.CursorCell;
-            _statusCell.Text = session.MouseInside && session.CompList.InBounds(x, y) ? $"Cell {x}, {y}, Z {z}" : string.Empty;
+            _statusCell.Text = session.ActiveTool.DragSize is { } drag ? $"{drag.Width} x {drag.Height} cells"
+                : session.MouseInside && session.CompList.InBounds(x, y) ? $"Cell {x}, {y}, Z {z}" : string.Empty;
             int offset = session.WorkPlaneOffset;
             _statusPlane.Text = $"Work plane Z {session.WorkPlaneZ}" + (offset != 0 ? $" (floor {offset:+0;-0})" : string.Empty) +
                                 (session.ShowWorkPlane ? string.Empty : " (hidden)");
@@ -2592,11 +2818,43 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (!_built || (keyData != Keys.Escape && IsTextInputFocused()))
+            if (!_built)
             {
                 return base.ProcessCmdKey(ref msg, keyData);
             }
 
+            Control focused = FocusedControl();
+            bool sidebar = InSidebar(focused);
+            Keys code = keyData & Keys.KeyCode, held = keyData & Keys.Modifiers;
+            if (keyData == Keys.Escape && sidebar)
+            {
+                // Esc is the sidebar control's first: a search box clears itself, a name being
+                // typed is dropped, an open list closes. With nothing of that, the canvas gets
+                // the keyboard back; the tool and the selection stay as they are.
+                if (focused is TextBoxBase { TextLength: > 0 } || focused is ComboBox { DroppedDown: true } || NativeEditHasFocus())
+                {
+                    return base.ProcessCmdKey(ref msg, keyData);
+                }
+
+                _canvas.Focus();
+                return true;
+            }
+
+            if (keyData != Keys.Escape && IsTextInputFocused())
+            {
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
+
+            // A list, tree, grid or gallery of a sidebar has keys of its own (arrows, Delete,
+            // Enter, letters to search): plain keys are its, and a button's Space and Enter the
+            // button's. Ctrl and Alt shortcuts and the function keys stay the editor's.
+            bool plain = (held == Keys.None || held == Keys.Shift) && !(code >= Keys.F1 && code <= Keys.F24);
+            if (sidebar && plain && (TakesKeys(focused) || (focused is ButtonBase && code is Keys.Space or Keys.Enter)))
+            {
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
+
+            _messageUntil = 0;
             if (_commands.TryRun(keyData))
             {
                 _commands.RefreshStates();
@@ -2639,13 +2897,41 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         }
 
         /// <summary>True while typing in a text, number or combo box, where letters must not switch tools.</summary>
-        private bool IsTextInputFocused()
+        /// <summary>The control of the editor that has the keyboard.</summary>
+        private Control FocusedControl()
         {
             Control focused = this;
             while (focused is ContainerControl container && container.ActiveControl != null)
             {
                 focused = container.ActiveControl;
             }
+
+            return focused;
+        }
+
+        /// <summary>True for a control of the tile browser, the design sidebar or the house panel.</summary>
+        private bool InSidebar(Control control)
+        {
+            for (Control at = control; at != null && at != this; at = at.Parent)
+            {
+                if (at == _browser || at == _inspector || at == _housePanel)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>True for a control that works with plain keys itself.</summary>
+        private static bool TakesKeys(Control control)
+        {
+            return control is ListView or ListBox or TreeView or TrackBar or TileBrowserGrid or TileBrowserHouseGallery;
+        }
+
+        private bool IsTextInputFocused()
+        {
+            Control focused = FocusedControl();
 
             return focused is TextBoxBase || focused is NumericUpDown || focused is ComboBox ||
                    focused.Parent is NumericUpDown || focused is ToolStrip || NativeEditHasFocus();

@@ -52,9 +52,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ("Step through the floors", "Shift + wheel"),
                 ("Place a paste, blueprint or duplicate, as often as you like", "Click"),
                 ("Context menu, or stop a drag, paste or blueprint", "Right click"),
-                ("Select the tile under the cursor (any tool)", "Middle click"),
+                ("Select the tile under the cursor (any tool)", "Middle click"));
+
+            Section("Keys on the canvas",
                 ("Move the selection one cell", "Arrow keys"),
-                ("Pan one cell", "Ctrl + arrow keys"));
+                ("Pan one cell", "Ctrl + arrow keys"),
+                ("Give the keyboard back to the canvas from a sidebar", "Esc"));
 
             Section("Keys held with a tool",
                 ("Move the selection (Select)", "Drag a selected tile"),

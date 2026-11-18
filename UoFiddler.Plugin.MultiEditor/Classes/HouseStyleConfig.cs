@@ -72,6 +72,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public List<HouseStyleEntry> Styles { get; } = new List<HouseStyleEntry>();
 
+        public List<HouseTheme> Themes { get; } = new List<HouseTheme>();
+
+        /// <summary>The order of the styles of a kind, as anchors, where it is other than the order of the Style elements.</summary>
+        public Dictionary<HousePartKind, List<ushort>> Order { get; } = new Dictionary<HousePartKind, List<ushort>>();
+
         public List<string> Errors { get; } = new List<string>();
 
         public static string ShippedPath
@@ -89,7 +94,13 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         public static HouseStyleConfig Load()
         {
             HouseStyleConfig config = LoadFile(ShippedPath);
-            config.Merge(LoadFile(UserPath));
+            HouseStyleConfig user = LoadFile(UserPath);
+            foreach (HouseTheme theme in user.Themes)
+            {
+                theme.IsUser = true;
+            }
+
+            config.Merge(user);
             return config;
         }
 
@@ -128,6 +139,47 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                         config.Errors.Add($"{Path.GetFileName(path)}: a Style without a kind or an anchor (line {((IXmlLineInfo)element).LineNumber})");
                     }
                 }
+
+                foreach (XElement element in root.Elements("Order"))
+                {
+                    if (!Enum.TryParse((string)element.Attribute("kind"), out HousePartKind kind))
+                    {
+                        continue;
+                    }
+
+                    var anchors = new List<ushort>();
+                    foreach (string text in element.Value.Split(new[] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        if (TryParseId(text, out ushort id))
+                        {
+                            anchors.Add(id);
+                        }
+                    }
+
+                    config.Order[kind] = anchors;
+                }
+
+                foreach (XElement element in root.Elements("Theme"))
+                {
+                    string name = ((string)element.Attribute("name"))?.Trim();
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        continue;
+                    }
+
+                    ushort Id(string attribute) => TryParseId((string)element.Attribute(attribute), out ushort id) ? id : (ushort)0;
+                    config.Themes.Add(new HouseTheme
+                    {
+                        Name = name,
+                        Walls = Id("walls"),
+                        Floor = Id("floor"),
+                        Roof = Id("roof"),
+                        FlatRoof = Id("flatRoof"),
+                        Door = Id("door"),
+                        Stairs = Id("stairs"),
+                        Foundation = Id("foundation")
+                    });
+                }
             }
             catch (Exception ex) when (ex is IOException or XmlException or UnauthorizedAccessException)
             {
@@ -139,7 +191,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         /// <summary>
         /// Lays another file's entries over these. An entry for a style both name takes the other
-        /// file's values where it gives any; its other entries are added at the end.
+        /// file's values where it gives any; its other entries are added at the end. A theme of
+        /// the other file takes the place of one of the same name.
         /// </summary>
         public void Merge(HouseStyleConfig other)
         {
@@ -169,7 +222,44 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
+            foreach (KeyValuePair<HousePartKind, List<ushort>> order in other.Order)
+            {
+                Order[order.Key] = order.Value;
+            }
+
+            foreach (HouseTheme theme in other.Themes)
+            {
+                int index = Themes.FindIndex(mine => string.Equals(mine.Name, theme.Name, StringComparison.OrdinalIgnoreCase));
+                if (index >= 0)
+                {
+                    Themes[index] = theme;
+                }
+                else
+                {
+                    Themes.Add(theme);
+                }
+            }
+
             Errors.AddRange(other.Errors);
+        }
+
+        /// <summary>Adds a theme to the user's copy of the style file, in place of one of the same name.</summary>
+        public static void SaveUserTheme(HouseTheme theme)
+        {
+            HouseStyleConfig user = LoadFile(UserPath);
+            user.Themes.RemoveAll(other => string.Equals(other.Name, theme.Name, StringComparison.OrdinalIgnoreCase));
+            user.Themes.Add(theme);
+            user.Save(UserPath);
+        }
+
+        /// <summary>Takes a theme out of the user's copy of the style file.</summary>
+        public static void DeleteUserTheme(string name)
+        {
+            HouseStyleConfig user = LoadFile(UserPath);
+            if (user.Themes.RemoveAll(other => string.Equals(other.Name, name, StringComparison.OrdinalIgnoreCase)) > 0)
+            {
+                user.Save(UserPath);
+            }
         }
 
         public void Save(string path)
@@ -178,6 +268,32 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             foreach (HouseStyleEntry entry in Styles)
             {
                 root.Add(WriteStyle(entry));
+            }
+
+            foreach (KeyValuePair<HousePartKind, List<ushort>> order in Order)
+            {
+                root.Add(new XElement("Order", new XAttribute("kind", order.Key), string.Join(" ", order.Value.Select(FormatId))));
+            }
+
+            foreach (HouseTheme theme in Themes)
+            {
+                var element = new XElement("Theme", new XAttribute("name", theme.Name));
+                void Id(string attribute, ushort id)
+                {
+                    if (id != 0)
+                    {
+                        element.Add(new XAttribute(attribute, FormatId(id)));
+                    }
+                }
+
+                Id("walls", theme.Walls);
+                Id("floor", theme.Floor);
+                Id("roof", theme.Roof);
+                Id("flatRoof", theme.FlatRoof);
+                Id("door", theme.Door);
+                Id("stairs", theme.Stairs);
+                Id("foundation", theme.Foundation);
+                root.Add(element);
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName(path) ?? string.Empty);

@@ -149,6 +149,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// </summary>
         public event Action<HouseStyle> SwapToHouseStyleRequested;
 
+        /// <summary>Asks for the style editor, on the style chosen on the House page (or none).</summary>
+        public event Action<HouseStyle> EditStylesRequested;
+
         /// <summary>The current draw tile, or -1.</summary>
         public int CurrentTile => _currentTile;
 
@@ -1266,6 +1269,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _houseKindButtons[kind] = button;
                 _houseKindBar.Items.Insert(_houseKindBar.Items.IndexOf(_patternsButton), button);
             }
+
+            var edit = new ToolStripButton("Edit...")
+            {
+                Alignment = ToolStripItemAlignment.Right,
+                ToolTipText = "Names, groups, order and pieces of the house styles."
+            };
+            edit.Click += (_, _) => EditStylesRequested?.Invoke(_houseStyle);
+            _houseKindBar.Items.Add(edit);
 
             // The pieces of the chosen style: click one to draw with exactly that tile.
             // Roughly half the page each by default; the splitter above the pieces moves the line.

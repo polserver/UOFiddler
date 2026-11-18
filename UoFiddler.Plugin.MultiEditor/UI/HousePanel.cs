@@ -10,6 +10,7 @@
  ***************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -31,6 +32,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private readonly Button[] _floorButtons;
         private readonly Label[] _storeyLabels;
         private readonly Font _boldFont;
+        private readonly TileBrowserThumbnails _thumbnails = new TileBrowserThumbnails();
         private EditorSession _session;
         private bool _updating;
 
@@ -41,7 +43,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _floorButtons = new[] { _floor1, _floor2, _floor3, _floor4 };
             _storeyLabels = new[] { _storey1, _storey2, _storey3, _storey4 };
             _boldFont = new Font(Font, FontStyle.Bold);
-            Disposed += (_, _) => _boldFont.Dispose();
+            Disposed += (_, _) =>
+            {
+                _boldFont.Dispose();
+                _thumbnails.Dispose();
+            };
 
             for (int k = 0; k < HouseDraft.MaxStoreys; ++k)
             {
@@ -50,6 +56,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _floorButtons[k].Click += (_, _) => PickStyle?.Invoke(HousePartKind.Floor, storey);
             }
 
+            _doorStyle.Click += (_, _) => PickStyle?.Invoke(HousePartKind.Door, 0);
+            _stairStyle.Click += (_, _) => PickStyle?.Invoke(HousePartKind.Stair, 0);
+            _foundationStyle.Click += (_, _) => PickStyle?.Invoke(HousePartKind.Wall, FoundationPick);
             _roofStyle.Click += (_, _) =>
             {
                 bool flat = _session != null && !_session.House.NoRoof && _session.House.Shape == RoofShape.Flat;
@@ -59,6 +68,19 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         /// <summary>The storey a pick names when it is for the flat roof's floor style.</summary>
         public const int FlatRoof = -1;
+
+        /// <summary>The storey a pick names when it is for the foundation's wall style.</summary>
+        public const int FoundationPick = -2;
+
+        private const string _customTheme = "(your own mix)";
+
+        /// <summary>Asks for the draft's styles to be saved as a theme, or for a theme of the user's to be deleted.</summary>
+        public event Action SaveTheme;
+
+        public event Action<HouseTheme> DeleteTheme;
+
+        /// <summary>Something to tell the user in the status bar.</summary>
+        public event Action<string> Message;
 
         /// <summary>Asks for a style to be picked on the House page for a storey's walls or floor, or for the roof.</summary>
         public event Action<HousePartKind, int> PickStyle;
@@ -108,17 +130,37 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _updating = true;
             try
             {
+                // Rows are changed in place: a list emptied and filled again on every step of a drag flickers.
                 _wingList.BeginUpdate();
-                _wingList.Items.Clear();
+                while (_wingList.Items.Count > house.Wings.Count)
+                {
+                    _wingList.Items.RemoveAt(_wingList.Items.Count - 1);
+                }
+
                 for (int i = 0; i < house.Wings.Count; ++i)
                 {
                     RoofWing wing = house.Wings[i];
                     string roof = wing.NoRoof ? "no roof" : wing.Shape.ToString().ToLowerInvariant();
-                    _wingList.Items.Add($"Wing {i + 1}: {wing.X1 - wing.X0 + 1} x {wing.Y1 - wing.Y0 + 1}, {wing.Storeys} storey{(wing.Storeys == 1 ? string.Empty : "s")}, {(wing.Rooms > 1 ? $"{wing.Rooms} rooms, " : string.Empty)}{roof}");
+                    string divided = wing.Rooms > 1 ? $"{wing.Rooms} rooms{(wing.Layout == RoomLayout.Row ? string.Empty : " (" + wing.Layout.ToString().ToLowerInvariant() + ")")}, " : string.Empty;
+                    string text = $"Wing {i + 1}: {wing.X1 - wing.X0 + 1} x {wing.Y1 - wing.Y0 + 1}, {wing.Storeys} storey{(wing.Storeys == 1 ? string.Empty : "s")}, {divided}{roof}";
+                    if (i >= _wingList.Items.Count)
+                    {
+                        _wingList.Items.Add(text);
+                    }
+                    else if (!text.Equals(_wingList.Items[i]))
+                    {
+                        _wingList.Items[i] = text;
+                    }
                 }
 
-                _wingList.SelectedIndex = house.SelectedIndex;
+                if (_wingList.SelectedIndex != house.SelectedIndex)
+                {
+                    _wingList.SelectedIndex = house.SelectedIndex;
+                }
+
                 _wingList.EndUpdate();
+                _gables.SelectedIndex = (int)house.Draft.Gables;
+                _gableFill.SelectedIndex = (int)house.Draft.GableFill;
 
                 _storeys.Value = Math.Clamp(house.Storeys, 1, HouseDraft.MaxStoreys);
                 // The drop-down lists the roof shapes in their order, then None.
@@ -134,8 +176,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 {
                     bool used = k < top || k < house.Storeys;
                     _storeyLabels[k].Visible = _wallButtons[k].Visible = _floorButtons[k].Visible = used;
-                    _wallButtons[k].Text = house.Draft.WallStyles[k]?.Name ?? "(walls)";
-                    _floorButtons[k].Text = house.Draft.FloorStyles[k]?.Name ?? "(floor)";
+                    Show(_wallButtons[k], house.Draft.WallStyles[k], "(walls)", "South2");
+                    Show(_floorButtons[k], house.Draft.FloorStyles[k], "(floor)", null);
 
                     // The storey the chosen floor means: where the other tools work.
                     bool current = k == active;
@@ -146,24 +188,44 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
                 // A flat roof is laid in a floor style of its own; the button picks that one then.
                 bool flat = !house.NoRoof && house.Shape == RoofShape.Flat;
-                _roofStyle.Text = flat ? house.Draft.FlatRoofStyle?.Name ?? "(top floor's style)" : house.Draft.RoofStyle?.Name ?? "(roof)";
+                Show(_roofStyle, flat ? house.Draft.FlatRoofStyle : house.Draft.RoofStyle, flat ? "(top floor's style)" : "(roof)", null);
                 _foundation.Checked = house.Draft.Foundation;
-                _rooms.Value = Math.Clamp(house.Rooms, 1, HouseDraft.MaxRooms);
+                Show(_doorStyle, house.Draft.DoorStyle, "(doors)", HouseDraft.DoorAlongX);
+                Show(_stairStyle, house.Draft.StairStyle, "(stairs)", null);
+                Show(_foundationStyle, house.Draft.FoundationStyle, "(light brick)", "South2");
+                _foundationStyle.Enabled = house.Draft.Foundation;
+                RefreshThemes(house);
+                // Rooms are those of the storey the chosen floor means.
+                int roomStorey = RoomStorey;
+                (int rooms, RoomLayout layout) = house.RoomsOn(roomStorey);
+                _rooms.Value = Math.Clamp(rooms, 1, HouseDraft.MaxRooms);
+                _layout.SelectedIndex = (int)layout;
+                _roomsPerStorey.Enabled = house.HasSelectedWing && roomStorey >= 1;
+                _roomsPerStorey.Checked = house.HasOwnRooms(roomStorey);
+                _roomsPerStorey.Text = roomStorey >= 1 ? $"Storey {roomStorey + 1} only" : "This storey";
+                _autoDoors.Checked = house.Draft.AutoDoors;
+                _frontDoor.SelectedIndex = (int)house.Draft.FrontDoor;
+                _windowSpacing.Value = Math.Clamp(house.Draft.WindowSpacing, 0, (int)_windowSpacing.Maximum);
                 _showWalls.Checked = house.ShowWalls;
                 _showFloors.Checked = house.ShowFloors;
                 _showRoof.Checked = house.ShowRoof;
                 _saveDraft.Enabled = _blueprint.Enabled = house.HasPending;
 
                 // The houses already placed in this design, which can be opened as drafts again.
-                object chosen = _placed.SelectedItem;
-                _placed.Items.Clear();
-                foreach (System.Xml.Linq.XElement placed in _session.PlacedHouses)
+                List<System.Xml.Linq.XElement> placedNow = _session.PlacedHouses.ToList();
+                if (!_placed.Items.Cast<PlacedHouse>().Select(p => p.House).SequenceEqual(placedNow))
                 {
-                    _placed.Items.Add(new PlacedHouse(placed));
+                    object chosen = _placed.SelectedItem;
+                    _placed.Items.Clear();
+                    foreach (System.Xml.Linq.XElement placed in placedNow)
+                    {
+                        _placed.Items.Add(new PlacedHouse(placed));
+                    }
+
+                    _placed.SelectedIndex = _placed.Items.Count == 0 ? -1
+                        : Math.Max(0, _placed.Items.Cast<PlacedHouse>().ToList().FindIndex(p => chosen is PlacedHouse c && c.House == p.House));
                 }
 
-                _placed.SelectedIndex = _placed.Items.Count == 0 ? -1
-                    : Math.Max(0, _placed.Items.Cast<PlacedHouse>().ToList().FindIndex(p => chosen is PlacedHouse c && c.House == p.House));
                 _placed.Enabled = _placed.Items.Count > 0;
                 _edit.Enabled = _placed.Items.Count > 0 && !house.HasPending;
                 _baseZ.Enabled = house.HasPending;
@@ -191,6 +253,119 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
         }
 
+        /// <summary>Shows a style on its button: a piece of it, its name, and the whole name as the tip.</summary>
+        private void Show(Button button, HouseStyle style, string none, string iconSlot)
+        {
+            string text = style?.Name ?? none;
+            if (button.Text != text)
+            {
+                button.Text = text;
+                _toolTip.SetToolTip(button, style == null ? null : $"{style.Name} ({style.Group}). Click to pick another on the House page.");
+            }
+
+            ushort icon = style == null ? (ushort)0 : iconSlot != null && style.Get(iconSlot) is var piece and not 0 ? piece : style.IconId;
+            Image image = icon == 0 ? null : _thumbnails.Get(icon, 20);
+            if (!ReferenceEquals(button.Image, image))
+            {
+                button.Image = image;
+                button.ImageAlign = ContentAlignment.MiddleLeft;
+                button.TextImageRelation = TextImageRelation.ImageBeforeText;
+            }
+        }
+
+        private void Gables_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Run(house => house.SetGables((RoofGables)Math.Max(0, _gables.SelectedIndex), (RoofGableFill)Math.Max(0, _gableFill.SelectedIndex)));
+        }
+
+        /// <summary>Lists the themes this client can build and marks the one the draft's styles are.</summary>
+        private void RefreshThemes(HouseTool house)
+        {
+            IReadOnlyList<HouseTheme> themes = house.Themes;
+            bool same = _theme.Items.Count == themes.Count + 1;
+            for (int i = 0; same && i < themes.Count; ++i)
+            {
+                same = ReferenceEquals(_theme.Items[i + 1], themes[i]);
+            }
+
+            if (!same)
+            {
+                _theme.BeginUpdate();
+                _theme.Items.Clear();
+                _theme.Items.Add(_customTheme);
+                foreach (HouseTheme theme in themes)
+                {
+                    _theme.Items.Add(theme);
+                }
+
+                _theme.EndUpdate();
+            }
+
+            HouseTheme current = house.CurrentTheme();
+            _theme.SelectedIndex = current == null ? 0 : _theme.Items.IndexOf(current);
+            _theme.Enabled = themes.Count > 0;
+            _deleteTheme.Enabled = current is { IsUser: true };
+        }
+
+        private void Theme_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (_updating || _session == null || _theme.SelectedItem is not HouseTheme theme)
+            {
+                return;
+            }
+
+            List<string> missing = _session.House.ApplyTheme(theme);
+            Message?.Invoke(missing.Count == 0
+                ? $"Theme \"{theme.Name}\" applied to the house."
+                : $"Theme \"{theme.Name}\" applied; this client has no {string.Join(", ", missing)} for it.");
+            Used?.Invoke();
+        }
+
+        private void SaveTheme_Click(object sender, EventArgs e)
+        {
+            SaveTheme?.Invoke();
+            Used?.Invoke();
+        }
+
+        private void DeleteTheme_Click(object sender, EventArgs e)
+        {
+            if (_theme.SelectedItem is HouseTheme { IsUser: true } theme)
+            {
+                DeleteTheme?.Invoke(theme);
+                Used?.Invoke();
+            }
+        }
+
+        /// <summary>Marks the button whose style is being picked on the House page; null clears the mark.</summary>
+        public void MarkPick(HousePartKind? kind, int storey)
+        {
+            Button picked = kind switch
+            {
+                null => null,
+                HousePartKind.Roof => _roofStyle,
+                HousePartKind.Door => _doorStyle,
+                HousePartKind.Stair => _stairStyle,
+                HousePartKind.Wall when storey == FoundationPick => _foundationStyle,
+                HousePartKind.Floor when storey == FlatRoof => _roofStyle,
+                HousePartKind.Wall => storey >= 0 && storey < _wallButtons.Length ? _wallButtons[storey] : null,
+                HousePartKind.Floor => storey >= 0 && storey < _floorButtons.Length ? _floorButtons[storey] : null,
+                _ => null
+            };
+            foreach (Button button in _wallButtons.Concat(_floorButtons).Concat(new[] { _roofStyle, _doorStyle, _stairStyle, _foundationStyle }))
+            {
+                if (button == picked)
+                {
+                    button.BackColor = Color.FromArgb(255, 214, 64);
+                    button.ForeColor = Color.Black;
+                }
+                else
+                {
+                    button.ForeColor = ForeColor;
+                    button.UseVisualStyleBackColor = true;
+                }
+            }
+        }
+
         /// <summary>A placed house in the list, shown by its name and size.</summary>
         private sealed class PlacedHouse
         {
@@ -208,11 +383,42 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
         }
 
+        /// <summary>The storey the rooms shown are of: the one the chosen floor means, the ground floor with all floors shown.</summary>
+        private int RoomStorey => _session != null && _session.House.HasPending && _session.WorkZ != null ? _session.DraftStorey : 0;
+
         private void Rooms_ValueChanged(object sender, EventArgs e)
         {
             if (!_updating && _session != null)
             {
-                _session.House.SetRooms((int)_rooms.Value);
+                _session.House.SetRooms((int)_rooms.Value, (RoomLayout)Math.Max(0, _layout.SelectedIndex), RoomStorey);
+            }
+        }
+
+        private void Layout_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Run(house => house.SetRooms((int)_rooms.Value, (RoomLayout)Math.Max(0, _layout.SelectedIndex), RoomStorey));
+        }
+
+        private void RoomsPerStorey_CheckedChanged(object sender, EventArgs e)
+        {
+            Run(house => house.SetOwnRooms(RoomStorey, _roomsPerStorey.Checked));
+        }
+
+        private void AutoDoors_CheckedChanged(object sender, EventArgs e)
+        {
+            Run(house => house.SetAutoDoors(_autoDoors.Checked));
+        }
+
+        private void FrontDoor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Run(house => house.SetFrontDoor((FrontDoorSide)Math.Max(0, _frontDoor.SelectedIndex)));
+        }
+
+        private void WindowSpacing_ValueChanged(object sender, EventArgs e)
+        {
+            if (!_updating && _session != null)
+            {
+                _session.House.SetWindowSpacing((int)_windowSpacing.Value);
             }
         }
 

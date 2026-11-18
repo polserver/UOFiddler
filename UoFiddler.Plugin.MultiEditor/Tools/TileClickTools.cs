@@ -25,15 +25,17 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         public override void OnMouseUp(MouseEventArgs e)
         {
+            // Shift lowers.
+            int step = (Control.ModifierKeys & Keys.Shift) != 0 ? -Context.ZStep : Context.ZStep;
             if (Context.Selection.Count > 1)
             {
-                Context.CompList.TileZMod(Context.Selection, Context.ZStep);
+                Context.CompList.TileZMod(Context.Selection, step);
                 Context.AfterEdit();
             }
             else if (Context.HoverTile != null)
             {
                 MultiTile tile = Context.HoverTile;
-                Context.CompList.TileZMod(tile, Context.ZStep);
+                Context.CompList.TileZMod(tile, step);
                 Context.AfterEdit(tile.Z);
             }
         }
