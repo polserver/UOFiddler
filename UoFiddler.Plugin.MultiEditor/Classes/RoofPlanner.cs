@@ -201,6 +201,19 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 return null;
             }
 
+            // The roof's edge counts as lower, so at a gable end a cell of the top rows of an even
+            // span drops as much to the edge as down its slope. The slope is the side where roof
+            // lies lower, not the edge.
+            if (Math.Abs(climbX) == Math.Abs(climbY))
+            {
+                bool roofLowerX = heights.ContainsKey((climbX > 0 ? x - 1 : x + 1, y));
+                bool roofLowerY = heights.ContainsKey((x, climbY > 0 ? y - 1 : y + 1));
+                if (roofLowerY && !roofLowerX)
+                {
+                    return climbY > 0 ? "North" : "South";
+                }
+            }
+
             return Math.Abs(climbX) >= Math.Abs(climbY) ? (climbX > 0 ? "West" : "East") : (climbY > 0 ? "North" : "South");
         }
 
