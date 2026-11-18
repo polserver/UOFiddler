@@ -716,10 +716,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             // A pick asked for by the house panel is a material of the draft, not a tool's style.
+            // It stays on, so one style after another can be tried, until Esc, another tool or
+            // another button of the panel ends it.
             if (_housePick is { } pick && pick.Kind == style.Kind)
             {
-                _housePick = null;
-                _housePanel.MarkPick(null, 0);
                 if (pick.Storey == HousePanel.FlatRoof)
                 {
                     Session.House.SetFlatRoofStyle(style);
@@ -739,10 +739,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             CancelHousePick();
 
-            // With the House tool in use, a wall, floor or roof style clicked on the House page is
-            // a material of the house too: of the storey the chosen floor means, or of every
-            // storey with all floors shown. Doors and stairs have tools of their own.
-            if (Session.Tool == ToolKind.House && style.Kind is HousePartKind.Wall or HousePartKind.Floor or HousePartKind.Roof)
+            // With the House tool in use, a style clicked on the House page is a material of the
+            // house too: a wall or floor style of the storey the chosen floor means (of every
+            // storey with all floors shown), a roof, door or stair style of the whole house. To
+            // hang single doors or build stairs in another style, the Doors and Stairs tools are chosen first.
+            if (Session.Tool == ToolKind.House &&
+                style.Kind is HousePartKind.Wall or HousePartKind.Floor or HousePartKind.Roof or HousePartKind.Door or HousePartKind.Stair)
             {
                 int? storey = style.Kind == HousePartKind.Roof || Session.WorkZ == null ? null : Session.DraftStorey;
                 Session.House.SetMaterial(style, storey);
@@ -793,7 +795,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 : storey == HousePanel.FoundationPick ? "Pick the wall style of the foundation on the House page (a quarter wall suits it)."
                 : storey == HousePanel.FlatRoof ? "Pick the floor style of the flat roofs on the House page."
                 : $"Pick the {(kind == HousePartKind.Wall ? "wall" : "floor")} style of storey {storey + 1} on the House page.";
-            _pickHint += " Esc cancels.";
+            _pickHint += " Click one style after another to try them; Esc ends.";
             UpdateStatus();
         }
 
@@ -2814,7 +2816,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 : session.PreviewingRepeat ? "The copies are shown as they would be placed."
                 : session.Pasting ? "Click to place the tiles, as often as you like. Esc or right click stops."
                 : session.ShapingRoof ? "Shaping: drag a wing to move it, a marked edge of the selected wing to resize it, anywhere else to add a wing. " +
-                                        "Ctrl+drag moves all of it, Shift+click turns a ridge, Delete removes a wing, Ctrl+Z steps back. Enter places it, Esc drops it."
+                                        "Ctrl+drag moves all of it, Shift+corner drag makes a wing square, Shift+click turns a ridge, Delete removes a wing. Enter places it, Esc drops it."
                 : session.House.HasPending ? DraftHint(session)
                 : ToolHint(session.Tool);
 

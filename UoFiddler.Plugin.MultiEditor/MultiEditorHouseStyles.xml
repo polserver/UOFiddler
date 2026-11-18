@@ -26,6 +26,12 @@
   Theme     the styles of every part of a house, picked together; each is a tile id of the style
             (its anchor): walls, floor, roof, flatRoof, door, stairs, foundation. A theme is offered
             when the client has its wall, floor and roof style.
+            foundation is the wall style of the foundation, foundationTiers its rows (1) and
+            foundationHeight how far below the floor it starts (7).
+
+  Foundation  a kind of foundation to choose for a house: name, style (a tile id of the low wall
+            style; none for light brick quarter walls), tiers (rows one on the other) and height
+            (how far below the ground floor it starts). Offered when the client has the style.
 -->
 <HouseStyles version="1">
   <Style kind="Wall" anchor="0x000A" name="Dark Wood Standard Walls" group="Dark Wood" family="Dark Wood"/>
@@ -832,14 +838,14 @@
   <Style kind="Stair" anchor="0x9AEA" name="Jungle" group="Jungle"/>
   <Style kind="Stair" anchor="0x9B4F" name="Shadowguard" group="Shadowguard"/>
   <Style kind="Teleporter" anchor="0x181D" name="Alchemical Tiles" group="Alchemical Tiles"/>
-  <Theme name="Fieldstone Cottage" walls="0x001E" floor="0x04D1" roof="0x2C56" door="0x06B9" stairs="0x0721"/>
+  <Theme name="Fieldstone Cottage" walls="0x001E" floor="0x04D1" roof="0x2C56" door="0x06B9" stairs="0x0721" foundation="0x0025" foundationHeight="8"/>
   <Theme name="Wood and Plaster" walls="0x0138" floor="0x04B4" roof="0x2C41" door="0x06A9" stairs="0x0738"/>
   <Theme name="Log Cabin" walls="0x0095" floor="0x04B4" roof="0x2C50" door="0x06B9" stairs="0x0738"/>
-  <Theme name="Sandstone" walls="0x0160" floor="0x0525" roof="0x2C32" flatRoof="0x0573" door="0x06D9" stairs="0x03EE"/>
-  <Theme name="Grey Brick Keep" walls="0x0037" floor="0x0519" roof="0x28C4" flatRoof="0x0573" door="0x06E9" stairs="0x07A3"/>
-  <Theme name="Weathered Stone Keep" walls="0x01D0" floor="0x0521" roof="0x28C4" flatRoof="0x0521" door="0x0679" stairs="0x0788"/>
-  <Theme name="Tan Marble" walls="0x0105" floor="0x050D" roof="0x2C7D" flatRoof="0x063B" door="0x0679" stairs="0x0709"/>
-  <Theme name="White Marble" walls="0x0292" floor="0x0511" roof="0x2912" flatRoof="0x063B" door="0x06D9" stairs="0x0750"/>
+  <Theme name="Sandstone" walls="0x0160" floor="0x0525" roof="0x2C32" flatRoof="0x0573" door="0x06D9" stairs="0x03EE" foundation="0x016A" foundationHeight="6"/>
+  <Theme name="Grey Brick Keep" walls="0x0037" floor="0x0519" roof="0x28C4" flatRoof="0x0573" door="0x06E9" stairs="0x07A3" foundation="0x0042" foundationHeight="5"/>
+  <Theme name="Weathered Stone Keep" walls="0x01D0" floor="0x0521" roof="0x28C4" flatRoof="0x0521" door="0x0679" stairs="0x0788" foundation="0x01E9" foundationTiers="2" foundationHeight="6"/>
+  <Theme name="Tan Marble" walls="0x0105" floor="0x050D" roof="0x2C7D" flatRoof="0x063B" door="0x0679" stairs="0x0709" foundation="0x0443" foundationHeight="4"/>
+  <Theme name="White Marble" walls="0x0292" floor="0x0511" roof="0x2912" flatRoof="0x063B" door="0x06D9" stairs="0x0750" foundation="0x0451" foundationHeight="4"/>
   <Theme name="Tokuno" walls="0x271F" floor="0x29CA" roof="0x23E0" door="0x2A0F" stairs="0x0721"/>
   <Theme name="Elven" walls="0x2B7C" floor="0x2BB5" roof="0x2B93" door="0x31AE" stairs="0x0721"/>
   <Theme name="Crystal" walls="0x35E3" floor="0x35B2" roof="0x35C2" door="0x367F" stairs="0x35D2"/>
@@ -853,4 +859,12 @@
   <Theme name="Shadowguard" walls="0x9B16" floor="0x9B32" roof="0x9B73" door="0x9B40" stairs="0x9B4F"/>
   <Theme name="Board and Batten" walls="0x77E6" floor="0x04D1" roof="0x2C41" door="0x06B9" stairs="0x7807"/>
   <Theme name="Celtic" walls="0xB3D7" floor="0x0519" roof="0x28C4" door="0x06E9" stairs="0x07A3"/>
+  <Foundation name="Light brick, 7 up" tiers="1" height="7"/>
+  <Foundation name="Stone edging x2, 6 up" style="0x01E9" tiers="2" height="6"/>
+  <Foundation name="Granite edging x2, 6 up" style="0x00DE" tiers="2" height="6"/>
+  <Foundation name="Tan marble edging, 4 up" style="0x0443" tiers="1" height="4"/>
+  <Foundation name="White marble edging, 4 up" style="0x0451" tiers="1" height="4"/>
+  <Foundation name="Fieldstone half walls, 8 up" style="0x0025" tiers="1" height="8"/>
+  <Foundation name="Sandstone half walls, 6 up" style="0x016A" tiers="1" height="6"/>
+  <Foundation name="Grey brick, 5 up" style="0x0042" tiers="1" height="5"/>
 </HouseStyles>

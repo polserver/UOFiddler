@@ -94,6 +94,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         protected override bool GhostsFollowView => true;
 
+        /// <summary>A house wing is at least three wall cells each way, as it is drawn: walls with a room between, and a middle to move it by.</summary>
+        protected override int MinSpan => 2;
+
         // What the preview shows. A view choice: it is no step of the history and what is placed
         // is always the whole house.
         private bool _showWalls = true;
@@ -721,6 +724,45 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
         }
 
+        /// <summary>The foundations this client can build.</summary>
+        public IReadOnlyList<HouseFoundation> Foundations => (IReadOnlyList<HouseFoundation>)Context.HouseStyles?.Foundations ?? Array.Empty<HouseFoundation>();
+
+        /// <summary>Gives the house one of the client's kinds of foundation: its wall style, rows and height.</summary>
+        public void SetFoundation(HouseFoundation foundation)
+        {
+            if (foundation == null || Context.HouseStyles == null)
+            {
+                return;
+            }
+
+            HouseStyle style = Context.HouseStyles.Find(HousePartKind.Wall, foundation.Style);
+            Edit(() =>
+            {
+                _draft.Foundation = true;
+                (_draft.FoundationStyle, _draft.FoundationTiers, _draft.FoundationHeight) = (style, foundation.Tiers, foundation.Height);
+            });
+        }
+
+        /// <summary>The kind of foundation the house has, or null when it has none or one put together by hand.</summary>
+        public HouseFoundation CurrentFoundation()
+        {
+            if (!_draft.Foundation || Context.HouseStyles == null)
+            {
+                return null;
+            }
+
+            foreach (HouseFoundation foundation in Foundations)
+            {
+                if (_draft.FoundationStyle == Context.HouseStyles.Find(HousePartKind.Wall, foundation.Style) &&
+                    _draft.FoundationTiers == foundation.Tiers && _draft.FoundationHeight == foundation.Height)
+                {
+                    return foundation;
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>Sets the wall style the foundation ring is built in; null is the client houses' own.</summary>
         public void SetFoundationStyle(HouseStyle style)
         {
@@ -772,7 +814,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
                 _draft.RoofStyle = roof ?? _draft.RoofStyle;
                 _draft.FlatRoofStyle = flatRoof ?? _draft.FlatRoofStyle;
-                _draft.FoundationStyle = foundation;
+                (_draft.FoundationStyle, _draft.FoundationTiers, _draft.FoundationHeight) = (foundation, theme.FoundationTiers, theme.FoundationHeight);
                 if (door != null)
                 {
                     Restyle(door);
@@ -800,6 +842,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 Door = _draft.DoorStyle?.Anchor ?? 0,
                 Stairs = _draft.StairStyle?.Anchor ?? 0,
                 Foundation = _draft.FoundationStyle?.Anchor ?? 0,
+                FoundationTiers = _draft.FoundationTiers,
+                FoundationHeight = _draft.FoundationHeight,
                 IsUser = true
             };
         }
@@ -825,7 +869,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 if (storeys && Is(_draft.RoofStyle, HousePartKind.Roof, theme.Roof) &&
                     Is(_draft.FlatRoofStyle, HousePartKind.Floor, theme.FlatRoof) &&
                     Is(_draft.DoorStyle, HousePartKind.Door, theme.Door) && Is(_draft.StairStyle, HousePartKind.Stair, theme.Stairs) &&
-                    _draft.FoundationStyle == Context.HouseStyles.Find(HousePartKind.Wall, theme.Foundation))
+                    _draft.FoundationStyle == Context.HouseStyles.Find(HousePartKind.Wall, theme.Foundation) &&
+                    _draft.FoundationTiers == theme.FoundationTiers && _draft.FoundationHeight == theme.FoundationHeight)
                 {
                     return theme;
                 }

@@ -64,6 +64,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ("Add a tile to the selection or take it out (Select)", "Ctrl + click"),
                 ("Add to the selection (Select, Lasso)", "Ctrl + drag"),
                 ("Pick the tile under the cursor (Draw, Rectangle, Line)", "Alt + click"),
+                ("Lower the tile instead of raising it (Altitude)", "Shift + click"),
                 ("Keep the line straight (Line)", "Shift + drag"),
                 ("One straight wall instead of a room (Walls)", "Shift + drag"),
                 ("Erase walls (Walls)", "Ctrl + drag"),
@@ -78,12 +79,24 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ("Drop the roof being shaped (Roof)", "Esc"),
                 ("Add a wing to the house draft (House)", "Drag out its wall cells"),
                 ("Select, move, resize, turn or remove a wing (House)", "As with the roof's wings"),
+                ("Move the whole draft, with all it holds (Roof, House)", "Ctrl + drag a wing"),
+                ("Resize the selected wing as a square (Roof, House)", "Shift + drag one of its corners"),
                 ("Step back and forth through the draft (Roof, House)", "Ctrl+Z / Ctrl+Y"),
                 ("Partitions and openings in the house draft (Walls)", "Drag / Ctrl + drag"),
-                ("Window in a wall of the house draft (Walls)", "Click the wall"),
-                ("Door in the house draft (Doors)", "Click a wall; Ctrl + click removes"),
+                ("Window in a wall of the house draft, or wall again (Walls)", "Click the wall"),
+                ("Door in the house draft, then its next hinge side (Doors)", "Click a wall; Ctrl + click removes"),
+                ("Floor area in another style in the house draft (Floors)", "Drag the area"),
+                ("Stairs in the house draft (Stairs)", "Drag from the bottom step the way they climb; Ctrl + click removes"),
                 ("Place the house on its layers (House and its draft tools)", "Enter"),
-                ("Drop the house draft; undo brings it back (House)", "Esc"));
+                ("Drop the house draft; undo brings it back (House)", "Esc"),
+                ("End a style pick started in the House draft panel", "Esc, or pick another tool"));
+
+            Section("House draft panel",
+                ("Change a material: walls, floor, roof, doors, stairs, foundation", "Click its button, then styles on the House page"),
+                ("Try one style after another for that material", "Keep clicking styles; the button stays marked"),
+                ("Change the house's style of the kind shown, with the House tool", "Click a style on the House page"),
+                ("Start a tower, keep or castle", "Start as"),
+                ("Rooms of one storey only", "Choose the floor, then tick the storey box beside Layout"));
 
             Section("Tile browser",
                 ("Go from the search box to the results", "Down"),
@@ -95,7 +108,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 ("Place a blueprint", "Click, Enter"),
                 ("Rename a blueprint", "F2"),
                 ("Delete a blueprint", "Delete"),
-                ("Open UO Architect designs (Designs page)", "Enter, double click"));
+                ("Open UO Architect designs (Designs page)", "Enter, double click"),
+                ("Walk the styles of the House page", "Arrow keys, Home, End"),
+                ("Choose the style walked to", "Enter, click"));
 
             Section("Selected tiles list",
                 ("Take the chosen rows out of the selection", "Delete"),
