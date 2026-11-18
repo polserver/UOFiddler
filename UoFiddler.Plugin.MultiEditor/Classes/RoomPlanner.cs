@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UoFiddler.Plugin.MultiEditor.Classes
 {
@@ -157,6 +158,92 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
 
             return plan;
+        }
+
+        /// <summary>
+        /// Moves the walls between rooms off stairs: a wall that would run between two stair
+        /// cells steps one or two cells aside, where the rooms on both sides stay wide enough.
+        /// A wall that cannot is left where it is (the draft then leaves it open at the stairs).
+        /// </summary>
+        public static void Avoid(RoomPlan plan, ICollection<(int X, int Y)> stairs)
+        {
+            if (stairs.Count == 0 || plan.Rooms.Count < 2)
+            {
+                return;
+            }
+
+            foreach (bool alongY in new[] { true, false })
+            {
+                // A wall along Y stands after column c: between the rooms that end at c and those that start at c + 1.
+                int End((int X0, int Y0, int X1, int Y1) r) => alongY ? r.X1 : r.Y1;
+                int Start((int X0, int Y0, int X1, int Y1) r) => alongY ? r.X0 : r.Y0;
+                (int From, int To) Side((int X0, int Y0, int X1, int Y1) r) => alongY ? (r.Y0, r.Y1) : (r.X0, r.X1);
+                bool Cut(int c, List<int> before)
+                {
+                    foreach (int i in before)
+                    {
+                        (int from, int to) = Side(plan.Rooms[i]);
+                        for (int at = from; at <= to; ++at)
+                        {
+                            if (alongY ? stairs.Contains((c, at)) && stairs.Contains((c + 1, at)) : stairs.Contains((at, c)) && stairs.Contains((at, c + 1)))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+
+                foreach (int c in plan.Rooms.Select(End).Distinct().ToList())
+                {
+                    var before = new List<int>();
+                    var after = new List<int>();
+                    for (int i = 0; i < plan.Rooms.Count; ++i)
+                    {
+                        if (End(plan.Rooms[i]) == c)
+                        {
+                            before.Add(i);
+                        }
+                        else if (Start(plan.Rooms[i]) == c + 1)
+                        {
+                            after.Add(i);
+                        }
+                    }
+
+                    // Only a wall with the same rooms' length on both sides can move as one.
+                    if (after.Count == 0 || before.Sum(i => Side(plan.Rooms[i]).To - Side(plan.Rooms[i]).From + 1) != after.Sum(i => Side(plan.Rooms[i]).To - Side(plan.Rooms[i]).From + 1) ||
+                        !Cut(c, before))
+                    {
+                        continue;
+                    }
+
+                    foreach (int by in new[] { 1, -1, 2, -2 })
+                    {
+                        // A room keeps the least width; one already narrower (a corridor) keeps its own.
+                        int least(int i) => Math.Min(MinRoom, End(plan.Rooms[i]) - Start(plan.Rooms[i]) + 1);
+                        bool fits = before.All(i => c + by - Start(plan.Rooms[i]) + 1 >= least(i)) && after.All(i => End(plan.Rooms[i]) - (c + by + 1) + 1 >= least(i));
+                        if (!fits || Cut(c + by, before))
+                        {
+                            continue;
+                        }
+
+                        foreach (int i in before)
+                        {
+                            (int x0, int y0, int x1, int y1) = plan.Rooms[i];
+                            plan.Rooms[i] = alongY ? (x0, y0, c + by, y1) : (x0, y0, x1, c + by);
+                        }
+
+                        foreach (int i in after)
+                        {
+                            (int x0, int y0, int x1, int y1) = plan.Rooms[i];
+                            plan.Rooms[i] = alongY ? (c + by + 1, y0, x1, y1) : (x0, c + by + 1, x1, y1);
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>

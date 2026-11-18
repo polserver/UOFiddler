@@ -51,6 +51,13 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         public RoomLayout Layout { get; set; }
 
         /// <summary>
+        /// True for a house wing that keeps its walls where it meets other wings, with a doorway
+        /// in each stretch of wall they share: a tower at a keep's corner, a hall in a castle's
+        /// yard. Wings without it run into each other as one open space.
+        /// </summary>
+        public bool Walled { get; set; }
+
+        /// <summary>
         /// Rooms and layout of the storeys above the ground floor that have their own; a storey
         /// without takes those of the storey below it. Index 0 is not used.
         /// </summary>
@@ -92,6 +99,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             (Shape, RidgeAlongY, RidgeAuto, Storeys, NoRoof) = (other.Shape, other.RidgeAlongY, other.RidgeAuto, other.Storeys, other.NoRoof);
             Rooms = other.Rooms;
             Layout = other.Layout;
+            Walled = other.Walled;
             RoomsAbove = ((int, RoomLayout)?[])other.RoomsAbove.Clone();
         }
     }
@@ -137,6 +145,10 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         private int _endY;
         private int _z;
         private RoofWing _before;
+
+        // A Ctrl+drag moves every wing: where they all stood, and how far they have been moved so far.
+        private List<RoofWing> _beforeAll;
+        private (int X, int Y) _movedAll;
         private State _dragStart;
         private int _grabX;
         private int _grabY;
@@ -241,6 +253,20 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         /// <summary>What the draft holds beside its wings, for the undo history.</summary>
         protected virtual object CaptureExtra() => null;
+
+        /// <summary>
+        /// One wing is being moved: it stood as <paramref name="before"/> and is now this far
+        /// from there. <paramref name="extraAtStart"/> is what the draft kept besides its wings
+        /// when the drag began, so the move is always made from there, not step upon step.
+        /// </summary>
+        protected virtual void WingMoved(RoofWing before, int dx, int dy, object extraAtStart)
+        {
+        }
+
+        /// <summary>Every wing was moved by this many cells: what a draft keeps besides its wings moves along.</summary>
+        protected virtual void DraftMoved(int dx, int dy)
+        {
+        }
 
         protected virtual void RestoreExtra(object extra)
         {
@@ -378,6 +404,16 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     (_grabX, _grabY) = (cx, cy);
                     Edges(wing, cx, cy, wasSelected, out _west, out _east, out _north, out _south);
                     _drag = _west || _east || _north || _south ? DragKind.Resize : DragKind.Move;
+
+                    // With Ctrl the whole draft moves, not the one wing.
+                    _beforeAll = null;
+                    if (CtrlHeld)
+                    {
+                        _drag = DragKind.Move;
+                        _beforeAll = _wings.Select(w => w.Clone()).ToList();
+                        _movedAll = (0, 0);
+                    }
+
                     RaiseChanged();
                     return;
                 }
@@ -469,10 +505,26 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         private void CancelDrag()
         {
-            if (_drag is DragKind.Move or DragKind.Resize && _before != null && SelectedWing is { } wing)
+            if (_drag == DragKind.Move && _beforeAll != null && _beforeAll.Count == _wings.Count)
+            {
+                // The whole draft was being moved: all of it goes back.
+                for (int i = 0; i < _wings.Count; ++i)
+                {
+                    _wings[i].CopyFrom(_beforeAll[i]);
+                }
+
+                DraftMoved(-_movedAll.X, -_movedAll.Y);
+            }
+            else if (_drag is DragKind.Move or DragKind.Resize && _before != null && SelectedWing is { } wing)
             {
                 wing.CopyFrom(_before);
+                if (_drag == DragKind.Move)
+                {
+                    WingMoved(_before, 0, 0, _dragStart?.Extra);
+                }
             }
+
+            _beforeAll = null;
 
             _before = null;
             _dragStart = null;
@@ -654,12 +706,32 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             Context.PlaneCell(Context.MouseLoc, GripZ(_before), out int cx, out int cy);
             int dx = cx - _grabX, dy = cy - _grabY;
+            if (_drag == DragKind.Move && _beforeAll != null && _beforeAll.Count == _wings.Count)
+            {
+                dx = Math.Max(dx, -_beforeAll.Min(w => w.X0));
+                dy = Math.Max(dy, -_beforeAll.Min(w => w.Y0));
+                for (int i = 0; i < _wings.Count; ++i)
+                {
+                    RoofWing was = _beforeAll[i];
+                    (_wings[i].X0, _wings[i].X1, _wings[i].Y0, _wings[i].Y1) = (was.X0 + dx, was.X1 + dx, was.Y0 + dy, was.Y1 + dy);
+                }
+
+                if ((dx, dy) != _movedAll)
+                {
+                    DraftMoved(dx - _movedAll.X, dy - _movedAll.Y);
+                    _movedAll = (dx, dy);
+                }
+
+                return;
+            }
+
             if (_drag == DragKind.Move)
             {
                 dx = Math.Max(dx, -_before.X0);
                 dy = Math.Max(dy, -_before.Y0);
                 (wing.X0, wing.X1, wing.Y0, wing.Y1) = (_before.X0 + dx, _before.X1 + dx, _before.Y0 + dy, _before.Y1 + dy);
                 Snap(wing, moved: true);
+                WingMoved(_before, wing.X0 - _before.X0, wing.Y0 - _before.Y0, _dragStart?.Extra);
                 return;
             }
 

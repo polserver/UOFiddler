@@ -67,6 +67,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _housePanel.SaveTheme += SaveHouseTheme;
             _housePanel.DeleteTheme += DeleteHouseTheme;
             _housePanel.Message += Tell;
+            _housePanel.HouseToolWanted += () => SetTool(ToolKind.House);
             _housePanel.SaveDraft += SaveHouseDraft;
             _housePanel.OpenDraft += OpenHouseDraft;
             _housePanel.SaveBlueprint += SaveHouseBlueprint;
@@ -285,6 +286,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             _browser.SetHouseStyles(_houseStyles);
             _browser.EditStylesRequested += EditHouseStyles;
+            _styleErrors = _houseStyles.Errors.Count == 0 ? null : string.Join("\r\n", _houseStyles.Errors.Take(5));
             _browser.TileChosen += id =>
             {
                 Session?.SetDrawTile(id);
@@ -656,6 +658,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             Session.Tool = kind;
 
+            if (IsHouseTool(kind) || kind == ToolKind.House)
+            {
+                TellStyleErrors();
+            }
+
             // A tool chosen in place of the style a pick was waiting for: the pick is off.
             if (!fromHousePage && !_openingHousePage)
             {
@@ -838,6 +845,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
 
             _browser.SetHouseStyles(_houseStyles);
+            _styleErrors = _houseStyles.Errors.Count == 0 ? null : string.Join("\r\n", _houseStyles.Errors.Take(5));
+            TellStyleErrors();
             foreach (EditorDocument document in _documents)
             {
                 document.Session.HouseStyle = _houseStyles.Successor(document.Session.HouseStyle);
@@ -847,6 +856,23 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _housePanel.RefreshDraft();
             _canvas.Invalidate();
             Tell("House styles saved.");
+        }
+
+        // What went wrong reading the house tables or a style file; told once, when the House page is first used.
+        private string _styleErrors;
+
+        private void TellStyleErrors()
+        {
+            if (_styleErrors == null)
+            {
+                return;
+            }
+
+            string errors = _styleErrors;
+            _styleErrors = null;
+            MessageBox.Show(this, "Some house style data could not be read and was left out:\r\n\r\n" + errors +
+                                  "\r\n\r\nYour own style file is " + (HouseStyleConfig.UserPath ?? "not set") + ".",
+                "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         /// <summary>Saves the styles of the house draft as a theme in the user's copy of the style file.</summary>
@@ -1559,7 +1585,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             Menu(_fileMenu, _new, _open, _openDesign, _import, _importFolder, null, _saveDesign, _saveDesignAs, _saveClient, _export, _saveBlueprint, _savePattern, null, _resize, _settingsCommand, null, _close, _closeAll);
             _undoHistory = new ToolStripMenuItem("Undo back to");
-            _editMenu.DropDownOpening += (_, _) => FillUndoHistory();
+            _editMenu.DropDownOpening += (_, _) => FillUndoHistory(_undoHistory);
             Menu(_editMenu, _undo, _redo);
             _editMenu.DropDownItems.Add(_undoHistory);
             Menu(_editMenu, null, _cut, _copy, _paste, _duplicate, _repeat, _delete, null,
@@ -1585,6 +1611,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             InsertButtons(strip, _mainSeparator1, _new, _open, _saveClient);
             InsertButtons(strip, _mainSeparator2, _undo, _redo);
+
+            // The steps Undo would take back, by name, beside the Undo and Redo buttons.
+            _undoDrop = new ToolStripDropDownButton("History")
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Text,
+                ToolTipText = "Undo back to a step of the history"
+            };
+            _undoDrop.DropDownOpening += (_, _) => FillUndoHistory(_undoDrop);
+            strip.Items.Insert(strip.Items.IndexOf(_mainSeparator2), _undoDrop);
             InsertButtons(strip, _mainSeparator3, _cut, _copy, _paste, _delete);
             InsertButtons(strip, _mainSeparator4, _workPlane, _grid, _hideWalls);
 
@@ -1626,13 +1661,22 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         }
 
         private ToolStripMenuItem _undoHistory;
+        private ToolStripDropDownButton _undoDrop;
 
         /// <summary>Lists the last steps of the history by name; choosing one takes it and every later step back.</summary>
-        private void FillUndoHistory()
+        private void FillUndoHistory(ToolStripDropDownItem menu)
         {
-            _undoHistory.DropDownItems.Clear();
+            menu.DropDownItems.Clear();
             IReadOnlyList<string> steps = Session?.UndoSteps(25) ?? Array.Empty<string>();
-            _undoHistory.Enabled = steps.Count > 0;
+            if (menu is ToolStripMenuItem)
+            {
+                menu.Enabled = steps.Count > 0;
+            }
+            else if (steps.Count == 0)
+            {
+                menu.DropDownItems.Add(new ToolStripMenuItem("Nothing to undo") { Enabled = false });
+            }
+
             for (int i = 0; i < steps.Count; ++i)
             {
                 int count = i + 1;
@@ -1646,7 +1690,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                     _commands.RefreshStates();
                     Tell(count == 1 ? "1 step undone." : $"{count} steps undone.");
                 };
-                _undoHistory.DropDownItems.Add(item);
+                menu.DropDownItems.Add(item);
             }
         }
 
@@ -2770,7 +2814,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 : session.PreviewingRepeat ? "The copies are shown as they would be placed."
                 : session.Pasting ? "Click to place the tiles, as often as you like. Esc or right click stops."
                 : session.ShapingRoof ? "Shaping: drag a wing to move it, a marked edge of the selected wing to resize it, anywhere else to add a wing. " +
-                                        "Shift+click turns a ridge, Delete removes a wing, Ctrl+Z steps back. Enter places it, Esc drops it."
+                                        "Ctrl+drag moves all of it, Shift+click turns a ridge, Delete removes a wing, Ctrl+Z steps back. Enter places it, Esc drops it."
                 : session.House.HasPending ? DraftHint(session)
                 : ToolHint(session.Tool);
 

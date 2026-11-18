@@ -837,6 +837,7 @@
   <Theme name="Log Cabin" walls="0x0095" floor="0x04B4" roof="0x2C50" door="0x06B9" stairs="0x0738"/>
   <Theme name="Sandstone" walls="0x0160" floor="0x0525" roof="0x2C32" flatRoof="0x0573" door="0x06D9" stairs="0x03EE"/>
   <Theme name="Grey Brick Keep" walls="0x0037" floor="0x0519" roof="0x28C4" flatRoof="0x0573" door="0x06E9" stairs="0x07A3"/>
+  <Theme name="Weathered Stone Keep" walls="0x01D0" floor="0x0521" roof="0x28C4" flatRoof="0x0521" door="0x0679" stairs="0x0788"/>
   <Theme name="Tan Marble" walls="0x0105" floor="0x050D" roof="0x2C7D" flatRoof="0x063B" door="0x0679" stairs="0x0709"/>
   <Theme name="White Marble" walls="0x0292" floor="0x0511" roof="0x2912" flatRoof="0x063B" door="0x06D9" stairs="0x0750"/>
   <Theme name="Tokuno" walls="0x271F" floor="0x29CA" roof="0x23E0" door="0x2A0F" stairs="0x0721"/>

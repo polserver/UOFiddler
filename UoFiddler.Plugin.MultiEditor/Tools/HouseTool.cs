@@ -33,6 +33,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         private int _storeys = 1;
         private int _rooms = 1;
         private RoomLayout _layout;
+        private bool _walled;
         private RoofShape _shape = RoofShape.Gable;
         private bool _noRoof;
         private RoofRidge _ridge = RoofRidge.Auto;
@@ -192,7 +193,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             var wing = new RoofWing
             {
-                X0 = x0, Y0 = y0, X1 = x1, Y1 = y1, EaveZ = z, Storeys = _storeys, Rooms = _rooms, Layout = _layout,
+                X0 = x0, Y0 = y0, X1 = x1, Y1 = y1, EaveZ = z, Storeys = _storeys, Rooms = _rooms, Layout = _layout, Walled = _walled,
                 Shape = _shape, NoRoof = _noRoof, RidgeAuto = _ridge == RoofRidge.Auto
             };
             Snap(wing, moved: false);
@@ -259,6 +260,24 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         }
 
         protected override object CaptureExtra() => _draft.Clone();
+
+        protected override void WingMoved(RoofWing before, int dx, int dy, object extraAtStart)
+        {
+            // What was set by hand inside the wing goes with it.
+            if (extraAtStart is HouseDraft start)
+            {
+                _draft = start.Clone();
+                _draft.ShiftWithin(before.Box, dx, dy);
+                ++_version;
+            }
+        }
+
+        protected override void DraftMoved(int dx, int dy)
+        {
+            // Walls, doors, windows, floor areas and stairs set by hand go with the house.
+            _draft.Shift(dx, dy);
+            ++_version;
+        }
 
         protected override void RestoreExtra(object extra)
         {
@@ -419,6 +438,89 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
 
             Edit(() => wing.RoomsAbove[storey] = own ? wing.RoomsOn(storey) : null);
+        }
+
+        /// <summary>True when the selected wing, else the wings drawn next, keeps its walls against other wings.</summary>
+        public bool Walled => SelectedWing?.Walled ?? _walled;
+
+        /// <summary>Lets the selected wing, and the wings drawn next, keep its walls where it meets other wings.</summary>
+        public void SetWalled(bool walled)
+        {
+            _walled = walled;
+            if (SelectedWing is { } wing && wing.Walled != walled)
+            {
+                Edit(() => wing.Walled = walled);
+            }
+            else
+            {
+                RaiseChanged();
+            }
+        }
+
+        /// <summary>The fortified houses a draft can be started from.</summary>
+        public static readonly string[] Presets = { "Tower", "Keep", "Castle" };
+
+        /// <summary>
+        /// Makes a tower, keep or castle the draft, sized to the multi: flat roofs with
+        /// battlements, corner towers that keep their walls, a front door and windows. It is an
+        /// ordinary draft from there on, and one step of the history. Returns what is in the way,
+        /// or null when the draft was made.
+        /// </summary>
+        public string LoadPreset(string preset)
+        {
+            int room = Math.Min(Context.CompList.Width, Context.CompList.Height) - 3;
+            (int least, int most) = preset switch { "Tower" => (7, 11), "Keep" => (17, 23), _ => (24, 30) };
+            if (room < least)
+            {
+                return $"A {preset.ToLowerInvariant()} needs a multi of at least {least + 3} x {least + 3} cells.";
+            }
+
+            int n = Math.Min(room, most);
+            const int o = 1;
+            string Wing(int x0, int y0, int x1, int y1, int storeys, string roof, bool walled, int rooms = 1) =>
+                $"<Wing x0=\"{x0}\" y0=\"{y0}\" x1=\"{x1}\" y1=\"{y1}\" storeys=\"{storeys}\" rooms=\"{rooms}\" roof=\"{roof}\" ridge=\"Auto\" walled=\"{(walled ? "true" : "false")}\"/>";
+            string Corners(int tower, int storeys) =>
+                Wing(o, o, o + tower, o + tower, storeys, "Flat", true) + Wing(o + n - tower, o, o + n, o + tower, storeys, "Flat", true) +
+                Wing(o, o + n - tower, o + tower, o + n, storeys, "Flat", true) + Wing(o + n - tower, o + n - tower, o + n, o + n, storeys, "Flat", true);
+
+            string wings;
+            switch (preset)
+            {
+                case "Tower":
+                    wings = Wing(o, o, o + n, o + n, 3, "Flat", false);
+                    break;
+                case "Keep":
+                {
+                    // A hall of two storeys with a taller tower on each corner, standing two cells out of it.
+                    const int tower = 6, inset = 2;
+                    wings = Wing(o + inset, o + inset, o + n - inset, o + n - inset, 2, "Flat", false, 2) + Corners(tower, 3);
+                    break;
+                }
+
+                default:
+                {
+                    // A walled yard with a tower on each corner and a hall across its far side.
+                    const int tower = 7, inset = 2;
+                    wings = Wing(o + inset, o + inset, o + n - inset, o + n - inset, 1, "None", false) + Corners(tower, 3) +
+                            Wing(o + tower, o + inset, o + n - tower, o + inset + 7, 2, "Flat", true, 2);
+                    break;
+                }
+            }
+
+            EnsureMaterials();
+            XElement house = XElement.Parse(
+                $"<House version=\"1\" name=\"{preset}\" baseZ=\"{BaseZ}\" foundation=\"false\" battlements=\"true\" roomDoors=\"true\" frontDoor=\"South\" windowSpacing=\"3\">{wings}</House>");
+            OpenXml(house);
+            return null;
+        }
+
+        /// <summary>Battlements around the flat roofs, on or off.</summary>
+        public void SetParapet(bool on)
+        {
+            if (_draft.Parapet != on)
+            {
+                Edit(() => _draft.Parapet = on);
+            }
         }
 
         /// <summary>Doors in the doorways between rooms, on or off.</summary>
@@ -921,7 +1023,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             EnsureMaterials();
             string key = string.Join(";", wings.Select(w =>
-                             $"{w.X0},{w.Y0},{w.X1},{w.Y1},{w.EaveZ},{w.Storeys},{w.Rooms},{w.Layout},{string.Join("/", w.RoomsAbove)},{w.Shape},{w.NoRoof},{w.RidgeAlongY}")) +
+                             $"{w.X0},{w.Y0},{w.X1},{w.Y1},{w.EaveZ},{w.Storeys},{w.Rooms},{w.Layout},{w.Walled},{string.Join("/", w.RoomsAbove)},{w.Shape},{w.NoRoof},{w.RidgeAlongY}")) +
                          $"|{_version}|{_draft.Gables}|{_draft.GableFill}|{Context.CompList.UndoList.Count}|{Context.CompList.RedoList.Count}";
             if (key == _builtFor)
             {

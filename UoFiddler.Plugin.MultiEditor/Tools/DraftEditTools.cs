@@ -72,6 +72,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         public override bool IsDragging => _dragging;
 
+        public override (int Width, int Height)? DragSize => _dragging ? (Math.Abs(_endX - _startX) + 1, Math.Abs(_endY - _startY) + 1) : null;
+
         public override void OnMouseDown(MouseEventArgs e)
         {
             MouseCell(out _startX, out _startY);
@@ -172,6 +174,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         }
 
         public override bool IsDragging => _dragging;
+
+        public override (int Width, int Height)? DragSize => _dragging ? (Math.Abs(_endX - _startX) + 1, Math.Abs(_endY - _startY) + 1) : null;
 
         public override void OnMouseDown(MouseEventArgs e)
         {

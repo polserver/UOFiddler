@@ -1270,6 +1270,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _houseKindBar.Items.Insert(_houseKindBar.Items.IndexOf(_patternsButton), button);
             }
 
+            _familyButton = new ToolStripDropDownButton("Family")
+            {
+                Alignment = ToolStripItemAlignment.Right,
+                ToolTipText = "Shows only the styles of one material. A kind without styles of it shows all of its own."
+            };
+            _familyButton.DropDownOpening += (_, _) => FillFamilies();
+            _houseKindBar.Items.Add(_familyButton);
+
             var edit = new ToolStripButton("Edit...")
             {
                 Alignment = ToolStripItemAlignment.Right,
@@ -1385,6 +1393,44 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                    (query.IsIdQuery ? style.Slots.Values.Any(id => query.MatchesId(id)) : query.MatchesText(style.Group + " " + style.Name + " " + style.Family));
         }
 
+        // The family the House page is narrowed to, or null for all, and its button.
+        private string _houseFamily;
+        private ToolStripDropDownButton _familyButton;
+
+        /// <summary>True for a style of the chosen family. A kind that has no style of that family shows all of its styles.</summary>
+        private bool InHouseFamily(HouseStyle style, ICollection<HousePartKind> kindsWithFamily)
+        {
+            return _houseFamily == null || style.Family == _houseFamily || !kindsWithFamily.Contains(style.Kind);
+        }
+
+        /// <summary>Lists the families of the kind shown, to narrow the page to one.</summary>
+        private void FillFamilies()
+        {
+            _familyButton.DropDownItems.Clear();
+            void Add(string text, string family)
+            {
+                var item = new ToolStripMenuItem(text) { Checked = _houseFamily == family };
+                item.Click += (_, _) =>
+                {
+                    _houseFamily = family;
+                    _familyButton.Text = family == null ? "Family" : "Family: " + family;
+                    RebuildHouseTree();
+                };
+                _familyButton.DropDownItems.Add(item);
+            }
+
+            Add("All families", null);
+            if (_houseStyles == null)
+            {
+                return;
+            }
+
+            foreach (string family in _houseStyles.Styles.Where(st => st.Kind == _houseKind && !st.Hidden && st.Family.Length > 0).Select(st => st.Family).Distinct())
+            {
+                Add(family, family);
+            }
+        }
+
         /// <summary>
         /// Shows the styles of the current kind that match the search (by style or material name,
         /// or by a piece's id), and how many each kind has.
@@ -1401,6 +1447,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _swapButton.Text = _swapText;
             _swapButton.Enabled = true;
             List<HouseStyle> styles = _houseStyles?.Styles.Where(st => !st.Hidden).ToList() ?? new List<HouseStyle>();
+            if (_houseFamily != null)
+            {
+                var kindsWithFamily = new HashSet<HousePartKind>(styles.Where(st => st.Family == _houseFamily).Select(st => st.Kind));
+                styles = styles.Where(st => InHouseFamily(st, kindsWithFamily)).ToList();
+            }
+
             _houseStyleCount = 0;
 
             foreach (var (kind, title, _, _) in _houseKinds)

@@ -56,6 +56,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 root.Add(new XAttribute("gableFill", draft.GableFill));
             }
 
+            if (draft.Parapet)
+            {
+                root.Add(new XAttribute("battlements", true));
+            }
+
             if (draft.AutoDoors)
             {
                 root.Add(new XAttribute("roomDoors", true));
@@ -88,6 +93,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 if (wing.Layout != RoomLayout.Row)
                 {
                     element.Add(new XAttribute("layout", wing.Layout));
+                }
+
+                if (wing.Walled)
+                {
+                    element.Add(new XAttribute("walled", true));
                 }
 
                 // Storeys with rooms of their own, as "storey:rooms:layout".
@@ -214,6 +224,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 draft.Foundation = (bool?)root.Attribute("foundation") ?? false;
                 draft.Gables = Enum.TryParse((string)root.Attribute("gables"), out RoofGables gables) ? gables : RoofGables.Front;
                 draft.GableFill = Enum.TryParse((string)root.Attribute("gableFill"), out RoofGableFill gableFill) ? gableFill : RoofGableFill.Caps;
+                draft.Parapet = (bool?)root.Attribute("battlements") ?? false;
                 draft.AutoDoors = (bool?)root.Attribute("roomDoors") ?? false;
                 draft.FrontDoor = Enum.TryParse((string)root.Attribute("frontDoor"), out FrontDoorSide side) ? side : FrontDoorSide.None;
                 draft.WindowSpacing = Math.Clamp((int?)root.Attribute("windowSpacing") ?? 0, 0, 12);
@@ -238,6 +249,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                         Storeys = Math.Clamp((int?)element.Attribute("storeys") ?? 1, 1, HouseDraft.MaxStoreys),
                         Rooms = Math.Clamp((int?)element.Attribute("rooms") ?? houseRooms, 1, HouseDraft.MaxRooms),
                         Layout = Enum.TryParse((string)element.Attribute("layout"), out RoomLayout layout) ? layout : RoomLayout.Row,
+                        Walled = (bool?)element.Attribute("walled") ?? false,
                         NoRoof = roof == "None",
                         Shape = Enum.TryParse(roof, out RoofShape shape) ? shape : RoofShape.Gable,
                         RidgeAuto = ridge == "Auto"
