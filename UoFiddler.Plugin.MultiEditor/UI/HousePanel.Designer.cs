@@ -73,7 +73,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _doorStyle = new System.Windows.Forms.Button();
             _stairStyleLabel = new System.Windows.Forms.Label();
             _stairStyle = new System.Windows.Forms.Button();
-            _foundation = new System.Windows.Forms.CheckBox();
+            _foundationLabel = new System.Windows.Forms.Label();
+            _foundationKind = new System.Windows.Forms.ComboBox();
+            _foundationStyleLabel = new System.Windows.Forms.Label();
             _foundationStyle = new System.Windows.Forms.Button();
             _baseZLabel = new System.Windows.Forms.Label();
             _baseZ = new System.Windows.Forms.NumericUpDown();
@@ -151,7 +153,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             houseBox.Controls.Add(_doorStyle);
             houseBox.Controls.Add(_stairStyleLabel);
             houseBox.Controls.Add(_stairStyle);
-            houseBox.Controls.Add(_foundation);
+            houseBox.Controls.Add(_foundationLabel);
+            houseBox.Controls.Add(_foundationKind);
+            houseBox.Controls.Add(_foundationStyleLabel);
             houseBox.Controls.Add(_foundationStyle);
             houseBox.Controls.Add(_baseZLabel);
             houseBox.Controls.Add(_baseZ);
@@ -179,7 +183,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             houseBox.Dock = System.Windows.Forms.DockStyle.Top;
             houseBox.Location = new System.Drawing.Point(0, 0);
             houseBox.Name = "houseBox";
-            houseBox.Size = new System.Drawing.Size(250, 823);
+            houseBox.Size = new System.Drawing.Size(250, 851);
             houseBox.TabIndex = 0;
             houseBox.TabStop = false;
             houseBox.Text = "House draft";
@@ -637,24 +641,43 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _stairStyle.AutoEllipsis = true;
             _stairStyle.UseVisualStyleBackColor = true;
             //
-            // _foundation
+            // _foundationLabel
             //
-            _foundation.AutoSize = true;
-            _foundation.Location = new System.Drawing.Point(6, 551);
-            _foundation.Name = "_foundation";
-            _foundation.Size = new System.Drawing.Size(86, 19);
-            _foundation.TabIndex = 43;
-            _foundation.Text = "Foundation";
-            _foundation.UseVisualStyleBackColor = true;
-            _foundation.CheckedChanged += Foundation_CheckedChanged;
+            _foundationLabel.AutoSize = true;
+            _foundationLabel.Location = new System.Drawing.Point(6, 551);
+            _foundationLabel.Name = "_foundationLabel";
+            _foundationLabel.Size = new System.Drawing.Size(66, 15);
+            _foundationLabel.TabIndex = 43;
+            _foundationLabel.Text = "Foundation";
+            //
+            // _foundationKind
+            //
+            _foundationKind.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            _foundationKind.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            _foundationKind.FormattingEnabled = true;
+            _foundationKind.Location = new System.Drawing.Point(76, 547);
+            _foundationKind.Name = "_foundationKind";
+            _foundationKind.Size = new System.Drawing.Size(168, 23);
+            _foundationKind.TabIndex = 44;
+            _toolTip.SetToolTip(_foundationKind, "The foundation the house stands on, as the client houses have them: the low wall around it, in one or two rows, and how far it reaches below the floor.");
+            _foundationKind.SelectionChangeCommitted += FoundationKind_SelectionChangeCommitted;
+            //
+            // _foundationStyleLabel
+            //
+            _foundationStyleLabel.AutoSize = true;
+            _foundationStyleLabel.Location = new System.Drawing.Point(6, 580);
+            _foundationStyleLabel.Name = "_foundationStyleLabel";
+            _foundationStyleLabel.Size = new System.Drawing.Size(50, 15);
+            _foundationStyleLabel.TabIndex = 45;
+            _foundationStyleLabel.Text = "Its walls";
             //
             // _foundationStyle
             //
             _foundationStyle.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            _foundationStyle.Location = new System.Drawing.Point(96, 547);
+            _foundationStyle.Location = new System.Drawing.Point(60, 575);
             _foundationStyle.Name = "_foundationStyle";
-            _foundationStyle.Size = new System.Drawing.Size(148, 25);
-            _foundationStyle.TabIndex = 44;
+            _foundationStyle.Size = new System.Drawing.Size(184, 25);
+            _foundationStyle.TabIndex = 46;
             _foundationStyle.Text = "(foundation)";
             _foundationStyle.AutoEllipsis = true;
             _foundationStyle.UseVisualStyleBackColor = true;
@@ -662,29 +685,29 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _baseZLabel
             //
             _baseZLabel.AutoSize = true;
-            _baseZLabel.Location = new System.Drawing.Point(6, 579);
+            _baseZLabel.Location = new System.Drawing.Point(6, 607);
             _baseZLabel.Name = "_baseZLabel";
             _baseZLabel.Size = new System.Drawing.Size(44, 15);
-            _baseZLabel.TabIndex = 45;
+            _baseZLabel.TabIndex = 47;
             _baseZLabel.Text = "Base Z";
             //
             // _baseZ
             //
-            _baseZ.Location = new System.Drawing.Point(60, 576);
+            _baseZ.Location = new System.Drawing.Point(60, 604);
             _baseZ.Maximum = new decimal(new int[] { 100, 0, 0, 0 });
             _baseZ.Minimum = new decimal(new int[] { 100, 0, 0, int.MinValue });
             _baseZ.Name = "_baseZ";
             _baseZ.Size = new System.Drawing.Size(56, 23);
-            _baseZ.TabIndex = 46;
+            _baseZ.TabIndex = 48;
             _baseZ.ValueChanged += BaseZ_ValueChanged;
             //
             // _autoDoors
             //
             _autoDoors.AutoSize = true;
-            _autoDoors.Location = new System.Drawing.Point(6, 609);
+            _autoDoors.Location = new System.Drawing.Point(6, 637);
             _autoDoors.Name = "_autoDoors";
             _autoDoors.Size = new System.Drawing.Size(96, 19);
-            _autoDoors.TabIndex = 47;
+            _autoDoors.TabIndex = 49;
             _autoDoors.Text = "Room doors";
             _autoDoors.UseVisualStyleBackColor = true;
             _toolTip.SetToolTip(_autoDoors, "Puts a door of the house's door style in every doorway between rooms.");
@@ -693,10 +716,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _frontDoorLabel
             //
             _frontDoorLabel.AutoSize = true;
-            _frontDoorLabel.Location = new System.Drawing.Point(110, 610);
+            _frontDoorLabel.Location = new System.Drawing.Point(110, 638);
             _frontDoorLabel.Name = "_frontDoorLabel";
             _frontDoorLabel.Size = new System.Drawing.Size(62, 15);
-            _frontDoorLabel.TabIndex = 48;
+            _frontDoorLabel.TabIndex = 50;
             _frontDoorLabel.Text = "Front door";
             //
             // _frontDoor
@@ -705,49 +728,49 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _frontDoor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             _frontDoor.FormattingEnabled = true;
             _frontDoor.Items.AddRange(new object[] { "None", "South", "East" });
-            _frontDoor.Location = new System.Drawing.Point(176, 606);
+            _frontDoor.Location = new System.Drawing.Point(176, 634);
             _frontDoor.Name = "_frontDoor";
             _frontDoor.Size = new System.Drawing.Size(68, 23);
-            _frontDoor.TabIndex = 49;
+            _frontDoor.TabIndex = 51;
             _toolTip.SetToolTip(_frontDoor, "The outer wall of the first wing that gets the front door.");
             _frontDoor.SelectedIndexChanged += FrontDoor_SelectedIndexChanged;
             //
             // _windowsLabel
             //
             _windowsLabel.AutoSize = true;
-            _windowsLabel.Location = new System.Drawing.Point(6, 637);
+            _windowsLabel.Location = new System.Drawing.Point(6, 665);
             _windowsLabel.Name = "_windowsLabel";
             _windowsLabel.Size = new System.Drawing.Size(90, 15);
-            _windowsLabel.TabIndex = 50;
+            _windowsLabel.TabIndex = 52;
             _windowsLabel.Text = "Windows every";
             //
             // _windowSpacing
             //
-            _windowSpacing.Location = new System.Drawing.Point(100, 634);
+            _windowSpacing.Location = new System.Drawing.Point(100, 662);
             _windowSpacing.Maximum = new decimal(new int[] { 12, 0, 0, 0 });
             _windowSpacing.Minimum = new decimal(new int[] { 0, 0, 0, 0 });
             _windowSpacing.Name = "_windowSpacing";
             _windowSpacing.Size = new System.Drawing.Size(44, 23);
-            _windowSpacing.TabIndex = 51;
+            _windowSpacing.TabIndex = 53;
             _toolTip.SetToolTip(_windowSpacing, "Puts windows along the outer walls, this many cells apart. 0: none.");
             _windowSpacing.ValueChanged += WindowSpacing_ValueChanged;
             //
             // _windowsHint
             //
             _windowsHint.AutoSize = true;
-            _windowsHint.Location = new System.Drawing.Point(150, 637);
+            _windowsHint.Location = new System.Drawing.Point(150, 665);
             _windowsHint.Name = "_windowsHint";
             _windowsHint.Size = new System.Drawing.Size(90, 15);
-            _windowsHint.TabIndex = 52;
+            _windowsHint.TabIndex = 54;
             _windowsHint.Text = "cells (0: none)";
             //
             // _showLabel
             //
             _showLabel.AutoSize = true;
-            _showLabel.Location = new System.Drawing.Point(6, 666);
+            _showLabel.Location = new System.Drawing.Point(6, 694);
             _showLabel.Name = "_showLabel";
             _showLabel.Size = new System.Drawing.Size(50, 15);
-            _showLabel.TabIndex = 53;
+            _showLabel.TabIndex = 55;
             _showLabel.Text = "Preview";
             //
             // _showWalls
@@ -755,10 +778,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _showWalls.AutoSize = true;
             _showWalls.Checked = true;
             _showWalls.CheckState = System.Windows.Forms.CheckState.Checked;
-            _showWalls.Location = new System.Drawing.Point(60, 664);
+            _showWalls.Location = new System.Drawing.Point(60, 692);
             _showWalls.Name = "_showWalls";
             _showWalls.Size = new System.Drawing.Size(56, 19);
-            _showWalls.TabIndex = 54;
+            _showWalls.TabIndex = 56;
             _showWalls.Text = "Walls";
             _showWalls.UseVisualStyleBackColor = true;
             _showWalls.CheckedChanged += Show_CheckedChanged;
@@ -768,10 +791,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _showFloors.AutoSize = true;
             _showFloors.Checked = true;
             _showFloors.CheckState = System.Windows.Forms.CheckState.Checked;
-            _showFloors.Location = new System.Drawing.Point(122, 664);
+            _showFloors.Location = new System.Drawing.Point(122, 692);
             _showFloors.Name = "_showFloors";
             _showFloors.Size = new System.Drawing.Size(60, 19);
-            _showFloors.TabIndex = 55;
+            _showFloors.TabIndex = 57;
             _showFloors.Text = "Floors";
             _showFloors.UseVisualStyleBackColor = true;
             _showFloors.CheckedChanged += Show_CheckedChanged;
@@ -781,20 +804,20 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _showRoof.AutoSize = true;
             _showRoof.Checked = true;
             _showRoof.CheckState = System.Windows.Forms.CheckState.Checked;
-            _showRoof.Location = new System.Drawing.Point(188, 664);
+            _showRoof.Location = new System.Drawing.Point(188, 692);
             _showRoof.Name = "_showRoof";
             _showRoof.Size = new System.Drawing.Size(52, 19);
-            _showRoof.TabIndex = 56;
+            _showRoof.TabIndex = 58;
             _showRoof.Text = "Roof";
             _showRoof.UseVisualStyleBackColor = true;
             _showRoof.CheckedChanged += Show_CheckedChanged;
             //
             // _undo
             //
-            _undo.Location = new System.Drawing.Point(6, 692);
+            _undo.Location = new System.Drawing.Point(6, 720);
             _undo.Name = "_undo";
             _undo.Size = new System.Drawing.Size(54, 25);
-            _undo.TabIndex = 57;
+            _undo.TabIndex = 59;
             _undo.Text = "Undo";
             _undo.AutoEllipsis = true;
             _undo.UseVisualStyleBackColor = true;
@@ -802,10 +825,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             //
             // _redo
             //
-            _redo.Location = new System.Drawing.Point(62, 692);
+            _redo.Location = new System.Drawing.Point(62, 720);
             _redo.Name = "_redo";
             _redo.Size = new System.Drawing.Size(54, 25);
-            _redo.TabIndex = 58;
+            _redo.TabIndex = 60;
             _redo.Text = "Redo";
             _redo.AutoEllipsis = true;
             _redo.UseVisualStyleBackColor = true;
@@ -813,10 +836,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             //
             // _place
             //
-            _place.Location = new System.Drawing.Point(122, 692);
+            _place.Location = new System.Drawing.Point(122, 720);
             _place.Name = "_place";
             _place.Size = new System.Drawing.Size(72, 25);
-            _place.TabIndex = 59;
+            _place.TabIndex = 61;
             _place.Text = "Place";
             _place.AutoEllipsis = true;
             _place.UseVisualStyleBackColor = true;
@@ -825,10 +848,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _drop
             //
             _drop.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            _drop.Location = new System.Drawing.Point(196, 692);
+            _drop.Location = new System.Drawing.Point(196, 720);
             _drop.Name = "_drop";
             _drop.Size = new System.Drawing.Size(48, 25);
-            _drop.TabIndex = 60;
+            _drop.TabIndex = 62;
             _drop.Text = "Drop";
             _drop.AutoEllipsis = true;
             _drop.UseVisualStyleBackColor = true;
@@ -836,10 +859,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             //
             // _saveDraft
             //
-            _saveDraft.Location = new System.Drawing.Point(6, 721);
+            _saveDraft.Location = new System.Drawing.Point(6, 749);
             _saveDraft.Name = "_saveDraft";
             _saveDraft.Size = new System.Drawing.Size(76, 25);
-            _saveDraft.TabIndex = 61;
+            _saveDraft.TabIndex = 63;
             _saveDraft.Text = "Save draft";
             _saveDraft.AutoEllipsis = true;
             _saveDraft.UseVisualStyleBackColor = true;
@@ -847,10 +870,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             //
             // _openDraft
             //
-            _openDraft.Location = new System.Drawing.Point(84, 721);
+            _openDraft.Location = new System.Drawing.Point(84, 749);
             _openDraft.Name = "_openDraft";
             _openDraft.Size = new System.Drawing.Size(76, 25);
-            _openDraft.TabIndex = 62;
+            _openDraft.TabIndex = 64;
             _openDraft.Text = "Open draft";
             _openDraft.AutoEllipsis = true;
             _openDraft.UseVisualStyleBackColor = true;
@@ -859,10 +882,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _blueprint
             //
             _blueprint.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            _blueprint.Location = new System.Drawing.Point(162, 721);
+            _blueprint.Location = new System.Drawing.Point(162, 749);
             _blueprint.Name = "_blueprint";
             _blueprint.Size = new System.Drawing.Size(82, 25);
-            _blueprint.TabIndex = 63;
+            _blueprint.TabIndex = 65;
             _blueprint.Text = "As blueprint";
             _blueprint.AutoEllipsis = true;
             _blueprint.UseVisualStyleBackColor = true;
@@ -871,10 +894,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _placedLabel
             //
             _placedLabel.AutoSize = true;
-            _placedLabel.Location = new System.Drawing.Point(6, 755);
+            _placedLabel.Location = new System.Drawing.Point(6, 783);
             _placedLabel.Name = "_placedLabel";
             _placedLabel.Size = new System.Drawing.Size(60, 15);
-            _placedLabel.TabIndex = 64;
+            _placedLabel.TabIndex = 66;
             _placedLabel.Text = "Placed";
             //
             // _placed
@@ -882,18 +905,18 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _placed.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             _placed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             _placed.FormattingEnabled = true;
-            _placed.Location = new System.Drawing.Point(60, 752);
+            _placed.Location = new System.Drawing.Point(60, 780);
             _placed.Name = "_placed";
             _placed.Size = new System.Drawing.Size(130, 23);
-            _placed.TabIndex = 65;
+            _placed.TabIndex = 67;
             //
             // _edit
             //
             _edit.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            _edit.Location = new System.Drawing.Point(196, 751);
+            _edit.Location = new System.Drawing.Point(196, 779);
             _edit.Name = "_edit";
             _edit.Size = new System.Drawing.Size(48, 25);
-            _edit.TabIndex = 66;
+            _edit.TabIndex = 68;
             _edit.Text = "Edit";
             _edit.AutoEllipsis = true;
             _edit.UseVisualStyleBackColor = true;
@@ -902,10 +925,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // _status
             //
             _status.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            _status.Location = new System.Drawing.Point(6, 781);
+            _status.Location = new System.Drawing.Point(6, 809);
             _status.Name = "_status";
             _status.Size = new System.Drawing.Size(238, 32);
-            _status.TabIndex = 67;
+            _status.TabIndex = 69;
             //
             // HousePanel
             //
@@ -914,7 +937,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             AutoScroll = true;
             Controls.Add(houseBox);
             Name = "HousePanel";
-            Size = new System.Drawing.Size(250, 823);
+            Size = new System.Drawing.Size(250, 851);
             houseBox.ResumeLayout(false);
             houseBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)_storeys).EndInit();
@@ -970,7 +993,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.Button _doorStyle;
         private System.Windows.Forms.Label _stairStyleLabel;
         private System.Windows.Forms.Button _stairStyle;
-        private System.Windows.Forms.CheckBox _foundation;
+        private System.Windows.Forms.Label _foundationLabel;
+        private System.Windows.Forms.ComboBox _foundationKind;
+        private System.Windows.Forms.Label _foundationStyleLabel;
         private System.Windows.Forms.Button _foundationStyle;
         private System.Windows.Forms.Label _baseZLabel;
         private System.Windows.Forms.NumericUpDown _baseZ;

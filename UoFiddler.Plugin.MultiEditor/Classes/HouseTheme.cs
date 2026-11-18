@@ -35,8 +35,32 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public ushort Foundation { get; set; }
 
+        /// <summary>Rows of the foundation's pieces, one on the other, and how far below the ground floor the foundation starts.</summary>
+        public int FoundationTiers { get; set; } = 1;
+
+        public int FoundationHeight { get; set; } = HouseDraft.UsualFoundationHeight;
+
         /// <summary>True for a theme from the user's copy of the style file.</summary>
         public bool IsUser { get; set; }
+
+        public override string ToString() => Name;
+    }
+
+    /// <summary>
+    /// A foundation as the client's houses have them: a low wall style around the house, in one
+    /// or two rows, with the ground floor a given height above where it starts. From the style
+    /// file; offered when the client has the wall style.
+    /// </summary>
+    internal sealed class HouseFoundation
+    {
+        public string Name { get; set; }
+
+        /// <summary>Anchor piece of the wall style; 0 for the usual one (light brick quarter walls).</summary>
+        public ushort Style { get; set; }
+
+        public int Tiers { get; set; } = 1;
+
+        public int Height { get; set; } = HouseDraft.UsualFoundationHeight;
 
         public override string ToString() => Name;
     }

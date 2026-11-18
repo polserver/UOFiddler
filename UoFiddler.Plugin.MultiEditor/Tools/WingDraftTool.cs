@@ -144,6 +144,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         private int _endX;
         private int _endY;
         private int _z;
+        /// <summary>Least distance between a wing's first and last row or column when it is resized. A roof may be a single row.</summary>
+        protected virtual int MinSpan => 0;
+
         private RoofWing _before;
 
         // A Ctrl+drag moves every wing: where they all stood, and how far they have been moved so far.
@@ -389,7 +392,11 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 {
                     RoofWing wing = _wings[hit];
                     bool wasSelected = hit == _selected;
-                    if (ShiftHeld)
+
+                    // Shift on a corner of the selected wing resizes it as a square; anywhere else on a wing it turns the wing.
+                    Edges(wing, cx, cy, wasSelected, out bool cornerWest, out bool cornerEast, out bool cornerNorth, out bool cornerSouth);
+                    bool corner = (cornerWest || cornerEast) && (cornerNorth || cornerSouth);
+                    if (ShiftHeld && !corner)
                     {
                         Remember();
                         _selected = hit;
@@ -432,15 +439,18 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         /// <summary>
         /// The sides a press on a cell of the selected wing takes hold of: its outermost rows and
-        /// columns. A side too short to have a middle moves the wing instead.
+        /// columns, however narrow the wing is, so a wing can always be made wider again.
         /// </summary>
         private static void Edges(RoofWing wing, int cx, int cy, bool selected, out bool west, out bool east, out bool north, out bool south)
         {
-            bool wide = wing.X1 - wing.X0 >= 2, deep = wing.Y1 - wing.Y0 >= 2;
-            west = selected && wide && cx == wing.X0;
-            east = selected && wide && cx == wing.X1;
-            north = selected && deep && cy == wing.Y0;
-            south = selected && deep && cy == wing.Y1;
+            west = selected && cx == wing.X0;
+            east = selected && cx == wing.X1;
+            north = selected && cy == wing.Y0;
+            south = selected && cy == wing.Y1;
+
+            // A wing of one row or column has both sides in the same cell: the far side is the one to pull out again.
+            west &= !east;
+            north &= !south;
         }
 
         public override void OnMouseMove(MouseEventArgs e)
@@ -735,11 +745,41 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 return;
             }
 
-            wing.X0 = _west ? Math.Clamp(_before.X0 + dx, 0, _before.X1) : _before.X0;
-            wing.X1 = _east ? Math.Max(_before.X1 + dx, _before.X0) : _before.X1;
-            wing.Y0 = _north ? Math.Clamp(_before.Y0 + dy, 0, _before.Y1) : _before.Y0;
-            wing.Y1 = _south ? Math.Max(_before.Y1 + dy, _before.Y0) : _before.Y1;
-            Snap(wing, moved: false);
+            // Not narrower than the tool lets a wing be.
+            wing.X0 = _west ? Math.Clamp(_before.X0 + dx, 0, Math.Max(0, _before.X1 - MinSpan)) : _before.X0;
+            wing.X1 = _east ? Math.Max(_before.X1 + dx, _before.X0 + MinSpan) : _before.X1;
+            wing.Y0 = _north ? Math.Clamp(_before.Y0 + dy, 0, Math.Max(0, _before.Y1 - MinSpan)) : _before.Y0;
+            wing.Y1 = _south ? Math.Max(_before.Y1 + dy, _before.Y0 + MinSpan) : _before.Y1;
+
+            // A corner dragged with Shift makes the wing square: the side dragged further sets the size.
+            // (Keeping a ratio does not work on a grid of cells: the two sides round apart.)
+            bool square = ShiftHeld && (_west || _east) && (_north || _south);
+            if (square)
+            {
+                int side = Math.Max(wing.X1 - wing.X0, wing.Y1 - wing.Y0);
+
+                // Not past the multi's first row or column, and not smaller than a wing can be.
+                if (_west)
+                {
+                    side = Math.Min(side, _before.X1);
+                }
+
+                if (_north)
+                {
+                    side = Math.Min(side, _before.Y1);
+                }
+
+                side = Math.Max(side, 2);
+                (wing.X0, wing.X1) = _west ? (_before.X1 - side, _before.X1) : (_before.X0, _before.X0 + side);
+                (wing.Y0, wing.Y1) = _north ? (_before.Y1 - side, _before.Y1) : (_before.Y0, _before.Y0 + side);
+            }
+
+            // Snapping to a wing one cell away would stretch one side by a cell: a square stays as dragged.
+            if (!square)
+            {
+                Snap(wing, moved: false);
+            }
+
             WingResized(wing);
         }
 
@@ -748,6 +788,33 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         public override void PaintOverlay(IToolOverlay overlay)
         {
             PaintDraft(overlay, active: true);
+        }
+
+        // The planned tiles in the order they are drawn, kept until the plan changes.
+        private object _orderedFor;
+        private List<(MultiTile Tile, string Layer)> _ordered;
+
+        /// <summary>
+        /// The planned tiles in the order the multi's own tiles are drawn: cell after cell, and
+        /// within a cell from the bottom up, floors before what stands on them. Drawn in the
+        /// order they were planned, a floor laid after its walls, or the floor of the storey
+        /// above, would lie over walls that stand in front of it.
+        /// </summary>
+        private List<(MultiTile Tile, string Layer)> InDrawOrder(List<(ushort Id, int X, int Y, int Z, string Layer)> add)
+        {
+            if (!ReferenceEquals(_orderedFor, add) || _ordered == null || _ordered.Count != add.Count)
+            {
+                _ordered = new List<(MultiTile, string)>(add.Count);
+                foreach (var (id, x, y, z, layer) in add)
+                {
+                    _ordered.Add((new MultiTile(id, x, y, z, 0), layer));
+                }
+
+                _ordered.Sort((a, b) => a.Tile.CompareTo(b.Tile));
+                _orderedFor = add;
+            }
+
+            return _ordered;
         }
 
         /// <summary>
@@ -787,11 +854,11 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             // A house is looked into like the multi: storeys above the chosen floor are left out.
             int highest = GhostsFollowView ? Context.MaxHeight : int.MaxValue;
-            foreach (var (id, x, y, z, layer) in add)
+            foreach ((MultiTile tile, string layer) in InDrawOrder(add))
             {
-                if (z <= highest && ShowsInPreview(layer))
+                if (tile.Z <= highest && ShowsInPreview(layer))
                 {
-                    overlay.Ghost(id, x, y, z);
+                    overlay.Ghost(tile.Id, tile.X, tile.Y, tile.Z);
                 }
             }
 

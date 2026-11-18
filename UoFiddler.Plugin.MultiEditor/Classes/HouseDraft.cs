@@ -44,8 +44,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         public const string StairsLayer = "Stairs";
         public const string FoundationLayer = "Foundation";
 
-        // The foundation ring stands this far below the ground floor, as in the client's house foundations.
-        private const int _foundationBelow = 7;
+        /// <summary>How far below the ground floor the foundation of most client houses starts.</summary>
+        public const int UsualFoundationHeight = 7;
 
         /// <summary>Z of the ground floor.</summary>
         public int BaseZ { get; set; }
@@ -63,6 +63,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         /// <summary>The wall style the foundation ring is built in; without one, the client houses' own (light brick).</summary>
         public HouseStyle FoundationStyle { get; set; }
+
+        /// <summary>Rows of foundation pieces, one on the other: the stone tower, keep and castle have two.</summary>
+        public int FoundationTiers { get; set; } = 1;
+
+        /// <summary>How far below the ground floor the foundation starts.</summary>
+        public int FoundationHeight { get; set; } = UsualFoundationHeight;
 
         /// <summary>The door style of the house: what a theme sets, and what doors made for the rooms are.</summary>
         public HouseStyle DoorStyle { get; set; }
@@ -193,7 +199,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             var copy = new HouseDraft
             {
                 RoofStyle = RoofStyle, FlatRoofStyle = FlatRoofStyle, Foundation = Foundation,
-                FoundationStyle = FoundationStyle, DoorStyle = DoorStyle, StairStyle = StairStyle,
+                FoundationStyle = FoundationStyle, FoundationTiers = FoundationTiers, FoundationHeight = FoundationHeight,
+                DoorStyle = DoorStyle, StairStyle = StairStyle,
                 AutoDoors = AutoDoors, FrontDoor = FrontDoor, WindowSpacing = WindowSpacing,
                 Gables = Gables, GableFill = GableFill, Parapet = Parapet
             };
@@ -898,9 +905,11 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     {
                         string column = WallPlanner.PieceFor(ringSouth, ringEast, x, y);
                         ushort id = column != null ? foundation.Get(column) : (ushort)0;
-                        if (id != 0)
+                        // One row, or rows one on the other, each as high as the piece.
+                        int rise = id != 0 ? Math.Max(1, (int)Ultima.TileData.ItemTable[id].Height) : 0;
+                        for (int tier = 0; id != 0 && tier < Math.Clamp(FoundationTiers, 1, 3); ++tier)
                         {
-                            built.Tiles.Add((id, x, y, z - _foundationBelow, FoundationLayer));
+                            built.Tiles.Add((id, x, y, z - FoundationHeight + (tier * rise), FoundationLayer));
                         }
                     }
                 }
@@ -1028,7 +1037,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 return;
             }
 
-            int z = BaseZ - Math.Max(1, (int)Ultima.TileData.ItemTable[step].Height);
+            // The step's top meets the floor; on a foundation lower than the step it starts where the foundation does.
+            int z = BaseZ - Math.Min(FoundationHeight, Math.Max(1, (int)Ultima.TileData.ItemTable[step].Height));
             (int X, int Y) at = south ? (door.X, door.Y + 1) : (door.X + 1, door.Y);
             built.Tiles.Add((step, at.X, at.Y, z, StairsLayer));
 

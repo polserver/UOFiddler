@@ -74,6 +74,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
         public List<HouseTheme> Themes { get; } = new List<HouseTheme>();
 
+        public List<HouseFoundation> Foundations { get; } = new List<HouseFoundation>();
+
         /// <summary>The order of the styles of a kind, as anchors, where it is other than the order of the Style elements.</summary>
         public Dictionary<HousePartKind, List<ushort>> Order { get; } = new Dictionary<HousePartKind, List<ushort>>();
 
@@ -177,7 +179,26 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                         FlatRoof = Id("flatRoof"),
                         Door = Id("door"),
                         Stairs = Id("stairs"),
-                        Foundation = Id("foundation")
+                        Foundation = Id("foundation"),
+                        FoundationTiers = Math.Clamp(ParseInt((string)element.Attribute("foundationTiers") ?? "1"), 1, 3),
+                        FoundationHeight = Math.Clamp(ParseInt((string)element.Attribute("foundationHeight") ?? "7"), 1, 20)
+                    });
+                }
+
+                foreach (XElement element in root.Elements("Foundation"))
+                {
+                    string name = ((string)element.Attribute("name"))?.Trim();
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        continue;
+                    }
+
+                    config.Foundations.Add(new HouseFoundation
+                    {
+                        Name = name,
+                        Style = TryParseId((string)element.Attribute("style"), out ushort style) ? style : (ushort)0,
+                        Tiers = Math.Clamp(ParseInt((string)element.Attribute("tiers") ?? "1"), 1, 3),
+                        Height = Math.Clamp(ParseInt((string)element.Attribute("height") ?? "7"), 1, 20)
                     });
                 }
             }
@@ -225,6 +246,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             foreach (KeyValuePair<HousePartKind, List<ushort>> order in other.Order)
             {
                 Order[order.Key] = order.Value;
+            }
+
+            foreach (HouseFoundation foundation in other.Foundations)
+            {
+                Foundations.RemoveAll(mine => string.Equals(mine.Name, foundation.Name, StringComparison.OrdinalIgnoreCase));
+                Foundations.Add(foundation);
             }
 
             foreach (HouseTheme theme in other.Themes)
@@ -293,6 +320,28 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 Id("door", theme.Door);
                 Id("stairs", theme.Stairs);
                 Id("foundation", theme.Foundation);
+                if (theme.FoundationTiers != 1)
+                {
+                    element.Add(new XAttribute("foundationTiers", theme.FoundationTiers));
+                }
+
+                if (theme.FoundationHeight != HouseDraft.UsualFoundationHeight)
+                {
+                    element.Add(new XAttribute("foundationHeight", theme.FoundationHeight));
+                }
+
+                root.Add(element);
+            }
+
+            foreach (HouseFoundation foundation in Foundations)
+            {
+                var element = new XElement("Foundation", new XAttribute("name", foundation.Name));
+                if (foundation.Style != 0)
+                {
+                    element.Add(new XAttribute("style", FormatId(foundation.Style)));
+                }
+
+                element.Add(new XAttribute("tiers", foundation.Tiers), new XAttribute("height", foundation.Height));
                 root.Add(element);
             }
 

@@ -81,6 +81,15 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             AddStyle(root, "door", draft.DoorStyle);
             AddStyle(root, "stairs", draft.StairStyle);
             AddStyle(root, "foundationStyle", draft.FoundationStyle);
+            if (draft.FoundationTiers != 1)
+            {
+                root.Add(new XAttribute("foundationTiers", draft.FoundationTiers));
+            }
+
+            if (draft.FoundationHeight != HouseDraft.UsualFoundationHeight)
+            {
+                root.Add(new XAttribute("foundationHeight", draft.FoundationHeight));
+            }
 
             foreach (RoofWing wing in wings)
             {
@@ -235,6 +244,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 draft.DoorStyle = Style(HousePartKind.Door, root, "door") ?? draft.DoorStyle;
                 draft.StairStyle = Style(HousePartKind.Stair, root, "stairs") ?? draft.StairStyle;
                 draft.FoundationStyle = Style(HousePartKind.Wall, root, "foundationStyle");
+                draft.FoundationTiers = Math.Clamp((int?)root.Attribute("foundationTiers") ?? 1, 1, 3);
+                draft.FoundationHeight = Math.Clamp((int?)root.Attribute("foundationHeight") ?? HouseDraft.UsualFoundationHeight, 1, 20);
 
                 var wings = new List<RoofWing>();
                 foreach (XElement element in root.Elements("Wing"))

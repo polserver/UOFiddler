@@ -56,6 +56,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _floorButtons[k].Click += (_, _) => PickStyle?.Invoke(HousePartKind.Floor, storey);
             }
 
+            _foundationKind.DropDownWidth = 240;
             _doorStyle.Click += (_, _) => PickStyle?.Invoke(HousePartKind.Door, 0);
             _stairStyle.Click += (_, _) => PickStyle?.Invoke(HousePartKind.Stair, 0);
             _foundationStyle.Click += (_, _) => PickStyle?.Invoke(HousePartKind.Wall, FoundationPick);
@@ -194,7 +195,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 // A flat roof is laid in a floor style of its own; the button picks that one then.
                 bool flat = !house.NoRoof && house.Shape == RoofShape.Flat;
                 Show(_roofStyle, flat ? house.Draft.FlatRoofStyle : house.Draft.RoofStyle, flat ? "(top floor's style)" : "(roof)", null);
-                _foundation.Checked = house.Draft.Foundation;
+                RefreshFoundations(house);
                 Show(_doorStyle, house.Draft.DoorStyle, "(doors)", HouseDraft.DoorAlongX);
                 Show(_stairStyle, house.Draft.StairStyle, "(stairs)", null);
                 Show(_foundationStyle, house.Draft.FoundationStyle, "(light brick)", "South2");
@@ -547,9 +548,53 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             Run(house => house.DeleteWing());
         }
 
-        private void Foundation_CheckedChanged(object sender, EventArgs e)
+        private const string _noFoundation = "None";
+        private const string _ownFoundation = "(your own)";
+
+        /// <summary>Lists the kinds of foundation this client can build and marks the one the house has.</summary>
+        private void RefreshFoundations(HouseTool house)
         {
-            Run(house => house.SetFoundation(_foundation.Checked));
+            IReadOnlyList<HouseFoundation> kinds = house.Foundations;
+            bool same = _foundationKind.Items.Count == kinds.Count + 2;
+            for (int i = 0; same && i < kinds.Count; ++i)
+            {
+                same = ReferenceEquals(_foundationKind.Items[i + 1], kinds[i]);
+            }
+
+            if (!same)
+            {
+                _foundationKind.BeginUpdate();
+                _foundationKind.Items.Clear();
+                _foundationKind.Items.Add(_noFoundation);
+                foreach (HouseFoundation kind in kinds)
+                {
+                    _foundationKind.Items.Add(kind);
+                }
+
+                _foundationKind.Items.Add(_ownFoundation);
+                _foundationKind.EndUpdate();
+            }
+
+            HouseFoundation current = house.CurrentFoundation();
+            _foundationKind.SelectedIndex = !house.Draft.Foundation ? 0 : current != null ? _foundationKind.Items.IndexOf(current) : _foundationKind.Items.Count - 1;
+        }
+
+        private void FoundationKind_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (_updating || _session == null)
+            {
+                return;
+            }
+
+            if (_foundationKind.SelectedItem is HouseFoundation kind)
+            {
+                Run(house => house.SetFoundation(kind));
+            }
+            else
+            {
+                // "(your own)" keeps what the house has and turns it on: the style button below changes it.
+                Run(house => house.SetFoundation(_foundationKind.SelectedIndex != 0));
+            }
         }
 
         private void BaseZ_ValueChanged(object sender, EventArgs e)

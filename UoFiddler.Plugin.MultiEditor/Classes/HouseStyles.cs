@@ -149,6 +149,9 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// </summary>
         public List<HouseTheme> Themes { get; } = new List<HouseTheme>();
 
+        /// <summary>The foundations of the style file whose wall style this client has.</summary>
+        public List<HouseFoundation> Foundations { get; } = new List<HouseFoundation>();
+
         /// <summary>The style of a kind that a piece names: the one with that anchor, or else the one that lists the piece.</summary>
         public HouseStyle Find(HousePartKind kind, ushort anchor)
         {
@@ -278,9 +281,18 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         private void SetThemes(HouseStyleConfig config)
         {
             Themes.Clear();
+            Foundations.Clear();
             if (config == null)
             {
                 return;
+            }
+
+            foreach (HouseFoundation foundation in config.Foundations)
+            {
+                if (foundation.Style == 0 ? TryGetRole(Tools.FoundationTool.FoundationPost, out _, out _) : Find(HousePartKind.Wall, foundation.Style) != null)
+                {
+                    Foundations.Add(foundation);
+                }
             }
 
             foreach (HouseTheme theme in config.Themes)
@@ -323,6 +335,8 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             Errors.AddRange(fresh.Errors);
             Themes.Clear();
             Themes.AddRange(fresh.Themes);
+            Foundations.Clear();
+            Foundations.AddRange(fresh.Foundations);
             _roles.Clear();
             foreach (KeyValuePair<ushort, (HouseStyle Style, string Slot)> role in fresh._roles)
             {
