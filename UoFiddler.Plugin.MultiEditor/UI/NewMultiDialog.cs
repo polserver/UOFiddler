@@ -17,7 +17,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
     /// <summary>
     /// Asks what kind of multi to start. The client has two kinds of houses: custom houses, always
     /// built on one of its ready-made foundations (floors from Z 7), and multis built whole, which
-    /// may stand on a foundation of their own or start from the ground.
+    /// may stand on a foundation of their own or start from the ground. A blank multi starts
+    /// from the ground unless chosen otherwise; its size is one of the usual ones or typed in.
     /// </summary>
     internal sealed partial class NewMultiDialog : Form
     {
@@ -25,6 +26,28 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             public override string ToString() => $"{Components.Width} x {Components.Height}   (multi 0x{Id:X4})";
         }
+
+        /// <summary>A usual size of a blank multi.</summary>
+        private sealed record SizePreset(int Width, int Height, string What)
+        {
+            public override string ToString() => Width == 0 ? What : $"{Width} x {Height}   {What}";
+        }
+
+        // The sizes of the client's own houses, and what the House tool's tower, keep and castle need.
+        private static readonly SizePreset[] _sizes =
+        {
+            new SizePreset(8, 8, "small house"),
+            new SizePreset(10, 10, "house"),
+            new SizePreset(12, 12, "house, room for a tower"),
+            new SizePreset(15, 15, "large house"),
+            new SizePreset(18, 18, "largest house plot"),
+            new SizePreset(24, 16, "the client's tower"),
+            new SizePreset(24, 24, "the client's keep, room for a keep"),
+            new SizePreset(31, 31, "the client's castle, room for a castle"),
+            new SizePreset(0, 0, "Custom size")
+        };
+
+        private bool _syncingSize;
 
         /// <summary>The floor of a custom house foundation.</summary>
         private const ushort _foundationDirt = 0x31F4;
@@ -43,16 +66,21 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             if (_foundationCombo.Items.Count > 0)
             {
                 _foundationCombo.SelectedIndex = 0;
-                _custom.Checked = true;
             }
             else
             {
                 // An old client without custom housing.
                 _custom.Enabled = false;
                 _foundationCombo.Enabled = false;
-                _blankFoundation.Checked = true;
             }
 
+            foreach (SizePreset size in _sizes)
+            {
+                _sizePreset.Items.Add(size);
+            }
+
+            _blankGround.Checked = true;
+            SyncPreset();
             SyncEnabled();
         }
 
@@ -72,8 +100,51 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
         private void SyncEnabled()
         {
-            _foundationCombo.Enabled = _custom.Checked;
-            _width.Enabled = _height.Enabled = !_custom.Checked;
+            _foundationCombo.Enabled = _custom.Checked && _foundationCombo.Items.Count > 0;
+            _sizePreset.Enabled = _width.Enabled = _height.Enabled = !_custom.Checked;
+        }
+
+        /// <summary>A preset fills in its size.</summary>
+        private void SizePreset_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_syncingSize || _sizePreset.SelectedItem is not SizePreset { Width: > 0 } size)
+            {
+                return;
+            }
+
+            _syncingSize = true;
+            try
+            {
+                _width.Value = size.Width;
+                _height.Value = size.Height;
+            }
+            finally
+            {
+                _syncingSize = false;
+            }
+        }
+
+        private void Size_ValueChanged(object sender, EventArgs e)
+        {
+            if (!_syncingSize)
+            {
+                SyncPreset();
+            }
+        }
+
+        /// <summary>Shows the preset the typed size is, or "Custom size".</summary>
+        private void SyncPreset()
+        {
+            _syncingSize = true;
+            try
+            {
+                int index = Array.FindIndex(_sizes, size => size.Width == (int)_width.Value && size.Height == (int)_height.Value);
+                _sizePreset.SelectedIndex = index >= 0 ? index : _sizes.Length - 1;
+            }
+            finally
+            {
+                _syncingSize = false;
+            }
         }
 
         /// <summary>Forgets the foundation list, after the client files changed.</summary>
