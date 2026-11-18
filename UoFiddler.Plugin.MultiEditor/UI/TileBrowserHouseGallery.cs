@@ -376,7 +376,25 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             e.Handled = true;
             next = Math.Clamp(next, 0, cells.Count - 1);
-            Choose(_slots[cells[next]].Item);
+            HouseGalleryItem item = _slots[cells[next]].Item;
+
+            // Arrows only walk the styles; Enter chooses, as a click does. Choosing can change a
+            // house draft, which must not happen once per key on the way to a style.
+            if (e.KeyCode == Keys.Enter)
+            {
+                Choose(item);
+            }
+            else if (item.Tag != null)
+            {
+                _selectedTag = item.Tag;
+                Invalidate();
+            }
+            else
+            {
+                _selected = item.Style;
+                Invalidate();
+            }
+
             ScrollToSelected();
         }
 

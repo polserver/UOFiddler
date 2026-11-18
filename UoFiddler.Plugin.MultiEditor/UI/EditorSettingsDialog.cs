@@ -165,7 +165,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 TileBrowserWidth = _settings.TileBrowserWidth,
                 InspectorWidth = _settings.InspectorWidth,
                 HousePiecesHeight = _settings.HousePiecesHeight,
-                DesignLibraryFolder = _settings.DesignLibraryFolder
+                DesignLibraryFolder = _settings.DesignLibraryFolder,
+                ImportFolder = _settings.ImportFolder,
+                ImportRecursive = _settings.ImportRecursive,
+                FavoriteBlueprintGroups = _settings.FavoriteBlueprintGroups
             };
             foreach (System.Reflection.PropertyInfo property in typeof(EditorSettings).GetProperties())
             {

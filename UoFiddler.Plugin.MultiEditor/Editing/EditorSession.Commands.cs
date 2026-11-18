@@ -254,7 +254,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             }
 
             RebuildLevels();
-            Modified = false;
+            MarkClean();
             DocumentChanged?.Invoke();
             LayersChanged?.Invoke();
             OnViewChanged();

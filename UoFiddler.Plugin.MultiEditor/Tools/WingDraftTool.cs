@@ -47,6 +47,29 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// </summary>
         public int Rooms { get; set; } = 1;
 
+        /// <summary>How the rooms of a house wing are laid out.</summary>
+        public RoomLayout Layout { get; set; }
+
+        /// <summary>
+        /// Rooms and layout of the storeys above the ground floor that have their own; a storey
+        /// without takes those of the storey below it. Index 0 is not used.
+        /// </summary>
+        public (int Rooms, RoomLayout Layout)?[] RoomsAbove { get; private set; } = new (int, RoomLayout)?[HouseDraft.MaxStoreys];
+
+        /// <summary>Rooms and layout of a storey.</summary>
+        public (int Rooms, RoomLayout Layout) RoomsOn(int storey)
+        {
+            for (int k = Math.Min(storey, HouseDraft.MaxStoreys - 1); k >= 1; --k)
+            {
+                if (RoomsAbove[k] is { } own)
+                {
+                    return own;
+                }
+            }
+
+            return (Rooms, Layout);
+        }
+
         public RoofShape Shape { get; set; }
 
         public bool RidgeAlongY { get; set; }
@@ -56,13 +79,20 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         public (int X0, int Y0, int X1, int Y1) Box => (X0, Y0, X1, Y1);
 
-        public RoofWing Clone() => (RoofWing)MemberwiseClone();
+        public RoofWing Clone()
+        {
+            var copy = (RoofWing)MemberwiseClone();
+            copy.RoomsAbove = ((int, RoomLayout)?[])RoomsAbove.Clone();
+            return copy;
+        }
 
         public void CopyFrom(RoofWing other)
         {
             (X0, Y0, X1, Y1, EaveZ) = (other.X0, other.Y0, other.X1, other.Y1, other.EaveZ);
             (Shape, RidgeAlongY, RidgeAuto, Storeys, NoRoof) = (other.Shape, other.RidgeAlongY, other.RidgeAuto, other.Storeys, other.NoRoof);
             Rooms = other.Rooms;
+            Layout = other.Layout;
+            RoomsAbove = ((int, RoomLayout)?[])other.RoomsAbove.Clone();
         }
     }
 
@@ -163,6 +193,13 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         public object ReopenedFrom { get; private set; }
 
         public override bool IsDragging => _drag != DragKind.None;
+
+        public override (int Width, int Height)? DragSize => _drag switch
+        {
+            DragKind.New => (Math.Abs(_endX - _startX) + 1, Math.Abs(_endY - _startY) + 1),
+            DragKind.Resize or DragKind.Move when SelectedWing is { } wing => (wing.X1 - wing.X0 + 1, wing.Y1 - wing.Y0 + 1),
+            _ => null
+        };
 
         public override bool TracksCursorCell => true;
 

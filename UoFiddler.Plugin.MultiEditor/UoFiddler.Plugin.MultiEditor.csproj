@@ -125,6 +125,12 @@
 		<Compile Update="UI\ShortcutsForm.Designer.cs">
 			<DependentUpon>ShortcutsForm.cs</DependentUpon>
 		</Compile>
+		<Compile Update="UI\HouseStyleEditorDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\HouseStyleEditorDialog.Designer.cs">
+			<DependentUpon>HouseStyleEditorDialog.cs</DependentUpon>
+		</Compile>
 		<Compile Update="UI\TextPromptForm.cs">
 			<SubType>Form</SubType>
 		</Compile>
@@ -174,6 +180,9 @@
 		</EmbeddedResource>
 		<EmbeddedResource Update="UI\ShortcutsForm.resx">
 			<DependentUpon>ShortcutsForm.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\HouseStyleEditorDialog.resx">
+			<DependentUpon>HouseStyleEditorDialog.cs</DependentUpon>
 		</EmbeddedResource>
 		<EmbeddedResource Update="UI\TextPromptForm.resx">
 			<DependentUpon>TextPromptForm.cs</DependentUpon>

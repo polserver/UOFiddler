@@ -161,8 +161,42 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
         /// <summary>Name shown on the document tab.</summary>
         public string Title { get; set; } = "Untitled";
 
-        /// <summary>True when there are edits since the last save or load.</summary>
+        /// <summary>
+        /// True when there are edits since the last save or load. Undoing back to the step that
+        /// was saved makes the design unchanged again; an edit that left no step in the history
+        /// keeps it changed.
+        /// </summary>
         public bool Modified { get; private set; }
+
+        // The history step on top when the design was saved, and when it was last looked at.
+        private EditCommand _savedStep;
+        private EditCommand _lastStep;
+        private bool _unloggedEdit;
+        private bool _steppingHistory;
+
+        private EditCommand TopStep => CompList.UndoList.Count > 0 ? CompList.UndoList[0] : null;
+
+        private void MarkClean()
+        {
+            _savedStep = _lastStep = TopStep;
+            _unloggedEdit = false;
+            Modified = false;
+        }
+
+        /// <summary>The names of the steps Undo would take back, the latest first.</summary>
+        public IReadOnlyList<string> UndoSteps(int most)
+        {
+            var names = new List<string>();
+            if (UndoDraftTool == null)
+            {
+                for (int i = 0; i < CompList.UndoList.Count && i < most; ++i)
+                {
+                    names.Add(CompList.UndoList[i].Action);
+                }
+            }
+
+            return names;
+        }
 
         public void NewBlank(int width, int height, int firstFloorZ = 0)
         {
@@ -177,7 +211,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
 
         public void MarkSaved()
         {
-            Modified = false;
+            MarkClean();
             DocumentChanged?.Invoke();
         }
 
@@ -225,7 +259,9 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
                 }
             }
 
+            _steppingHistory = true;
             AfterEdit();
+            _steppingHistory = false;
             LayersChanged?.Invoke();
             return true;
         }
@@ -260,7 +296,9 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
                 return false;
             }
 
+            _steppingHistory = true;
             AfterEdit();
+            _steppingHistory = false;
             LayersChanged?.Invoke();
             return true;
         }
@@ -278,7 +316,7 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
             _activeLevel = null;
             _levelIndex = 0;
             _workPlaneOffset = 0;
-            Modified = false;
+            MarkClean();
             _firstFloorZ = DetectFirstFloorZ();
             _levelDefinitions.Clear();
             CustomLevels = false;
@@ -999,7 +1037,15 @@ namespace UoFiddler.Plugin.MultiEditor.Editing
                 SelectionChanged?.Invoke();
             }
 
-            Modified = true;
+            // A change that left no step in the history cannot be undone back to the saved state.
+            EditCommand top = TopStep;
+            if (ReferenceEquals(top, _lastStep) && !_steppingHistory)
+            {
+                _unloggedEdit = true;
+            }
+
+            _lastStep = top;
+            Modified = _unloggedEdit || !ReferenceEquals(top, _savedStep);
             RebuildLevels();
             if (_showWalkables)
             {

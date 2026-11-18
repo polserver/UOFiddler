@@ -143,6 +143,110 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         public List<string> Errors { get; } = new List<string>();
 
         /// <summary>
+        /// The themes of the style file this client can build: those whose wall, floor and roof
+        /// style it has. An older client has no gargish, crystal or shadow sets, and so none of
+        /// their themes.
+        /// </summary>
+        public List<HouseTheme> Themes { get; } = new List<HouseTheme>();
+
+        /// <summary>The style of a kind that a piece names: the one with that anchor, or else the one that lists the piece.</summary>
+        public HouseStyle Find(HousePartKind kind, ushort anchor)
+        {
+            if (anchor == 0)
+            {
+                return null;
+            }
+
+            foreach (HouseStyle style in Styles)
+            {
+                if (style.Kind == kind && style.Anchor == anchor)
+                {
+                    return style;
+                }
+            }
+
+            return TryGetRole(anchor, out HouseStyle listed, out _) && listed.Kind == kind ? listed : null;
+        }
+
+        private static readonly string[] _windowsAlongX = { "WindowS", "AltWindowS", "SecondAltWindowS" };
+        private static readonly string[] _windowsAlongY = { "WindowE", "AltWindowE", "SecondAltWindowE" };
+        private readonly Dictionary<(HouseStyle Style, bool AlongX), ushort> _windows = new Dictionary<(HouseStyle, bool), ushort>();
+
+        /// <summary>
+        /// The window piece for a wall of a style, along X or along Y: the style's own first, and
+        /// when it has none (many tables keep windows in a row of their own) the window of
+        /// another style of its material that is as high as its walls. 0 when there is none.
+        /// </summary>
+        public ushort WindowFor(HouseStyle style, bool alongX)
+        {
+            if (style == null)
+            {
+                return 0;
+            }
+
+            if (_windows.TryGetValue((style, alongX), out ushort known))
+            {
+                return known;
+            }
+
+            string[] labels = alongX ? _windowsAlongX : _windowsAlongY;
+            ushort Own(HouseStyle of)
+            {
+                foreach (string label in labels)
+                {
+                    if (of.Get(label) is var id and not 0)
+                    {
+                        return id;
+                    }
+                }
+
+                return 0;
+            }
+
+            ushort window = Own(style);
+            ushort wall = style.Get(alongX ? "South2" : "East2");
+            if (window == 0 && wall != 0)
+            {
+                foreach (HouseStyle other in Styles)
+                {
+                    if (other != style && other.Kind == HousePartKind.Wall && other.Group == style.Group && Own(other) is var id and not 0 &&
+                        Ultima.TileData.ItemTable[id].Height == Ultima.TileData.ItemTable[wall].Height)
+                    {
+                        window = id;
+                        break;
+                    }
+                }
+            }
+
+            _windows[(style, alongX)] = window;
+            return window;
+        }
+
+        /// <summary>Reads the themes again after the user's copy of the style file changed.</summary>
+        public void ReloadThemes()
+        {
+            SetThemes(HouseStyleConfig.Load());
+        }
+
+        private void SetThemes(HouseStyleConfig config)
+        {
+            Themes.Clear();
+            if (config == null)
+            {
+                return;
+            }
+
+            foreach (HouseTheme theme in config.Themes)
+            {
+                if (Find(HousePartKind.Wall, theme.Walls) != null && Find(HousePartKind.Floor, theme.Floor) != null &&
+                    Find(HousePartKind.Roof, theme.Roof) != null)
+                {
+                    Themes.Add(theme);
+                }
+            }
+        }
+
+        /// <summary>
         /// Reads the tables. With <paramref name="splitFloorsByColour"/> a floors.txt row, which is a
         /// palette of up to 16 tiles often in several colours, becomes one style per colour, so a
         /// floor laid with a style does not mix them. The style file (<see cref="HouseStyleConfig"/>)
@@ -153,12 +257,81 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             return Load(splitFloorsByColour, HouseStyleConfig.Load());
         }
 
+        private bool _splitFloors;
+
+        /// <summary>Raised after <see cref="Reload"/>: every style is a new object.</summary>
+        public event Action Reloaded;
+
+        /// <summary>
+        /// Reads the tables and the style file again, into this same object: after the style
+        /// file was changed. The styles are new objects; whoever holds one finds its successor
+        /// with <see cref="Successor"/>.
+        /// </summary>
+        public void Reload()
+        {
+            HouseStyles fresh = Load(_splitFloors);
+            Styles.Clear();
+            Styles.AddRange(fresh.Styles);
+            Errors.Clear();
+            Errors.AddRange(fresh.Errors);
+            Themes.Clear();
+            Themes.AddRange(fresh.Themes);
+            _roles.Clear();
+            foreach (KeyValuePair<ushort, (HouseStyle Style, string Slot)> role in fresh._roles)
+            {
+                _roles[role.Key] = role.Value;
+            }
+
+            _windows.Clear();
+            _listedByArt = null;
+            _stairCorners = null;
+            Reloaded?.Invoke();
+        }
+
+        /// <summary>The style that an older style object now is: of its kind, with its anchor piece or else its name.</summary>
+        public HouseStyle Successor(HouseStyle style)
+        {
+            if (style == null || Styles.Contains(style))
+            {
+                return style;
+            }
+
+            return Find(style.Kind, style.Anchor) ?? Styles.FirstOrDefault(s => s.Kind == style.Kind && s.Name == style.Name) ?? style;
+        }
+
+        /// <summary>
+        /// A style made of the given pieces, with the empty wall columns filled as the tables'
+        /// styles are: what the style editor shows before it saves.
+        /// </summary>
+        public static HouseStyle Compose(HousePartKind kind, string group, string name, IEnumerable<(string Role, ushort Id)> pieces, string layout)
+        {
+            var style = new HouseStyle(kind, group ?? string.Empty, name ?? string.Empty);
+            foreach ((string role, ushort id) in pieces)
+            {
+                style.Add(role, id);
+            }
+
+            style.Paired = layout == HouseStyleEntry.LayoutPaired;
+            if (layout == HouseStyleEntry.LayoutCycle)
+            {
+                style.CycleSouth = style.Slots.Keys.Count(label => label.StartsWith("CycleSouth", System.StringComparison.Ordinal));
+                style.CycleEast = style.Slots.Keys.Count(label => label.StartsWith("CycleEast", System.StringComparison.Ordinal));
+            }
+
+            if (kind == HousePartKind.Wall)
+            {
+                FillWallRuns(style, style.Get("CycleSouth1"), style.Get("CycleEast1"));
+            }
+
+            return style;
+        }
+
         internal static HouseStyles Load(bool splitFloorsByColour, HouseStyleConfig config)
         {
             // New tables mean the client files may have changed: measure the art again.
             ArtFacing.Clear();
 
-            var result = new HouseStyles();
+            var result = new HouseStyles { _splitFloors = splitFloorsByColour };
             var wallNamesUsed = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
             List<TileGroupFile> files = TileGroupRegistry.LoadAll(out List<string> errors);
             int categoryNumber = 0;
@@ -237,6 +410,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             result.BuildRoles();
             result.FinishWalls();
             result.Order();
+            result.SetThemes(config);
 
             result.Errors.AddRange(errors);
             if (config != null)
@@ -369,6 +543,27 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
 
             Styles.RemoveAll(removed.Contains);
+
+            // An order of the user's for a kind goes over the order of the entries.
+            foreach (KeyValuePair<HousePartKind, List<ushort>> order in config.Order)
+            {
+                var placed = new HashSet<HouseStyle>();
+                int next = _rank.Count == 0 ? 0 : _rank.Values.Max() + 1;
+                foreach (ushort anchor in order.Value)
+                {
+                    HouseStyle style = Styles.FirstOrDefault(s => s.Kind == order.Key && s.Anchor == anchor);
+                    if (style != null && placed.Add(style))
+                    {
+                        _rank[style] = next++;
+                    }
+                }
+
+                // The styles of the kind the order does not name keep their place among themselves, behind it.
+                foreach (HouseStyle style in Styles.Where(s => s.Kind == order.Key && !placed.Contains(s) && _rank.ContainsKey(s)).OrderBy(s => _rank[s]).ToList())
+                {
+                    _rank[style] = next++;
+                }
+            }
         }
 
         /// <summary>

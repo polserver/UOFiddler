@@ -32,6 +32,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         private HouseDraft _draft = new HouseDraft();
         private int _storeys = 1;
         private int _rooms = 1;
+        private RoomLayout _layout;
         private RoofShape _shape = RoofShape.Gable;
         private bool _noRoof;
         private RoofRidge _ridge = RoofRidge.Auto;
@@ -60,6 +61,12 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         /// <summary>Rooms of the selected wing, else of the wings drawn next.</summary>
         public int Rooms => SelectedWing?.Rooms ?? _rooms;
+
+        /// <summary>Rooms and layout of a storey of the selected wing, else of the wings drawn next.</summary>
+        public (int Rooms, RoomLayout Layout) RoomsOn(int storey) => SelectedWing?.RoomsOn(storey) ?? (_rooms, _layout);
+
+        /// <summary>True when a storey of the selected wing has rooms of its own, apart from the storey below.</summary>
+        public bool HasOwnRooms(int storey) => storey >= 1 && storey < HouseDraft.MaxStoreys && SelectedWing?.RoomsAbove[storey] != null;
 
         public RoofShape Shape => SelectedWing?.Shape ?? _shape;
 
@@ -147,6 +154,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             // The floors table has flat roof tiles (stone roof, marble roof): a flat roof starts with those.
             _draft.FlatRoofStyle ??= Context.HouseStyles.Styles.FirstOrDefault(s => s.Kind == HousePartKind.Floor && s.Slots.Values.Any(id =>
                 (Ultima.TileData.ItemTable[id].Name ?? string.Empty).Contains("roof", StringComparison.OrdinalIgnoreCase)));
+            _draft.DoorStyle ??= First(HousePartKind.Door);
+            _draft.StairStyle ??= First(HousePartKind.Stair);
             for (int k = 1; k < HouseDraft.MaxStoreys; ++k)
             {
                 _draft.WallStyles[k] ??= _draft.WallStyles[k - 1];
@@ -183,7 +192,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             var wing = new RoofWing
             {
-                X0 = x0, Y0 = y0, X1 = x1, Y1 = y1, EaveZ = z, Storeys = _storeys, Rooms = _rooms,
+                X0 = x0, Y0 = y0, X1 = x1, Y1 = y1, EaveZ = z, Storeys = _storeys, Rooms = _rooms, Layout = _layout,
                 Shape = _shape, NoRoof = _noRoof, RidgeAuto = _ridge == RoofRidge.Auto
             };
             Snap(wing, moved: false);
@@ -254,18 +263,53 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         protected override void RestoreExtra(object extra)
         {
             _draft = extra is HouseDraft saved ? saved.Clone() : _draft.Fresh();
+            _lastRun = null;
             ++_version;
         }
 
         // ---------------------------------------------------------------- changes to the draft
 
-        /// <summary>Runs a change to the draft as one step of its history.</summary>
-        private void Edit(Action change)
+        // What the last step of the history changed, when steps of that kind run together (a
+        // number stepped up and up is one step to take back, not ten).
+        private string _lastRun;
+
+        /// <summary>
+        /// Runs a change to the draft as one step of its history. Changes given the same
+        /// <paramref name="run"/> name one after another are one step together.
+        /// </summary>
+        private void Edit(Action change, string run = null)
         {
-            Remember();
+            if (run == null || run != _lastRun)
+            {
+                Remember();
+            }
+
+            _lastRun = run;
             change();
             ++_version;
             RaiseChanged();
+        }
+
+        /// <summary>The styles were read again: the draft takes the new style objects in place of the ones it holds.</summary>
+        public void StylesReloaded()
+        {
+            if (Context.HouseStyles == null)
+            {
+                return;
+            }
+
+            _draft.Remap(Context.HouseStyles.Successor);
+            ++_version;
+            RaiseChanged();
+        }
+
+        /// <summary>Which gable ends of the house's roofs are closed, and with what.</summary>
+        public void SetGables(RoofGables gables, RoofGableFill fill)
+        {
+            if (_draft.Gables != gables || _draft.GableFill != fill)
+            {
+                Edit(() => (_draft.Gables, _draft.GableFill) = (gables, fill));
+            }
         }
 
         /// <summary>Sets the storeys of the selected wing, and of the wings drawn next.</summary>
@@ -329,21 +373,78 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 {
                     wing.EaveZ = z;
                 }
+            }, "baseZ");
+        }
+
+        /// <summary>
+        /// Sets the rooms and their layout for a storey of the selected wing: for that storey
+        /// alone when it has rooms of its own (<see cref="SetOwnRooms"/>), else for the ground
+        /// floor and every storey that follows it. Without a selected wing it is for the wings drawn next.
+        /// </summary>
+        public void SetRooms(int rooms, RoomLayout layout, int storey)
+        {
+            rooms = Math.Clamp(rooms, 1, HouseDraft.MaxRooms);
+            if (SelectedWing is not { } wing)
+            {
+                (_rooms, _layout) = (rooms, layout);
+                RaiseChanged();
+                return;
+            }
+
+            if (wing.RoomsOn(storey) == (rooms, layout))
+            {
+                return;
+            }
+
+            Edit(() =>
+            {
+                if (storey >= 1 && storey < HouseDraft.MaxStoreys && wing.RoomsAbove[storey] != null)
+                {
+                    wing.RoomsAbove[storey] = (rooms, layout);
+                }
+                else
+                {
+                    (wing.Rooms, wing.Layout) = (rooms, layout);
+                    (_rooms, _layout) = (rooms, layout);
+                }
             });
         }
 
-        /// <summary>Divides the selected wing, and the wings drawn next, into this many rooms on every storey (1: undivided).</summary>
-        public void SetRooms(int rooms)
+        /// <summary>Gives a storey above the ground floor rooms of its own, or lets it follow the storey below again.</summary>
+        public void SetOwnRooms(int storey, bool own)
         {
-            rooms = Math.Clamp(rooms, 1, HouseDraft.MaxRooms);
-            _rooms = rooms;
-            if (SelectedWing is { } wing && wing.Rooms != rooms)
+            if (SelectedWing is not { } wing || storey < 1 || storey >= HouseDraft.MaxStoreys || (wing.RoomsAbove[storey] != null) == own)
             {
-                Edit(() => wing.Rooms = rooms);
+                return;
             }
-            else
+
+            Edit(() => wing.RoomsAbove[storey] = own ? wing.RoomsOn(storey) : null);
+        }
+
+        /// <summary>Doors in the doorways between rooms, on or off.</summary>
+        public void SetAutoDoors(bool on)
+        {
+            if (_draft.AutoDoors != on)
             {
-                RaiseChanged();
+                Edit(() => _draft.AutoDoors = on);
+            }
+        }
+
+        public void SetFrontDoor(FrontDoorSide side)
+        {
+            if (_draft.FrontDoor != side)
+            {
+                Edit(() => _draft.FrontDoor = side);
+            }
+        }
+
+        /// <summary>Windows along the outer walls, this many cells apart; 0 for none.</summary>
+        public void SetWindowSpacing(int cells)
+        {
+            cells = Math.Clamp(cells, 0, 12);
+            if (_draft.WindowSpacing != cells)
+            {
+                Edit(() => _draft.WindowSpacing = cells, "windows");
             }
         }
 
@@ -453,8 +554,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         }
 
         /// <summary>
-        /// Sets a wall, floor or roof style. A wall or floor style goes to one storey, or to
-        /// every storey when <paramref name="storey"/> is null.
+        /// Sets a wall, floor, roof, door or stair style. A wall or floor style goes to one
+        /// storey, or to every storey when <paramref name="storey"/> is null. A door or stair
+        /// style is the house's: the doors and stairs it already has change with it.
         /// </summary>
         public void SetMaterial(HouseStyle style, int? storey)
         {
@@ -471,6 +573,12 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     return;
                 }
 
+                if (style.Kind is HousePartKind.Door or HousePartKind.Stair)
+                {
+                    Restyle(style);
+                    return;
+                }
+
                 HouseStyle[] target = style.Kind == HousePartKind.Floor ? _draft.FloorStyles : style.Kind == HousePartKind.Wall ? _draft.WallStyles : null;
                 for (int k = 0; target != null && k < HouseDraft.MaxStoreys; ++k)
                 {
@@ -480,6 +588,148 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     }
                 }
             });
+        }
+
+        /// <summary>Makes a door or stair style the house's, and gives it to the doors or stairs already there that it has the piece for.</summary>
+        private void Restyle(HouseStyle style)
+        {
+            if (style.Kind == HousePartKind.Door)
+            {
+                _draft.DoorStyle = style;
+                foreach (var key in _draft.Doors.Keys.ToList())
+                {
+                    string piece = _draft.Doors[key].Piece;
+                    if (style.Get(piece) != 0)
+                    {
+                        _draft.Doors[key] = (style, piece);
+                    }
+                }
+            }
+            else if (style.Kind == HousePartKind.Stair)
+            {
+                _draft.StairStyle = style;
+                for (int i = 0; i < _draft.Stairs.Count; ++i)
+                {
+                    var stairs = _draft.Stairs[i];
+                    if (style.Get(stairs.Column) != 0)
+                    {
+                        _draft.Stairs[i] = (stairs.Storey, stairs.X, stairs.Y, stairs.Column, style);
+                    }
+                }
+            }
+        }
+
+        /// <summary>Sets the wall style the foundation ring is built in; null is the client houses' own.</summary>
+        public void SetFoundationStyle(HouseStyle style)
+        {
+            if (style == null || style.Kind == HousePartKind.Wall)
+            {
+                Edit(() => _draft.FoundationStyle = style);
+            }
+        }
+
+        /// <summary>The themes this client can build.</summary>
+        public IReadOnlyList<HouseTheme> Themes => (IReadOnlyList<HouseTheme>)Context.HouseStyles?.Themes ?? Array.Empty<HouseTheme>();
+
+        /// <summary>
+        /// Gives the whole house the styles of a theme, as one step of the draft's history: walls
+        /// and floors of every storey, roof, flat roof, doors, stairs and foundation. Returns the
+        /// parts the theme names that this client does not have; those stay as they are.
+        /// </summary>
+        public List<string> ApplyTheme(HouseTheme theme)
+        {
+            var missing = new List<string>();
+            if (theme == null || Context.HouseStyles == null)
+            {
+                return missing;
+            }
+
+            EnsureMaterials();
+            HouseStyle Part(HousePartKind kind, ushort anchor, string what)
+            {
+                HouseStyle style = Context.HouseStyles.Find(kind, anchor);
+                if (style == null && anchor != 0)
+                {
+                    missing.Add(what);
+                }
+
+                return style;
+            }
+
+            HouseStyle walls = Part(HousePartKind.Wall, theme.Walls, "walls"), floor = Part(HousePartKind.Floor, theme.Floor, "floor");
+            HouseStyle roof = Part(HousePartKind.Roof, theme.Roof, "roof"), flatRoof = Part(HousePartKind.Floor, theme.FlatRoof, "flat roof");
+            HouseStyle door = Part(HousePartKind.Door, theme.Door, "doors"), stairs = Part(HousePartKind.Stair, theme.Stairs, "stairs");
+            HouseStyle foundation = Part(HousePartKind.Wall, theme.Foundation, "foundation");
+            Edit(() =>
+            {
+                for (int k = 0; k < HouseDraft.MaxStoreys; ++k)
+                {
+                    _draft.WallStyles[k] = walls ?? _draft.WallStyles[k];
+                    _draft.FloorStyles[k] = floor ?? _draft.FloorStyles[k];
+                }
+
+                _draft.RoofStyle = roof ?? _draft.RoofStyle;
+                _draft.FlatRoofStyle = flatRoof ?? _draft.FlatRoofStyle;
+                _draft.FoundationStyle = foundation;
+                if (door != null)
+                {
+                    Restyle(door);
+                }
+
+                if (stairs != null)
+                {
+                    Restyle(stairs);
+                }
+            });
+            return missing;
+        }
+
+        /// <summary>The draft's styles as a theme of the given name: what "save as theme" stores.</summary>
+        public HouseTheme ThemeOfDraft(string name)
+        {
+            EnsureMaterials();
+            return new HouseTheme
+            {
+                Name = name,
+                Walls = _draft.WallStyles[0]?.Anchor ?? 0,
+                Floor = _draft.FloorStyles[0]?.Anchor ?? 0,
+                Roof = _draft.RoofStyle?.Anchor ?? 0,
+                FlatRoof = _draft.FlatRoofStyle?.Anchor ?? 0,
+                Door = _draft.DoorStyle?.Anchor ?? 0,
+                Stairs = _draft.StairStyle?.Anchor ?? 0,
+                Foundation = _draft.FoundationStyle?.Anchor ?? 0,
+                IsUser = true
+            };
+        }
+
+        /// <summary>The theme the draft's styles are, or null when they are a mix of the user's own.</summary>
+        public HouseTheme CurrentTheme()
+        {
+            if (Context.HouseStyles == null)
+            {
+                return null;
+            }
+
+            EnsureMaterials();
+            bool Is(HouseStyle style, HousePartKind kind, ushort anchor) => anchor == 0 || style == Context.HouseStyles.Find(kind, anchor);
+            foreach (HouseTheme theme in Themes)
+            {
+                bool storeys = true;
+                for (int k = 0; k < Math.Max(1, TopStorey) && storeys; ++k)
+                {
+                    storeys = Is(_draft.WallStyles[k], HousePartKind.Wall, theme.Walls) && Is(_draft.FloorStyles[k], HousePartKind.Floor, theme.Floor);
+                }
+
+                if (storeys && Is(_draft.RoofStyle, HousePartKind.Roof, theme.Roof) &&
+                    Is(_draft.FlatRoofStyle, HousePartKind.Floor, theme.FlatRoof) &&
+                    Is(_draft.DoorStyle, HousePartKind.Door, theme.Door) && Is(_draft.StairStyle, HousePartKind.Stair, theme.Stairs) &&
+                    _draft.FoundationStyle == Context.HouseStyles.Find(HousePartKind.Wall, theme.Foundation))
+                {
+                    return theme;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>Sets the floor style flat roofs are laid in.</summary>
@@ -535,18 +785,30 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             });
         }
 
-        /// <summary>Turns the wall in a cell into a window, or back. False when the cell has no straight wall.</summary>
+        /// <summary>
+        /// Turns the wall in a cell into a window, or back. A window the draft put there by itself
+        /// is set back to wall, and stays so. False when the cell has no straight wall.
+        /// </summary>
         public bool ToggleWindow(int storey, int x, int y)
         {
-            EdgesOf(storey, out HashSet<(int X, int Y)> south, out HashSet<(int X, int Y)> east);
-            if (south.Contains((x, y)) == east.Contains((x, y)))
+            HouseDraft.StoreyLayout layout = _draft.LayOut(Wings, storey);
+            if (layout.South.Contains((x, y)) == layout.East.Contains((x, y)))
             {
                 return false;
             }
 
             Edit(() =>
             {
-                if (!_draft.Windows.Remove((storey, x, y)))
+                if (_draft.Windows.Remove((storey, x, y)))
+                {
+                    return;
+                }
+
+                if (layout.Windows.Contains((x, y)))
+                {
+                    _draft.Suppressed.Add((storey, x, y));
+                }
+                else if (!_draft.Suppressed.Remove((storey, x, y)) || !_draft.LayOut(Wings, storey).Windows.Contains((x, y)))
                 {
                     _draft.Windows.Add((storey, x, y));
                     _draft.Doors.Remove((storey, x, y));
@@ -565,7 +827,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// </summary>
         public bool CycleDoor(int storey, int x, int y, HouseStyle style, bool remove)
         {
-            EdgesOf(storey, out HashSet<(int X, int Y)> south, out HashSet<(int X, int Y)> east);
+            HouseDraft.StoreyLayout layout = _draft.LayOut(Wings, storey);
+            HashSet<(int X, int Y)> south = layout.South, east = layout.East;
             bool alongX = south.Contains((x, y));
             if (alongX == east.Contains((x, y)))
             {
@@ -575,12 +838,21 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             bool has = _draft.Doors.TryGetValue((storey, x, y), out (HouseStyle Style, string Piece) door);
             if (remove)
             {
-                if (has)
+                // A door the draft hung by itself is taken out for good: its doorway stays open.
+                bool own = layout.Doors.ContainsKey((x, y));
+                if (has || own)
                 {
-                    Edit(() => _draft.Doors.Remove((storey, x, y)));
+                    Edit(() =>
+                    {
+                        _draft.Doors.Remove((storey, x, y));
+                        if (own)
+                        {
+                            _draft.Suppressed.Add((storey, x, y));
+                        }
+                    });
                 }
 
-                return has;
+                return has || own;
             }
 
             if (style == null || style.Kind != HousePartKind.Door)
@@ -649,8 +921,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             EnsureMaterials();
             string key = string.Join(";", wings.Select(w =>
-                             $"{w.X0},{w.Y0},{w.X1},{w.Y1},{w.EaveZ},{w.Storeys},{w.Rooms},{w.Shape},{w.NoRoof},{w.RidgeAlongY}")) +
-                         $"|{_version}|{_roof.Gables}|{_roof.GableFill}|{Context.CompList.UndoList.Count}|{Context.CompList.RedoList.Count}";
+                             $"{w.X0},{w.Y0},{w.X1},{w.Y1},{w.EaveZ},{w.Storeys},{w.Rooms},{w.Layout},{string.Join("/", w.RoomsAbove)},{w.Shape},{w.NoRoof},{w.RidgeAlongY}")) +
+                         $"|{_version}|{_draft.Gables}|{_draft.GableFill}|{Context.CompList.UndoList.Count}|{Context.CompList.RedoList.Count}";
             if (key == _builtFor)
             {
                 return _built;
@@ -718,7 +990,20 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 // lies under the eaves of a taller one where the two meet.
                 foreach (IGrouping<int, RoofWing> level in roofWings.GroupBy(r => r.EaveZ))
                 {
-                    var (roofRemove, roofAdd) = _roof.PlanRoof(level.ToList(), _draft.RoofStyle, built.Walls, Hidden);
+                    // The house has gable settings of its own; the roof tool's are for roofs drawn with it.
+                    (RoofGables gables, RoofGableFill fill) = (_roof.Gables, _roof.GableFill);
+                    (_roof.Gables, _roof.GableFill) = (_draft.Gables, _draft.GableFill);
+                    List<MultiTile> roofRemove;
+                    List<(ushort Id, int X, int Y, int Z, string Layer)> roofAdd;
+                    try
+                    {
+                        (roofRemove, roofAdd) = _roof.PlanRoof(level.ToList(), _draft.RoofStyle, built.Walls, Hidden);
+                    }
+                    finally
+                    {
+                        (_roof.Gables, _roof.GableFill) = (gables, fill);
+                    }
+
                     remove.AddRange(roofRemove.Where(t => !remove.Contains(t)));
                     foreach (var (id, x, y, z, layer) in roofAdd)
                     {

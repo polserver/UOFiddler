@@ -162,6 +162,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// <summary>True while a drag is in progress, so every mouse move repaints.</summary>
         public virtual bool IsDragging => false;
 
+        /// <summary>Cells a drag in progress spans, for the status bar; null when the tool has no such drag.</summary>
+        public virtual (int Width, int Height)? DragSize => null;
+
         /// <summary>True when the overlay follows the cell under the cursor.</summary>
         public virtual bool TracksCursorCell => false;
 
@@ -214,6 +217,8 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         protected int EndY { get; private set; }
 
         public override bool IsDragging => _dragging;
+
+        public override (int Width, int Height)? DragSize => _dragging ? (System.Math.Abs(EndX - StartX) + 1, System.Math.Abs(EndY - StartY) + 1) : null;
 
         protected bool Dragging => _dragging;
 
