@@ -138,11 +138,15 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 return;
             }
 
-            HouseStyle First(HousePartKind kind) => Context.HouseStyles.Styles.FirstOrDefault(s => s.Kind == kind && s.IconId != 0);
+            HouseStyle First(HousePartKind kind) => Context.HouseStyles.Styles.FirstOrDefault(s => s.Kind == kind && s.IconId != 0 && !s.Hidden);
             _draft.WallStyles[0] ??= Context.HouseStyles.Styles.FirstOrDefault(s =>
                 s.Kind == HousePartKind.Wall && s.Get("South2") is var id and not 0 && Ultima.TileData.ItemTable[id].Height >= 15) ?? First(HousePartKind.Wall);
             _draft.FloorStyles[0] ??= First(HousePartKind.Floor);
             _draft.RoofStyle ??= First(HousePartKind.Roof);
+
+            // The floors table has flat roof tiles (stone roof, marble roof): a flat roof starts with those.
+            _draft.FlatRoofStyle ??= Context.HouseStyles.Styles.FirstOrDefault(s => s.Kind == HousePartKind.Floor && s.Slots.Values.Any(id =>
+                (Ultima.TileData.ItemTable[id].Name ?? string.Empty).Contains("roof", StringComparison.OrdinalIgnoreCase)));
             for (int k = 1; k < HouseDraft.MaxStoreys; ++k)
             {
                 _draft.WallStyles[k] ??= _draft.WallStyles[k - 1];
@@ -476,6 +480,15 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     }
                 }
             });
+        }
+
+        /// <summary>Sets the floor style flat roofs are laid in.</summary>
+        public void SetFlatRoofStyle(HouseStyle style)
+        {
+            if (style is { Kind: HousePartKind.Floor })
+            {
+                Edit(() => _draft.FlatRoofStyle = style);
+            }
         }
 
         /// <summary>The storey the work plane is on (the chosen floor); the ground floor with all floors shown.</summary>

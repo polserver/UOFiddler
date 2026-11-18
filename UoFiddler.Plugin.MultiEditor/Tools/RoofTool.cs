@@ -300,11 +300,22 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     {
                         lift = int.Parse(column.AsSpan(mark + 1));
                         column = column.Substring(0, mark);
-                        if (style.Get(column) == 0)
-                        {
-                            // A style without corner pieces: the slope facing the same way.
-                            (column, lift) = (column[0] switch { 'N' => "North", 'E' => "East", 'S' => "South", _ => "West" }, 0);
-                        }
+                    }
+
+                    // A hip's corner: a set with hip pieces of its own (ceramic) uses those, at the
+                    // slopes' height, with the eave's piece where the hip line reaches the edge.
+                    string hip = column switch { "NDent" => "HipNW", "EDent" => "HipNE", "SDent" => "HipSE", "WDent" => "HipSW", _ => null };
+                    if (hip != null && style.Get(hip) != 0)
+                    {
+                        bool west = hip[^1] == 'W', north = hip[^2] == 'N';
+                        bool atEdge = !heights.ContainsKey((x + (west ? -1 : 1), y)) && !heights.ContainsKey((x, y + (north ? -1 : 1)));
+                        string atEave = "HipEave" + hip.Substring(3);
+                        (column, lift) = (atEdge && style.Get(atEave) != 0 ? atEave : hip, 0);
+                    }
+                    else if (hip != null && style.Get(column) == 0)
+                    {
+                        // A style without corner pieces: the slope facing the same way.
+                        (column, lift) = (column[0] switch { 'N' => "North", 'E' => "East", 'S' => "South", _ => "West" }, 0);
                     }
                 }
                 else
@@ -314,6 +325,16 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     {
                         column = fallback;
                     }
+                }
+
+                // A slope at the roof's edge is the set's eave piece, when it has one.
+                (int X, int Y) below = column switch
+                {
+                    "West" => (x - 1, y), "East" => (x + 1, y), "North" => (x, y - 1), "South" => (x, y + 1), _ => (int.MinValue, 0)
+                };
+                if (below.X != int.MinValue && !heights.ContainsKey(below) && style.Get("Eave" + column) != 0)
+                {
+                    column = "Eave" + column;
                 }
 
                 ushort id = style.Get(column);

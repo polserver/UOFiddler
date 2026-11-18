@@ -469,8 +469,31 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                 }
             }
 
+            // Eave + side, Hip + corner and HipEave + corner (ceramic, crystal and shadow sets).
+            if (slot.StartsWith("Eave", StringComparison.Ordinal) && _directions.ContainsKey(slot.Substring(4)))
+            {
+                return "Eave" + mapDirection(slot.Substring(4));
+            }
+
+            foreach (string prefix in new[] { "HipEave", "Hip" })
+            {
+                if (slot.Length == prefix.Length + 2 && slot.StartsWith(prefix, StringComparison.Ordinal))
+                {
+                    // A corner is two sides: both turn, and north or south is named first.
+                    string first = mapDirection(_directions.Keys.First(d => d[0] == slot[^2]));
+                    string second = mapDirection(_directions.Keys.First(d => d[0] == slot[^1]));
+                    (string ns, string ew) = first[0] is 'N' or 'S' ? (first, second) : (second, first);
+                    return prefix + ns[0] + ew[0];
+                }
+            }
+
             if (swapsAxes)
             {
+                if (slot is "NSEnd" or "EWEnd")
+                {
+                    return slot == "NSEnd" ? "EWEnd" : "NSEnd";
+                }
+
                 if (slot == "NSCrosspiece")
                 {
                     return "EWCrosspiece";

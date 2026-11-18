@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UoFiddler.Controls.Classes.TilesInfo;
 
 namespace UoFiddler.Plugin.MultiEditor.Classes
@@ -44,11 +45,45 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         public HousePartKind Kind { get; }
 
         /// <summary>The category name (the first style's comment), grouping a material's styles.</summary>
-        public string Group { get; }
+        public string Group { get; internal set; }
 
-        public string Name { get; }
+        public string Name { get; internal set; }
+
+        /// <summary>The material, shared by the styles of every kind made of it. From the style file; may be empty.</summary>
+        public string Family { get; internal set; } = string.Empty;
+
+        /// <summary>True for a style the style file keeps out of the lists.</summary>
+        public bool Hidden { get; internal set; }
+
+        /// <summary>A piece that tells the style from every other of its kind: how files refer to it. 0 when it has none.</summary>
+        public ushort Anchor { get; internal set; }
+
+        /// <summary>False for a wall style that takes no post or corner from the other rows of its category.</summary>
+        internal bool Borrows { get; set; } = true;
+
+        /// <summary>The table category the style was read from, counted over all tables.</summary>
+        internal int Category { get; set; } = -1;
+
+        /// <summary>True for a wall style of a category sorted by its art.</summary>
+        internal bool ByArt { get; set; }
 
         public IReadOnlyDictionary<string, ushort> Slots => _slots;
+
+        /// <summary>
+        /// True for a wall style whose run pieces are the two halves of an ornament (the shadow
+        /// banner): South1 and South3 along X, East3 and East1 along Y, with South2 and East2 the
+        /// plain wall. A run is then laid as pairs, not as start, middle and end.
+        /// </summary>
+        public bool Paired { get; internal set; }
+
+        /// <summary>
+        /// For a wall style that is a set of different panels (the carved red marble): how many
+        /// it has along X (CycleSouth1 ...) and along Y (CycleEast1 ...). A run is laid as one
+        /// panel after another, starting again after the last. 0 for an ordinary style.
+        /// </summary>
+        public int CycleSouth { get; internal set; }
+
+        public int CycleEast { get; internal set; }
 
         /// <summary>A piece to show for the style in lists.</summary>
         public ushort IconId { get; private set; }
@@ -63,6 +98,12 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             {
                 IconId = id;
             }
+        }
+
+        internal void Clear()
+        {
+            _slots.Clear();
+            IconId = 0;
         }
 
         public override string ToString() => Name;
@@ -104,15 +145,23 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// <summary>
         /// Reads the tables. With <paramref name="splitFloorsByColour"/> a floors.txt row, which is a
         /// palette of up to 16 tiles often in several colours, becomes one style per colour, so a
-        /// floor laid with a style does not mix them.
+        /// floor laid with a style does not mix them. The style file (<see cref="HouseStyleConfig"/>)
+        /// then names, groups, orders and corrects what the tables give.
         /// </summary>
         public static HouseStyles Load(bool splitFloorsByColour = false)
+        {
+            return Load(splitFloorsByColour, HouseStyleConfig.Load());
+        }
+
+        internal static HouseStyles Load(bool splitFloorsByColour, HouseStyleConfig config)
         {
             // New tables mean the client files may have changed: measure the art again.
             ArtFacing.Clear();
 
             var result = new HouseStyles();
+            var wallNamesUsed = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
             List<TileGroupFile> files = TileGroupRegistry.LoadAll(out List<string> errors);
+            int categoryNumber = 0;
             foreach (TileGroupFile file in files)
             {
                 if (!_kinds.TryGetValue(file.DisplayName, out HousePartKind kind))
@@ -122,19 +171,48 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
 
                 foreach (TileCategory category in file.Categories)
                 {
-                    foreach (TileStyle tileStyle in category.Styles)
-                    {
-                        var style = new HouseStyle(kind, category.Name, tileStyle.Name);
-                        foreach (TileSlot slot in tileStyle.Slots)
-                        {
-                            // Stairs list stair multis; they are multi ids, not art.
-                            bool multiColumn = slot.Label.StartsWith("Multi", System.StringComparison.Ordinal);
-                            if (slot.IsEmpty || slot.TileId > ushort.MaxValue || (!multiColumn && !slot.IsValid))
-                            {
-                                continue;
-                            }
+                    int number = categoryNumber++;
 
-                            style.Add(slot.Label, (ushort)slot.TileId);
+                    // A roof set with more pieces than a row of roof.txt holds runs on into a second
+                    // row of its category: the rows are one style.
+                    if (kind == HousePartKind.Roof)
+                    {
+                        HouseStyle roof = RoofStyle(category);
+                        if (roof.Slots.Count > 0)
+                        {
+                            roof.Category = number;
+                            result.Styles.Add(roof);
+                        }
+
+                        continue;
+                    }
+
+                    // A category whose pieces are mostly not what their headings say is sorted by its art.
+                    bool byArt = kind == HousePartKind.Wall && HeadingsAreOff(category);
+
+                    // Wall rows are named so that each row of a category can be told from the others.
+                    (string wallGroup, List<string> wallNames) = kind == HousePartKind.Wall ? WallNames(category, wallNamesUsed, byArt) : (null, null);
+                    for (int row = 0; row < category.Styles.Count; ++row)
+                    {
+                        TileStyle tileStyle = category.Styles[row];
+                        var style = new HouseStyle(kind, wallGroup ?? category.Name, wallNames != null ? wallNames[row] : tileStyle.Name);
+                        if (byArt)
+                        {
+                            SortByArt(style, PiecesOf(tileStyle), WindowPieces(tileStyle));
+                        }
+                        else
+                        {
+                            foreach (TileSlot slot in tileStyle.Slots)
+                            {
+                                // Stairs list stair multis; they are multi ids, not art.
+                                bool multiColumn = IsMultiColumn(slot.Label);
+                                if (slot.IsEmpty || slot.TileId > ushort.MaxValue || (!multiColumn && !slot.IsValid))
+                                {
+                                    continue;
+                                }
+
+                                style.Add(slot.Label, (ushort)slot.TileId);
+                            }
                         }
 
                         if (style.Slots.Count == 0)
@@ -147,22 +225,631 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                             : new[] { style };
                         foreach (HouseStyle part in parts)
                         {
+                            part.Category = number;
+                            part.ByArt = byArt;
                             result.Styles.Add(part);
-                            foreach (KeyValuePair<string, ushort> piece in part.Slots)
-                            {
-                                // Stair multi columns hold multi ids, not art.
-                                if (!piece.Key.StartsWith("Multi", System.StringComparison.Ordinal))
-                                {
-                                    result._roles.TryAdd(piece.Value, (part, piece.Key));
-                                }
-                            }
                         }
                     }
                 }
             }
 
+            result.Apply(config);
+            result.BuildRoles();
+            result.FinishWalls();
+            result.Order();
+
             result.Errors.AddRange(errors);
+            if (config != null)
+            {
+                result.Errors.AddRange(config.Errors);
+            }
+
             return result;
+        }
+
+        /// <summary>Stairs list stair multis under "Multi" columns: multi ids, not art.</summary>
+        private static bool IsMultiColumn(string label) => label.StartsWith("Multi", System.StringComparison.Ordinal);
+
+        // Where each style named by the style file comes in the lists.
+        private readonly Dictionary<HouseStyle, int> _rank = new Dictionary<HouseStyle, int>();
+
+        /// <summary>
+        /// Applies the style file to the styles read from the tables. An entry finds its style by
+        /// a piece (its anchor): the first style of the kind that lists it. It can rename and
+        /// regroup the style, give it other pieces, and take the place of further styles (a set
+        /// the table spreads over several rows). An entry whose pieces this client has no art for
+        /// is left out, so one file serves every client.
+        /// </summary>
+        private void Apply(HouseStyleConfig config)
+        {
+            var owners = new Dictionary<(HousePartKind Kind, ushort Id), HouseStyle>();
+            foreach (HouseStyle style in Styles)
+            {
+                foreach (KeyValuePair<string, ushort> piece in style.Slots)
+                {
+                    if (!IsMultiColumn(piece.Key))
+                    {
+                        owners.TryAdd((style.Kind, piece.Value), style);
+                    }
+                }
+            }
+
+            foreach (HouseStyle style in Styles)
+            {
+                foreach (KeyValuePair<string, ushort> piece in style.Slots)
+                {
+                    if (!IsMultiColumn(piece.Key) && owners[(style.Kind, piece.Value)] == style)
+                    {
+                        style.Anchor = piece.Value;
+                        break;
+                    }
+                }
+            }
+
+            if (config == null)
+            {
+                return;
+            }
+
+            var removed = new HashSet<HouseStyle>();
+            foreach (HouseStyleEntry entry in config.Styles)
+            {
+                List<(string Role, ushort Id)> pieces = entry.Pieces?
+                    .Where(piece => IsMultiColumn(piece.Role) || (piece.Id < Ultima.TileData.ItemTable.Length && Ultima.Art.IsValidStatic(piece.Id)))
+                    .ToList();
+                if (pieces != null && !pieces.Any(piece => !IsMultiColumn(piece.Role)))
+                {
+                    continue;
+                }
+
+                HouseStyle target = null;
+                if (!entry.IsNew)
+                {
+                    owners.TryGetValue((entry.Kind, entry.Anchor), out target);
+                }
+
+                if (target == null)
+                {
+                    // A style of the file's own. It stands where the first style it replaces stood.
+                    if (pieces == null)
+                    {
+                        continue;
+                    }
+
+                    HouseStyle first = null;
+                    foreach (ushort id in entry.Replaces)
+                    {
+                        if (owners.TryGetValue((entry.Kind, id), out first))
+                        {
+                            break;
+                        }
+                    }
+
+                    target = new HouseStyle(entry.Kind, entry.Group ?? entry.Name ?? string.Empty, entry.Name ?? string.Empty)
+                    {
+                        Category = first?.Category ?? -1,
+                        ByArt = first?.ByArt ?? false
+                    };
+                    int at = first != null ? Styles.IndexOf(first) : -1;
+                    Styles.Insert(at >= 0 ? at : Styles.Count, target);
+                }
+
+                if (pieces != null)
+                {
+                    target.Clear();
+                    foreach ((string role, ushort id) in pieces)
+                    {
+                        target.Add(role, id);
+                    }
+                }
+
+                foreach (ushort id in entry.Replaces)
+                {
+                    if (owners.TryGetValue((entry.Kind, id), out HouseStyle other) && other != target)
+                    {
+                        removed.Add(other);
+                    }
+                }
+
+                target.Anchor = entry.Anchor != 0 ? entry.Anchor : target.IconId;
+                target.Name = entry.Name ?? target.Name;
+                target.Group = entry.Group ?? target.Group;
+                target.Family = entry.Family ?? target.Family;
+                target.Hidden = entry.Hidden ?? target.Hidden;
+                target.Borrows = entry.Borrows ?? target.Borrows;
+                if (entry.Layout != null)
+                {
+                    target.Paired = entry.Layout == HouseStyleEntry.LayoutPaired;
+                    bool cycle = entry.Layout == HouseStyleEntry.LayoutCycle;
+                    target.CycleSouth = cycle ? target.Slots.Keys.Count(label => label.StartsWith("CycleSouth", System.StringComparison.Ordinal)) : 0;
+                    target.CycleEast = cycle ? target.Slots.Keys.Count(label => label.StartsWith("CycleEast", System.StringComparison.Ordinal)) : 0;
+                }
+
+                _rank[target] = _rank.Count;
+            }
+
+            Styles.RemoveAll(removed.Contains);
+        }
+
+        /// <summary>
+        /// The lookup from a tile to its style and column: the first style that lists it. A panel
+        /// of a style that goes through its panels in turn counts as a plain run piece for
+        /// everything that asks what a tile is (redrawing, turning).
+        /// </summary>
+        private void BuildRoles()
+        {
+            foreach (HouseStyle style in Styles)
+            {
+                foreach (KeyValuePair<string, ushort> piece in style.Slots)
+                {
+                    if (IsMultiColumn(piece.Key))
+                    {
+                        continue;
+                    }
+
+                    string label = piece.Key.StartsWith("CycleSouth", System.StringComparison.Ordinal) ? "South2"
+                        : piece.Key.StartsWith("CycleEast", System.StringComparison.Ordinal) ? "East2"
+                        : piece.Key;
+                    _roles.TryAdd(piece.Value, (style, label));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Makes every wall style build whole walls: empty run columns are filled, a row without a
+        /// post borrows one from its category, and in a category sorted by its art corners and
+        /// posts are lent between the rows. A style the file marks as not borrowing is two or
+        /// three pieces on their own and stays as it is.
+        /// </summary>
+        private void FinishWalls()
+        {
+            var posts = new Dictionary<int, List<ushort>>();
+            var sorted = new Dictionary<int, List<HouseStyle>>();
+            foreach (HouseStyle style in Styles)
+            {
+                if (style.Kind != HousePartKind.Wall)
+                {
+                    continue;
+                }
+
+                if (style.ByArt && style.Borrows)
+                {
+                    if (!sorted.TryGetValue(style.Category, out List<HouseStyle> rows))
+                    {
+                        sorted[style.Category] = rows = new List<HouseStyle>();
+                    }
+
+                    rows.Add(style);
+                }
+
+                FillWallRuns(style, style.Get("CycleSouth1"), style.Get("CycleEast1"));
+
+                // A row without a post (Celtic Walls 2) borrows the one of an earlier row
+                // of its category that is as high: the same wall, differently decorated.
+                if (!posts.TryGetValue(style.Category, out List<ushort> categoryPosts))
+                {
+                    posts[style.Category] = categoryPosts = new List<ushort>();
+                }
+
+                ushort post = style.Get("Post"), straight = style.Get("South1");
+                if (post != 0)
+                {
+                    categoryPosts.Add(post);
+                }
+                else if (straight != 0 && style.Borrows)
+                {
+                    foreach (ushort other in categoryPosts)
+                    {
+                        if (Ultima.TileData.ItemTable[other].Height == Ultima.TileData.ItemTable[straight].Height)
+                        {
+                            style.Add("Post", other);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            foreach (List<HouseStyle> rows in sorted.Values)
+            {
+                LendCornersAndPosts(rows);
+            }
+        }
+
+        /// <summary>
+        /// Puts the styles in the style file's order. A style the file does not name (one only
+        /// another client version has) stays behind the style it follows in the tables.
+        /// </summary>
+        private void Order()
+        {
+            if (_rank.Count == 0)
+            {
+                return;
+            }
+
+            var last = new Dictionary<HousePartKind, int>();
+            var keys = new Dictionary<HouseStyle, (int Rank, int Index)>();
+            for (int i = 0; i < Styles.Count; ++i)
+            {
+                HouseStyle style = Styles[i];
+                if (_rank.TryGetValue(style, out int rank))
+                {
+                    last[style.Kind] = rank;
+                }
+                else if (!last.TryGetValue(style.Kind, out rank))
+                {
+                    rank = -1;
+                }
+
+                keys[style] = (rank, _rank.ContainsKey(style) ? -1 : i);
+            }
+
+            List<HouseStyle> ordered = Styles.OrderBy(style => keys[style].Rank).ThenBy(style => keys[style].Index).ToList();
+            Styles.Clear();
+            Styles.AddRange(ordered);
+        }
+
+        /// <summary>
+        /// In a category sorted by its art, a row often has walls but no corner or post of its
+        /// own: the set's corners and posts sit in another row. Such a style takes the first
+        /// piece of the category that is a corner (or post) of its walls' height.
+        /// </summary>
+        private static void LendCornersAndPosts(List<HouseStyle> styles)
+        {
+            static int Class(ushort id) => Ultima.TileData.ItemTable[id].Height >= 15 ? 2 : Ultima.TileData.ItemTable[id].Height >= 8 ? 1 : 0;
+            var pieces = new List<ushort>();
+            foreach (HouseStyle style in styles)
+            {
+                foreach (ushort id in style.Slots.Values)
+                {
+                    if (!pieces.Contains(id))
+                    {
+                        pieces.Add(id);
+                    }
+                }
+            }
+
+            foreach (HouseStyle style in styles)
+            {
+                ushort wall = style.Get("South1") != 0 ? style.Get("South1") : style.Get("East1");
+                if (wall == 0)
+                {
+                    continue;
+                }
+
+                foreach ((string column, TilePlacement placement) in new[] { ("Corner", TilePlacement.Cell), ("Post", TilePlacement.Vertex) })
+                {
+                    if (style.Get(column) != 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (ushort id in pieces)
+                    {
+                        if (Class(id) == Class(wall) && ArtFacing.Placement(id) == placement &&
+                            (Ultima.TileData.ItemTable[id].Flags & Ultima.TileFlag.Window) == 0)
+                        {
+                            style.Add(column, id);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>The pieces a row lists under its window headings.</summary>
+        private static HashSet<ushort> WindowPieces(TileStyle row)
+        {
+            var ids = new HashSet<ushort>();
+            foreach (TileSlot slot in row.Slots)
+            {
+                if (!slot.IsEmpty && slot.IsValid && slot.TileId <= ushort.MaxValue && slot.Label.Contains("Window", System.StringComparison.Ordinal))
+                {
+                    ids.Add((ushort)slot.TileId);
+                }
+            }
+
+            return ids;
+        }
+
+        /// <summary>The pieces a row lists, each once, in the row's order.</summary>
+        private static List<ushort> PiecesOf(TileStyle row)
+        {
+            var ids = new List<ushort>();
+            foreach (TileSlot slot in row.Slots)
+            {
+                if (!slot.IsEmpty && slot.IsValid && slot.TileId <= ushort.MaxValue && !ids.Contains((ushort)slot.TileId))
+                {
+                    ids.Add((ushort)slot.TileId);
+                }
+            }
+
+            return ids;
+        }
+
+        private static readonly string[] _southWindows = { "WindowS", "AltWindowS", "SecondAltWindowS" };
+        private static readonly string[] _eastWindows = { "WindowE", "AltWindowE", "SecondAltWindowE" };
+
+        /// <summary>What a wall column's heading says its piece is.</summary>
+        private static TilePlacement HeadingPlacement(string label)
+        {
+            return label == "Corner" ? TilePlacement.Cell
+                : label == "Post" ? TilePlacement.Vertex
+                : label.StartsWith("South", System.StringComparison.Ordinal) || label.EndsWith("S", System.StringComparison.Ordinal) ? TilePlacement.SouthEdge
+                : TilePlacement.EastEdge;
+        }
+
+        /// <summary>
+        /// True for a walls.txt category where at least three pieces in ten are not what their
+        /// column heading says, going by the art: a piece under "South" that runs along Y, a
+        /// "Corner" that is a straight wall. All the gargish sets and the gothic one are like
+        /// that; in the other categories it is at most a spare window under "Corner".
+        /// </summary>
+        private static bool HeadingsAreOff(TileCategory category)
+        {
+            int pieces = 0, off = 0;
+            foreach (TileStyle row in category.Styles)
+            {
+                foreach (TileSlot slot in row.Slots)
+                {
+                    if (slot.IsEmpty || !slot.IsValid || slot.TileId > ushort.MaxValue)
+                    {
+                        continue;
+                    }
+
+                    ++pieces;
+                    if (ArtFacing.Placement((ushort)slot.TileId) != HeadingPlacement(slot.Label))
+                    {
+                        ++off;
+                    }
+                }
+            }
+
+            return pieces > 0 && off * 10 >= pieces * 3;
+        }
+
+        /// <summary>
+        /// Fills a wall style from a row whose headings cannot be trusted. Each piece goes where
+        /// its art says: a wall along X to the South columns, one along Y to the East columns, a
+        /// piece that fills its cell's corner to Corner, a column to Post, windows to the window
+        /// columns. The pieces keep the row's order. What does not fit (a fourth wall along X, a
+        /// second corner, a piece of another height than most of the row) stays with the style as
+        /// a "More" piece, to place by hand.
+        /// </summary>
+        private static void SortByArt(HouseStyle style, List<ushort> ids, HashSet<ushort> listedAsWindows)
+        {
+            if (ids.Count == 0)
+            {
+                return;
+            }
+
+            // The row's usual height: full, half or low walls.
+            static int Class(ushort id) => Ultima.TileData.ItemTable[id].Height >= 15 ? 2 : Ultima.TileData.ItemTable[id].Height >= 8 ? 1 : 0;
+            int usual = ids.GroupBy(Class).OrderByDescending(g => g.Count()).ThenByDescending(g => g.Key).First().Key;
+
+            int more = 0;
+            void Put(string[] columns, ushort id)
+            {
+                foreach (string column in columns)
+                {
+                    if (style.Get(column) == 0)
+                    {
+                        style.Add(column, id);
+                        return;
+                    }
+                }
+
+                style.Add($"More{++more}", id);
+            }
+
+            foreach (ushort id in ids)
+            {
+                // An arch or opening the table lists under a window heading is one, flagged or not.
+                bool window = (Ultima.TileData.ItemTable[id].Flags & Ultima.TileFlag.Window) != 0 || listedAsWindows.Contains(id);
+                if (Class(id) != usual)
+                {
+                    style.Add($"More{++more}", id);
+                    continue;
+                }
+
+                switch (ArtFacing.Placement(id))
+                {
+                    case TilePlacement.SouthEdge:
+                        Put(window ? _southWindows : _southRun, id);
+                        break;
+                    case TilePlacement.EastEdge:
+                        Put(window ? _eastWindows : _eastRun, id);
+                        break;
+                    case TilePlacement.Vertex:
+                        Put(new[] { "Post" }, id);
+                        break;
+                    default:
+                        Put(new[] { "Corner" }, id);
+                        break;
+                }
+            }
+        }
+
+        private static readonly string[] _southRun = { "South1", "South2", "South3" };
+        private static readonly string[] _eastRun = { "East1", "East2", "East3" };
+
+        /// <summary>
+        /// Many wall rows list one piece per direction where the table has three columns (the
+        /// start, middle and end of a run): the later sets, and most half and quarter walls. A
+        /// run built from such a row had holes. The columns a row leaves empty take the piece of
+        /// the nearest one it has, so every row builds whole walls. (The piece keeps the one role
+        /// it is listed under.)
+        /// </summary>
+        private static void FillWallRuns(HouseStyle style, ushort south = 0, ushort east = 0)
+        {
+            foreach (string[] run in new[] { _southRun, _eastRun })
+            {
+                // The middle piece first: it stands in best for a missing end, and an end for a missing middle.
+                ushort have = style.Get(run[1]) != 0 ? style.Get(run[1]) : style.Get(run[0]) != 0 ? style.Get(run[0]) : style.Get(run[2]);
+                if (have == 0)
+                {
+                    have = run == _southRun ? south : east;
+                }
+                if (have == 0)
+                {
+                    continue;
+                }
+
+                foreach (string column in run)
+                {
+                    if (style.Get(column) == 0)
+                    {
+                        style.Add(column, have);
+                    }
+                }
+            }
+        }
+
+        private static readonly string[] _wallFillerWords = { "Standard", "Walls", "Wall", "Set", "Style", "-" };
+
+        /// <summary>
+        /// The group and the row names of a walls.txt category. The table's comments name many
+        /// rows alike ("Carved Wood 1" four times: full, windowed, half and quarter walls) or only
+        /// by number ("Crystal Walls 2"). The group is the material: what the rows' names share,
+        /// without filler words and numbers. A row whose name is used twice, or is only numbered,
+        /// is named by what it holds instead: material + Walls, Window Walls, Half Walls or
+        /// Quarter Walls, by the height of its pieces. Other rows keep their comment.
+        /// </summary>
+        private static (string Group, List<string> Names) WallNames(TileCategory category, HashSet<string> used, bool byArt)
+        {
+            var raw = new List<string>();
+            foreach (TileStyle row in category.Styles)
+            {
+                string name = (row.Name ?? string.Empty).Trim().TrimEnd('\\').Trim();
+                raw.Add(name);
+            }
+
+            // The material: the words every row starts with.
+            string[] first = raw.Count > 0 ? raw[0].Split(' ', System.StringSplitOptions.RemoveEmptyEntries) : System.Array.Empty<string>();
+            int shared = first.Length;
+            foreach (string name in raw)
+            {
+                string[] words = name.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+                int same = 0;
+                while (same < shared && same < words.Length && string.Equals(words[same], first[same], System.StringComparison.OrdinalIgnoreCase))
+                {
+                    ++same;
+                }
+
+                shared = same;
+            }
+
+            // A category of two materials (Weathered Stone and Granite) shares no words: it goes by its first row.
+            bool oneMaterial = shared > 0;
+            var material = new List<string>(first.Take(oneMaterial ? shared : first.Length));
+
+            // "Gargish Wall Set 2": the set's number is part of what it is, as there are three such categories.
+            string set = material.Count >= 3 && material[^2] == "Set" && int.TryParse(material[^1], out _) ? " Set " + material[^1] : string.Empty;
+            while (material.Count > 0 && (System.Array.IndexOf(_wallFillerWords, material[^1]) >= 0 || int.TryParse(material[^1], out _)))
+            {
+                material.RemoveAt(material.Count - 1);
+            }
+
+            string group = material.Count > 0 ? string.Join(" ", material) + set : (category.Name ?? string.Empty).Trim();
+            if (group.Length > 0)
+            {
+                group = char.ToUpperInvariant(group[0]) + group.Substring(1);
+            }
+
+            var names = new List<string>();
+            for (int row = 0; row < raw.Count; ++row)
+            {
+                string name = raw[row];
+                string[] words = name.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+                // In a category sorted by its art the comments say little: any numbered row of the material is renamed.
+                bool numbered = words.Length >= 2 && int.TryParse(words[^1], out _) &&
+                                (words[^2] is "Walls" or "Wall" or "Set" || raw.Count(n => n == name) > 1 ||
+                                 (byArt && material.Count > 0 && name.StartsWith(string.Join(" ", material), System.StringComparison.OrdinalIgnoreCase)));
+                bool vague = raw.Count(n => string.Equals(n, name, System.StringComparison.OrdinalIgnoreCase)) > 1 || numbered ||
+                             name.Contains(" - Style", System.StringComparison.Ordinal);
+                if (vague && oneMaterial && material.Count > 0)
+                {
+                    string kindName = WallKind(category.Styles[row]);
+                    name = kindName == "Window Walls" && group.Contains("Window", System.StringComparison.OrdinalIgnoreCase) ? group : group + " " + kindName;
+                }
+
+                // Two rows of one kind: the second and later ones are numbered.
+                string unique = name;
+                for (int n = 2; !used.Add(unique); ++n)
+                {
+                    unique = $"{name} {n}";
+                }
+
+                names.Add(unique);
+            }
+
+            return (group, names);
+        }
+
+        /// <summary>What a wall row holds, by its pieces: their usual height, and whether most are windows.</summary>
+        private static string WallKind(TileStyle row)
+        {
+            var heights = new List<int>();
+            int windows = 0;
+            foreach (TileSlot slot in row.Slots)
+            {
+                if (slot.IsEmpty || slot.TileId > ushort.MaxValue || !slot.IsValid)
+                {
+                    continue;
+                }
+
+                heights.Add(Ultima.TileData.ItemTable[slot.TileId].Height);
+                if ((Ultima.TileData.ItemTable[slot.TileId].Flags & Ultima.TileFlag.Window) != 0)
+                {
+                    ++windows;
+                }
+            }
+
+            if (heights.Count == 0)
+            {
+                return "Walls";
+            }
+
+            heights.Sort();
+            int height = heights[heights.Count / 2];
+            return height >= 15 ? (windows * 2 > heights.Count ? "Window Walls" : "Walls") : height >= 8 ? "Half Walls" : "Quarter Walls";
+        }
+
+        /// <summary>
+        /// One style from the rows of a roof.txt category, named after the category without its
+        /// row number ("Straw Roof 1" and "Straw Roof 2" are "Straw Roof"). The first row's pieces
+        /// keep their column headings; the pieces of a further row are extras of the set, kept
+        /// under "More" + heading so they still count as its roof pieces. Sets whose rows do not
+        /// follow the headings (ceramic, crystal, shadow) get their pieces from the style file,
+        /// which has labels for what the headings have no word for: Eave + side (a slope with
+        /// the roof's edge), Hip + corner (a hip line), HipEave + corner, NSEnd and EWEnd.
+        /// </summary>
+        private static HouseStyle RoofStyle(TileCategory category)
+        {
+            string name = category.Name ?? string.Empty;
+            if (name.EndsWith(" 1", System.StringComparison.Ordinal))
+            {
+                name = name.Substring(0, name.Length - 2);
+            }
+
+            var style = new HouseStyle(HousePartKind.Roof, name, name);
+            for (int row = 0; row < category.Styles.Count; ++row)
+            {
+                foreach (TileSlot slot in category.Styles[row].Slots)
+                {
+                    if (slot.IsEmpty || slot.TileId > ushort.MaxValue || !slot.IsValid)
+                    {
+                        continue;
+                    }
+
+                    string label = row == 0 ? slot.Label : "More" + slot.Label;
+                    if (style.Get(label) == 0)
+                    {
+                        style.Add(label, (ushort)slot.TileId);
+                    }
+                }
+            }
+
+            return style;
         }
 
         /// <summary>How far apart two radar colours may be (RGB distance) and still count as one floor colour.</summary>

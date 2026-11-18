@@ -173,7 +173,7 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
                     continue;
                 }
 
-                string column = PieceFor(cell.X, cell.Y);
+                string column = PieceFor(_style, _south, _east, cell.X, cell.Y);
                 ushort want = column != null ? _style.Get(column) : (ushort)0;
                 _pieces.TryGetValue(cell, out MultiTile have);
 
@@ -206,6 +206,53 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
         /// Post where walls meet at the cell's corner, or null for no piece.
         /// </summary>
         public string PieceFor(int x, int y) => PieceFor(_south, _east, x, y);
+
+        /// <summary>
+        /// The column of a style's piece for a cell. As <see cref="PieceFor(HashSet{ValueTuple{int, int}}, HashSet{ValueTuple{int, int}}, int, int)"/>,
+        /// except in a paired style (<see cref="HouseStyle.Paired"/>): there the straight pieces of
+        /// a run alternate between the two halves of the ornament, counted from the run's start,
+        /// and the last piece of a run of odd length is the plain one.
+        /// </summary>
+        public static string PieceFor(HouseStyle style, HashSet<(int X, int Y)> southEdges, HashSet<(int X, int Y)> eastEdges, int x, int y)
+        {
+            string column = PieceFor(southEdges, eastEdges, x, y);
+            bool cycles = style != null && style.CycleSouth > 0 && style.CycleEast > 0;
+            if (style == null || (!style.Paired && !cycles) || column == null || column is "Corner" or "Post")
+            {
+                return column;
+            }
+
+            bool alongX = column.StartsWith("South", StringComparison.Ordinal);
+            bool Straight(int cx, int cy) => alongX
+                ? southEdges.Contains((cx, cy)) && !eastEdges.Contains((cx, cy))
+                : eastEdges.Contains((cx, cy)) && !southEdges.Contains((cx, cy));
+
+            int before = 0, after = 0;
+            while (Straight(alongX ? x - before - 1 : x, alongX ? y : y - before - 1))
+            {
+                ++before;
+            }
+
+            while (Straight(alongX ? x + after + 1 : x, alongX ? y : y + after + 1))
+            {
+                ++after;
+            }
+
+            // A set of panels: one after the other along the run.
+            if (cycles)
+            {
+                return alongX ? $"CycleSouth{(before % style.CycleSouth) + 1}" : $"CycleEast{(before % style.CycleEast) + 1}";
+            }
+
+            int length = before + after + 1;
+            if (length % 2 == 1 && after == 0)
+            {
+                return alongX ? "South2" : "East2";
+            }
+
+            bool firstHalf = before % 2 == 0;
+            return alongX ? (firstHalf ? "South1" : "South3") : (firstHalf ? "East3" : "East1");
+        }
 
         /// <summary>
         /// The walls.txt column for a cell given the +Y edges (<paramref name="southEdges"/>) and
