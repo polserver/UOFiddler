@@ -43,6 +43,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _roomsLabel = new System.Windows.Forms.Label();
             _rooms = new System.Windows.Forms.NumericUpDown();
             _removeWing = new System.Windows.Forms.Button();
+            _duplicateWing = new System.Windows.Forms.Button();
             _walled = new System.Windows.Forms.CheckBox();
             _layoutLabel = new System.Windows.Forms.Label();
             _layout = new System.Windows.Forms.ComboBox();
@@ -123,6 +124,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             houseBox.Controls.Add(_roomsLabel);
             houseBox.Controls.Add(_rooms);
             houseBox.Controls.Add(_removeWing);
+            houseBox.Controls.Add(_duplicateWing);
             houseBox.Controls.Add(_walled);
             houseBox.Controls.Add(_layoutLabel);
             houseBox.Controls.Add(_layout);
@@ -329,6 +331,19 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _removeWing.AutoEllipsis = true;
             _removeWing.UseVisualStyleBackColor = true;
             _removeWing.Click += RemoveWing_Click;
+            //
+            // _duplicateWing
+            //
+            _duplicateWing.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            _duplicateWing.Location = new System.Drawing.Point(166, 141);
+            _duplicateWing.Name = "_duplicateWing";
+            _duplicateWing.Size = new System.Drawing.Size(78, 23);
+            _duplicateWing.TabIndex = 12;
+            _duplicateWing.Text = "Duplicate";
+            _duplicateWing.AutoEllipsis = true;
+            _duplicateWing.UseVisualStyleBackColor = true;
+            _toolTip.SetToolTip(_duplicateWing, "Puts a copy of the selected wing, with its doors, windows and stairs, on the mouse: click to drop it (Ctrl+D). Ctrl+C / Ctrl+V copy and paste a wing.");
+            _duplicateWing.Click += DuplicateWing_Click;
             //
             // _walled
             //
@@ -963,6 +978,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private System.Windows.Forms.Label _roomsLabel;
         private System.Windows.Forms.NumericUpDown _rooms;
         private System.Windows.Forms.Button _removeWing;
+        private System.Windows.Forms.Button _duplicateWing;
         private System.Windows.Forms.CheckBox _walled;
         private System.Windows.Forms.Label _layoutLabel;
         private System.Windows.Forms.ComboBox _layout;

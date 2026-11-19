@@ -793,6 +793,80 @@ namespace UoFiddler.Plugin.MultiEditor.Classes
             }
         }
 
+        /// <summary>
+        /// What was changed by hand inside a wing, for a copy of the wing: walls added and taken
+        /// away, doors, windows, floor areas and stairs whose cell lies in the box.
+        /// </summary>
+        public HouseDraft CopyWithin((int X0, int Y0, int X1, int Y1) box)
+        {
+            bool In(int x, int y) => x >= box.X0 && x <= box.X1 && y >= box.Y0 && y <= box.Y1;
+            var part = new HouseDraft();
+            for (int k = 0; k < MaxStoreys; ++k)
+            {
+                part.AddedSouth[k].UnionWith(AddedSouth[k].Where(c => In(c.X, c.Y)));
+                part.AddedEast[k].UnionWith(AddedEast[k].Where(c => In(c.X, c.Y)));
+                part.ErasedSouth[k].UnionWith(ErasedSouth[k].Where(c => In(c.X, c.Y)));
+                part.ErasedEast[k].UnionWith(ErasedEast[k].Where(c => In(c.X, c.Y)));
+            }
+
+            foreach (var door in Doors)
+            {
+                if (In(door.Key.X, door.Key.Y))
+                {
+                    part.Doors[door.Key] = door.Value;
+                }
+            }
+
+            part.Windows.UnionWith(Windows.Where(c => In(c.X, c.Y)));
+            part.Suppressed.UnionWith(Suppressed.Where(c => In(c.X, c.Y)));
+            part.FloorAreas.AddRange(FloorAreas.Where(a => In(a.X0, a.Y0) && In(a.X1, a.Y1)));
+            part.Stairs.AddRange(Stairs.Where(s => In(s.X, s.Y)));
+            return part;
+        }
+
+        /// <summary>Adds what <see cref="CopyWithin"/> took, moved by this many cells: the hand edits of a pasted wing.</summary>
+        public void AddShifted(HouseDraft part, int dx, int dy)
+        {
+            HouseDraft moved = part.Clone();
+            moved.Shift(dx, dy);
+
+            // Where the pasted wing says otherwise, it wins: a wall added there is no longer
+            // taken away, a door replaces a window, and the reverse.
+            for (int k = 0; k < MaxStoreys; ++k)
+            {
+                ErasedSouth[k].ExceptWith(moved.AddedSouth[k]);
+                ErasedEast[k].ExceptWith(moved.AddedEast[k]);
+                AddedSouth[k].ExceptWith(moved.ErasedSouth[k]);
+                AddedEast[k].ExceptWith(moved.ErasedEast[k]);
+                AddedSouth[k].UnionWith(moved.AddedSouth[k]);
+                AddedEast[k].UnionWith(moved.AddedEast[k]);
+                ErasedSouth[k].UnionWith(moved.ErasedSouth[k]);
+                ErasedEast[k].UnionWith(moved.ErasedEast[k]);
+            }
+
+            foreach (var door in moved.Doors)
+            {
+                Doors[door.Key] = door.Value;
+                Windows.Remove(door.Key);
+            }
+
+            foreach (var window in moved.Windows)
+            {
+                Windows.Add(window);
+                Doors.Remove(window);
+            }
+
+            Suppressed.UnionWith(moved.Suppressed);
+            FloorAreas.AddRange(moved.FloorAreas);
+
+            // A stair already starting in a cell gives way to the pasted one.
+            foreach (var stair in moved.Stairs)
+            {
+                Stairs.RemoveAll(s => s.Storey == stair.Storey && s.X == stair.X && s.Y == stair.Y);
+                Stairs.Add(stair);
+            }
+        }
+
         /// <summary>Moves everything changed by hand along with the house.</summary>
         public void Shift(int dx, int dy)
         {
