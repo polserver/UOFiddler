@@ -97,6 +97,18 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 }
             }
 
+            // Roof cells the style has no piece for stay open; they are marked so the gap is seen.
+            if (ShowsInPreview(RoofTool.LayerName))
+            {
+                foreach ((int x, int y, int z) in RoofGaps)
+                {
+                    if (z <= highest)
+                    {
+                        overlay.CellMark(x, y, z, OverlayTone.Remove);
+                    }
+                }
+            }
+
             PaintDetails(overlay, active);
 
             int hover = -1, hx = 0, hy = 0;

@@ -28,10 +28,13 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// with no layer goes on the roof layer; a re-pieced tile of an older roof names the layer
         /// it stays on. <paramref name="draftWalls"/> are walls about to be built with the roof (a
         /// house draft), which count as standing for the gable ends. <paramref name="hidden"/>
-        /// tells roof cells that must not be built (inside a taller part of the house).
+        /// tells roof cells that must not be built (inside a taller part of the house). A cell
+        /// whose piece the style does not have is left open, never filled with another piece,
+        /// and added to <paramref name="gaps"/> when given.
         /// </summary>
         public (List<MultiTile> Remove, List<(ushort Id, int X, int Y, int Z, string Layer)> Add) PlanRoof(IReadOnlyList<RoofWing> wings,
-            HouseStyle style, IReadOnlyList<(ushort Id, int X, int Y, int Z)> draftWalls, Func<int, int, int, bool> hidden)
+            HouseStyle style, IReadOnlyList<(ushort Id, int X, int Y, int Z)> draftWalls, Func<int, int, int, bool> hidden,
+            List<(int X, int Y, int Z)> gaps = null)
         {
             var remove = new List<MultiTile>();
             var add = new List<(ushort Id, int X, int Y, int Z, string Layer)>();
@@ -76,8 +79,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 }
             }
 
+            RoofPlanner.SettleCorners(heights, fixedPieces);
             var footprint = new HashSet<(int X, int Y)>(heights.Keys);
-            JoinExisting(footprint, heights, fixedPieces, remove, add);
+            JoinExisting(footprint, heights, fixedPieces, remove, add, gaps);
 
             foreach ((int x, int y) in footprint)
             {
@@ -102,18 +106,15 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                         string atEave = "HipEave" + hip.Substring(3);
                         (column, lift) = (atEdge && style.Get(atEave) != 0 ? atEave : hip, 0);
                     }
-                    else if (hip != null && style.Get(column) == 0)
-                    {
-                        // A style without corner pieces: the slope facing the same way.
-                        (column, lift) = (column[0] switch { 'N' => "North", 'E' => "East", 'S' => "South", _ => "West" }, 0);
-                    }
                 }
                 else
                 {
-                    column = RoofPlanner.Piece(heights, x, y, out string fallback) ?? (wings[0].RidgeAlongY ? "West" : "North");
-                    if (style.Get(column) == 0 && fallback != null)
+                    column = RoofPlanner.Piece(heights, x, y);
+
+                    // A ridge ends in its own piece in the sets that have one.
+                    if (column is "NSCrosspiece" or "EWCrosspiece" && RoofPlanner.RidgeEnd(heights, x, y) is { } end && style.Get(end) != 0)
                     {
-                        column = fallback;
+                        column = end;
                     }
                 }
 
@@ -127,10 +128,15 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     column = "Eave" + column;
                 }
 
-                ushort id = style.Get(column);
+                // No piece of the style fits the cell: it stays open.
+                ushort id = column != null ? style.Get(column) : (ushort)0;
                 if (id != 0)
                 {
                     add.Add((id, x, y, heights[(x, y)] + lift, null));
+                }
+                else
+                {
+                    gaps?.Add((x, y, heights[(x, y)]));
                 }
             }
 
@@ -302,11 +308,13 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// Fits a new roof to the roof already there. A roof lying wholly under the new one is
         /// replaced. One that reaches beyond it is joined: each cell keeps the higher of the two,
         /// and the old cells next to the new roof get the piece their place now calls for (a
-        /// valley, a T where the ridges meet), in their own style. Cells the old roof keeps are
-        /// taken out of <paramref name="footprint"/>.
+        /// valley, a T where the ridges meet), in their own style. When that style has no such
+        /// piece the old tile is taken away and the cell left open (<paramref name="gaps"/>).
+        /// Cells the old roof keeps are taken out of <paramref name="footprint"/>.
         /// </summary>
         private void JoinExisting(HashSet<(int X, int Y)> footprint, Dictionary<(int X, int Y), int> heights,
-            Dictionary<(int X, int Y), string> fixedPieces, List<MultiTile> remove, List<(ushort Id, int X, int Y, int Z, string Layer)> add)
+            Dictionary<(int X, int Y), string> fixedPieces, List<MultiTile> remove, List<(ushort Id, int X, int Y, int Z, string Layer)> add,
+            List<(int X, int Y, int Z)> gaps)
         {
             MultiEditorComponentList list = Context.CompList;
             var existing = new Dictionary<(int X, int Y), List<MultiTile>>();
@@ -388,8 +396,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     }
                 }
 
-                string fallback = null;
-                string column = beside ? RoofPlanner.Piece(heights, x, y, out fallback) : null;
+                string column = beside ? RoofPlanner.Piece(heights, x, y) : null;
                 if (column == null)
                 {
                     continue;
@@ -402,13 +409,26 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     (style, now) = (owner, slot);
                 }
 
-                if (now == column || (style.Get(column) == 0 && now == fallback))
+                // The old roof's own end piece, or a plain crosspiece where its set has none, is what it should be.
+                string end = column is "NSCrosspiece" or "EWCrosspiece" ? RoofPlanner.RidgeEnd(heights, x, y) : null;
+                if (end != null && style.Get(end) != 0)
+                {
+                    column = end;
+                }
+
+                if (now == column || (now != null && now.StartsWith("Eave", StringComparison.Ordinal) && now.EndsWith(column, StringComparison.Ordinal)))
                 {
                     continue;
                 }
 
-                ushort id = style.Get(column) != 0 ? style.Get(column) : style.Get(fallback ?? column);
-                if (id != 0 && id != tile.Id)
+                ushort id = style.Get(column);
+                if (id == 0 && now != null)
+                {
+                    // The old roof's set has no piece for what the cell now is: leave it open.
+                    remove.Add(tile);
+                    gaps?.Add((x, y, tile.Z));
+                }
+                else if (id != 0 && id != tile.Id)
                 {
                     remove.Add(tile);
                     add.Add((id, x, y, tile.Z, tile.Layer.Name));

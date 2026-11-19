@@ -182,7 +182,14 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
         protected override (List<MultiTile> Remove, List<(ushort Id, int X, int Y, int Z, string Layer)> Add) Plan(IReadOnlyList<RoofWing> wings)
         {
-            return PlanRoof(wings, Style, null, null);
+            var gaps = new List<(int X, int Y, int Z)>();
+            var plan = PlanRoof(wings, Style, null, null, gaps);
+            _gaps = gaps;
+            return plan;
         }
+
+        private List<(int X, int Y, int Z)> _gaps = new List<(int X, int Y, int Z)>();
+
+        public override IReadOnlyList<(int X, int Y, int Z)> RoofGaps => _gaps;
     }
 }
