@@ -118,7 +118,29 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.28.2
+    <value>Version 4.28.3
+- Multi Editor: roofs sit on the wall tops whatever floor is chosen; a drag over the walls, the floor or the roof area fits the roof to the walls, and the overhang grows the multi
+- Multi Editor: hip roofs; a roof dragged across another joins it with valleys and a T piece, and a click roofs each part of an L or T shaped house
+- Multi Editor: a roof stays open for shaping (move and resize its wings, add wings, turn ridges) until Enter places it on a Roof layer; Esc drops it
+- Multi Editor: House tool designs a whole house as a draft: wings with 1 to 4 storeys, wall and floor style per storey, roof, foundation; the wall, door, floor and stair tools work on the draft until it is placed on its own layers
+- Multi Editor: undo and redo step through a roof or house draft, dropping a draft can be undone, and undoing a placement reopens its draft
+- Multi Editor: house drafts can be saved to a house draft file or to the blueprints, and a placed house can be opened as a draft again (kept with the design file and the layers file)
+- Multi Editor: house wings of different heights join cleanly (a lower roof runs up to the higher wall, wings drawn side by side share their wall), and a wing can have a flat roof
+- Multi Editor: room layouts per wing and storey, with doors between rooms, a front door and windows along the outer walls
+- Multi Editor: house themes set walls, floors, roof, doors and stairs at once, and your own can be saved
+- Multi Editor: battlements on flat roofs, walled wings (towers, halls in a yard) and Tower, Keep and Castle presets
+- Multi Editor: foundations as the client houses have them, picked per house draft
+- Multi Editor: copy, paste and duplicate a wing of a roof or house draft (Ctrl+C, Ctrl+V, Ctrl+D or the Duplicate button)
+- Multi Editor: Ctrl+drag moves a whole draft, Shift+corner drag makes a wing square, and a draft is drawn in depth order
+- Multi Editor: house styles are read from a style file (MultiEditorHouseStyles.xml) and can be edited in the house style editor
+- Multi Editor: one roof style per roof type (Straw, Bark, Ceramic, Slate, Wooden Slats, Elf, Elvan, Crystal and Shadow no longer split in two); the ceramic, crystal and shadow sets build correct roofs, with their eave pieces at the edge and, for ceramic, their own hip and ridge end pieces
+- Multi Editor: a roof cell the roof style has no piece for stays open instead of getting a piece that only looks like it fits; open cells are marked in the preview and counted in the status bar
+- Multi Editor: wall styles are grouped by material and named by what they hold (Carved Wood Walls, Window Walls, Half Walls, Quarter Walls instead of "Carved Wood 1" four times); wall rows that list one piece per direction build whole walls
+- Multi Editor: a new multi starts blank from the ground with the usual sizes offered
+- Multi Editor: asks before closing designs with unsaved changes or drafts that are not placed
+- Multi Editor: the opacity of tool previews is a setting; shortcut keys can be typed while a layer is renamed
+
+Version 4.28.2
 - Animations: the animation edit body list opens anim.mul in a fraction of a second and the editor closes at once; body and action rows show tooltips
 - Animations: center editing can apply relative offsets and cover all directions or all actions at once
 - Animations: the frame size shows next to the zoom while a frame rectangle is drawn
