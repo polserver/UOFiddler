@@ -39,6 +39,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             public string FilePath;
         }
 
+        private const string _messageTitle = "Multi Editor";
+
         private readonly ArtMasks _masks = new ArtMasks();
         private readonly List<EditorDocument> _documents = new List<EditorDocument>();
         private readonly CommandRegistry _commands = new CommandRegistry();
@@ -194,8 +196,51 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             BuildCanvasMenu();
 
             _browser.SetHouseStyles(_houseStyles);
-            _browser.EditStylesRequested += EditHouseStyles;
             _styleErrors = _houseStyles.Errors.Count == 0 ? null : string.Join("\r\n", _houseStyles.Errors.Take(5));
+            WireBrowser();
+
+            // The hint takes its colours from the settings and its font from the host.
+            _emptyHint.ForeColor = EditorSettings.Current.BackgroundText;
+            _emptyHint.BackColor = EditorSettings.Current.EffectiveBackground;
+            _emptyHint.Font = new Font(Font.FontFamily, 11f);
+
+            // The strips and the sidebars are laid out in the designer (docking runs from the last
+            // added control: strips first, then the sidebars on the right, the tool palette on the
+            // left, and the canvas area takes what is left). Here they get the command items.
+            BuildToolPalette();
+            BuildOptionsStrip();
+            BuildMainStrip();
+
+            // The performance box floats over the canvas's top right corner (F12).
+            _performancePanel = new PerformancePanel { Visible = false };
+            _centre.Controls.Add(_performancePanel);
+            _performancePanel.BringToFront();
+            _performancePanel.Bind(_canvas.Stats, () => Session?.CompList.TileCount ?? 0);
+            _performancePanel.SizeChanged += (_, _) => PlacePerformancePanel();
+            _centre.Resize += (_, _) => PlacePerformancePanel();
+            ResumeLayout(true);
+
+            // Splitter distances only hold once the containers have their real size.
+            LayoutSidebars();
+
+            ControlEvents.FilePathChangeEvent += OnClientFilesChanged;
+            ControlEvents.ItemChangeEvent += OnItemChanged;
+            ControlEvents.TileDataChangeEvent += OnItemChanged;
+            Disposed += (_, _) =>
+            {
+                ControlEvents.FilePathChangeEvent -= OnClientFilesChanged;
+                ControlEvents.ItemChangeEvent -= OnItemChanged;
+                ControlEvents.TileDataChangeEvent -= OnItemChanged;
+            };
+
+            _built = true;
+            Activate(-1);
+        }
+
+        /// <summary>What the tile browser asks of the editor.</summary>
+        private void WireBrowser()
+        {
+            _browser.EditStylesRequested += EditHouseStyles;
             _browser.TileChosen += id =>
             {
                 Session?.SetDrawTile(id);
@@ -268,43 +313,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 Session?.BeginPaste(tiles, "Blueprint");
                 _canvas.Focus();
             };
-
-            // The hint takes its colours from the settings and its font from the host.
-            _emptyHint.ForeColor = EditorSettings.Current.BackgroundText;
-            _emptyHint.BackColor = EditorSettings.Current.EffectiveBackground;
-            _emptyHint.Font = new Font(Font.FontFamily, 11f);
-
-            // The strips and the sidebars are laid out in the designer (docking runs from the last
-            // added control: strips first, then the sidebars on the right, the tool palette on the
-            // left, and the canvas area takes what is left). Here they get the command items.
-            BuildToolPalette();
-            BuildOptionsStrip();
-            BuildMainStrip();
-
-            // The performance box floats over the canvas's top right corner (F12).
-            _performancePanel = new PerformancePanel { Visible = false };
-            _centre.Controls.Add(_performancePanel);
-            _performancePanel.BringToFront();
-            _performancePanel.Bind(_canvas.Stats, () => Session?.CompList.TileCount ?? 0);
-            _performancePanel.SizeChanged += (_, _) => PlacePerformancePanel();
-            _centre.Resize += (_, _) => PlacePerformancePanel();
-            ResumeLayout(true);
-
-            // Splitter distances only hold once the containers have their real size.
-            LayoutSidebars();
-
-            ControlEvents.FilePathChangeEvent += OnClientFilesChanged;
-            ControlEvents.ItemChangeEvent += OnItemChanged;
-            ControlEvents.TileDataChangeEvent += OnItemChanged;
-            Disposed += (_, _) =>
-            {
-                ControlEvents.FilePathChangeEvent -= OnClientFilesChanged;
-                ControlEvents.ItemChangeEvent -= OnItemChanged;
-                ControlEvents.TileDataChangeEvent -= OnItemChanged;
-            };
-
-            _built = true;
-            Activate(-1);
         }
 
         /// <summary>
@@ -363,7 +371,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
             catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
             {
-                MessageBox.Show(this, "The design could not be read: " + ex.Message, "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "The design could not be read: " + ex.Message, _messageTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return null;
             }
         }

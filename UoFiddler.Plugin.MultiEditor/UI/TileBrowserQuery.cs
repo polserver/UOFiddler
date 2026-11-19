@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace UoFiddler.Plugin.MultiEditor.UI
 {
@@ -94,6 +95,12 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         }
 
         public bool MatchesTile(int id) => IsIdQuery ? MatchesId(id) : MatchesText(TileBrowserThumbnails.NameOf(id));
+
+        /// <summary>An id query matches when one of the ids does, a text query when the text does.</summary>
+        public bool Matches(IEnumerable<int> ids, string text) => IsIdQuery ? ids.Any(MatchesId) : MatchesText(text);
+
+        /// <inheritdoc cref="Matches(IEnumerable{int}, string)"/>
+        public bool Matches(IEnumerable<ushort> ids, string text) => IsIdQuery ? ids.Any(id => MatchesId(id)) : MatchesText(text);
 
         private static bool TryParseRange(string token, out int low, out int high)
         {

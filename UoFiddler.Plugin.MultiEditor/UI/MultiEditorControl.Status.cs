@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Ultima;
 using UoFiddler.Plugin.MultiEditor.Editing;
 using UoFiddler.Plugin.MultiEditor.Model;
 
@@ -52,17 +51,36 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
-            EditorSession session = _active.Session;
-            session.CancelTool();
-            session.DocumentChanged -= OnDocumentChanged;
-            session.SelectionChanged -= OnSelectionChanged;
-            session.HoverChanged -= UpdateStatus;
-            session.CursorCellChanged -= UpdateStatus;
-            session.ToolChanged -= OnToolChanged;
-            session.DrawTileChanged -= OnDrawTileChanged;
-            session.ViewChanged -= OnViewChanged;
-            session.TileUsed -= _browser.RecordRecent;
+            _active.Session.CancelTool();
+            Wire(_active.Session, attach: false);
             _active = null;
+        }
+
+        /// <summary>Subscribes to the events of a document's session, or unsubscribes.</summary>
+        private void Wire(EditorSession session, bool attach)
+        {
+            if (attach)
+            {
+                session.DocumentChanged += OnDocumentChanged;
+                session.SelectionChanged += OnSelectionChanged;
+                session.HoverChanged += UpdateStatus;
+                session.CursorCellChanged += UpdateStatus;
+                session.ToolChanged += OnToolChanged;
+                session.DrawTileChanged += OnDrawTileChanged;
+                session.ViewChanged += OnViewChanged;
+                session.TileUsed += _browser.RecordRecent;
+            }
+            else
+            {
+                session.DocumentChanged -= OnDocumentChanged;
+                session.SelectionChanged -= OnSelectionChanged;
+                session.HoverChanged -= UpdateStatus;
+                session.CursorCellChanged -= UpdateStatus;
+                session.ToolChanged -= OnToolChanged;
+                session.DrawTileChanged -= OnDrawTileChanged;
+                session.ViewChanged -= OnViewChanged;
+                session.TileUsed -= _browser.RecordRecent;
+            }
         }
 
         private void Activate(int index)
@@ -87,15 +105,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             else
             {
                 EditorSession session = document.Session;
-                session.DocumentChanged += OnDocumentChanged;
-                session.SelectionChanged += OnSelectionChanged;
-                session.HoverChanged += UpdateStatus;
-                session.CursorCellChanged += UpdateStatus;
-                session.ToolChanged += OnToolChanged;
-                session.DrawTileChanged += OnDrawTileChanged;
-                session.ViewChanged += OnViewChanged;
-                session.TileUsed += _browser.RecordRecent;
-
+                Wire(session, attach: true);
                 _canvas.Show(session, document.Camera);
 
                 _inspector.Bind(session);
@@ -250,10 +260,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
         }
 
-        private static string TileName(ushort id)
-        {
-            return id < TileData.ItemTable.Length ? TileData.ItemTable[id].Name : string.Empty;
-        }
+        private static string TileName(ushort id) => TileBrowserThumbnails.NameOf(id);
 
         private void UpdateTitle()
         {

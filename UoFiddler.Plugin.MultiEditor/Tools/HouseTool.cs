@@ -203,12 +203,13 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 Shape = _shape, NoRoof = _noRoof, RidgeAuto = _ridge == RoofRidge.Auto
             };
             Snap(wing, moved: false);
-            wing.RidgeAlongY = wing.RidgeAuto ? RoofPlanner.RidgeAlongY(RoofBox(wing)) : _ridge == RoofRidge.AlongY;
+            SetWingRidge(wing, _ridge);
             wings.Add(wing);
             return wings;
         }
 
-        private static (int X0, int Y0, int X1, int Y1) RoofBox(RoofWing wing) => (wing.X0 + 1, wing.Y0 + 1, wing.X1 + 1, wing.Y1 + 1);
+        /// <summary>A house's roof covers its walls one cell further along X and Y.</summary>
+        protected override (int X0, int Y0, int X1, int Y1) RoofBox(RoofWing wing) => (wing.X0 + 1, wing.Y0 + 1, wing.X1 + 1, wing.Y1 + 1);
 
         /// <summary>
         /// A wing drawn or moved to stand right beside another would leave two walls back to back
@@ -249,20 +250,6 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     wing.Y0 += moved ? 1 : 0;
                 }
             }
-        }
-
-        protected override void WingResized(RoofWing wing)
-        {
-            if (wing.RidgeAuto)
-            {
-                wing.RidgeAlongY = RoofPlanner.RidgeAlongY(RoofBox(wing));
-            }
-        }
-
-        protected override void Turn(RoofWing wing)
-        {
-            wing.RidgeAlongY = !wing.RidgeAlongY;
-            wing.RidgeAuto = false;
         }
 
         protected override object CaptureExtra() => _draft.Clone();

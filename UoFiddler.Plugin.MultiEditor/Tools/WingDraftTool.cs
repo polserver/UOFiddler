@@ -229,14 +229,30 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         {
         }
 
-        /// <summary>Called when a wing's box changed.</summary>
-        protected virtual void WingResized(RoofWing wing)
+        /// <summary>The cells a wing's roof covers, which its ridge direction is worked out from.</summary>
+        protected virtual (int X0, int Y0, int X1, int Y1) RoofBox(RoofWing wing) => wing.Box;
+
+        /// <summary>Sets a wing's ridge: worked out from its roof's box when automatic.</summary>
+        protected void SetWingRidge(RoofWing wing, RoofRidge ridge)
         {
+            wing.RidgeAuto = ridge == RoofRidge.Auto;
+            wing.RidgeAlongY = wing.RidgeAuto ? RoofPlanner.RidgeAlongY(RoofBox(wing)) : ridge == RoofRidge.AlongY;
         }
 
-        /// <summary>Shift+click on a wing.</summary>
+        /// <summary>Called when a wing's box changed: an automatic ridge follows its proportions.</summary>
+        protected virtual void WingResized(RoofWing wing)
+        {
+            if (wing.RidgeAuto)
+            {
+                wing.RidgeAlongY = RoofPlanner.RidgeAlongY(RoofBox(wing));
+            }
+        }
+
+        /// <summary>Shift+click on a wing: turns its ridge the other way.</summary>
         protected virtual void Turn(RoofWing wing)
         {
+            wing.RidgeAlongY = !wing.RidgeAlongY;
+            wing.RidgeAuto = false;
         }
 
         /// <summary>Drawn after the ghost tiles and before the wing outlines.</summary>

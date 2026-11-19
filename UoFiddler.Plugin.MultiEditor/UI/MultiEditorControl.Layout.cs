@@ -259,9 +259,21 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 settings.InspectorWidth = _sidePanel.Width;
             }
 
+            ApplyOwnSettings(settings);
+        }
+
+        /// <summary>Applies settings this control changed itself, which it then need not react to.</summary>
+        private void ApplyOwnSettings(EditorSettings settings)
+        {
             _applyingOwnSettings = true;
-            settings.Apply();
-            _applyingOwnSettings = false;
+            try
+            {
+                settings.Apply();
+            }
+            finally
+            {
+                _applyingOwnSettings = false;
+            }
         }
 
         private void OnSettingsChanged()
@@ -299,9 +311,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             EditorSettings settings = EditorSettings.Current.Clone();
             settings.ShowTileBrowser = _browserShown;
             settings.ShowInspector = _inspectorShown;
-            _applyingOwnSettings = true;
-            settings.Apply();
-            _applyingOwnSettings = false;
+            ApplyOwnSettings(settings);
             LayoutSidebars();
         }
 

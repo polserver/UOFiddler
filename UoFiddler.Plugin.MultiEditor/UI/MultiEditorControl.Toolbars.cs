@@ -96,12 +96,17 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// <summary>Fills one of the designer's menus with command items; null is a separator.</summary>
         private ToolStripDropDownButton Menu(ToolStripDropDownButton menu, params EditorCommand[] commands)
         {
+            AddCommands(menu.DropDownItems, commands);
+            return menu;
+        }
+
+        /// <summary>Adds a menu item per command; null adds a separator.</summary>
+        private void AddCommands(ToolStripItemCollection items, params EditorCommand[] commands)
+        {
             foreach (EditorCommand command in commands)
             {
-                menu.DropDownItems.Add(command == null ? new ToolStripSeparator() : _commands.MenuItem(command));
+                items.Add(command == null ? new ToolStripSeparator() : _commands.MenuItem(command));
             }
-
-            return menu;
         }
 
         private ToolStripMenuItem _undoHistory;

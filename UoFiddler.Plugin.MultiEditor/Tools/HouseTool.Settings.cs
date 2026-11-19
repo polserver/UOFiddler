@@ -97,11 +97,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             _ridge = ridge;
             if (SelectedWing is { } wing)
             {
-                Edit(() =>
-                {
-                    wing.RidgeAuto = ridge == RoofRidge.Auto;
-                    wing.RidgeAlongY = wing.RidgeAuto ? RoofPlanner.RidgeAlongY(RoofBox(wing)) : ridge == RoofRidge.AlongY;
-                });
+                Edit(() => SetWingRidge(wing, ridge));
             }
             else
             {

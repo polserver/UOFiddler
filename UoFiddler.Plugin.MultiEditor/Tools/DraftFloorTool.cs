@@ -10,7 +10,6 @@
  ***************************************************************************/
 
 using System;
-using System.Windows.Forms;
 
 namespace UoFiddler.Plugin.MultiEditor.Tools
 {
@@ -18,60 +17,23 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     /// Floors of a house draft: a drag lays that area of the storey in the chosen floor style;
     /// the rest keeps the storey's own.
     /// </summary>
-    internal sealed class DraftFloorTool : DraftEditTool
+    internal sealed class DraftFloorTool : DraftDragTool
     {
-        private bool _dragging;
-        private int _startX;
-        private int _startY;
-        private int _endX;
-        private int _endY;
-
         public DraftFloorTool(IEditorContext context, HouseTool house) : base(context, house)
         {
         }
 
-        public override bool IsDragging => _dragging;
-
-        public override (int Width, int Height)? DragSize => _dragging ? (Math.Abs(_endX - _startX) + 1, Math.Abs(_endY - _startY) + 1) : null;
-
-        public override void OnMouseDown(MouseEventArgs e)
+        protected override void Finish()
         {
-            MouseCell(out _startX, out _startY);
-            (_endX, _endY) = (_startX, _startY);
-            _dragging = true;
-        }
-
-        public override void OnMouseMove(MouseEventArgs e)
-        {
-            if (_dragging)
-            {
-                MouseCell(out _endX, out _endY);
-            }
-        }
-
-        public override void OnMouseUp(MouseEventArgs e)
-        {
-            if (!_dragging)
-            {
-                return;
-            }
-
-            _dragging = false;
-            MouseCell(out _endX, out _endY);
-            House.AddFloorArea(Storey, _startX, _startY, _endX, _endY, Context.HouseStyle);
-        }
-
-        public override void Cancel()
-        {
-            _dragging = false;
+            House.AddFloorArea(Storey, StartX, StartY, EndX, EndY, Context.HouseStyle);
         }
 
         protected override void PaintEdit(IToolOverlay overlay)
         {
             int x0, y0, x1, y1;
-            if (_dragging)
+            if (Dragging)
             {
-                (x0, y0, x1, y1) = (Math.Min(_startX, _endX), Math.Min(_startY, _endY), Math.Max(_startX, _endX), Math.Max(_startY, _endY));
+                (x0, y0, x1, y1) = (Math.Min(StartX, EndX), Math.Min(StartY, EndY), Math.Max(StartX, EndX), Math.Max(StartY, EndY));
             }
             else
             {

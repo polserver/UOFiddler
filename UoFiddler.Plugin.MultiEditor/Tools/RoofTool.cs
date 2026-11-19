@@ -78,8 +78,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 if (SelectedWing is { } wing)
                 {
                     Remember();
-                    wing.RidgeAuto = value == RoofRidge.Auto;
-                    wing.RidgeAlongY = value == RoofRidge.Auto ? RoofPlanner.RidgeAlongY(wing.Box) : value == RoofRidge.AlongY;
+                    SetWingRidge(wing, value);
                 }
 
                 _ridge = value;
@@ -130,21 +129,6 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 z = baseZ;
                 Context.PlaneCell(Context.MouseLoc, z, out x, out y);
             }
-        }
-
-        protected override void WingResized(RoofWing wing)
-        {
-            if (wing.RidgeAuto)
-            {
-                wing.RidgeAlongY = RoofPlanner.RidgeAlongY(wing.Box);
-            }
-        }
-
-        /// <summary>Turns a wing's ridge the other way.</summary>
-        protected override void Turn(RoofWing wing)
-        {
-            wing.RidgeAlongY = !wing.RidgeAlongY;
-            wing.RidgeAuto = false;
         }
 
         /// <summary>

@@ -225,8 +225,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 DropMissingFavoriteGroups();
             }
 
-            RebuildBlueprintGroupBar();
-            RebuildBlueprintList();
+            RebuildBlueprintPage();
         }
 
         private void AddBlueprintsOf(string group)
@@ -344,8 +343,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 item.Click += (_, _) =>
                 {
                     _blueprintGroup = group;
-                    RebuildBlueprintGroupBar();
-                    RebuildBlueprintList();
+                    RebuildBlueprintPage();
                 };
                 chooser.DropDownItems.Add(item);
             }
@@ -388,14 +386,13 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 button.Click += (_, _) =>
                 {
                     _blueprintGroup = favorite;
-                    RebuildBlueprintGroupBar();
-                    RebuildBlueprintList();
+                    RebuildBlueprintPage();
                 };
                 button.MouseUp += (_, e) =>
                 {
                     if (e.Button == MouseButtons.Right)
                     {
-                        _blueprintMenu.Items.Clear();
+                        ClearMenu(_blueprintMenu.Items);
                         _blueprintMenu.Items.Add($"Remove \"{favorite}\" from favorites", null, (_, _) => SetFavoriteGroup(favorite, false));
                         _blueprintMenu.Show(_blueprintGroupBar, _blueprintGroupBar.PointToClient(Cursor.Position));
                     }
@@ -412,11 +409,18 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _blueprintGroupBar.Items.Add(refresh);
         }
 
+        /// <summary>Rebuilds the group bar and the list of the blueprints page.</summary>
+        private void RebuildBlueprintPage()
+        {
+            RebuildBlueprintGroupBar();
+            RebuildBlueprintList();
+        }
+
         /// <summary>Shows the blueprints of the chosen group whose name matches the search, or that hold a searched id.</summary>
         private void RebuildBlueprintList()
         {
             TileBrowserQuery query = _query;
-            string selected = (_blueprintList.SelectedItems.Count > 0 ? _blueprintList.SelectedItems[0].Tag as BlueprintEntry : null)?.Path;
+            string selected = SelectedBlueprint?.Path;
             _blueprintList.BeginUpdate();
             try
             {
@@ -478,7 +482,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
-            _blueprintMenu.Items.Clear();
+            ClearMenu(_blueprintMenu.Items);
             _blueprintMenu.Items.Add("Place", null, (_, _) => PlaceSelectedBlueprint());
 
             var move = new ToolStripMenuItem("Move to group");
@@ -547,8 +551,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             });
 
             _blueprintGroup = _blueprintGroups.Contains(group) ? group : _blueprintGroup;
-            RebuildBlueprintGroupBar();
-            RebuildBlueprintList();
+            RebuildBlueprintPage();
         }
 
         /// <summary>

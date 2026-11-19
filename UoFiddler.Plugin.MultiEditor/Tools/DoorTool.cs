@@ -23,9 +23,11 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     /// </summary>
     internal sealed class DoorTool : PlaneDragTool
     {
-        // Hinge variants per wall direction, in the order a click cycles through them.
-        private static readonly string[] _alongX = { "Piece3", "Piece1", "Piece4", "Piece2" };
-        private static readonly string[] _alongY = { "Piece5", "Piece7", "Piece6", "Piece8" };
+        /// <summary>Hinge variants of a door in a wall along X, in the order a click cycles through them.</summary>
+        internal static readonly string[] HingesAlongX = { "Piece3", "Piece1", "Piece4", "Piece2" };
+
+        /// <summary>Hinge variants of a door in a wall along Y, in the order a click cycles through them.</summary>
+        internal static readonly string[] HingesAlongY = { "Piece5", "Piece7", "Piece6", "Piece8" };
 
         public DoorTool(IEditorContext context) : base(context)
         {
@@ -63,7 +65,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
 
             // Default: a wall along X. A wall piece or door already in the cell decides the direction.
-            string[] variants = _alongX;
+            string[] variants = HingesAlongX;
             int next = 0;
             foreach (MultiTile tile in list.GetTilesAt(startX, startY))
             {
@@ -74,7 +76,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
                 if (owner.Kind == HousePartKind.Door)
                 {
-                    variants = WallPlanner.DoorAlongX(slot) ? _alongX : _alongY;
+                    variants = WallPlanner.DoorAlongX(slot) ? HingesAlongX : HingesAlongY;
                     next = owner == Style ? (Array.IndexOf(variants, slot) + 1) % variants.Length : 0;
                     remove.Add(tile);
                 }
@@ -86,7 +88,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                         return (new List<MultiTile>(), add);
                     }
 
-                    variants = slot.StartsWith("East", StringComparison.Ordinal) || slot.EndsWith('E') ? _alongY : _alongX;
+                    variants = slot.StartsWith("East", StringComparison.Ordinal) || slot.EndsWith('E') ? HingesAlongY : HingesAlongX;
                     remove.Add(tile);
                 }
             }
