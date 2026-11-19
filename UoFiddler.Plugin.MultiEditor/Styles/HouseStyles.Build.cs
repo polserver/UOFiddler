@@ -72,7 +72,7 @@ namespace UoFiddler.Plugin.MultiEditor.Styles
                             {
                                 // Stairs list stair multis; they are multi ids, not art.
                                 bool multiColumn = IsMultiColumn(slot.Label);
-                                if (slot.IsEmpty || slot.TileId > ushort.MaxValue || (!multiColumn && !slot.IsValid))
+                                if (slot.IsEmpty || slot.TileId > ushort.MaxValue || (!multiColumn && (!slot.IsValid || !HouseStyle.InTileData(slot.TileId))))
                                 {
                                     continue;
                                 }

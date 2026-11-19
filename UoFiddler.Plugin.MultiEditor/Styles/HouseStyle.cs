@@ -9,6 +9,7 @@
  *
  ***************************************************************************/
 
+using System;
 using System.Collections.Generic;
 
 namespace UoFiddler.Plugin.MultiEditor.Styles
@@ -75,7 +76,15 @@ namespace UoFiddler.Plugin.MultiEditor.Styles
         public ushort IconId { get; private set; }
 
         /// <summary>The piece under a column label, or 0 when the style has none.</summary>
-        public ushort Get(string label) => _slots.TryGetValue(label, out ushort id) ? id : (ushort)0;
+        /// <summary>
+        /// The tile of a piece, or 0 when the style has none. A tile past the client's tiledata (a
+        /// style read from another client) counts as none; the Multi columns hold multi ids.
+        /// </summary>
+        public ushort Get(string label) =>
+            _slots.TryGetValue(label, out ushort id) && (InTileData(id) || label.StartsWith("Multi", StringComparison.Ordinal)) ? id : (ushort)0;
+
+        /// <summary>True when the client's tiledata has the item.</summary>
+        public static bool InTileData(int id) => Ultima.TileData.ItemTable is { } items && id >= 0 && id < items.Length;
 
         internal void Add(string label, ushort id)
         {

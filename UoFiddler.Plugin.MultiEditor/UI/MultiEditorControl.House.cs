@@ -169,6 +169,37 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
+            HouseStylesReloaded();
+            Tell("House styles saved.");
+        }
+
+        /// <summary>
+        /// The client files changed: the house tables are read again from the new client, so no
+        /// style keeps tiles the new client does not have.
+        /// </summary>
+        private void ReloadHouseStylesForClient()
+        {
+            if (_houseStyles == null)
+            {
+                return;
+            }
+
+            try
+            {
+                _houseStyles.Reload();
+            }
+            catch (Exception ex)
+            {
+                Tell("The client's house tables could not be read again: " + ex.Message);
+                return;
+            }
+
+            HouseStylesReloaded();
+        }
+
+        /// <summary>The styles are new objects: the House page shows them, and every open design's draft and chosen style take their successors.</summary>
+        private void HouseStylesReloaded()
+        {
             _browser.SetHouseStyles(_houseStyles);
             _styleErrors = _houseStyles.Errors.Count == 0 ? null : string.Join("\r\n", _houseStyles.Errors.Take(5));
             TellStyleErrors();
@@ -180,7 +211,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             _housePanel.RefreshDraft();
             _canvas.Invalidate();
-            Tell("House styles saved.");
         }
 
         // What went wrong reading the house tables or a style file; told once, when the House page is first used.

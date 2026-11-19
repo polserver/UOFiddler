@@ -40,7 +40,7 @@ namespace UoFiddler.Plugin.MultiEditor.Styles
             var ids = new List<ushort>();
             foreach (TileSlot slot in row.Slots)
             {
-                if (!slot.IsEmpty && slot.IsValid && slot.TileId <= ushort.MaxValue && !ids.Contains((ushort)slot.TileId))
+                if (!slot.IsEmpty && slot.IsValid && HouseStyle.InTileData(slot.TileId) && !ids.Contains((ushort)slot.TileId))
                 {
                     ids.Add((ushort)slot.TileId);
                 }

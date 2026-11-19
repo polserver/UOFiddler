@@ -36,7 +36,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         protected override (List<MultiTile> Remove, List<(ushort Id, int X, int Y, int Z)> Add) Plan(
             int startX, int startY, int endX, int endY, int z, bool final)
         {
-            ushort[] pieces = Style.Slots.Values.Distinct().ToArray();
+            ushort[] pieces = Style.Slots.Values.Where(id => HouseStyle.InTileData(id)).Distinct().ToArray();
             var remove = new List<MultiTile>();
             var add = new List<(ushort, int, int, int)>();
             MultiEditorComponentList list = Context.CompList;

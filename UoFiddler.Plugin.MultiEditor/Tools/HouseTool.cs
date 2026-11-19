@@ -160,7 +160,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             // The floors table has flat roof tiles (stone roof, marble roof): a flat roof starts with those.
             _draft.FlatRoofStyle ??= Context.HouseStyles.Styles.FirstOrDefault(s => s.Kind == HousePartKind.Floor && s.Slots.Values.Any(id =>
-                (Ultima.TileData.ItemTable[id].Name ?? string.Empty).Contains("roof", StringComparison.OrdinalIgnoreCase)));
+                HouseStyle.InTileData(id) && (Ultima.TileData.ItemTable[id].Name ?? string.Empty).Contains("roof", StringComparison.OrdinalIgnoreCase)));
             _draft.DoorStyle ??= First(HousePartKind.Door);
             _draft.StairStyle ??= First(HousePartKind.Stair);
             for (int k = 1; k < HouseDraft.MaxStoreys; ++k)
