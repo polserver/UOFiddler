@@ -405,6 +405,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         {
             if (wings.Count == 0)
             {
+                _roofGaps = new List<(int X, int Y, int Z)>();
                 return (new List<MultiTile>(), new List<(ushort, int, int, int, string)>());
             }
 
@@ -442,6 +443,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
 
             // The roof: each wing's walls one cell further along X and Y, eaves on its top storey.
+            var gaps = new List<(int X, int Y, int Z)>();
             var roofWings = new List<RoofWing>();
             foreach (RoofWing wing in wings)
             {
@@ -486,7 +488,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     List<(ushort Id, int X, int Y, int Z, string Layer)> roofAdd;
                     try
                     {
-                        (roofRemove, roofAdd) = _roof.PlanRoof(level.ToList(), _draft.RoofStyle, built.Walls, Hidden);
+                        (roofRemove, roofAdd) = _roof.PlanRoof(level.ToList(), _draft.RoofStyle, built.Walls, Hidden, gaps);
                     }
                     finally
                     {
@@ -503,7 +505,12 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             _builtFor = key;
             _built = (remove, add);
+            _roofGaps = gaps;
             return _built;
         }
+
+        private List<(int X, int Y, int Z)> _roofGaps = new List<(int X, int Y, int Z)>();
+
+        public override IReadOnlyList<(int X, int Y, int Z)> RoofGaps => _roofGaps;
     }
 }

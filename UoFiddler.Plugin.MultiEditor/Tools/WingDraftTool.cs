@@ -154,6 +154,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// <summary>The tiles a draft of these wings takes away and adds; an added tile names its layer or none.</summary>
         protected abstract (List<MultiTile> Remove, List<(ushort Id, int X, int Y, int Z, string Layer)> Add) Plan(IReadOnlyList<RoofWing> wings);
 
+        /// <summary>Roof cells the last plan left open because the roof style has no piece for them.</summary>
+        public virtual IReadOnlyList<(int X, int Y, int Z)> RoofGaps => Array.Empty<(int X, int Y, int Z)>();
+
         /// <summary>The height a wing's outline and grips are drawn and taken hold of at.</summary>
         protected virtual int GripZ(RoofWing wing) => wing.EaveZ;
 

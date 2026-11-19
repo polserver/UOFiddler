@@ -210,6 +210,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             BuildToolPalette();
             BuildOptionsStrip();
             BuildMainStrip();
+            BuildStatusBar();
 
             // The performance box floats over the canvas's top right corner (F12).
             _performancePanel = new PerformancePanel { Visible = false };

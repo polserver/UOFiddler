@@ -114,21 +114,25 @@ namespace UoFiddler.Plugin.MultiEditor.House
             }
         }
 
+        // -1 lower (or no roof there), 0 level, 1 higher: a neighbour's height against a cell's.
+        private static int Side(IReadOnlyDictionary<(int X, int Y), int> heights, int x, int y, int height)
+        {
+            return heights.TryGetValue((x, y), out int n) ? Math.Sign(n - height) : -1;
+        }
+
         /// <summary>
         /// The roof.txt column of the piece for a cell, from the heights around it; null for a
-        /// cell level with all its neighbours. <paramref name="fallback"/> is the plain piece to
-        /// use when the style has no such joint piece.
+        /// cell level with all its neighbours, which no piece fits. A style without the piece
+        /// named leaves the cell open: no other piece is put there in its place.
         /// </summary>
-        public static string Piece(IReadOnlyDictionary<(int X, int Y), int> heights, int x, int y, out string fallback)
+        public static string Piece(IReadOnlyDictionary<(int X, int Y), int> heights, int x, int y)
         {
-            fallback = null;
             if (!heights.TryGetValue((x, y), out int h))
             {
                 return null;
             }
 
-            // -1 lower (or no roof there), 0 level, 1 higher.
-            int Side(int cx, int cy, int ch) => heights.TryGetValue((cx, cy), out int n) ? Math.Sign(n - ch) : -1;
+            int Side(int cx, int cy, int ch) => RoofPlanner.Side(heights, cx, cy, ch);
             bool RidgeAlongYAt(int cx, int cy) => heights.TryGetValue((cx, cy), out int ch) && Side(cx - 1, cy, ch) < 0 && Side(cx + 1, cy, ch) < 0;
             bool RidgeAlongXAt(int cx, int cy) => heights.TryGetValue((cx, cy), out int ch) && Side(cx, cy - 1, ch) < 0 && Side(cx, cy + 1, ch) < 0;
 
@@ -139,11 +143,9 @@ namespace UoFiddler.Plugin.MultiEditor.House
             {
                 if (w > 0)
                 {
-                    fallback = s > 0 ? "East" : "South";
                     return s > 0 ? "EDent" : "SDent";
                 }
 
-                fallback = n > 0 ? "West" : "North";
                 return n > 0 ? "WDent" : "NDent";
             }
 
@@ -153,13 +155,11 @@ namespace UoFiddler.Plugin.MultiEditor.House
             int arms = (armW ? 1 : 0) + (armE ? 1 : 0) + (armN ? 1 : 0) + (armS ? 1 : 0);
             if (arms == 4)
             {
-                fallback = "NSCrosspiece";
                 return "XPiece";
             }
 
             if (arms == 3)
             {
-                fallback = armN && armS ? "NSCrosspiece" : "EWCrosspiece";
                 return !armW ? "ETPiece" : !armE ? "WTPiece" : !armN ? "STPiece" : "NTPiece";
             }
 
@@ -199,6 +199,64 @@ namespace UoFiddler.Plugin.MultiEditor.House
             }
 
             return Math.Abs(climbX) >= Math.Abs(climbY) ? (climbX > 0 ? "West" : "East") : (climbY > 0 ? "North" : "South");
+        }
+
+        /// <summary>
+        /// The end piece of a ridge, for the sets that have them (the ceramic tiles): a ridge cell
+        /// lower on three sides and level on the fourth. North end MoreNS, south end NSEnd, west
+        /// end MoreEW, east end EWEnd, as the UO Architect ceramic roofs place them. Null for any
+        /// other cell; a set without end pieces ends its ridge with the crosspiece.
+        /// </summary>
+        public static string RidgeEnd(IReadOnlyDictionary<(int X, int Y), int> heights, int x, int y)
+        {
+            if (!heights.TryGetValue((x, y), out int h))
+            {
+                return null;
+            }
+
+            int w = Side(heights, x - 1, y, h), e = Side(heights, x + 1, y, h), n = Side(heights, x, y - 1, h), s = Side(heights, x, y + 1, h);
+            if (w < 0 && e < 0 && n + s == -1 && n * s == 0)
+            {
+                return n < 0 ? "MoreNS" : "NSEnd";
+            }
+
+            if (n < 0 && s < 0 && w + e == -1 && w * e == 0)
+            {
+                return w < 0 ? "MoreEW" : "EWEnd";
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Drops the hip corners that joined wings have covered. A corner stays only where the
+        /// roof still turns there: lower (or no roof) on its two outer sides, level on the two
+        /// inner ones. Any other cell is a joint, whose piece follows from the heights.
+        /// </summary>
+        public static void SettleCorners(IReadOnlyDictionary<(int X, int Y), int> heights, Dictionary<(int X, int Y), string> fixedPieces)
+        {
+            foreach (((int x, int y), string piece) in new List<KeyValuePair<(int X, int Y), string>>(fixedPieces))
+            {
+                (int outerX, int outerY) = piece switch
+                {
+                    _hipNorthWest => (-1, -1),
+                    _hipNorthEast => (1, -1),
+                    _hipSouthEast => (1, 1),
+                    _hipSouthWest => (-1, 1),
+                    _ => (0, 0)
+                };
+                if (outerX == 0 || !heights.TryGetValue((x, y), out int h))
+                {
+                    continue;
+                }
+
+                bool corner = Side(heights, x + outerX, y, h) < 0 && Side(heights, x, y + outerY, h) < 0 &&
+                              Side(heights, x - outerX, y, h) == 0 && Side(heights, x, y - outerY, h) == 0;
+                if (!corner)
+                {
+                    fixedPieces.Remove((x, y));
+                }
+            }
         }
 
         /// <summary>

@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using UoFiddler.Plugin.MultiEditor.Editing;
@@ -22,6 +23,21 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private string _told;
         private long _messageUntil;
 
+        // How many roof cells of the draft are left open, beside the hint; shown only when there are any.
+        private readonly ToolStripStatusLabel _statusGaps = new ToolStripStatusLabel
+        {
+            Visible = false,
+            ForeColor = Color.OrangeRed,
+            ToolTipText = "Roof cells left open because the roof style has no piece for them. They are marked red in the preview."
+        };
+
+        /// <summary>Puts the roof gap count beside the hint and lets long hints show whole on hover.</summary>
+        private void BuildStatusBar()
+        {
+            _statusStrip.ShowItemToolTips = true;
+            _statusStrip.Items.Insert(_statusStrip.Items.IndexOf(_statusHint) + 1, _statusGaps);
+        }
+
         /// <summary>Says something in the status bar. It stays a few seconds, or until the next command, whatever the mouse does.</summary>
         private void Tell(string text)
         {
@@ -33,14 +49,14 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         /// <summary>What the tool in use does to the open house draft.</summary>
         private static string DraftHint(EditorSession session)
         {
-            string storey = $"House draft, storey {session.DraftStorey + 1} (the floor buttons choose it): ";
+            string storey = $"Draft storey {session.DraftStorey + 1}: ";
             return session.Tool switch
             {
-                ToolKind.Wall => storey + "drag to add walls, Ctrl+drag to take walls away, click a wall for a window.",
-                ToolKind.Door => storey + "click a wall to hang the chosen door, again to turn it, Ctrl+click to take it out.",
-                ToolKind.Floor => storey + "drag an area to lay it in the chosen floor style.",
-                ToolKind.Stair => storey + "press on the bottom step and drag the way the stairs climb; Ctrl+click a bottom step removes them.",
-                _ => "A house draft is open. This tool works on the multi; House, Walls, Doors, Floors and Stairs work on the draft."
+                ToolKind.Wall => storey + "drag to add walls, Ctrl+drag removes, click a wall for a window.",
+                ToolKind.Door => storey + "click a wall for a door, again to turn it, Ctrl+click removes.",
+                ToolKind.Floor => storey + "drag an area to lay the chosen floor.",
+                ToolKind.Stair => storey + "drag from the bottom step the way the stairs climb, Ctrl+click removes.",
+                _ => "A house draft is open; this tool works on the multi, the house tools on the draft."
             };
         }
 
@@ -288,7 +304,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             EditorSession session = Session;
             if (session == null)
             {
-                _statusHint.Text = string.Empty;
+                _statusHint.Text = _statusHint.ToolTipText = string.Empty;
+                _statusGaps.Visible = false;
                 _statusCell.Text = _statusPlane.Text = _statusHover.Text = _statusSelection.Text = _statusSize.Text = string.Empty;
                 return;
             }
@@ -299,11 +316,18 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 : session.PreviewingRepeat ? "The copies are shown as they would be placed."
                 : session.Pasting ? "Click to place the tiles, as often as you like. Esc or right click stops."
                 : session.ShapingRoof && session.WingTool.FloatingWing ? "Click to drop the wing. Esc or right click takes it away."
-                : session.ShapingRoof ? "Shaping: drag a wing to move it, a marked edge of the selected wing to resize it, anywhere else to add a wing. " +
-                                        "Ctrl+drag moves all of it, Shift+corner drag makes a wing square, Shift+click turns a ridge, Delete removes a wing, " +
-                                        "Ctrl+C / Ctrl+V copy and paste one, Ctrl+D duplicates it. Enter places it, Esc drops it."
+                : session.ShapingRoof ? "Drag a wing to move it, its marked edge to resize it, empty ground to add one. Enter places, Esc drops. F1 lists all keys."
                 : session.House.HasPending ? DraftHint(session)
                 : ToolHint(session.Tool);
+
+            // A hint cut off by the window's width can still be read whole.
+            _statusHint.ToolTipText = _statusHint.Text;
+
+            // Roof cells the style has no piece for are left open, and marked in the preview.
+            int gaps = session.ShapingRoof && session.WingTool != null ? session.WingTool.RoofGaps.Count
+                : session.House.HasPending ? session.House.RoofGaps.Count : 0;
+            _statusGaps.Visible = gaps > 0;
+            _statusGaps.Text = gaps == 1 ? "1 roof gap" : $"{gaps} roof gaps";
 
             (int x, int y, int z) = session.CursorCell;
             _statusCell.Text = session.ActiveTool.DragSize is { } drag ? $"{drag.Width} x {drag.Height} cells"
