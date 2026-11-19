@@ -230,23 +230,15 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             // matching kind. The page answers by choosing the style, which comes back here.
             if (IsHouseTool(kind) && !fromHousePage && !_openingHousePage && _browserShown)
             {
-                _openingHousePage = true;
-                try
+                HousePartKind part = kind switch
                 {
-                    HousePartKind part = kind switch
-                    {
-                        ToolKind.Floor => HousePartKind.Floor,
-                        ToolKind.Door => HousePartKind.Door,
-                        ToolKind.Stair => HousePartKind.Stair,
-                        ToolKind.Roof => HousePartKind.Roof,
-                        _ => HousePartKind.Wall
-                    };
-                    _browser.ShowHousePage(part, foundation: kind == ToolKind.Foundation);
-                }
-                finally
-                {
-                    _openingHousePage = false;
-                }
+                    ToolKind.Floor => HousePartKind.Floor,
+                    ToolKind.Door => HousePartKind.Door,
+                    ToolKind.Stair => HousePartKind.Stair,
+                    ToolKind.Roof => HousePartKind.Roof,
+                    _ => HousePartKind.Wall
+                };
+                OpenHousePage(part, foundation: kind == ToolKind.Foundation);
             }
 
             _canvas.Focus();
@@ -339,7 +331,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             string problem = Session.TransformGroup(kind);
             if (problem != null)
             {
-                MessageBox.Show(this, problem, "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, problem, _messageTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -443,52 +435,28 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _canvasMenu.Items.Add(_canvasMenuTitle);
             _canvasMenu.Items.Add(_commands.MenuItem(_drawWithSelected));
             var brushMenu = new ToolStripMenuItem("Brush size");
-            foreach (EditorCommand brush in _brushCommands)
-            {
-                brushMenu.DropDownItems.Add(_commands.MenuItem(brush));
-            }
-
+            AddCommands(brushMenu.DropDownItems, _brushCommands.ToArray());
             _canvasMenu.Items.Add(brushMenu);
-            _canvasMenu.Items.Add(new ToolStripSeparator());
-            foreach (EditorCommand command in new[] { _cut, _copy, _paste, _duplicate, _repeat, _delete })
-            {
-                _canvasMenu.Items.Add(_commands.MenuItem(command));
-            }
-
-            _canvasMenu.Items.Add(new ToolStripSeparator());
-            foreach (EditorCommand command in new[] { _zUp, _zDown, _rotateLeft, _rotateRight, _hide, _showHidden, _moveToLayer })
-            {
-                _canvasMenu.Items.Add(_commands.MenuItem(command));
-            }
-
-            _canvasMenu.Items.Add(new ToolStripSeparator());
-            foreach (EditorCommand command in new[] { _selectConnected, _selectSameId, _selectAll, _saveBlueprint, _savePattern })
-            {
-                _canvasMenu.Items.Add(_commands.MenuItem(command));
-            }
-
-            _canvasMenu.Items.Add(new ToolStripSeparator());
-            foreach (EditorCommand command in new[] { _workPlane, _grid, _fit, _center })
-            {
-                _canvasMenu.Items.Add(_commands.MenuItem(command));
-            }
+            AddCommands(_canvasMenu.Items,
+                null, _cut, _copy, _paste, _duplicate, _repeat, _delete,
+                null, _zUp, _zDown, _rotateLeft, _rotateRight, _hide, _showHidden, _moveToLayer,
+                null, _selectConnected, _selectSameId, _selectAll, _saveBlueprint, _savePattern,
+                null, _workPlane, _grid, _fit, _center);
         }
 
-        /// <summary>
-        /// Right click on the canvas: the menu acts on the selection, so a tile under the cursor
-        /// that is not part of it becomes the selection first.
-        /// </summary>
         /// <summary>Picks the preview ground for this document and as the default for the next ones.</summary>
         private void SetPreviewTerrain(PreviewTerrain terrain)
         {
             Session.PreviewTerrain = terrain;
             EditorSettings settings = EditorSettings.Current.Clone();
             settings.PreviewTerrain = (int)terrain;
-            _applyingOwnSettings = true;
-            settings.Apply();
-            _applyingOwnSettings = false;
+            ApplyOwnSettings(settings);
         }
 
+        /// <summary>
+        /// Right click on the canvas: the menu acts on the selection, so a tile under the cursor
+        /// that is not part of it becomes the selection first.
+        /// </summary>
         private void ShowCanvasMenu(Point location)
         {
             EditorSession session = Session;
@@ -554,7 +522,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             FloorPattern pattern = FloorPattern.Learn(Session.Selection, name, out string problem);
             if (pattern == null)
             {
-                MessageBox.Show(this, problem, "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, problem, _messageTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 

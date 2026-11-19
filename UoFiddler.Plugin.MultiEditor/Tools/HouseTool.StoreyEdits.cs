@@ -94,10 +94,6 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             return true;
         }
 
-        // Hinge variants per wall direction, in the order a click cycles through them.
-        private static readonly string[] _doorsAlongX = { "Piece3", "Piece1", "Piece4", "Piece2" };
-        private static readonly string[] _doorsAlongY = { "Piece5", "Piece7", "Piece6", "Piece8" };
-
         /// <summary>
         /// Hangs a door in the wall of a cell, or turns the door there to its next hinge variant;
         /// with <paramref name="remove"/> takes it out. False when the cell has no straight wall.
@@ -137,7 +133,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 return false;
             }
 
-            string[] variants = alongX ? _doorsAlongX : _doorsAlongY;
+            string[] variants = alongX ? DoorTool.HingesAlongX : DoorTool.HingesAlongY;
             int next = has && door.Style == style ? (Array.IndexOf(variants, door.Piece) + 1) % variants.Length : 0;
             for (int i = 0; i < variants.Length; ++i)
             {

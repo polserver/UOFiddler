@@ -92,6 +92,20 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             SetTool(kind, fromHousePage: true);
         }
 
+        /// <summary>Brings the House page up on a kind, without taking that as a style picked there.</summary>
+        private void OpenHousePage(HousePartKind kind, bool foundation)
+        {
+            _openingHousePage = true;
+            try
+            {
+                _browser.ShowHousePage(kind, foundation);
+            }
+            finally
+            {
+                _openingHousePage = false;
+            }
+        }
+
         /// <summary>The house panel asks for a style: the House page comes up on that kind and the next pick there goes to the draft.</summary>
         private void PickHouseMaterial(HousePartKind kind, int storey)
         {
@@ -107,15 +121,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             _housePick = (kind, storey);
             _housePanel.MarkPick(kind, storey);
-            _openingHousePage = true;
-            try
-            {
-                _browser.ShowHousePage(kind, foundation: false);
-            }
-            finally
-            {
-                _openingHousePage = false;
-            }
+            OpenHousePage(kind, foundation: false);
 
             _pickHint = kind == HousePartKind.Roof ? "Pick the roof style of the house on the House page."
                 : kind == HousePartKind.Door ? "Pick the door style of the house on the House page."
@@ -191,7 +197,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _styleErrors = null;
             MessageBox.Show(this, "Some house style data could not be read and was left out:\r\n\r\n" + errors +
                                   "\r\n\r\nYour own style file is " + (HouseStyleConfig.UserPath ?? "not set") + ".",
-                "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                _messageTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         /// <summary>Saves the styles of the house draft as a theme in the user's copy of the style file.</summary>
@@ -275,7 +281,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
             catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
             {
-                MessageBox.Show(this, "The house draft could not be saved:\r\n" + ex.Message, "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "The house draft could not be saved:\r\n" + ex.Message, _messageTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -300,7 +306,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
             catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or System.Xml.XmlException or System.IO.InvalidDataException)
             {
-                MessageBox.Show(this, "The house draft could not be opened:\r\n" + ex.Message, "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "The house draft could not be opened:\r\n" + ex.Message, _messageTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -338,7 +344,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             string problem = Session.ReopenHouse(house);
             if (problem != null)
             {
-                MessageBox.Show(this, problem, "Multi Editor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, problem, _messageTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {

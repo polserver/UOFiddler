@@ -96,8 +96,18 @@ namespace UoFiddler.Plugin.MultiEditor.House
         /// </summary>
         public HouseDraft CopyWithin((int X0, int Y0, int X1, int Y1) box)
         {
-            bool In(int x, int y) => x >= box.X0 && x <= box.X1 && y >= box.Y0 && y <= box.Y1;
             var part = new HouseDraft();
+            CopyHandEditsInto(part, box);
+            return part;
+        }
+
+        // A box that holds every cell.
+        private static readonly (int X0, int Y0, int X1, int Y1) _everywhere = (int.MinValue, int.MinValue, int.MaxValue, int.MaxValue);
+
+        /// <summary>Adds the hand edits whose cell lies in the box to <paramref name="part"/>.</summary>
+        private void CopyHandEditsInto(HouseDraft part, (int X0, int Y0, int X1, int Y1) box)
+        {
+            bool In(int x, int y) => x >= box.X0 && x <= box.X1 && y >= box.Y0 && y <= box.Y1;
             for (int k = 0; k < MaxStoreys; ++k)
             {
                 part.AddedSouth[k].UnionWith(AddedSouth[k].Where(c => In(c.X, c.Y)));
@@ -118,7 +128,6 @@ namespace UoFiddler.Plugin.MultiEditor.House
             part.Suppressed.UnionWith(Suppressed.Where(c => In(c.X, c.Y)));
             part.FloorAreas.AddRange(FloorAreas.Where(a => In(a.X0, a.Y0) && In(a.X1, a.Y1)));
             part.Stairs.AddRange(Stairs.Where(s => In(s.X, s.Y)));
-            return part;
         }
 
         /// <summary>Adds what <see cref="CopyWithin"/> took, moved by this many cells: the hand edits of a pasted wing.</summary>
@@ -165,60 +174,6 @@ namespace UoFiddler.Plugin.MultiEditor.House
         }
 
         /// <summary>Moves everything changed by hand along with the house.</summary>
-        public void Shift(int dx, int dy)
-        {
-            static void Move(HashSet<(int X, int Y)> set, int dx, int dy)
-            {
-                var moved = new List<(int X, int Y)>(set.Count);
-                foreach ((int x, int y) in set)
-                {
-                    moved.Add((x + dx, y + dy));
-                }
-
-                set.Clear();
-                set.UnionWith(moved);
-            }
-
-            for (int k = 0; k < MaxStoreys; ++k)
-            {
-                Move(AddedSouth[k], dx, dy);
-                Move(AddedEast[k], dx, dy);
-                Move(ErasedSouth[k], dx, dy);
-                Move(ErasedEast[k], dx, dy);
-            }
-
-            var doors = new List<KeyValuePair<(int Storey, int X, int Y), (HouseStyle Style, string Piece)>>(Doors);
-            Doors.Clear();
-            foreach (var door in doors)
-            {
-                Doors[(door.Key.Storey, door.Key.X + dx, door.Key.Y + dy)] = door.Value;
-            }
-
-            var windows = new List<(int Storey, int X, int Y)>(Windows);
-            Windows.Clear();
-            foreach ((int storey, int x, int y) in windows)
-            {
-                Windows.Add((storey, x + dx, y + dy));
-            }
-
-            var suppressed = new List<(int Storey, int X, int Y)>(Suppressed);
-            Suppressed.Clear();
-            foreach ((int storey, int x, int y) in suppressed)
-            {
-                Suppressed.Add((storey, x + dx, y + dy));
-            }
-
-            for (int i = 0; i < FloorAreas.Count; ++i)
-            {
-                var a = FloorAreas[i];
-                FloorAreas[i] = (a.Storey, a.X0 + dx, a.Y0 + dy, a.X1 + dx, a.Y1 + dy, a.Style);
-            }
-
-            for (int i = 0; i < Stairs.Count; ++i)
-            {
-                var s = Stairs[i];
-                Stairs[i] = (s.Storey, s.X + dx, s.Y + dy, s.Column, s.Style);
-            }
-        }
+        public void Shift(int dx, int dy) => ShiftWithin(_everywhere, dx, dy);
     }
 }

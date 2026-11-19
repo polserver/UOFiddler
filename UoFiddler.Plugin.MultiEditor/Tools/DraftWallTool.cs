@@ -9,9 +9,7 @@
  *
  ***************************************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using UoFiddler.Plugin.MultiEditor.House;
 
 namespace UoFiddler.Plugin.MultiEditor.Tools
@@ -22,63 +20,26 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     /// outer ones, which leaves an opening. A click on a straight wall turns it into a window
     /// and back.
     /// </summary>
-    internal sealed class DraftWallTool : DraftEditTool
+    internal sealed class DraftWallTool : DraftDragTool
     {
-        private bool _dragging;
-        private int _startX;
-        private int _startY;
-        private int _endX;
-        private int _endY;
-
         public DraftWallTool(IEditorContext context, HouseTool house) : base(context, house)
         {
         }
 
-        public override bool IsDragging => _dragging;
-
-        public override (int Width, int Height)? DragSize => _dragging ? (Math.Abs(_endX - _startX) + 1, Math.Abs(_endY - _startY) + 1) : null;
-
-        public override void OnMouseDown(MouseEventArgs e)
+        protected override void Finish()
         {
-            MouseCell(out _startX, out _startY);
-            (_endX, _endY) = (_startX, _startY);
-            _dragging = true;
-        }
-
-        public override void OnMouseMove(MouseEventArgs e)
-        {
-            if (_dragging)
-            {
-                MouseCell(out _endX, out _endY);
-            }
-        }
-
-        public override void OnMouseUp(MouseEventArgs e)
-        {
-            if (!_dragging)
+            if (StartX == EndX && StartY == EndY && !CtrlHeld && House.ToggleWindow(Storey, StartX, StartY))
             {
                 return;
             }
 
-            _dragging = false;
-            MouseCell(out _endX, out _endY);
-            if (_startX == _endX && _startY == _endY && !CtrlHeld && House.ToggleWindow(Storey, _startX, _startY))
-            {
-                return;
-            }
-
-            var (south, east) = WallPlanner.DragEdges(_startX, _startY, _endX, _endY, ShiftHeld);
+            var (south, east) = WallPlanner.DragEdges(StartX, StartY, EndX, EndY, ShiftHeld);
             House.EditEdges(Storey, south, east, CtrlHeld);
-        }
-
-        public override void Cancel()
-        {
-            _dragging = false;
         }
 
         protected override void PaintEdit(IToolOverlay overlay)
         {
-            if (!_dragging)
+            if (!Dragging)
             {
                 MouseCell(out int x, out int y);
                 overlay.CellMark(x, y, StoreyZ, OverlayTone.Hover);
@@ -86,7 +47,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
 
             OverlayTone tone = CtrlHeld ? OverlayTone.Remove : OverlayTone.Hover;
-            var (south, east) = WallPlanner.DragEdges(_startX, _startY, _endX, _endY, ShiftHeld);
+            var (south, east) = WallPlanner.DragEdges(StartX, StartY, EndX, EndY, ShiftHeld);
             var cells = new HashSet<(int X, int Y)>(south);
             cells.UnionWith(east);
             foreach ((int x, int y) in cells)

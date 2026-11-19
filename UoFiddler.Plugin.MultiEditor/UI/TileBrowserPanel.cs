@@ -232,7 +232,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _houseStyle = null;
 
             // The panel is constructed before the shell loads the settings, so the saved height is applied here.
-            _housePieces.Height = Math.Clamp(EditorSettings.Current.HousePiecesHeight, 80, 800);
+            _housePieces.Height = SavedPiecesHeight;
             if (_houseLoaded)
             {
                 RebuildHouseTree();

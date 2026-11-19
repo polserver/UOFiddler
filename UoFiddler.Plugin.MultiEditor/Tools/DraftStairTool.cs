@@ -9,7 +9,6 @@
  *
  ***************************************************************************/
 
-using System.Windows.Forms;
 using UoFiddler.Plugin.MultiEditor.Styles;
 
 namespace UoFiddler.Plugin.MultiEditor.Tools
@@ -19,65 +18,32 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     /// should climb (a click climbs north). They open the floor of the storey above.
     /// Ctrl+click on a bottom step takes the stairs out.
     /// </summary>
-    internal sealed class DraftStairTool : DraftEditTool
+    internal sealed class DraftStairTool : DraftDragTool
     {
-        private bool _dragging;
-        private int _startX;
-        private int _startY;
-        private int _endX;
-        private int _endY;
-
         public DraftStairTool(IEditorContext context, HouseTool house) : base(context, house)
         {
         }
 
-        public override bool IsDragging => _dragging;
+        public override (int Width, int Height)? DragSize => null;
 
-        public override void OnMouseDown(MouseEventArgs e)
+        protected override void Finish()
         {
-            MouseCell(out _startX, out _startY);
-            (_endX, _endY) = (_startX, _startY);
-            _dragging = true;
-        }
-
-        public override void OnMouseMove(MouseEventArgs e)
-        {
-            if (_dragging)
-            {
-                MouseCell(out _endX, out _endY);
-            }
-        }
-
-        public override void OnMouseUp(MouseEventArgs e)
-        {
-            if (!_dragging)
-            {
-                return;
-            }
-
-            _dragging = false;
-            MouseCell(out _endX, out _endY);
             if (CtrlHeld)
             {
-                House.RemoveStairs(Storey, _startX, _startY);
+                House.RemoveStairs(Storey, StartX, StartY);
             }
             else
             {
-                House.AddStairs(Storey, _startX, _startY, StairTool.Column(_endX - _startX, _endY - _startY), Context.HouseStyle);
+                House.AddStairs(Storey, StartX, StartY, StairTool.Column(EndX - StartX, EndY - StartY), Context.HouseStyle);
             }
-        }
-
-        public override void Cancel()
-        {
-            _dragging = false;
         }
 
         protected override void PaintEdit(IToolOverlay overlay)
         {
             int x, y;
-            if (_dragging)
+            if (Dragging)
             {
-                (x, y) = (_startX, _startY);
+                (x, y) = (StartX, StartY);
             }
             else
             {
@@ -87,7 +53,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             overlay.CellMark(x, y, StoreyZ, CtrlHeld ? OverlayTone.Remove : OverlayTone.Hover);
             if (!CtrlHeld && Context.HouseStyle is { Kind: HousePartKind.Stair } style)
             {
-                string column = _dragging ? StairTool.Column(_endX - _startX, _endY - _startY) : "MultiNorth";
+                string column = Dragging ? StairTool.Column(EndX - StartX, EndY - StartY) : "MultiNorth";
                 foreach ((ushort id, int tx, int ty, int tz) in StairTool.Tiles(style, column, x, y, StoreyZ))
                 {
                     overlay.Ghost(id, tx, ty, tz);

@@ -48,6 +48,9 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private int _houseStyleCount;
         private bool _houseLoaded;
 
+        /// <summary>The height of the pieces grid from the settings, within what the page allows.</summary>
+        private static int SavedPiecesHeight => Math.Clamp(EditorSettings.Current.HousePiecesHeight, 80, 800);
+
         private static bool IsFoundationStyle(HouseStyle style) =>
             style.Kind == HousePartKind.Wall && style.Get("Post") == FoundationTool.FoundationPost;
 
@@ -89,7 +92,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _housePieces = new TileBrowserGrid(_thumbnails)
             {
                 Dock = DockStyle.Bottom,
-                Height = Math.Clamp(EditorSettings.Current.HousePiecesHeight, 80, 800),
+                Height = SavedPiecesHeight,
                 EmptyText = "Pick a style to see its pieces."
             };
             _housePieces.CellSize = 64;
@@ -187,8 +190,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private bool HouseStyleMatches(HouseStyle style)
         {
             TileBrowserQuery query = _query;
-            return query == null ||
-                   (query.IsIdQuery ? style.Slots.Values.Any(id => query.MatchesId(id)) : query.MatchesText(style.Group + " " + style.Name + " " + style.Family));
+            return query == null || query.Matches(style.Slots.Values, style.Group + " " + style.Name + " " + style.Family);
         }
 
         // The family the House page is narrowed to, or null for all, and its button.
@@ -472,7 +474,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             var shipped = new List<HouseGalleryItem>();
             foreach (FloorPattern pattern in FloorPatterns.All())
             {
-                if (query != null && !(query.IsIdQuery ? pattern.Pieces().Any(id => query.MatchesId(id)) : query.MatchesText(pattern.Name)))
+                if (query != null && !query.Matches(pattern.Pieces(), pattern.Name))
                 {
                     continue;
                 }

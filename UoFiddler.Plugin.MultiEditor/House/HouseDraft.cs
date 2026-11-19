@@ -123,23 +123,7 @@ namespace UoFiddler.Plugin.MultiEditor.House
         {
             HouseDraft copy = Fresh();
             copy.BaseZ = BaseZ;
-            for (int k = 0; k < MaxStoreys; ++k)
-            {
-                copy.AddedSouth[k].UnionWith(AddedSouth[k]);
-                copy.AddedEast[k].UnionWith(AddedEast[k]);
-                copy.ErasedSouth[k].UnionWith(ErasedSouth[k]);
-                copy.ErasedEast[k].UnionWith(ErasedEast[k]);
-            }
-
-            foreach (var door in Doors)
-            {
-                copy.Doors[door.Key] = door.Value;
-            }
-
-            copy.Windows.UnionWith(Windows);
-            copy.Suppressed.UnionWith(Suppressed);
-            copy.FloorAreas.AddRange(FloorAreas);
-            copy.Stairs.AddRange(Stairs);
+            CopyHandEditsInto(copy, _everywhere);
             return copy;
         }
 

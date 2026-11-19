@@ -102,7 +102,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private bool ConfirmOpenMany(int count)
         {
             const int withoutAsking = 12;
-            return count <= withoutAsking || MessageBox.Show(this, $"Open {count} multis, each in its own tab?", "Multi Editor",
+            return count <= withoutAsking || MessageBox.Show(this, $"Open {count} multis, each in its own tab?", _messageTitle,
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK;
         }
 
@@ -191,7 +191,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             }
             catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or ArgumentException or System.Xml.XmlException)
             {
-                MessageBox.Show(this, $"The multi was saved, but its layers could not be written:\r\n{ex.Message}", "Multi Editor",
+                MessageBox.Show(this, $"The multi was saved, but its layers could not be written:\r\n{ex.Message}", _messageTitle,
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
@@ -219,10 +219,6 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         }
 
         /// <summary>
-        /// Before a save: asks whether tiles on hidden layers go into it. True without asking when
-        /// no hidden layer has tiles; null when the save is cancelled.
-        /// </summary>
-        /// <summary>
         /// Before a save: a roof or house still being shaped is not in the multi. Asks whether to
         /// place it first. False when the save was cancelled.
         /// </summary>
@@ -238,7 +234,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             DialogResult answer = MessageBox.Show(this,
                 $"The {what} being shaped is not placed yet, so it is not part of the multi.\r\n\r\nPlace it before saving?\r\n\r\n" +
                 "Yes places it. No saves without it and keeps it open.",
-                "Multi Editor", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                _messageTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
             if (answer == DialogResult.Cancel)
             {
                 return false;
@@ -253,6 +249,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             return true;
         }
 
+        /// <summary>
+        /// Before a save: asks whether tiles on hidden layers go into it. True without asking when
+        /// no hidden layer has tiles; null when the save is cancelled.
+        /// </summary>
         private bool? AskIncludeHiddenLayers(string whenLeftOut)
         {
             MultiEditorComponentList list = Session.CompList;
@@ -385,7 +385,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private void CloseAllDocuments()
         {
             if (UnsavedWarning() is { } warning && MessageBox.Show(this, warning + "\r\nClose all designs anyway?",
-                    "Multi Editor", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+                    _messageTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
             {
                 return;
             }
@@ -431,7 +431,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 return;
             }
 
-            if (MessageBox.Show(this, "Multi Editor: " + warning + "\r\nClose anyway?", "Multi Editor", MessageBoxButtons.OKCancel,
+            if (MessageBox.Show(this, "Multi Editor: " + warning + "\r\nClose anyway?", _messageTitle, MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Warning) != DialogResult.OK)
             {
                 e.Cancel = true;
@@ -451,7 +451,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 DialogResult answer = MessageBox.Show(this,
                     $"\"{document.Session.Title}\" has a {(draft is HouseTool ? "house" : "roof")} draft that is not placed.\r\n" +
                     "Yes places it in the design, No drops it.",
-                    "Multi Editor", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    _messageTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (answer == DialogResult.Cancel)
                 {
                     return;
@@ -469,7 +469,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
 
             if (ask && document.Session.Modified && MessageBox.Show(this,
                     $"\"{document.Session.Title}\" has changes that were not saved to a design file or the client, or exported.\r\nClose it anyway?",
-                    "Multi Editor", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+                    _messageTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
             {
                 return;
             }
