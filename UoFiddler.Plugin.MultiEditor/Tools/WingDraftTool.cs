@@ -109,6 +109,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     /// The first stroke starts a draft, shown as it will be built. Then: click a wing to select
     /// it, drag it to move it, drag an outermost row or column of the selected wing to resize
     /// it, drag anywhere else to add a wing, Shift+click to turn one, Delete to remove one.
+    /// A copied or duplicated wing follows the mouse until a click drops it.
     /// Nothing is written to the multi until <see cref="Commit"/>; <see cref="Discard"/> drops
     /// the draft. Every change to the draft is a step of its own undo history, which
     /// <see cref="UndoDraft"/> and <see cref="RedoDraft"/> walk; dropping the draft is such a
@@ -123,7 +124,10 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             None,
             New,
             Move,
-            Resize
+            Resize,
+
+            /// <summary>A pasted wing following the mouse until a click drops it.</summary>
+            Float
         }
 
         private sealed class State
@@ -159,6 +163,14 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         private bool _east;
         private bool _north;
         private bool _south;
+
+        // The copied wing and what the tool keeps of it besides (a house's hand edits inside it).
+        private RoofWing _clipWing;
+        private object _clipExtra;
+
+        // A pasted wing on the mouse: the wing it was copied from, as it stood, and what came with it.
+        private RoofWing _floatSource;
+        private object _floatExtra;
 
         // The last placement, so undoing it in the multi can bring the draft back.
         private State _placed;
@@ -212,7 +224,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         public override (int Width, int Height)? DragSize => _drag switch
         {
             DragKind.New => (Math.Abs(_endX - _startX) + 1, Math.Abs(_endY - _startY) + 1),
-            DragKind.Resize or DragKind.Move when SelectedWing is { } wing => (wing.X1 - wing.X0 + 1, wing.Y1 - wing.Y0 + 1),
+            DragKind.Resize or DragKind.Move or DragKind.Float when SelectedWing is { } wing => (wing.X1 - wing.X0 + 1, wing.Y1 - wing.Y0 + 1),
             _ => null
         };
 
@@ -270,6 +282,20 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         protected virtual void DraftMoved(int dx, int dy)
         {
         }
+
+        /// <summary>What a copy of this wing takes along besides the wing itself.</summary>
+        protected virtual object CopyWingExtra(RoofWing wing) => null;
+
+        /// <summary>
+        /// A pasted wing stands this far from the wing it was copied from: what came with it is
+        /// laid there, onto <paramref name="extraAtStart"/>, what the draft kept before the paste.
+        /// </summary>
+        protected virtual void WingPasted(object extraAtStart, object copied, int dx, int dy)
+        {
+        }
+
+        /// <summary>The Z a pasted wing stands at.</summary>
+        protected virtual int PastedWingZ(RoofWing copy) => copy.EaveZ;
 
         protected virtual void RestoreExtra(object extra)
         {
@@ -342,12 +368,40 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
 
             _redo.Clear();
             ReopenedFrom = null;
+            StepPushed();
+        }
+
+        /// <summary>Called when a step was added to the draft's history.</summary>
+        protected virtual void StepPushed()
+        {
+        }
+
+        /// <summary>Runs <paramref name="remap"/> on what copied wings took along besides themselves.</summary>
+        protected void RemapCopies(Action<object> remap)
+        {
+            if (_clipExtra != null)
+            {
+                remap(_clipExtra);
+            }
+
+            if (_floatExtra != null)
+            {
+                remap(_floatExtra);
+            }
         }
 
         protected void RaiseChanged() => Changed?.Invoke();
 
         public bool UndoDraft()
         {
+            if (_drag == DragKind.Float)
+            {
+                // A pasted wing not dropped yet: undo takes back only the paste.
+                CancelDrag();
+                RaiseChanged();
+                return true;
+            }
+
             if (_undo.Count == 0)
             {
                 return false;
@@ -382,6 +436,14 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         {
             if (!Ready)
             {
+                return;
+            }
+
+            if (_drag == DragKind.Float)
+            {
+                // A click drops the pasted wing, as one step of the draft's history. A right click never gets here: the view cancels the tool.
+                DropFloat();
+                RaiseChanged();
                 return;
             }
 
@@ -462,6 +524,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                     break;
                 case DragKind.Move:
                 case DragKind.Resize:
+                case DragKind.Float:
                     DragWing();
                     break;
             }
@@ -470,6 +533,12 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         public override void OnMouseUp(MouseEventArgs e)
         {
             DragKind drag = _drag;
+            if (drag == DragKind.Float)
+            {
+                // A pasted wing stays on the mouse until a click on the view.
+                return;
+            }
+
             if (drag is DragKind.Move or DragKind.Resize)
             {
                 DragWing();
@@ -510,11 +579,25 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// <summary>Stops a drag: a wing being moved or resized goes back to where it was.</summary>
         public override void Cancel()
         {
+            bool floating = _drag == DragKind.Float;
             CancelDrag();
+            if (floating)
+            {
+                // The pasted wing is gone and the selection is back to what it was.
+                RaiseChanged();
+            }
         }
 
         private void CancelDrag()
         {
+            if (_drag == DragKind.Float && _dragStart != null)
+            {
+                // A pasted wing not dropped yet: the draft is as it was before the paste.
+                Restore(_dragStart);
+                EndFloat();
+                return;
+            }
+
             if (_drag == DragKind.Move && _beforeAll != null && _beforeAll.Count == _wings.Count)
             {
                 // The whole draft was being moved: all of it goes back.
@@ -591,12 +674,99 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             RaiseChanged();
         }
 
+        /// <summary>True while a pasted wing follows the mouse.</summary>
+        public bool FloatingWing => _drag == DragKind.Float;
+
+        /// <summary>True when a copied wing can be pasted into the draft.</summary>
+        public bool CanPasteWing => _clipWing != null && HasPending && Ready;
+
+        /// <summary>Copies the selected wing, with what the tool keeps of it besides, for <see cref="PasteWing"/>.</summary>
+        public bool CopyWing()
+        {
+            if (SelectedWing is not { } wing || IsDragging)
+            {
+                return false;
+            }
+
+            _clipWing = wing.Clone();
+            _clipExtra = CopyWingExtra(wing);
+            return true;
+        }
+
+        /// <summary>Puts a copy of the copied wing on the mouse; a click drops it, Esc takes it away.</summary>
+        public void PasteWing()
+        {
+            if (CanPasteWing)
+            {
+                StartFloat(_clipWing, _clipExtra);
+            }
+        }
+
+        /// <summary>Puts a copy of the selected wing on the mouse, leaving the copied wing alone.</summary>
+        public void DuplicateWing()
+        {
+            if (SelectedWing is { } wing && !IsDragging && Ready)
+            {
+                StartFloat(wing.Clone(), CopyWingExtra(wing));
+            }
+        }
+
+        private void StartFloat(RoofWing source, object extra)
+        {
+            CancelDrag();
+            _dragStart = Capture();
+
+            RoofWing wing = source.Clone();
+            wing.EaveZ = PastedWingZ(source);
+            Context.PlaneCell(Context.MouseLoc, GripZ(wing), out int cx, out int cy);
+
+            // The mouse holds the wing by its middle.
+            int width = wing.X1 - wing.X0, height = wing.Y1 - wing.Y0;
+            wing.X0 = Math.Max(0, cx - (width / 2));
+            wing.Y0 = Math.Max(0, cy - (height / 2));
+            (wing.X1, wing.Y1) = (wing.X0 + width, wing.Y0 + height);
+
+            _wings.Add(wing);
+            _selected = _wings.Count - 1;
+            _before = wing.Clone();
+            (_grabX, _grabY) = (cx, cy);
+            _floatSource = source.Clone();
+            _floatExtra = extra;
+            _beforeAll = null;
+            _drag = DragKind.Float;
+            DragWing();
+            RaiseChanged();
+        }
+
+        /// <summary>Drops the pasted wing where it is, as one step of the draft's history.</summary>
+        private void DropFloat()
+        {
+            DragWing();
+            Push(_dragStart);
+            EndFloat();
+        }
+
+        private void EndFloat()
+        {
+            _drag = DragKind.None;
+            _before = null;
+            _dragStart = null;
+            _floatSource = null;
+            _floatExtra = null;
+        }
+
         /// <summary>
         /// Places the draft in one undo step of the multi. Undoing that step brings the draft
         /// back (<see cref="Reopen"/>).
         /// </summary>
         public void Commit()
         {
+            if (_drag == DragKind.Float)
+            {
+                // A pasted wing still on the mouse is placed with the rest, where it is shown.
+                DropFloat();
+            }
+
             CancelDrag();
             if (!HasPending)
             {
@@ -735,13 +905,21 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
                 return;
             }
 
-            if (_drag == DragKind.Move)
+            if (_drag is DragKind.Move or DragKind.Float)
             {
                 dx = Math.Max(dx, -_before.X0);
                 dy = Math.Max(dy, -_before.Y0);
                 (wing.X0, wing.X1, wing.Y0, wing.Y1) = (_before.X0 + dx, _before.X1 + dx, _before.Y0 + dy, _before.Y1 + dy);
                 Snap(wing, moved: true);
-                WingMoved(_before, wing.X0 - _before.X0, wing.Y0 - _before.Y0, _dragStart?.Extra);
+                if (_drag == DragKind.Float)
+                {
+                    WingPasted(_dragStart?.Extra, _floatExtra, wing.X0 - _floatSource.X0, wing.Y0 - _floatSource.Y0);
+                }
+                else
+                {
+                    WingMoved(_before, wing.X0 - _before.X0, wing.Y0 - _before.Y0, _dragStart?.Extra);
+                }
+
                 return;
             }
 

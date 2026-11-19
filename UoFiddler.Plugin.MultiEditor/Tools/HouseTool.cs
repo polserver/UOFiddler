@@ -275,6 +275,26 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
         }
 
+        protected override object CopyWingExtra(RoofWing wing) => _draft.CopyWithin(wing.Box);
+
+        protected override void WingPasted(object extraAtStart, object copied, int dx, int dy)
+        {
+            // Walls, doors, windows, floor areas and stairs set by hand in the copied wing come with it.
+            if (extraAtStart is HouseDraft start)
+            {
+                _draft = start.Clone();
+                if (copied is HouseDraft part)
+                {
+                    _draft.AddShifted(part, dx, dy);
+                }
+
+                ++_version;
+            }
+        }
+
+        /// <summary>Every wing of a house stands on its ground floor.</summary>
+        protected override int PastedWingZ(RoofWing copy) => BaseZ;
+
         protected override void DraftMoved(int dx, int dy)
         {
             // Walls, doors, windows, floor areas and stairs set by hand go with the house.
@@ -288,6 +308,9 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             _lastRun = null;
             ++_version;
         }
+
+        // A step made outside Edit (a move, a paste) ends a run: the next change is a step of its own.
+        protected override void StepPushed() => _lastRun = null;
 
         // ---------------------------------------------------------------- changes to the draft
 
@@ -321,6 +344,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
 
             _draft.Remap(Context.HouseStyles.Successor);
+            RemapCopies(copied => (copied as HouseDraft)?.Remap(Context.HouseStyles.Successor));
             ++_version;
             RaiseChanged();
         }

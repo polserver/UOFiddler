@@ -531,9 +531,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
             _redo = Command("Edit", "Redo", () => Session.Redo(), Keys.Control | Keys.Y,
                 () => Session != null && Session.CanRedo, glyph: Glyphs.Redo, alt: Keys.Control | Keys.Shift | Keys.Z);
             _cut = Command("Edit", "Cut", () => Session.Cut(), Keys.Control | Keys.X, hasSelection, glyph: Glyphs.Cut);
-            _copy = Command("Edit", "Copy", () => Session.Copy(), Keys.Control | Keys.C, hasSelection, glyph: Glyphs.Copy);
-            _paste = Command("Edit", "Paste", () => Session.Paste(), Keys.Control | Keys.V, hasDoc, glyph: Glyphs.Paste);
-            _duplicate = Command("Edit", "Duplicate selection", () => Session.Duplicate(), Keys.Control | Keys.D, hasSelection);
+            // While a draft is being shaped, copy, paste and duplicate work on its selected wing.
+            Func<bool> hasWing = () => Session != null && Session.ShapingRoof && Session.WingTool.HasSelectedWing;
+            _copy = Command("Edit", "Copy", CopySelectionOrWing, Keys.Control | Keys.C, () => hasWing() || hasSelection(), glyph: Glyphs.Copy);
+            _paste = Command("Edit", "Paste", PasteTilesOrWing, Keys.Control | Keys.V, hasDoc, glyph: Glyphs.Paste);
+            _duplicate = Command("Edit", "Duplicate selection", DuplicateSelectionOrWing, Keys.Control | Keys.D, () => hasWing() || hasSelection());
             _repeat = Command("Edit", "Repeat selection...", RepeatSelectionPrompt, Keys.Control | Keys.Shift | Keys.D, hasSelection);
             _delete = Command("Edit", "Delete selection", DeleteSelectionOrWing, Keys.Delete,
                 () => Session != null && (Session.ShapingRoof ? Session.WingTool.HasSelectedWing : Session.Selection.Count > 0), glyph: Glyphs.Delete);
@@ -1035,6 +1037,43 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             Session.Placement = (PlacementMode)(((int)Session.Placement + 1) % 3);
             SyncOptions();
+        }
+
+        private void CopySelectionOrWing()
+        {
+            if (Session.ShapingRoof && Session.WingTool.HasSelectedWing)
+            {
+                Session.WingTool.CopyWing();
+                _commands.RefreshStates();
+            }
+            else
+            {
+                Session.Copy();
+            }
+        }
+
+        private void PasteTilesOrWing()
+        {
+            if (Session.ShapingRoof && Session.WingTool.CanPasteWing)
+            {
+                Session.WingTool.PasteWing();
+            }
+            else
+            {
+                Session.Paste();
+            }
+        }
+
+        private void DuplicateSelectionOrWing()
+        {
+            if (Session.ShapingRoof && Session.WingTool.HasSelectedWing)
+            {
+                Session.WingTool.DuplicateWing();
+            }
+            else
+            {
+                Session.Duplicate();
+            }
         }
 
         private void DeleteSelectionOrWing()
@@ -2815,8 +2854,10 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 : session.PreviewMode ? "Preview: editing is off. Right click picks the ground. F5 returns to the editor."
                 : session.PreviewingRepeat ? "The copies are shown as they would be placed."
                 : session.Pasting ? "Click to place the tiles, as often as you like. Esc or right click stops."
+                : session.ShapingRoof && session.WingTool.FloatingWing ? "Click to drop the wing. Esc or right click takes it away."
                 : session.ShapingRoof ? "Shaping: drag a wing to move it, a marked edge of the selected wing to resize it, anywhere else to add a wing. " +
-                                        "Ctrl+drag moves all of it, Shift+corner drag makes a wing square, Shift+click turns a ridge, Delete removes a wing. Enter places it, Esc drops it."
+                                        "Ctrl+drag moves all of it, Shift+corner drag makes a wing square, Shift+click turns a ridge, Delete removes a wing, " +
+                                        "Ctrl+C / Ctrl+V copy and paste one, Ctrl+D duplicates it. Enter places it, Esc drops it."
                 : session.House.HasPending ? DraftHint(session)
                 : ToolHint(session.Tool);
 

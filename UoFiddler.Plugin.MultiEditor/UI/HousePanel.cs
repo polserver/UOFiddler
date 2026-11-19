@@ -174,6 +174,8 @@ namespace UoFiddler.Plugin.MultiEditor.UI
                 _ridge.SelectedIndex = (int)house.Ridge;
                 _ridge.Enabled = !house.NoRoof && house.Shape == RoofShape.Gable;
                 _removeWing.Enabled = house.HasSelectedWing;
+                // The copy follows the mouse of the House tool: under the draft's other tools nothing would drop it.
+                _duplicateWing.Enabled = house.HasSelectedWing && !house.FloatingWing && ReferenceEquals(_session.WingTool, house);
                 _wingHint.Text = house.HasSelectedWing ? "Selected wing:" : "New wings:";
 
                 int top = house.TopStorey;
@@ -546,6 +548,11 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         private void RemoveWing_Click(object sender, EventArgs e)
         {
             Run(house => house.DeleteWing());
+        }
+
+        private void DuplicateWing_Click(object sender, EventArgs e)
+        {
+            Run(house => house.DuplicateWing());
         }
 
         private const string _noFoundation = "None";
