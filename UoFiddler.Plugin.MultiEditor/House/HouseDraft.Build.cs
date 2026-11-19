@@ -316,7 +316,7 @@ namespace UoFiddler.Plugin.MultiEditor.House
         {
             if (!_pieces.TryGetValue(style, out ushort[] pieces))
             {
-                _pieces[style] = pieces = style.Slots.Values.Distinct().ToArray();
+                _pieces[style] = pieces = style.Slots.Values.Where(id => HouseStyle.InTileData(id)).Distinct().ToArray();
             }
 
             return pieces;

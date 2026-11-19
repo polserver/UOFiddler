@@ -346,6 +346,7 @@ namespace UoFiddler.Plugin.MultiEditor.UI
         {
             NewMultiDialog.Reset();
             ResetArt();
+            ReloadHouseStylesForClient();
         }
 
         private void OnItemChanged(object sender, int id)
