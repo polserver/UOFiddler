@@ -1,0 +1,88 @@
+/***************************************************************************
+ *
+ * $Author: Turley
+ *
+ * "THE BEER-WARE LICENSE"
+ * As long as you retain this notice you can do whatever you want with
+ * this stuff. If we meet some day, and you think this stuff is worth it,
+ * you can buy me a beer in return.
+ *
+ ***************************************************************************/
+
+using System.Collections.Generic;
+
+namespace UoFiddler.Plugin.MultiEditor.Model
+{
+    /// <summary>
+    /// One undo step: the tiles an edit added, removed and changed, and the multi size before and
+    /// after. Tiles are kept as the same objects, so references to them survive undo and redo.
+    /// </summary>
+    internal sealed class EditCommand
+    {
+        public EditCommand(string action, int width, int height)
+        {
+            Action = action;
+            OldWidth = NewWidth = width;
+            OldHeight = NewHeight = height;
+        }
+
+        public string Action { get; }
+
+        public HashSet<MultiTile> Added { get; } = new();
+
+        public HashSet<MultiTile> Removed { get; } = new();
+
+        /// <summary>
+        /// State of each changed tile before the edit. Tiles added by the same edit are not listed.
+        /// </summary>
+        public Dictionary<MultiTile, TileState> Before { get; } = new();
+
+        /// <summary>
+        /// State of each changed tile after the edit, filled in when the edit ends.
+        /// </summary>
+        public Dictionary<MultiTile, TileState> After { get; } = new();
+
+        public int OldWidth { get; }
+
+        public int OldHeight { get; }
+
+        public int NewWidth { get; set; }
+
+        public int NewHeight { get; set; }
+
+        /// <summary>
+        /// The layer list (order and names) before and after the edit; null when the edit did not
+        /// touch it.
+        /// </summary>
+        public List<(TileLayer Layer, string Name)> LayersBefore { get; set; }
+
+        public List<(TileLayer Layer, string Name)> LayersAfter { get; set; }
+
+        /// <summary>The active layer before and after an edit of the layer list.</summary>
+        public TileLayer ActiveLayerBefore { get; set; }
+
+        public TileLayer ActiveLayerAfter { get; set; }
+
+        public bool IsEmpty => Added.Count == 0 && Removed.Count == 0 && Before.Count == 0 &&
+                               OldWidth == NewWidth && OldHeight == NewHeight && LayersBefore == null;
+
+        public void CaptureAfter()
+        {
+            After.Clear();
+            foreach (MultiTile tile in new List<MultiTile>(Before.Keys))
+            {
+                TileState after = TileState.Of(tile);
+
+                // A tile changed and changed back is no change at all.
+                if (after == Before[tile])
+                {
+                    Before.Remove(tile);
+                }
+                else
+                {
+                    After[tile] = after;
+                }
+            }
+        }
+    }
+}

@@ -107,6 +107,10 @@
 		<Compile Update="UI\MultiEditorControl.Designer.cs">
 			<DependentUpon>MultiEditorControl.cs</DependentUpon>
 		</Compile>
+		<Compile Update="UI\MultiEditorControl.Commands.cs;UI\MultiEditorControl.DocumentTabs.cs;UI\MultiEditorControl.Documents.cs;UI\MultiEditorControl.House.cs;UI\MultiEditorControl.Keyboard.cs;UI\MultiEditorControl.Layout.cs;UI\MultiEditorControl.Status.cs;UI\MultiEditorControl.Toolbars.cs">
+			<DependentUpon>MultiEditorControl.cs</DependentUpon>
+			<SubType>Code</SubType>
+		</Compile>
 		<Compile Update="UI\NewMultiDialog.cs">
 			<SubType>Form</SubType>
 		</Compile>
@@ -142,6 +146,10 @@
 		</Compile>
 		<Compile Update="UI\TileBrowserPanel.Designer.cs">
 			<DependentUpon>TileBrowserPanel.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\TileBrowserPanel.Blueprints.cs;UI\TileBrowserPanel.Favorites.cs;UI\TileBrowserPanel.House.cs;UI\TileBrowserPanel.TileMenu.cs">
+			<DependentUpon>TileBrowserPanel.cs</DependentUpon>
+			<SubType>Code</SubType>
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>

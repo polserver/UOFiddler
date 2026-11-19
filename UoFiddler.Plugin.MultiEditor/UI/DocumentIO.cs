@@ -16,8 +16,8 @@ using System.Xml;
 using Ultima;
 using UoFiddler.Controls.Classes;
 using UoFiddler.Controls.Forms;
-using UoFiddler.Plugin.MultiEditor.Classes;
-using UoFiddler.Plugin.MultiEditor.Tools;
+using UoFiddler.Plugin.MultiEditor.Model;
+using UoFiddler.Plugin.MultiEditor.Storage;
 
 namespace UoFiddler.Plugin.MultiEditor.UI
 {

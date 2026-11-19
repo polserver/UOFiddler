@@ -14,8 +14,8 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using Ultima;
-using UoFiddler.Plugin.MultiEditor.Classes;
 using UoFiddler.Plugin.MultiEditor.Editing;
+using UoFiddler.Plugin.MultiEditor.Model;
 
 namespace UoFiddler.Plugin.MultiEditor.UI
 {

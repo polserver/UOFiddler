@@ -232,7 +232,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             var list = _session.CompList;
             if (_session.PlanMode)
             {
-                Size plan = MultiEditor.Classes.PlanView.ContentSize(list.Width, list.Height);
+                Size plan = MultiEditor.Rendering.PlanView.ContentSize(list.Width, list.Height);
                 return new RectangleF(0, 0, plan.Width, plan.Height);
             }
 
@@ -243,7 +243,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             float bottom = EditorSession.CellCorner(list.Width, list.Height, 0).Y;
             foreach (var tile in list.RealTiles)
             {
-                if (!MultiEditor.Classes.ArtMetrics.TryGetSize(tile.Id, out int width, out int height))
+                if (!MultiEditor.Rendering.ArtMetrics.TryGetSize(tile.Id, out int width, out int height))
                 {
                     continue;
                 }

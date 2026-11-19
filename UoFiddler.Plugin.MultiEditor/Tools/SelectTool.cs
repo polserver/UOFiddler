@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
  *
  * $Author: Turley
  *
@@ -13,7 +13,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using UoFiddler.Plugin.MultiEditor.Classes;
+using UoFiddler.Plugin.MultiEditor.Model;
 
 namespace UoFiddler.Plugin.MultiEditor.Tools
 {

@@ -10,9 +10,9 @@
 using System;
 using System.Drawing;
 using Ultima;
-using UoFiddler.Plugin.MultiEditor.Classes;
 using UoFiddler.Plugin.MultiEditor.Tools;
 using UoFiddler.Plugin.MultiEditor.Editing;
+using UoFiddler.Plugin.MultiEditor.Model;
 
 namespace UoFiddler.Plugin.MultiEditor.Rendering
 {

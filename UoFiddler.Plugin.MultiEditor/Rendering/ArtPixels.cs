@@ -7,7 +7,6 @@
  *
  ***************************************************************************/
 
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Ultima;
@@ -104,49 +103,6 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
         private static byte Expand5(int value)
         {
             return (byte)((value << 3) | (value >> 2));
-        }
-    }
-
-    /// <summary>
-    /// Which pixels of a static are drawn, for picking the tile under the cursor.
-    /// </summary>
-    internal sealed class ArtMasks
-    {
-        private sealed class Mask
-        {
-            public int Width;
-            public int Height;
-            public bool[] Opaque;
-        }
-
-        private readonly Dictionary<ushort, Mask> _masks = new Dictionary<ushort, Mask>();
-
-        /// <summary>True when the art has a drawn pixel at the given offset from its top left.</summary>
-        public bool Hit(ushort id, int x, int y)
-        {
-            if (x < 0 || y < 0)
-            {
-                return false;
-            }
-
-            if (!_masks.TryGetValue(id, out Mask mask))
-            {
-                byte[] rgba = ArtPixels.LoadStatic(id, out int width, out int height);
-                mask = new Mask { Width = width, Height = height, Opaque = new bool[width * height] };
-                for (int i = 0; rgba != null && i < mask.Opaque.Length; i++)
-                {
-                    mask.Opaque[i] = rgba[(i * 4) + 3] != 0;
-                }
-
-                _masks[id] = mask;
-            }
-
-            return x < mask.Width && y < mask.Height && mask.Opaque[(y * mask.Width) + x];
-        }
-
-        public void Clear()
-        {
-            _masks.Clear();
         }
     }
 }
