@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
  *
  * $Author: Turley
  *
@@ -10,7 +10,9 @@
  ***************************************************************************/
 
 using System.Collections.Generic;
-using UoFiddler.Plugin.MultiEditor.Classes;
+using UoFiddler.Plugin.MultiEditor.House;
+using UoFiddler.Plugin.MultiEditor.Model;
+using UoFiddler.Plugin.MultiEditor.Styles;
 
 namespace UoFiddler.Plugin.MultiEditor.Tools
 {

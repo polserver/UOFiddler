@@ -11,99 +11,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using UoFiddler.Plugin.MultiEditor.Classes;
+using UoFiddler.Plugin.MultiEditor.House;
+using UoFiddler.Plugin.MultiEditor.Model;
 
 namespace UoFiddler.Plugin.MultiEditor.Tools
 {
-    /// <summary>
-    /// One rectangle of a roof or a house being shaped. For a roof the box is the cells the roof
-    /// covers and <see cref="EaveZ"/> the height of its eaves; for a house the box is the wall
-    /// cells and <see cref="EaveZ"/> the Z its ground floor stands on.
-    /// </summary>
-    internal sealed class RoofWing
-    {
-        public int X0 { get; set; }
-
-        public int Y0 { get; set; }
-
-        public int X1 { get; set; }
-
-        public int Y1 { get; set; }
-
-        public int EaveZ { get; set; }
-
-        /// <summary>Storeys of a house wing.</summary>
-        public int Storeys { get; set; } = 1;
-
-        /// <summary>A house wing left without a roof.</summary>
-        public bool NoRoof { get; set; }
-
-        /// <summary>
-        /// Rooms a house wing is divided into on each of its storeys: partitions across its longer
-        /// side, each with a doorway left in the middle. 1 leaves the wing undivided.
-        /// </summary>
-        public int Rooms { get; set; } = 1;
-
-        /// <summary>How the rooms of a house wing are laid out.</summary>
-        public RoomLayout Layout { get; set; }
-
-        /// <summary>
-        /// True for a house wing that keeps its walls where it meets other wings, with a doorway
-        /// in each stretch of wall they share: a tower at a keep's corner, a hall in a castle's
-        /// yard. Wings without it run into each other as one open space.
-        /// </summary>
-        public bool Walled { get; set; }
-
-        /// <summary>
-        /// Rooms and layout of the storeys above the ground floor that have their own; a storey
-        /// without takes those of the storey below it. Index 0 is not used.
-        /// </summary>
-        public (int Rooms, RoomLayout Layout)?[] RoomsAbove { get; private set; } = new (int, RoomLayout)?[HouseDraft.MaxStoreys];
-
-        /// <summary>Rooms and layout of a storey.</summary>
-        public (int Rooms, RoomLayout Layout) RoomsOn(int storey)
-        {
-            for (int k = Math.Min(storey, HouseDraft.MaxStoreys - 1); k >= 1; --k)
-            {
-                if (RoomsAbove[k] is { } own)
-                {
-                    return own;
-                }
-            }
-
-            return (Rooms, Layout);
-        }
-
-        public RoofShape Shape { get; set; }
-
-        public bool RidgeAlongY { get; set; }
-
-        /// <summary>True while the ridge follows the box's proportions as it is resized.</summary>
-        public bool RidgeAuto { get; set; }
-
-        public (int X0, int Y0, int X1, int Y1) Box => (X0, Y0, X1, Y1);
-
-        public RoofWing Clone()
-        {
-            var copy = (RoofWing)MemberwiseClone();
-            copy.RoomsAbove = ((int, RoomLayout)?[])RoomsAbove.Clone();
-            return copy;
-        }
-
-        public void CopyFrom(RoofWing other)
-        {
-            (X0, Y0, X1, Y1, EaveZ) = (other.X0, other.Y0, other.X1, other.Y1, other.EaveZ);
-            (Shape, RidgeAlongY, RidgeAuto, Storeys, NoRoof) = (other.Shape, other.RidgeAlongY, other.RidgeAuto, other.Storeys, other.NoRoof);
-            Rooms = other.Rooms;
-            Layout = other.Layout;
-            Walled = other.Walled;
-            RoomsAbove = ((int, RoomLayout)?[])other.RoomsAbove.Clone();
-        }
-    }
-
     /// <summary>
     /// Base for the tools that shape something out of wings before it is placed (roofs, houses).
     /// The first stroke starts a draft, shown as it will be built. Then: click a wing to select
@@ -115,7 +29,7 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
     /// <see cref="UndoDraft"/> and <see cref="RedoDraft"/> walk; dropping the draft is such a
     /// step too, and undoing a placement in the multi brings the draft back with its history.
     /// </summary>
-    internal abstract class WingDraftTool : EditorTool
+    internal abstract partial class WingDraftTool : EditorTool
     {
         private const int _historySize = 200;
 
@@ -163,14 +77,6 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         private bool _east;
         private bool _north;
         private bool _south;
-
-        // The copied wing and what the tool keeps of it besides (a house's hand edits inside it).
-        private RoofWing _clipWing;
-        private object _clipExtra;
-
-        // A pasted wing on the mouse: the wing it was copied from, as it stood, and what came with it.
-        private RoofWing _floatSource;
-        private object _floatExtra;
 
         // The last placement, so undoing it in the multi can bring the draft back.
         private State _placed;
@@ -374,20 +280,6 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
         /// <summary>Called when a step was added to the draft's history.</summary>
         protected virtual void StepPushed()
         {
-        }
-
-        /// <summary>Runs <paramref name="remap"/> on what copied wings took along besides themselves.</summary>
-        protected void RemapCopies(Action<object> remap)
-        {
-            if (_clipExtra != null)
-            {
-                remap(_clipExtra);
-            }
-
-            if (_floatExtra != null)
-            {
-                remap(_floatExtra);
-            }
         }
 
         protected void RaiseChanged() => Changed?.Invoke();
@@ -674,87 +566,6 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             RaiseChanged();
         }
 
-        /// <summary>True while a pasted wing follows the mouse.</summary>
-        public bool FloatingWing => _drag == DragKind.Float;
-
-        /// <summary>True when a copied wing can be pasted into the draft.</summary>
-        public bool CanPasteWing => _clipWing != null && HasPending && Ready;
-
-        /// <summary>Copies the selected wing, with what the tool keeps of it besides, for <see cref="PasteWing"/>.</summary>
-        public bool CopyWing()
-        {
-            if (SelectedWing is not { } wing || IsDragging)
-            {
-                return false;
-            }
-
-            _clipWing = wing.Clone();
-            _clipExtra = CopyWingExtra(wing);
-            return true;
-        }
-
-        /// <summary>Puts a copy of the copied wing on the mouse; a click drops it, Esc takes it away.</summary>
-        public void PasteWing()
-        {
-            if (CanPasteWing)
-            {
-                StartFloat(_clipWing, _clipExtra);
-            }
-        }
-
-        /// <summary>Puts a copy of the selected wing on the mouse, leaving the copied wing alone.</summary>
-        public void DuplicateWing()
-        {
-            if (SelectedWing is { } wing && !IsDragging && Ready)
-            {
-                StartFloat(wing.Clone(), CopyWingExtra(wing));
-            }
-        }
-
-        private void StartFloat(RoofWing source, object extra)
-        {
-            CancelDrag();
-            _dragStart = Capture();
-
-            RoofWing wing = source.Clone();
-            wing.EaveZ = PastedWingZ(source);
-            Context.PlaneCell(Context.MouseLoc, GripZ(wing), out int cx, out int cy);
-
-            // The mouse holds the wing by its middle.
-            int width = wing.X1 - wing.X0, height = wing.Y1 - wing.Y0;
-            wing.X0 = Math.Max(0, cx - (width / 2));
-            wing.Y0 = Math.Max(0, cy - (height / 2));
-            (wing.X1, wing.Y1) = (wing.X0 + width, wing.Y0 + height);
-
-            _wings.Add(wing);
-            _selected = _wings.Count - 1;
-            _before = wing.Clone();
-            (_grabX, _grabY) = (cx, cy);
-            _floatSource = source.Clone();
-            _floatExtra = extra;
-            _beforeAll = null;
-            _drag = DragKind.Float;
-            DragWing();
-            RaiseChanged();
-        }
-
-        /// <summary>Drops the pasted wing where it is, as one step of the draft's history.</summary>
-        private void DropFloat()
-        {
-            DragWing();
-            Push(_dragStart);
-            EndFloat();
-        }
-
-        private void EndFloat()
-        {
-            _drag = DragKind.None;
-            _before = null;
-            _dragStart = null;
-            _floatSource = null;
-            _floatExtra = null;
-        }
-
         /// <summary>
         /// Places the draft in one undo step of the multi. Undoing that step brings the draft
         /// back (<see cref="Reopen"/>).
@@ -959,167 +770,6 @@ namespace UoFiddler.Plugin.MultiEditor.Tools
             }
 
             WingResized(wing);
-        }
-
-        // ---------------------------------------------------------------- overlay
-
-        public override void PaintOverlay(IToolOverlay overlay)
-        {
-            PaintDraft(overlay, active: true);
-        }
-
-        // The planned tiles in the order they are drawn, kept until the plan changes.
-        private object _orderedFor;
-        private List<(MultiTile Tile, string Layer)> _ordered;
-
-        /// <summary>
-        /// The planned tiles in the order the multi's own tiles are drawn: cell after cell, and
-        /// within a cell from the bottom up, floors before what stands on them. Drawn in the
-        /// order they were planned, a floor laid after its walls, or the floor of the storey
-        /// above, would lie over walls that stand in front of it.
-        /// </summary>
-        private List<(MultiTile Tile, string Layer)> InDrawOrder(List<(ushort Id, int X, int Y, int Z, string Layer)> add)
-        {
-            if (!ReferenceEquals(_orderedFor, add) || _ordered == null || _ordered.Count != add.Count)
-            {
-                _ordered = new List<(MultiTile, string)>(add.Count);
-                foreach (var (id, x, y, z, layer) in add)
-                {
-                    _ordered.Add((new MultiTile(id, x, y, z, 0), layer));
-                }
-
-                _ordered.Sort((a, b) => a.Tile.CompareTo(b.Tile));
-                _orderedFor = add;
-            }
-
-            return _ordered;
-        }
-
-        /// <summary>
-        /// Draws the draft as it would be built. With <paramref name="active"/> (this tool is in
-        /// use) it also shows what the mouse would take hold of: the wing under it, the side of
-        /// the selected wing a press would resize, and the wing being dragged out.
-        /// </summary>
-        public void PaintDraft(IToolOverlay overlay, bool active)
-        {
-            if (!Ready)
-            {
-                return;
-            }
-
-            var wings = new List<RoofWing>(_wings);
-            List<RoofWing> stroke = null;
-            if (active && _drag == DragKind.New)
-            {
-                stroke = WingsFor(_startX, _startY, _endX, _endY, _z, out _);
-            }
-            else if (active && !HasPending && PreviewsFirstClick)
-            {
-                StartCell(out int x, out int y, out int z);
-                stroke = WingsFor(x, y, x, y, z, out _);
-            }
-
-            if (stroke != null)
-            {
-                wings.AddRange(stroke);
-            }
-
-            var (remove, add) = Plan(wings);
-            foreach (MultiTile tile in remove)
-            {
-                overlay.Highlight(tile, TileHighlight.Remove);
-            }
-
-            // A house is looked into like the multi: storeys above the chosen floor are left out.
-            int highest = GhostsFollowView ? Context.MaxHeight : int.MaxValue;
-            foreach ((MultiTile tile, string layer) in InDrawOrder(add))
-            {
-                if (tile.Z <= highest && ShowsInPreview(layer))
-                {
-                    overlay.Ghost(tile.Id, tile.X, tile.Y, tile.Z);
-                }
-            }
-
-            PaintDetails(overlay, active);
-
-            int hover = -1, hx = 0, hy = 0;
-            if (active && _drag == DragKind.None && HasPending)
-            {
-                hover = HitWing(out hx, out hy);
-            }
-
-            for (int i = 0; i < _wings.Count; ++i)
-            {
-                RoofWing wing = _wings[i];
-                int z = GripZ(wing);
-                bool selected = i == _selected;
-                if (selected && active)
-                {
-                    // The rows and columns a press would resize by; the one under the mouse stands out.
-                    Edges(wing, hx, hy, hover == i, out bool west, out bool east, out bool north, out bool south);
-                    if (_drag == DragKind.Resize)
-                    {
-                        (west, east, north, south) = (_west, _east, _north, _south);
-                    }
-
-                    for (int x = wing.X0; x <= wing.X1; ++x)
-                    {
-                        for (int y = wing.Y0; y <= wing.Y1; ++y)
-                        {
-                            bool band = x == wing.X0 || x == wing.X1 || y == wing.Y0 || y == wing.Y1;
-                            bool held = (west && x == wing.X0) || (east && x == wing.X1) || (north && y == wing.Y0) || (south && y == wing.Y1);
-                            if (held)
-                            {
-                                overlay.CellMark(x, y, z, OverlayTone.Hover);
-                            }
-                            else if (band)
-                            {
-                                overlay.CellMark(x, y, z, OverlayTone.Selected);
-                            }
-                        }
-                    }
-                }
-
-                OverlayTone tone = selected ? OverlayTone.Selected : i == hover ? OverlayTone.Hover : OverlayTone.Plain;
-                Point[] corners = BoxOutline(wing.X0, wing.Y0, wing.X1, wing.Y1, z);
-                overlay.Outline(corners, tone);
-                if (!selected || !active)
-                {
-                    continue;
-                }
-
-                // Grips in the middle of the selected wing's sides.
-                for (int side = 0; side < 4; ++side)
-                {
-                    Point a = corners[side], b = corners[(side + 1) % 4];
-                    var mid = new Point((a.X + b.X) / 2, (a.Y + b.Y) / 2);
-                    overlay.Outline(new[]
-                    {
-                        new Point(mid.X - 5, mid.Y - 5), new Point(mid.X + 5, mid.Y - 5),
-                        new Point(mid.X + 5, mid.Y + 5), new Point(mid.X - 5, mid.Y + 5)
-                    }, OverlayTone.Selected);
-                }
-            }
-
-            if (stroke != null && _drag == DragKind.New)
-            {
-                foreach (RoofWing wing in stroke)
-                {
-                    overlay.Outline(BoxOutline(wing.X0, wing.Y0, wing.X1, wing.Y1, GripZ(wing)), OverlayTone.Hover);
-                }
-            }
-        }
-
-        /// <summary>The corners of a box of cells on the plane at height z: top, right, bottom, left.</summary>
-        protected static Point[] BoxOutline(int x0, int y0, int x1, int y1, int z)
-        {
-            return new[] { Corner(x0, y0, z), Corner(x1 + 1, y0, z), Corner(x1 + 1, y1 + 1, z), Corner(x0, y1 + 1, z) };
-        }
-
-        /// <summary>Canvas position of the top corner of a cell's diamond at height z.</summary>
-        protected static Point Corner(int x, int y, int z)
-        {
-            return new Point(((x - y) * 22) + MultiEditorComponentList.GapXMod, ((x + y) * 22) - (z * 4) - 22);
         }
     }
 }

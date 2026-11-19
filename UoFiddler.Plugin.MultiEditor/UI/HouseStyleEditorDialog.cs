@@ -16,7 +16,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using UoFiddler.Plugin.MultiEditor.Classes;
+using UoFiddler.Plugin.MultiEditor.House;
+using UoFiddler.Plugin.MultiEditor.Styles;
 
 namespace UoFiddler.Plugin.MultiEditor.UI
 {

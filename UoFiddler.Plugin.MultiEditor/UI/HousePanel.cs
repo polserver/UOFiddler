@@ -14,8 +14,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using UoFiddler.Plugin.MultiEditor.Classes;
 using UoFiddler.Plugin.MultiEditor.Editing;
+using UoFiddler.Plugin.MultiEditor.House;
+using UoFiddler.Plugin.MultiEditor.Styles;
 using UoFiddler.Plugin.MultiEditor.Tools;
 
 namespace UoFiddler.Plugin.MultiEditor.UI
