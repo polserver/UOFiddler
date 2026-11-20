@@ -11,16 +11,16 @@ using System;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 
-namespace UoFiddler.Plugin.MultiEditor.Rendering
+namespace UoFiddler.Rendering
 {
     /// <summary>Where a sprite sits in the atlas, in pixels.</summary>
-    internal readonly record struct AtlasSprite(int Layer, int X, int Y, int Width, int Height);
+    public readonly record struct AtlasSprite(int Layer, int X, int Y, int Width, int Height);
 
     /// <summary>
     /// Static art packed into one texture array, filled as tiles are first drawn. One texture
     /// means the whole multi draws in one call and keeps its draw order.
     /// </summary>
-    internal sealed class ArtAtlas : IDisposable
+    public sealed class ArtAtlas : IDisposable
     {
         public const int Size = 2048;
 
@@ -35,8 +35,14 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
         /// <summary>Keys from here down are land tiles; see <see cref="LandKey"/>.</summary>
         private const int _landBase = -1000;
 
+        /// <summary>Keys from here down are texmaps; see <see cref="TexmapKey"/>.</summary>
+        private const int _texmapBase = -100000;
+
         /// <summary>The atlas key of a land tile's art (ground under a previewed multi).</summary>
         public static int LandKey(int landId) => _landBase - landId;
+
+        /// <summary>The atlas key of a texmap, the texture stretched over sloped land.</summary>
+        public static int TexmapKey(int textureId) => _texmapBase - textureId;
 
         private readonly Dictionary<int, AtlasSprite> _sprites = new Dictionary<int, AtlasSprite>();
         private readonly HashSet<int> _missing = new HashSet<int>();
@@ -115,6 +121,11 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
                     width = height = ArtPixels.FloorSize;
                     return ArtPixels.FloorDiamond();
                 default:
+                    if (key <= _texmapBase)
+                    {
+                        return ArtPixels.LoadTexmap(_texmapBase - key, out width, out height);
+                    }
+
                     return key <= _landBase
                         ? ArtPixels.LoadLand(_landBase - key, out width, out height)
                         : ArtPixels.LoadStatic((ushort)key, out width, out height);

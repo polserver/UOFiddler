@@ -12,10 +12,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Windowing.Common;
 using UoFiddler.Plugin.MultiEditor.Editing;
+using UoFiddler.Rendering;
 
 namespace UoFiddler.Plugin.MultiEditor.Rendering
 {
@@ -24,7 +23,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
     /// demand. It owns the camera gestures (pan, zoom) and passes the rest of the mouse to the
     /// session in world coordinates.
     /// </summary>
-    internal sealed class GlCanvas : GLControl
+    internal sealed class GlCanvas : GlHostControl
     {
         private bool _ready;
         private bool _failed;
@@ -48,17 +47,6 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
 
         /// <summary>Raised after pan or zoom changed.</summary>
         public event Action CameraChanged;
-
-        public GlCanvas()
-            : base(new GLControlSettings
-            {
-                API = ContextAPI.OpenGL,
-                APIVersion = new Version(3, 3),
-                Profile = ContextProfile.Core,
-                Flags = ContextFlags.ForwardCompatible
-            })
-        {
-        }
 
         public Camera2D Camera { get; private set; } = new Camera2D();
 

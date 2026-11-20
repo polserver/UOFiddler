@@ -13,6 +13,7 @@ using Ultima;
 using UoFiddler.Plugin.MultiEditor.Tools;
 using UoFiddler.Plugin.MultiEditor.Editing;
 using UoFiddler.Plugin.MultiEditor.Model;
+using UoFiddler.Rendering;
 
 namespace UoFiddler.Plugin.MultiEditor.Rendering
 {

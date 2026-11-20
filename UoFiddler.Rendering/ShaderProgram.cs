@@ -10,9 +10,9 @@
 using System;
 using OpenTK.Graphics.OpenGL4;
 
-namespace UoFiddler.Plugin.MultiEditor.Rendering
+namespace UoFiddler.Rendering
 {
-    internal sealed class ShaderProgram : IDisposable
+    public sealed class ShaderProgram : IDisposable
     {
         public int Handle { get; }
 

@@ -12,7 +12,7 @@
 		<FileVersion>3.0.0.0</FileVersion>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<GenerateResourceWarnOnBinaryFormatterUse>false</GenerateResourceWarnOnBinaryFormatterUse>
-		<!-- Package DLLs go to plugins\MultiEditor\ (see CopyPluginDependencies), not next to the plugin. -->
+		<!-- OpenTK comes through UoFiddler.Rendering and must not land next to the plugin. -->
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 	<PropertyGroup>
@@ -28,14 +28,16 @@
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="..\Ultima\Ultima.csproj">
 			<Private>false</Private>
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</ProjectReference>
 		<ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<!-- Lives with OpenTK in plugins\UoFiddler.Rendering\. -->
+		<ProjectReference Include="..\UoFiddler.Rendering\UoFiddler.Rendering.csproj">
 			<Private>false</Private>
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</ProjectReference>
@@ -210,15 +212,4 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
-	<!--
-		The host loads every dll in plugins\ as a plugin, so the OpenTK assemblies and the native
-		GLFW library live in a subfolder named after this assembly. PluginServices resolves them from there.
-	-->
-	<Target Name="CopyPluginDependencies" AfterTargets="Build" DependsOnTargets="ResolvePackageAssets">
-		<ItemGroup>
-			<_PluginDependency Include="@(RuntimeCopyLocalItems)" />
-			<_PluginDependency Include="@(RuntimeTargetsCopyLocalItems)" Condition="'%(RuntimeTargetsCopyLocalItems.RuntimeIdentifier)' == 'win-x64'" />
-		</ItemGroup>
-		<Copy SourceFiles="@(_PluginDependency)" DestinationFolder="$(OutDir)$(AssemblyName)\" SkipUnchangedFiles="true" />
-	</Target>
 </Project>

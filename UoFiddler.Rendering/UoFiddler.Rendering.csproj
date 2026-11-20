@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>UoFiddler.Rendering</AssemblyName>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AssemblyTitle>UoFiddler.Rendering</AssemblyTitle>
+		<Product>UoFiddler.Rendering</Product>
+		<Copyright>Copyright © 2026</Copyright>
+		<!-- Package DLLs are copied flat next to this library by CopyRenderingDependencies. -->
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	</PropertyGroup>
+	<!--
+		Shared OpenGL pieces for plugins. The host loads every dll directly in plugins\ as a plugin, so
+		this library and OpenTK live in plugins\UoFiddler.Rendering\, where PluginServices resolves them.
+	-->
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>portable</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\UoFiddler.Rendering\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\UoFiddler.Rendering\</OutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Ultima\Ultima.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+	</ItemGroup>
+	<Target Name="CopyRenderingDependencies" AfterTargets="Build" DependsOnTargets="ResolvePackageAssets">
+		<ItemGroup>
+			<_RenderingDependency Include="@(RuntimeCopyLocalItems)" />
+			<_RenderingDependency Include="@(RuntimeTargetsCopyLocalItems)" Condition="'%(RuntimeTargetsCopyLocalItems.RuntimeIdentifier)' == 'win-x64'" />
+		</ItemGroup>
+		<Copy SourceFiles="@(_RenderingDependency)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+	</Target>
+</Project>

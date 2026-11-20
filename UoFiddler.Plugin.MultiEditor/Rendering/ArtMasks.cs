@@ -8,6 +8,7 @@
  ***************************************************************************/
 
 using System.Collections.Generic;
+using UoFiddler.Rendering;
 
 namespace UoFiddler.Plugin.MultiEditor.Rendering
 {

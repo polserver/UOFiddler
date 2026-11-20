@@ -10,16 +10,21 @@
 using System;
 using System.Drawing;
 
-namespace UoFiddler.Plugin.MultiEditor.Rendering
+namespace UoFiddler.Rendering
 {
     /// <summary>
-    /// Pan and zoom of the canvas. World space is the tile pixel space of the multi
-    /// (<c>MultiTile.XMod</c>/<c>YMod</c>); screen = (world - origin) * zoom.
+    /// Pan and zoom of a canvas. World space is the isometric tile pixel space of what is drawn;
+    /// screen = (world - origin) * zoom.
     /// </summary>
-    internal sealed class Camera2D
+    public sealed class Camera2D
     {
-        public const float MinZoom = 0.25f;
         public const float MaxZoom = 8f;
+
+        /// <summary>
+        /// The smallest zoom. Below a quarter the steps halve instead of dropping by a quarter, so a
+        /// large map area can be shown whole.
+        /// </summary>
+        public float MinZoom { get; init; } = 0.25f;
 
         /// <summary>World position shown at the top left of the canvas.</summary>
         public float OriginX { get; private set; }
@@ -75,11 +80,13 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
             float zoom = Zoom;
             if (direction > 0)
             {
-                zoom = zoom < 1f ? Math.Min(1f, zoom + 0.25f) : (float)Math.Floor(zoom) + 1f;
+                zoom = zoom < 0.25f ? zoom * 2f
+                    : zoom < 1f ? Math.Min(1f, zoom + 0.25f) : (float)Math.Floor(zoom) + 1f;
             }
             else
             {
-                zoom = zoom > 1f ? (float)Math.Ceiling(zoom) - 1f : zoom - 0.25f;
+                zoom = zoom > 1f ? (float)Math.Ceiling(zoom) - 1f
+                    : zoom > 0.25f ? zoom - 0.25f : zoom / 2f;
             }
 
             ZoomAt(anchor, zoom);
@@ -112,7 +119,7 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
                 zoom = 1f;
                 while (zoom > MinZoom && zoom > fit)
                 {
-                    zoom -= 0.25f;
+                    zoom = zoom > 0.25f ? zoom - 0.25f : zoom / 2f;
                 }
             }
 
