@@ -103,6 +103,7 @@ namespace UoFiddler.Plugin.MultiEditor
                 (Map map, System.Drawing.Point location) = clickedAt();
                 _editor.ExtractFromMap(map, location);
             };
+            strip.Items.Add(new ToolStripSeparator());
             strip.Items.Add(item);
         }
     }

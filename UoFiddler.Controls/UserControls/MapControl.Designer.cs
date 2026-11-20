@@ -63,6 +63,7 @@ namespace UoFiddler.Controls.UserControls
             this.getMapInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertMarkerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.gotoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TextBoxGoto = new System.Windows.Forms.ToolStripTextBox();
             this.sendClientToPosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -199,6 +200,7 @@ namespace UoFiddler.Controls.UserControls
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.zoomToolStripMenuItem,
             this.zoomToolStripMenuItem1,
+            this.toolStripSeparator9,
             this.getMapInfoToolStripMenuItem,
             this.insertMarkerToolStripMenuItem,
             this.toolStripSeparator4,
@@ -245,6 +247,11 @@ namespace UoFiddler.Controls.UserControls
             this.insertMarkerToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.insertMarkerToolStripMenuItem.Text = "Insert Marker";
             this.insertMarkerToolStripMenuItem.Click += new System.EventHandler(this.OnClickInsertMarker);
+            // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(168, 6);
             // 
             // toolStripSeparator4
             // 
@@ -855,6 +862,7 @@ namespace UoFiddler.Controls.UserControls
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem trammelToolStripMenuItem;
         private System.Windows.Forms.VScrollBar vScrollBar;
