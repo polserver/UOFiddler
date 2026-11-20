@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>MapPreview</AssemblyName>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AssemblyTitle>MapPreview</AssemblyTitle>
+		<Product>MapPreview</Product>
+		<Copyright>Copyright © 2026</Copyright>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		<!-- OpenTK comes through UoFiddler.Rendering and must not land next to the plugin. -->
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+	<PropertyGroup>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>portable</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>none</DebugType>
+		<OutputPath>..\UoFiddler\bin\$(Configuration)\plugins\</OutputPath>
+		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Ultima\Ultima.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\UoFiddler.Controls\UoFiddler.Controls.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<!-- Lives with OpenTK in plugins\UoFiddler.Rendering\. -->
+		<ProjectReference Include="..\UoFiddler.Rendering\UoFiddler.Rendering.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="UI\MapPreviewSettingsDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\MapPreviewSettingsDialog.Designer.cs">
+			<DependentUpon>MapPreviewSettingsDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UI\MapPreviewForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="UI\MapPreviewForm.Designer.cs">
+			<DependentUpon>MapPreviewForm.cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="UI\MapPreviewSettingsDialog.resx">
+			<DependentUpon>MapPreviewSettingsDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="UI\MapPreviewForm.resx">
+			<DependentUpon>MapPreviewForm.cs</DependentUpon>
+		</EmbeddedResource>
+	</ItemGroup>
+</Project>

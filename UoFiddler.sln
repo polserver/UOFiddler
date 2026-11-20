@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UoFiddler.Plugin.UopPacker"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UoFiddler.Rendering", "UoFiddler.Rendering\UoFiddler.Rendering.csproj", "{F3367DE7-B9CC-4703-8E30-B57577AAF667}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UoFiddler.Plugin.MapPreview", "UoFiddler.Plugin.MapPreview\UoFiddler.Plugin.MapPreview.csproj", "{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,18 @@ Global
 		{F3367DE7-B9CC-4703-8E30-B57577AAF667}.Release|x64.Build.0 = Release|Any CPU
 		{F3367DE7-B9CC-4703-8E30-B57577AAF667}.Release|x86.ActiveCfg = Release|Any CPU
 		{F3367DE7-B9CC-4703-8E30-B57577AAF667}.Release|x86.Build.0 = Release|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Debug|x64.Build.0 = Debug|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Debug|x86.Build.0 = Debug|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Release|x64.ActiveCfg = Release|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Release|x64.Build.0 = Release|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Release|x86.ActiveCfg = Release|Any CPU
+		{6780FAB6-9A07-48BB-9D18-872B44CDCDB6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

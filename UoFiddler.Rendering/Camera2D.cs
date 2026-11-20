@@ -119,7 +119,8 @@ namespace UoFiddler.Rendering
                 zoom = 1f;
                 while (zoom > MinZoom && zoom > fit)
                 {
-                    zoom = zoom > 0.25f ? zoom - 0.25f : zoom / 2f;
+                    // Under a quarter the art is already a blur, so the view simply fits exactly.
+                    zoom = zoom > 0.25f ? zoom - 0.25f : fit;
                 }
             }
 

@@ -74,7 +74,7 @@ namespace UoFiddler.Rendering
                 return false;
             }
 
-            byte[] pixels = Load(key, out int width, out int height);
+            byte[] pixels = TryLoad(key, out int width, out int height);
             if (pixels == null || width > Size - Padding || height > Size - Padding)
             {
                 _missing.Add(key);
@@ -106,6 +106,24 @@ namespace UoFiddler.Rendering
         {
             GL.DeleteTexture(_texture);
             _texture = 0;
+        }
+
+        /// <summary>
+        /// Art that cannot be read (files missing or swapped by a client reload) counts as having
+        /// none, so one bad entry blanks a sprite instead of failing the whole frame.
+        /// </summary>
+        private static byte[] TryLoad(int key, out int width, out int height)
+        {
+            try
+            {
+                return Load(key, out width, out height);
+            }
+            catch (Exception)
+            {
+                width = 0;
+                height = 0;
+                return null;
+            }
         }
 
         private static byte[] Load(int key, out int width, out int height)
@@ -170,7 +188,7 @@ namespace UoFiddler.Rendering
             Allocate(_layers * 2);
             foreach (KeyValuePair<int, AtlasSprite> entry in _sprites)
             {
-                byte[] pixels = Load(entry.Key, out int width, out int height);
+                byte[] pixels = TryLoad(entry.Key, out int width, out int height);
                 if (pixels != null && width == entry.Value.Width && height == entry.Value.Height)
                 {
                     Upload(entry.Value, pixels);
