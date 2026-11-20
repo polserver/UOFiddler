@@ -118,7 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Version 4.28.3
+    <value>Version 4.29.0
+- Map Preview: new plugin; "In-game preview here" in the map context menu shows the area as the client draws it, with stretched and lit land, hues and hidden roofs
+- Map Preview: a Max Z slider cuts statics at a height, and Auto cuts them above the ground at the centre as the client does under a roof; Cut land hides the land above it too, to show statics under the terrain
+- Map Preview: fit, 1:1 and mouse zoom; the area exports to PNG
+- Map Preview: areas from 32 to 256 tiles; arrow buttons and keys move the area by 1 to 32 tiles, and Go to (Ctrl+G) jumps to X, Y
+- Map Preview: settings are under Plugins and kept in the profile; the preview follows client reloads
+- Map: the map context menu is split into groups
+
+Version 4.28.3
 - Multi Editor: roofs sit on the wall tops whatever floor is chosen; a drag over the walls, the floor or the roof area fits the roof to the walls, and the overhang grows the multi
 - Multi Editor: hip roofs; a roof dragged across another joins it with valleys and a T piece, and a click roofs each part of an L or T shaped house
 - Multi Editor: a roof stays open for shaping (move and resize its wings, add wings, turn ridges) until Enter places it on a Roof layer; Esc drops it
