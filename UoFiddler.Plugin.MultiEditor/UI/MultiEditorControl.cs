@@ -18,6 +18,7 @@ using UoFiddler.Plugin.MultiEditor.Editing;
 using UoFiddler.Plugin.MultiEditor.Rendering;
 using UoFiddler.Plugin.MultiEditor.Model;
 using UoFiddler.Plugin.MultiEditor.Styles;
+using UoFiddler.Rendering;
 
 namespace UoFiddler.Plugin.MultiEditor.UI
 {

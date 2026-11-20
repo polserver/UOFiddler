@@ -11,12 +11,13 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using Ultima;
 
-namespace UoFiddler.Plugin.MultiEditor.Rendering
+namespace UoFiddler.Rendering
 {
     /// <summary>
-    /// Static art as RGBA8 pixels, read from the art cache so replaced art shows.
+    /// Art and texmaps as RGBA8 pixels, read from the caches so replaced art shows. Each 5-bit
+    /// channel is widened, so a shader can get the hue index back from red.
     /// </summary>
-    internal static class ArtPixels
+    public static class ArtPixels
     {
         public const int FloorSize = 44;
 
@@ -30,6 +31,12 @@ namespace UoFiddler.Plugin.MultiEditor.Rendering
         public static byte[] LoadLand(int id, out int width, out int height)
         {
             return ToRgba(Art.GetLand(id), out width, out height);
+        }
+
+        /// <summary>RGBA8 pixels of a texmap (64x64 or 128x128), or null when there is none.</summary>
+        public static byte[] LoadTexmap(int id, out int width, out int height)
+        {
+            return ToRgba(Textures.GetTexture(id), out width, out height);
         }
 
         private static unsafe byte[] ToRgba(Bitmap bitmap, out int width, out int height)

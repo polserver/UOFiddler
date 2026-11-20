@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using Ultima;
+using UoFiddler.Rendering;
 
 namespace UoFiddler.Plugin.MultiEditor.Rendering
 {

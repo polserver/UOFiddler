@@ -10,6 +10,7 @@
 using System;
 using System.Drawing;
 using OpenTK.Graphics.OpenGL4;
+using UoFiddler.Rendering;
 
 namespace UoFiddler.Plugin.MultiEditor.Rendering
 {
